@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/login"
+    >
+
+
+
+
+    <RelativeLayout
+        android:layout_marginTop="50dp"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <TextView
+            android:layout_marginLeft="80dp"
+            android:layout_width="wrap_content"
+           android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
+            android:text="地址:"
+            />
+        <EditText
+            android:id="@+id/httpUrl"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="140dp"
+            android:background="@color/white"
+            android:layout_width="160dp"
+            android:text="http://erp.robotime.com"
+            android:textSize="12sp"
+            android:layout_height="40dp" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <TextView
+            android:layout_marginLeft="80dp"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
+            android:text="数据库:"
+            />
+        <Button
+            android:textAllCaps="false"
+            android:id="@+id/database"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="140dp"
+            android:background="@color/white"
+            android:layout_width="160dp"
+            android:textSize="12sp"
+            android:layout_height="40dp" />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <TextView
+            android:layout_marginLeft="80dp"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
+            android:text="Email:"
+            />
+        <AutoCompleteTextView
+            android:id="@+id/email"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="140dp"
+            android:background="@color/white"
+            android:layout_width="160dp"
+            android:textSize="12sp"
+            android:layout_height="40dp" />
+    </RelativeLayout>
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <TextView
+            android:layout_marginLeft="80dp"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
+            android:text="密码:"
+            />
+        <EditText
+            android:id="@+id/password"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="140dp"
+            android:background="@color/white"
+            android:layout_width="160dp"
+            android:textSize="12sp"
+            android:layout_height="40dp" />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/to_login"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:text="登录"
+        />
+
+
+
+</LinearLayout>

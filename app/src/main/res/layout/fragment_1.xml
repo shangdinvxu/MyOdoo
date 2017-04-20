@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="50dp">
+      <Button
+          android:layout_width="0dp"
+          android:layout_weight="1"
+          android:text="采购入库"
+          android:layout_height="match_parent" />
+      <Button
+          android:layout_width="0dp"
+          android:layout_weight="1"
+          android:text="采购退库"
+          android:layout_height="match_parent" />
+  </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="生产领料"
+            android:layout_height="match_parent" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="生产退料"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="生产入库"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <Button
+            android:id="@+id/sales_out"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="销售出库"
+            android:layout_height="match_parent" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="客户退货"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="零售出库"
+            android:layout_height="match_parent" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="零售退货"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <tarce.myodoo.view.NoScrollViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"
+        >
+
+    </tarce.myodoo.view.NoScrollViewPager>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/black"
+        />
+    <RadioGroup
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp">
+        <RadioButton
+            android:gravity="center"
+            android:text="仓库"
+            android:id="@+id/radio_button1"
+            android:layout_width="0dp"
+            android:button="@null"
+            android:layout_weight="1"
+            android:layout_height="match_parent" />
+        <RadioButton
+            android:gravity="center"
+            android:text="生产"
+            android:id="@+id/radio_button2"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent" />
+        <RadioButton
+            android:gravity="center"
+            android:text="品检"
+            android:id="@+id/radio_button3"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent" />
+        <RadioButton
+            android:gravity="center"
+            android:text="我"
+            android:id="@+id/radio_button4"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent" />
+    </RadioGroup>
+
+</LinearLayout>
