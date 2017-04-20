@@ -2,6 +2,8 @@ package tarce.support;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -12,9 +14,19 @@ import android.view.MenuItem;
 public abstract class ToolBarActivity extends AppCompatActivity {
     private ToolBarHelper mToolBarHelper ;
     public Toolbar toolbar ;
+    public LinearLayoutManager linearLayoutManager;
+    public DividerItemDecoration dividerItemDecoration;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+    }
+
+    public void makeDefultRecycler(){
+        linearLayoutManager = new LinearLayoutManager(ToolBarActivity.this);
+        dividerItemDecoration = new DividerItemDecoration(ToolBarActivity.this,
+                DividerItemDecoration.VERTICAL);
     }
 
     @Override

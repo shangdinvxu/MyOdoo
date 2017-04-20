@@ -84,9 +84,9 @@ public class LoginActivity extends Activity {
         ButterKnife.inject(this);
         daoSession = MyApplication.getInstances().getDaoSession();
         menuListBeanDao = daoSession.getMenuListBeanDao();
+        contactsBeanDao =  daoSession.getContactsBeanDao();
         progressDialog = new ProgressDialog(LoginActivity.this);
         progressDialog.setMessage("loading");
-        contactsBeanDao = GreenDaoManager.getInstance().getmDaoSession().getContactsBeanDao();
         checkOutoLogin();
         initEmailAdapter();
         initListener();
@@ -275,6 +275,8 @@ public class LoginActivity extends Activity {
                             }
                         }
                     }
+                    long count = menuListBeanDao.count();
+                    MyLog.e(TAG,"menuListBeanDao里面的数量是"+count);
                 }
                 getSalesList();
 
@@ -301,11 +303,18 @@ public class LoginActivity extends Activity {
                         }
                     }
                 }
+                long count = contactsBeanDao.count();
+                MyLog.e(TAG,"contactsBeanDao里面的数量是"+count);
+                toMainActivity();
             }
             @Override
             public void onFailure(Call<SearchSupplierResponse> call, Throwable t) {
             }
         });
+
+    }
+
+    private void toMainActivity(){
         if (progressDialog.isShowing()) {
             progressDialog.dismiss();
         }

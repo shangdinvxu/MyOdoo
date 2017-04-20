@@ -66,5 +66,8 @@ dependencies {
     /**侧滑*/
     compile 'com.github.mcxtzhang:SwipeDelMenuLayout:V1.2.5'
 
+    /**快速适配器*/
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.12'
+
 
 }

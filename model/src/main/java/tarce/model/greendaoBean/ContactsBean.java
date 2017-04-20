@@ -17,7 +17,7 @@ public class ContactsBean {
     private String x_qq;
     @Generated(hash = 1063711758)
     public ContactsBean(String comment, String phone, Long partner_id, String name,
-                        String x_qq) {
+            String x_qq) {
         this.comment = comment;
         this.phone = phone;
         this.partner_id = partner_id;
@@ -57,4 +57,7 @@ public class ContactsBean {
     public void setX_qq(String x_qq) {
         this.x_qq = x_qq;
     }
+
+
+
 }

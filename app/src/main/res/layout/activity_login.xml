@@ -25,7 +25,7 @@
             android:layout_marginLeft="140dp"
             android:background="@color/white"
             android:layout_width="160dp"
-            android:text="http://erp.robotime.com"
+            android:text="http://192.168.88.106:8069"
             android:textSize="12sp"
             android:layout_height="40dp" />
     </RelativeLayout>

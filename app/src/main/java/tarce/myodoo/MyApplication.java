@@ -36,7 +36,6 @@ public class MyApplication extends Application {
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this);
         }
-        GreenDaoManager.getInstance();
         ZXingLibrary.initDisplayOpinion(this);
     }
 

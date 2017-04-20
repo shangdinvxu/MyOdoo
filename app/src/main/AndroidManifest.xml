@@ -40,6 +40,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.SalesOutActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activity.SalesListActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 
