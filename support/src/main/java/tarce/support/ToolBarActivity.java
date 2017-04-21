@@ -1,9 +1,11 @@
 package tarce.support;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
@@ -12,10 +14,10 @@ import android.view.MenuItem;
  */
 
 public abstract class ToolBarActivity extends AppCompatActivity {
+
     private ToolBarHelper mToolBarHelper ;
     public Toolbar toolbar ;
-    public LinearLayoutManager linearLayoutManager;
-    public DividerItemDecoration dividerItemDecoration;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,11 +25,28 @@ public abstract class ToolBarActivity extends AppCompatActivity {
 
     }
 
-    public void makeDefultRecycler(){
-        linearLayoutManager = new LinearLayoutManager(ToolBarActivity.this);
-        dividerItemDecoration = new DividerItemDecoration(ToolBarActivity.this,
-                DividerItemDecoration.VERTICAL);
+
+
+    public void setRecyclerview(RecyclerView recyclerview){
+        recyclerview.setLayoutManager(new LinearLayoutManager(ToolBarActivity.this));
+        recyclerview.addItemDecoration(new DividerItemDecoration(ToolBarActivity.this,
+                DividerItemDecoration.VERTICAL));
     }
+
+
+    public void showDefultProgressDialog(){
+        progressDialog = new ProgressDialog(ToolBarActivity.this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
+    }
+
+    public  void dismissDefultProgressDialog(){
+        if (progressDialog!=null&&progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
+    }
+
+
 
     @Override
     public void setContentView(int layoutResID) {

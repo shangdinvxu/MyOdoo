@@ -42,6 +42,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.SalesListActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activity.SalesDetailActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 

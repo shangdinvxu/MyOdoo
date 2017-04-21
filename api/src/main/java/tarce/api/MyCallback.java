@@ -14,7 +14,7 @@ public abstract class MyCallback<T> implements Callback<T> {
     public abstract void onResponse(Call<T> call, Response<T> response);
 
     @Override
-    public void onFailure(Call<T> call, Throwable t) {
+    public  void onFailure(Call<T> call, Throwable t) {
         MyLog.e("MyCallback",t.toString());
     }
 

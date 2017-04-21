@@ -278,7 +278,8 @@ public class LoginActivity extends Activity {
                     long count = menuListBeanDao.count();
                     MyLog.e(TAG,"menuListBeanDao里面的数量是"+count);
                 }
-                getSalesList();
+                toMainActivity();
+//                getSalesList();
 
             }
         });

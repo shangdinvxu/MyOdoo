@@ -1,48 +1,54 @@
 package tarce.model;
 
-import com.chad.library.adapter.base.entity.MultiItemEntity;
+/**
+ * Created by Daniel.Xu on 2017/4/21.
+ */
 
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Created by Daniel.Xu on 2017/4/20.
- */
+        import java.util.List;
 
-public class GetSaleListByNumberResponse implements Serializable {
+/***
+ *
+ * Json To JavaBean
+ * @author www.json123.com
+ *
+ */
+public class GetSaleResponse implements Serializable{
 
     public static class TResult implements Serializable{
 
-        public static class TRes_data  implements Serializable{
+        public static class TRes_data implements Serializable{
 
-            public static class TPost_area_id  implements Serializable{
+            public static class TPost_area_id implements Serializable{
 
-                private	Boolean	area_id;	/*false*/
-                private	Boolean	area_name;	/*false*/
+                private	Integer	area_id;	/*210*/
+                private	String	area_name;	/*A3C2*/
 
-                public void setArea_id(Boolean value){
+                public void setArea_id(Integer value){
                     this.area_id = value;
                 }
-                public Boolean getArea_id(){
+                public Integer getArea_id(){
                     return this.area_id;
                 }
 
-                public void setArea_name(Boolean value){
+                public void setArea_name(String value){
                     this.area_name = value;
                 }
-                public Boolean getArea_name(){
+                public String getArea_name(){
                     return this.area_name;
                 }
 
             }
-            public static class TPack_operation_product_ids  implements Serializable{
+            public static class TPack_operation_product_ids implements Serializable{
 
-                public static class TProduct_id  implements Serializable{
+                public static class TProduct_id implements Serializable{
 
-                    public static class TArea_id  implements Serializable{
+                    public static class TArea_id implements Serializable{
 
-                        private	Integer	area_id;	/*247*/
-                        private	String	area_name;	/*A3M3*/
+                        private	Integer	area_id;	/*210*/
+                        private	String	area_name;	/*A3C2*/
 
                         public void setArea_id(Integer value){
                             this.area_id = value;
@@ -59,11 +65,11 @@ public class GetSaleListByNumberResponse implements Serializable {
                         }
 
                     }
-                    private	Integer	id;	/*49509*/
+                    private	Integer	id;	/*49457*/
                     private	TArea_id	area_id;	/*TArea_id*/
-                    private	Integer	qty_available;	/*3*/
-                    private	String	name;	/*[52.500000.003] S-102白色油墨*/
-                    private	String	default_code;	/*52.500000.003*/
+                    private	Integer	qty_available;	/*280*/
+                    private	String	name;	/*[47.1PZ005.000] PZ1005-三角彩盒(世界地图)-RT-CN*/
+                    private	String	default_code;	/*47.1PZ005.000*/
 
                     public void setId(Integer value){
                         this.id = value;
@@ -101,11 +107,10 @@ public class GetSaleListByNumberResponse implements Serializable {
                     }
 
                 }
-                private	Integer	product_qty;	/*100*/
+                private	Integer	product_qty;	/*900*/
                 private	TProduct_id	product_id;	/*TProduct_id*/
-                private	Integer	pack_id;	/*3250*/
-                private	Boolean	sale_note;	/*false*/
-                private	Integer	qty_done;	/*100*/
+                private	Integer	pack_id;	/*2788*/
+                private	Integer	qty_done;	/*900*/
 
                 public void setProduct_qty(Integer value){
                     this.product_qty = value;
@@ -128,13 +133,6 @@ public class GetSaleListByNumberResponse implements Serializable {
                     return this.pack_id;
                 }
 
-                public void setSale_note(Boolean value){
-                    this.sale_note = value;
-                }
-                public Boolean getSale_note(){
-                    return this.sale_note;
-                }
-
                 public void setQty_done(Integer value){
                     this.qty_done = value;
                 }
@@ -151,18 +149,27 @@ public class GetSaleListByNumberResponse implements Serializable {
                 return this.pack_operation_product_ids;
             }
 
+            private	Integer	complete_rate;	/*0*/
             private	TPost_area_id	post_area_id;	/*TPost_area_id*/
-            private	String	origin;	/*PO2016122001211*/
+            private	String	origin;	/*PO2016121401111*/
+            private	Boolean	sale_note;	/*false*/
             private	String	state;	/*done*/
-            private	Integer	picking_id;	/*900*/
-            private	String	min_date;	/*2016-12-20 03:02:01*/
-            private	Object	delivery_rule;	/*Object*/
-            private	String	name;	/*WHIN2016122000790*/
+            private	Integer	picking_id;	/*781*/
+            private	String	min_date;	/*2016-12-14 06:59:24*/
+            private	String	delivery_rule;	/*Object*/
+            private	String	name;	/*WHIN2016121500693*/
             private	Boolean	qc_note;	/*false*/
-            private	String	parnter_id;	/*苏州始丰丝印器材有限公司*/
-            private	String	post_img;	/*http://erp.robotime.com/linkloving_app_api/get_worker_image?worker_id=900&model=stock.picking&field=post_img*/
+            private	String	parnter_id;	/*海盐宏胜包装材料厂*/
             private	String	picking_type_code;	/*incoming*/
-            private	String	qc_img;	/*http://erp.robotime.com/linkloving_app_api/get_worker_image?worker_id=900&model=stock.picking&field=qc_img*/
+            private	String	post_img;	/*http://192.168.88.106:8069/linkloving_app_api/get_worker_image?worker_id=781&model=stock.picking&field=post_img*/
+            private	String	qc_img;	/*http://192.168.88.106:8069/linkloving_app_api/get_worker_image?worker_id=781&model=stock.picking&field=qc_img*/
+
+            public void setComplete_rate(Integer value){
+                this.complete_rate = value;
+            }
+            public Integer getComplete_rate(){
+                return this.complete_rate;
+            }
 
             public void setPost_area_id(TPost_area_id value){
                 this.post_area_id = value;
@@ -176,6 +183,13 @@ public class GetSaleListByNumberResponse implements Serializable {
             }
             public String getOrigin(){
                 return this.origin;
+            }
+
+            public void setSale_note(Boolean value){
+                this.sale_note = value;
+            }
+            public Boolean getSale_note(){
+                return this.sale_note;
             }
 
             public void setState(String value){
@@ -199,10 +213,10 @@ public class GetSaleListByNumberResponse implements Serializable {
                 return this.min_date;
             }
 
-            public void setDelivery_rule(Object value){
+            public void setDelivery_rule(String value){
                 this.delivery_rule = value;
             }
-            public Object getDelivery_rule(){
+            public String getDelivery_rule(){
                 return this.delivery_rule;
             }
 
@@ -227,18 +241,18 @@ public class GetSaleListByNumberResponse implements Serializable {
                 return this.parnter_id;
             }
 
-            public void setPost_img(String value){
-                this.post_img = value;
-            }
-            public String getPost_img(){
-                return this.post_img;
-            }
-
             public void setPicking_type_code(String value){
                 this.picking_type_code = value;
             }
             public String getPicking_type_code(){
                 return this.picking_type_code;
+            }
+
+            public void setPost_img(String value){
+                this.post_img = value;
+            }
+            public String getPost_img(){
+                return this.post_img;
             }
 
             public void setQc_img(String value){
@@ -249,16 +263,16 @@ public class GetSaleListByNumberResponse implements Serializable {
             }
 
         }
-        private	List<TRes_data>	res_data;	/*List<TRes_data>*/
-        public void setRes_data(List<TRes_data> value){
-            this.res_data = value;
-        }
-        public List<TRes_data> getRes_data(){
-            return this.res_data;
-        }
-
+        private	TRes_data	res_data;	/*TRes_data*/
         private	Integer	res_code;	/*1*/
         private	String	res_msg;	/**/
+
+        public void setRes_data(TRes_data value){
+            this.res_data = value;
+        }
+        public TRes_data getRes_data(){
+            return this.res_data;
+        }
 
         public void setRes_code(Integer value){
             this.res_code = value;
@@ -300,5 +314,5 @@ public class GetSaleListByNumberResponse implements Serializable {
         return this.jsonrpc;
     }
 
-
 }
+
