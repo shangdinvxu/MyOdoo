@@ -8,26 +8,33 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ViewUtils;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.uuzuche.lib_zxing.activity.CaptureFragment;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
+import com.uuzuche.lib_zxing.decoding.CaptureActivityHandler;
 
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import tarce.model.GetSaleResponse;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.SalesDetailAdapter;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
-import tarce.support.MyLog;
 import tarce.support.ToolBarActivity;
 
 /**
@@ -49,7 +56,14 @@ public class SalesDetailActivity extends ToolBarActivity {
     RecyclerView recyclerview;
     @InjectView(R.id.framelayout)
     FrameLayout framelayout;
+    @InjectView(R.id.camera_buttom_linearlayout)
+    LinearLayout cameraButtomLinearlayout;
+    @InjectView(R.id.top_imageview)
+    ImageView topImageview;
+    @InjectView(R.id.camera_Imageview)
+    ImageView cameraImageview;
     private SalesDetailAdapter salesDetailAdapter;
+    private boolean isShowCamera = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,22 +77,43 @@ public class SalesDetailActivity extends ToolBarActivity {
     private void initFragment() {
         FragmentManager supportFragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
-        CaptureFragment captureFragment = new CaptureFragment();
+        final CaptureFragment captureFragment = new CaptureFragment();
         CodeUtils.setFragmentArgs(captureFragment, R.layout.my_camera);
         captureFragment.setAnalyzeCallback(new CodeUtils.AnalyzeCallback() {
             @Override
             public void onAnalyzeSuccess(Bitmap mBitmap, String result) {
-                Toast.makeText(SalesDetailActivity.this,"扫描到的结果是"+result,Toast.LENGTH_SHORT).show();
+                Toast.makeText(SalesDetailActivity.this, "扫描到的结果是" + result, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onAnalyzeFailed() {
-
             }
         });
-        fragmentTransaction.replace(R.id.framelayout,captureFragment);
+        fragmentTransaction.replace(R.id.framelayout, captureFragment);
         fragmentTransaction.commit();
+    }
 
+
+    @OnClick(R.id.top_imageview)
+    void setCameraState(View view) {
+        if (isShowCamera) {
+            showCamera();
+        } else {
+            dismissCamera();
+        }
+
+    }
+
+    private void dismissCamera() {
+        cameraImageview.setVisibility(View.GONE);
+        isShowCamera = true;
+        tarce.support.ViewUtils.ViewRotate(topImageview,0);
+    }
+
+    private void showCamera() {
+        isShowCamera = false;
+        cameraImageview.setVisibility(View.VISIBLE);
+        tarce.support.ViewUtils.ViewRotate(topImageview,180);
     }
 
     private void initIntent() {

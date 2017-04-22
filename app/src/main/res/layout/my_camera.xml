@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         app:inner_width="200dp"
         app:inner_height="200dp"
-        app:inner_margintop="25dp"
+        app:inner_margintop="200dp"
         app:inner_corner_length="30dp"
         app:inner_corner_width="5dp"
         app:inner_scan_bitmap="@drawable/scan_light"
