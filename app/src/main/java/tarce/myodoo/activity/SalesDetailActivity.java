@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.uuzuche.lib_zxing.activity.CaptureFragment;
@@ -67,7 +68,7 @@ public class SalesDetailActivity extends ToolBarActivity {
         captureFragment.setAnalyzeCallback(new CodeUtils.AnalyzeCallback() {
             @Override
             public void onAnalyzeSuccess(Bitmap mBitmap, String result) {
-                MyLog.e("",result);
+                Toast.makeText(SalesDetailActivity.this,"扫描到的结果是"+result,Toast.LENGTH_SHORT).show();
             }
 
             @Override
