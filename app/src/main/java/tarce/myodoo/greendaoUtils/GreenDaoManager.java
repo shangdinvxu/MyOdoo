@@ -2,6 +2,7 @@ package tarce.myodoo.greendaoUtils;
 
 import greendao.DaoMaster;
 import greendao.DaoSession;
+import greendao.MySQLiteOpenHelper;
 import tarce.myodoo.MyApplication;
 
 /**
@@ -40,9 +41,14 @@ public class GreenDaoManager {
      */
     private void init()
     {
-        DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(MyApplication.getInstances(),
-                "Odoo",null);
-        mDaoMaster = new DaoMaster(devOpenHelper.getWritableDatabase());
+
+        //MigrationHelper.DEBUG = true;  //if you want see the log info,default is false
+        MySQLiteOpenHelper helper = new MySQLiteOpenHelper(MyApplication.getInstances(), "Odoo",
+                null);
+        mDaoMaster = new DaoMaster(helper.getWritableDatabase());
+//        DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(MyApplication.getInstances(),
+//                "Odoo",null);
+//        mDaoMaster = new DaoMaster(devOpenHelper.getWritableDatabase());
         mDaoSession = mDaoMaster.newSession();
     }
 

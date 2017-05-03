@@ -21,6 +21,7 @@ public class GetSaleResponse implements Serializable{
 
         public static class TRes_data implements Serializable{
 
+
             public static class TPost_area_id implements Serializable{
 
                 private	Integer	area_id;	/*210*/
@@ -261,6 +262,16 @@ public class GetSaleResponse implements Serializable{
             public String getQc_img(){
                 return this.qc_img;
             }
+
+            public String getError() {
+                return error;
+            }
+
+            public void setError(String error) {
+                this.error = error;
+            }
+
+            private String error;
 
         }
         private	TRes_data	res_data;	/*TRes_data*/

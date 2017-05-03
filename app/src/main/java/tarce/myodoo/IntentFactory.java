@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import tarce.myodoo.activity.MainActivity;
+import tarce.myodoo.activity.SalesInActivity;
 import tarce.myodoo.activity.SalesOutActivity;
 
 
@@ -27,6 +28,15 @@ public class IntentFactory {
      */
     public static void start_SalesOut_Activity(Context context){
         Intent intent = new Intent(context, SalesOutActivity.class);
+        context.startActivity(intent);
+    }
+
+    /**
+     * 客户退货
+     * @param context
+     */
+    public static void start_SalesIn_Activity(Context context){
+        Intent intent = new Intent(context, SalesInActivity.class);
         context.startActivity(intent);
     }
 

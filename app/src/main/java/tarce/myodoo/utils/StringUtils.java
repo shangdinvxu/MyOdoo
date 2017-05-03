@@ -15,6 +15,9 @@ public class StringUtils {
             transtring = "完成";
         }else  if (string.equals("partially_available")){
             transtring = "部分可用";
+
+        }else  if (string.equals("delivery_once")){
+            transtring = "一次性发齐货";
         }
         return transtring;
 

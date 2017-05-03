@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:gravity="center_vertical"
+    android:layout_height="40dp">
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="15sp"
+        android:text="原料入库"
+        />
+    <LinearLayout
+        android:gravity="right|center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:visibility="gone"
+            android:id="@+id/number"
+            android:background="@drawable/red_point"
+            android:layout_width="30dp"
+            android:text=""
+            android:textSize="16sp"
+            android:gravity="center"
+            android:textColor="@color/bg_color"
+            android:layout_marginEnd="30dp"
+            android:layout_height="30dp" />
+        <ImageView
+            android:layout_width="13dp"
+            android:padding="3dp"
+            android:layout_height="20dp"
+            android:background="@mipmap/right"
+            android:layout_marginEnd="10dp"
+            />
+
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -3,11 +3,90 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <ImageView
+        android:id="@+id/heard"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="140dp"
+        android:layout_height="140dp" />
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="20sp"
-        android:text="4"
-        />
+        android:layout_height="40dp">
+        <TextView
+            android:textSize="17sp"
+            android:gravity="center_vertical"
+            android:text="用户名"
+            android:layout_width="100dp"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="right|center_vertical"
+            android:paddingEnd="13dp"
+            android:textSize="17sp"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:textSize="17sp"
+            android:gravity="center_vertical"
+            android:text="数据库"
+            android:layout_width="100dp"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/db"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="right|center_vertical"
+            android:paddingEnd="13dp"
+            android:textSize="17sp"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:textSize="17sp"
+            android:gravity="center_vertical"
+            android:text="地址"
+            android:layout_width="100dp"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="right|center_vertical"
+            android:paddingEnd="13dp"
+            android:textSize="17sp"
+            />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+        <TextView
+            android:textSize="17sp"
+            android:gravity="center_vertical"
+            android:text="版本"
+            android:layout_width="100dp"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/version"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="right|center_vertical"
+            android:paddingEnd="13dp"
+            android:textSize="17sp"
+            />
+    </LinearLayout>
 
+    <Button
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:background="@color/colorPrimary"
+        android:text="退出登录"
+        android:textSize="17sp"
+        android:layout_height="40dp" />
 </LinearLayout>

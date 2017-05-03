@@ -21,6 +21,12 @@ public interface LoginApi {
     @POST("login")
     Call<LoginResponse> toLogin(@Body loginBean bean);
 
+    @POST("login")
+    Call<String> toLoginstring(@Body loginBean bean);
+
+
+
+
     @GET("get_menu_list")
     Call<GetMenuListResponse> getMenuList();
 

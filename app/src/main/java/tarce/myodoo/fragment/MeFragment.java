@@ -13,7 +13,7 @@ import tarce.myodoo.R;
  * Created by Daniel.Xu on 2017/4/20.
  */
 
-public class Fragment4 extends Fragment {
+public class MeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

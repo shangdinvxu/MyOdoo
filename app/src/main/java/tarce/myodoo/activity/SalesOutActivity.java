@@ -51,6 +51,7 @@ public class SalesOutActivity extends ToolBarActivity {
     private InventoryApi inventoryApi;
     private ContactsBeanDao contactsBeanDao;
     private ContactBeanUtils contactBeanUtils;
+    private CustomerAdapter customerAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,15 +75,16 @@ public class SalesOutActivity extends ToolBarActivity {
         objectObjectHashMap.put("model", "stock.picking");
         objectObjectHashMap.put("partner_id", 0);
         Call<GetGroupByListresponse> groupsByList = inventoryApi.getGroupsByList(objectObjectHashMap);
+        showDefultProgressDialog();
         groupsByList.enqueue(new Callback<GetGroupByListresponse>() {
             @Override
             public void onResponse(Call<GetGroupByListresponse> call, Response<GetGroupByListresponse> response) {
+                dismissDefultProgressDialog();
                 String s = response.body().toString();
                 MyLog.e(TAG,s);
                 List<GetGroupByListresponse.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
                 for (GetGroupByListresponse.ResultBean.ResDataBean bean : res_data) {
                     if (bean.getPicking_type_code().equals("outgoing")) {
-                        MyLog.e(TAG,"执行了的次数");
                         ArrayList<GetGroupByListresponse.ResultBean.ResDataBean.StatesBean> statesBeanList = new ArrayList<>();
                         List<GetGroupByListresponse.ResultBean.ResDataBean.StatesBean> states = bean.getStates();
                         for (GetGroupByListresponse.ResultBean.ResDataBean.StatesBean statesBean :states){
@@ -100,6 +102,7 @@ public class SalesOutActivity extends ToolBarActivity {
             }
             @Override
             public void onFailure(Call<GetGroupByListresponse> call, Throwable t) {
+                showDefultProgressDialog();
                 MyLog.e(TAG,t.toString());
             }
         });
@@ -118,9 +121,11 @@ public class SalesOutActivity extends ToolBarActivity {
                 objectObjectHashMap.put("offset",0);
                 objectObjectHashMap.put("picking_type_code","outgoing");
                 Call<GetSaleListResponse> inComingOutgoingList = inventoryApi.getInComingOutgoingList(objectObjectHashMap);
+                showDefultProgressDialog();
                 inComingOutgoingList.enqueue(new Callback<GetSaleListResponse>() {
                     @Override
                     public void onResponse(Call<GetSaleListResponse> call, Response<GetSaleListResponse> response) {
+                        dismissDefultProgressDialog();
                         List<GetSaleListResponse.TResult.TRes_data> res_data = response.body().getResult().getRes_data();
                         Intent intent = new Intent(SalesOutActivity.this, SalesListActivity.class);
                         Bundle bundle = new Bundle();
@@ -131,6 +136,7 @@ public class SalesOutActivity extends ToolBarActivity {
 
                     @Override
                     public void onFailure(Call<GetSaleListResponse> call, Throwable t) {
+                        dismissDefultProgressDialog();
                             MyLog.e(TAG,t.toString());
                     }
                 });
@@ -153,6 +159,13 @@ public class SalesOutActivity extends ToolBarActivity {
 
             @Override
             public boolean onQueryTextChange(String s) {
+                if (s==null||s.length()==0){
+                    if (customerAdapter!=null){
+                        customerAdapter.getData().clear();
+                        recyclerview.setVisibility(View.GONE);
+                    }
+                }
+
                 return false;
             }
         });
@@ -187,9 +200,11 @@ public class SalesOutActivity extends ToolBarActivity {
         objectObjectHashMap.put("order_name", name);
 //        objectObjectHashMap.put("type", "supplier");
         Call<GetSaleListResponse> getSaleListByNumberResponseCall = inventoryApi.searchBySalesNumber(objectObjectHashMap);
+        showDefultProgressDialog();
         getSaleListByNumberResponseCall.enqueue(new Callback<GetSaleListResponse>() {
             @Override
             public void onResponse(Call<GetSaleListResponse> call, Response<GetSaleListResponse> response) {
+                dismissDefultProgressDialog();
                 List<GetSaleListResponse.TResult.TRes_data> res_data = response.body().getResult().getRes_data();
                 if (res_data != null && res_data.size() > 0) {
                     Intent intent = new Intent(SalesOutActivity.this, SalesListActivity.class);
@@ -202,6 +217,7 @@ public class SalesOutActivity extends ToolBarActivity {
 
             @Override
             public void onFailure(Call<GetSaleListResponse> call, Throwable t) {
+                dismissDefultProgressDialog();
                 MyLog.e(TAG,t.toString());
             }
         });
@@ -210,10 +226,17 @@ public class SalesOutActivity extends ToolBarActivity {
     }
 
 
-    private void showInRecyclerView(List<ContactsBean> contactsBeen) {
+    private void showInRecyclerView(final List<ContactsBean> contactsBeen) {
         recyclerview.setVisibility(View.VISIBLE);
-        CustomerAdapter customerAdapter = new CustomerAdapter(R.layout.customername_textview, contactsBeen);
+        customerAdapter = new CustomerAdapter(R.layout.customername_textview, contactsBeen);
+        recyclerview.setVisibility(View.VISIBLE);
         recyclerview.setAdapter(customerAdapter);
+        customerAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+
+            }
+        });
     }
 
 
@@ -223,9 +246,11 @@ public class SalesOutActivity extends ToolBarActivity {
         // type: ‘supplier’ or ‘customer’
         objectObjectHashMap.put("type", "supplier");
         Call<SearchSupplierResponse> stringCall = inventoryApi.searchSupplier(objectObjectHashMap);
+        showDefultProgressDialog();
         stringCall.enqueue(new Callback<SearchSupplierResponse>() {
             @Override
             public void onResponse(Call<SearchSupplierResponse> call, Response<SearchSupplierResponse> response) {
+                dismissDefultProgressDialog();
                 if (response.body().getResult() != null) {
                     List<SearchSupplierResponse.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
                     if (res_data != null && res_data.size() > 0) {
@@ -240,6 +265,7 @@ public class SalesOutActivity extends ToolBarActivity {
 
             @Override
             public void onFailure(Call<SearchSupplierResponse> call, Throwable t) {
+                dismissDefultProgressDialog();
             }
         });
     }

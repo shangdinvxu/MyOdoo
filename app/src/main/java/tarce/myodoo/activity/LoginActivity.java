@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,6 +13,12 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.amitshekhar.DebugDB;
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,8 +56,10 @@ import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.greendaoUtils.GreenDaoManager;
 import tarce.myodoo.greendaoUtils.UserLoginUtils;
+import tarce.support.DbUtils;
 import tarce.support.MyLog;
 import tarce.support.SharePreferenceUtils;
+import tarce.support.ToolBarActivity;
 
 /**
  * Created by Daniel.Xu on 2017/4/20.
@@ -82,6 +91,8 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.inject(this);
+        String addressLog = DebugDB.getAddressLog();
+        MyLog.e(TAG,addressLog+"=============================================addressLog");
         daoSession = MyApplication.getInstances().getDaoSession();
         menuListBeanDao = daoSession.getMenuListBeanDao();
         contactsBeanDao =  daoSession.getContactsBeanDao();
@@ -90,7 +101,6 @@ public class LoginActivity extends Activity {
         checkOutoLogin();
         initEmailAdapter();
         initListener();
-
     }
 
 
@@ -149,6 +159,9 @@ public class LoginActivity extends Activity {
         builder.setTitle("选择数据库");
         builder.setIcon(android.R.drawable.ic_menu_more);
         builder.setCancelable(true);
+        progressDialog = new ProgressDialog(LoginActivity.this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
         Observable<LoginDatabase> database = loginApi.getDatabase();
         database.subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -156,17 +169,26 @@ public class LoginActivity extends Activity {
                         new Subscriber<LoginDatabase>() {
                             @Override
                             public void onCompleted() {
+                                if (progressDialog!=null&&progressDialog.isShowing()){
+                                    progressDialog.dismiss();
+                                }
 
                             }
 
                             @Override
                             public void onError(Throwable e) {
                                 MyLog.e(TAG, e.toString());
+                                if (progressDialog!=null&&progressDialog.isShowing()){
+                                    progressDialog.dismiss();
+                                }
 
                             }
 
                             @Override
                             public void onNext(LoginDatabase loginDatabase) {
+                                if (progressDialog!=null&&progressDialog.isShowing()){
+                                    progressDialog.dismiss();
+                                }
                                 final List<String> res_data = loginDatabase.getRes_data();
                                 final String[] databaseArr = res_data.toArray(new String[res_data.size()]);
                                 builder.setSingleChoiceItems(databaseArr, databaseArr.length, new DialogInterface.OnClickListener() {
@@ -197,17 +219,15 @@ public class LoginActivity extends Activity {
         final String emailString = this.email.getText().toString();
         final String passwordString = password.getText().toString();
         final String url = httpUrl.getText().toString();
-
         Call<LoginResponse> stringCall = loginApi.toLogin(new loginBean(emailString, passwordString, chooseDB));
         stringCall.enqueue(new MyCallback<LoginResponse>() {
-            private Call<String> menuListCall;
-
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.body()==null)
                     return;
                 if (response.body().getResult().getRes_code() == 1) {
                     final int user_id = response.body().getResult().getRes_data().getUser_id();
+                    MyApplication.userID = user_id ;
                     SharePreferenceUtils.putInt("user_id", user_id, LoginActivity.this);
                     SharePreferenceUtils.putString("email", emailString, LoginActivity.this);
                     SharePreferenceUtils.putString("url",url,LoginActivity.this);
@@ -247,7 +267,6 @@ public class LoginActivity extends Activity {
                 List<GetMenuListResponse.ResDataBean> res_data = response.body().getRes_data();
                 if (res_data.size() > 0) {
                     int user_id = res_data.get(0).getUser_id();
-                    MyApplication.userID = user_id;
                     for (GetMenuListResponse.ResDataBean resDataBean : res_data) {
                         menuListBeanDao.insertOrReplace(new MenuListBean(resDataBean.getId(), resDataBean.getAction()
                                 , resDataBean.getSequence(), resDataBean.getWeb_icon(), resDataBean.getName()

@@ -54,6 +54,7 @@ dependencies {
     compile 'com.github.Aspsine:SwipeToLoadLayout:1.0.3'
 
     compile 'org.greenrobot:greendao:3.2.0'
+    compile 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v1.3.0'
 
 
     compile project(':lib-zxing')
@@ -69,6 +70,8 @@ dependencies {
 
     /**快速适配器*/
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.12'
+
+    compile 'com.amitshekhar.android:debug-db:1.0.0'
 
 
 

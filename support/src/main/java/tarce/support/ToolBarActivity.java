@@ -37,6 +37,7 @@ public abstract class ToolBarActivity extends AppCompatActivity {
     public void showDefultProgressDialog(){
         progressDialog = new ProgressDialog(ToolBarActivity.this);
         progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
         progressDialog.show();
     }
 
