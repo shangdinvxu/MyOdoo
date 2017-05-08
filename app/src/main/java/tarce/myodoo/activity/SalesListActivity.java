@@ -1,28 +1,31 @@
 package tarce.myodoo.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Observable;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
-import tarce.model.GetSaleListResponse;
 import tarce.model.GetSaleResponse;
+import tarce.model.inventory.SalesOutListResponse;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.SalesListAdapter;
 import tarce.support.ToolBarActivity;
@@ -34,8 +37,11 @@ import tarce.support.ToolBarActivity;
 public class SalesListActivity extends ToolBarActivity {
     @InjectView(R.id.recyclerview)
     RecyclerView recyclerview;
+    @InjectView(R.id.swipeLayout)
+    SwipeRefreshLayout swipeLayout;
     private SalesListAdapter salesListAdapter;
     private InventoryApi inventoryApi;
+    private int count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +51,18 @@ public class SalesListActivity extends ToolBarActivity {
         inventoryApi = RetrofitClient.getInstance(SalesListActivity.this).create(InventoryApi.class);
         setRecyclerview(recyclerview);
         initIntent();
+        initListener();
     }
 
     private void initIntent() {
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("intent");
-        List<GetSaleListResponse.TResult.TRes_data> bundle1 = (List<GetSaleListResponse.TResult.TRes_data>) bundle.getSerializable("bundle");
-        salesListAdapter = new SalesListAdapter(R.layout.activity_salelist_item, bundle1);
+        count = intent.getIntExtra("count", 0);
+        count = intent.getIntExtra("count", 0);
+        count = intent.getIntExtra("count", 0);
+        List<SalesOutListResponse.TResult.TRes_data> bundle1 = (List<SalesOutListResponse.TResult.TRes_data>) bundle.getSerializable("bundle");
+        salesListAdapter = new SalesListAdapter(R.layout.activity_saleslist_adapter_item, bundle1);
         recyclerview.setAdapter(salesListAdapter);
-        initListener();
     }
 
     private void initListener() {
@@ -82,9 +91,35 @@ public class SalesListActivity extends ToolBarActivity {
                         super.onFailure(call, t);
                     }
                 });
-
             }
         });
+
+        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Observable.timer(1000, TimeUnit.MILLISECONDS)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new Action1<Long>() {
+                            @Override
+                            public void call(Long aLong) {
+                                swipeLayout.setRefreshing(false);
+                            }
+                        });
+            }
+        });
+
+        salesListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
+            @Override
+            public void onLoadMoreRequested() {
+                if (salesListAdapter.getData().size()>=count){
+                    salesListAdapter.loadMoreEnd();
+                }else {
+
+
+                }
+            }
+        },recyclerview);
 
 
 

@@ -7,15 +7,16 @@ import java.util.List;
 
 import tarce.model.GetGroupByListresponse;
 import tarce.myodoo.R;
+import tarce.myodoo.bean.AvailabilityBean;
 import tarce.support.MyLog;
 
 /**
  * Created by Daniel.Xu on 2017/4/21.
  */
 
-public class SalesStatesAdapter extends BaseQuickAdapter<GetGroupByListresponse.ResultBean.ResDataBean.StatesBean ,BaseViewHolder> {
+public class SalesStatesAdapter extends BaseQuickAdapter<AvailabilityBean,BaseViewHolder> {
     private int i = 0 ;
-    public SalesStatesAdapter(int layoutResId, List<GetGroupByListresponse.ResultBean.ResDataBean.StatesBean> data) {
+    public SalesStatesAdapter(int layoutResId, List<AvailabilityBean> data) {
         super(layoutResId, data);
         MyLog.e(TAG,"data.size()"+data.size());
     }
@@ -23,19 +24,26 @@ public class SalesStatesAdapter extends BaseQuickAdapter<GetGroupByListresponse.
 
 
     @Override
-    protected void convert(BaseViewHolder helper, GetGroupByListresponse.ResultBean.ResDataBean.StatesBean item) {
-        if (item.getState().equals("assigned")){
-            helper.setText(R.id.text,"可用");
-            helper.setText(R.id.number,item.getState_count()+"");
-        }else if (item.getState().equals("confirmed")){
-            helper.setText(R.id.text,"等待可用");
-            helper.setText(R.id.number,item.getState_count()+"");
-        }else if (item.getState().equals("done")){
-            helper.setText(R.id.text,"完成");
-            helper.setText(R.id.number,item.getState_count()+"");
-        }else if (item.getState().equals("partially_available")){
-            helper.setText(R.id.text,"部分可用");
-            helper.setText(R.id.number,item.getState_count()+"");
+    protected void convert(BaseViewHolder helper, AvailabilityBean item) {
+        switch (item.getPer()){
+            case 100:
+                helper.setText(R.id.text,"可用率100%")
+                        .setText(R.id.number,item.getNumber()+"");
+                break;
+            case 99:
+                helper.setText(R.id.text,"可用率1% ~ 99%")
+                        .setText(R.id.number,item.getNumber()+"");
+                break;
+            case 0:
+                helper.setText(R.id.text,"可用率0%")
+                        .setText(R.id.number,item.getNumber()+"");
+                break;
+            case 1000:
+                helper.setText(R.id.text,"完成")
+                        .setText(R.id.number,item.getNumber()+"");
+                break;
+
         }
+
     }
 }

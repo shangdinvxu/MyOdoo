@@ -11,8 +11,10 @@ import tarce.model.GetGroupByListresponse;
 import tarce.model.GetSaleListResponse;
 import tarce.model.GetSaleResponse;
 import tarce.model.LoadActionBean;
+import tarce.model.OutgoingStockpickingBean;
 import tarce.model.SearchSupplierResponse;
 import tarce.model.greendaoBean.LoadResponse;
+import tarce.model.inventory.SalesOutListResponse;
 
 /**
  * Created by Daniel.Xu on 2017/2/17.
@@ -63,10 +65,19 @@ public interface InventoryApi {
 
 
     @POST("load_needaction")
-    Observable<Object> load_action(@Body HashMap hashMap);
+    Observable<LoadActionBean> load_action(@Body HashMap hashMap);
 
     @POST("load_needaction")
     Call<LoadActionBean> load_actionCall(@Body HashMap hashMap);
+
+
+    @POST("get_outgoing_stock_picking")
+    Observable<OutgoingStockpickingBean> getOutgoingStockpicking(@Body HashMap hashMap);
+
+    @POST("get_outgoing_stock_picking_list")
+    Observable<SalesOutListResponse> getOutgoingStockpickingList(@Body HashMap hashMap);
+
+
 
 
 }

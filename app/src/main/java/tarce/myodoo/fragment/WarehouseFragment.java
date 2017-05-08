@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.chad.library.adapter.base.BaseQuickAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +75,23 @@ public class WarehouseFragment extends Fragment {
         sectionAdapter = new SectionAdapter(R.layout.mian_list_item, R.layout.adapter_head, list);
         setRecyclerview(recyclerview);
         recyclerview.setAdapter(sectionAdapter);
+        initListener();
         return view;
+    }
+
+    private void initListener() {
+        sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                String name = list.get(position).t.getName();
+                switch (name){
+                    case "销售出库":
+                        IntentFactory.start_SalesOut_Activity(getActivity());
+                        break;
+                }
+            }
+        });
+
     }
 
 

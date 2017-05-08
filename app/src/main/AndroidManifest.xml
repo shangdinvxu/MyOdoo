@@ -37,6 +37,7 @@
             </intent-filter>
         </activity>
         <activity
+            android:launchMode="singleTask"
             android:name=".activity.MainActivity"
             android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />

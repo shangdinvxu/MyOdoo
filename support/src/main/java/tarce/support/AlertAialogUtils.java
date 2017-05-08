@@ -1,5 +1,6 @@
 package tarce.support;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
@@ -9,6 +10,7 @@ import android.support.v7.app.AlertDialog;
  */
 
 public class AlertAialogUtils {
+    private static ProgressDialog progressDialog;
     public static AlertDialog.Builder getCommonDialog(Context context , String title){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
          builder.setMessage(title)
@@ -19,5 +21,19 @@ public class AlertAialogUtils {
                     }
                 });
         return builder;
+    }
+
+    public  static void showDefultProgressDialog(Context context){
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Loading...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+    }
+
+
+    public static void dismissDefultProgressDialog(){
+        if (progressDialog!=null&&progressDialog.isShowing()){
+            progressDialog.dismiss();
+        }
     }
 }

@@ -2,6 +2,7 @@ package tarce.myodoo.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -20,16 +21,25 @@ import greendao.ContactsBeanDao;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Observable;
+import rx.Scheduler;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
+import tarce.api.dialogrequest.ProgressSubscriber;
+import tarce.api.dialogrequest.SubscriberOnNextListener;
 import tarce.model.GetGroupByListresponse;
 import tarce.model.GetSaleListResponse;
+import tarce.model.OutgoingStockpickingBean;
 import tarce.model.SearchSupplierResponse;
 import tarce.model.greendaoBean.ContactsBean;
+import tarce.model.inventory.SalesOutListResponse;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.CustomerAdapter;
 import tarce.myodoo.adapter.SalesStatesAdapter;
+import tarce.myodoo.bean.AvailabilityBean;
 import tarce.myodoo.greendaoUtils.ContactBeanUtils;
 import tarce.support.MyLog;
 import tarce.support.ToolBarActivity;
@@ -39,7 +49,7 @@ import tarce.support.ToolBarActivity;
  */
 
 public class SalesOutActivity extends ToolBarActivity {
-    private final  static  String TAG = SalesOutActivity.class.getSimpleName();
+    private final static String TAG = SalesOutActivity.class.getSimpleName();
     @InjectView(R.id.search_customer)
     SearchView searchCustomer;
     @InjectView(R.id.search_sales_number)
@@ -66,83 +76,85 @@ public class SalesOutActivity extends ToolBarActivity {
         setRecyclerview(recyclerview);
         setRecyclerview(recyclerviewStates);
         initData();
-
     }
 
     private void initData() {
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-        objectObjectHashMap.put("groupby", "picking_type_id");
-        objectObjectHashMap.put("model", "stock.picking");
         objectObjectHashMap.put("partner_id", 0);
-        Call<GetGroupByListresponse> groupsByList = inventoryApi.getGroupsByList(objectObjectHashMap);
-        showDefultProgressDialog();
-        groupsByList.enqueue(new Callback<GetGroupByListresponse>() {
-            @Override
-            public void onResponse(Call<GetGroupByListresponse> call, Response<GetGroupByListresponse> response) {
-                dismissDefultProgressDialog();
-                String s = response.body().toString();
-                MyLog.e(TAG,s);
-                List<GetGroupByListresponse.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
-                for (GetGroupByListresponse.ResultBean.ResDataBean bean : res_data) {
-                    if (bean.getPicking_type_code().equals("outgoing")) {
-                        ArrayList<GetGroupByListresponse.ResultBean.ResDataBean.StatesBean> statesBeanList = new ArrayList<>();
-                        List<GetGroupByListresponse.ResultBean.ResDataBean.StatesBean> states = bean.getStates();
-                        for (GetGroupByListresponse.ResultBean.ResDataBean.StatesBean statesBean :states){
-                            if (statesBean.getState().equals("partially_available")||statesBean.getState().equals("done")
-                                    || statesBean.getState().equals("confirmed")||statesBean.getState().equals("assigned")){
-                                statesBeanList.add(statesBean);
-                            }
+        Observable<OutgoingStockpickingBean> outgoingStockpicking = inventoryApi.getOutgoingStockpicking(objectObjectHashMap);
+        outgoingStockpicking
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new ProgressSubscriber<>(new SubscriberOnNextListener<OutgoingStockpickingBean>() {
+                    @Override
+                    public void onNext(OutgoingStockpickingBean bean) {
+                        ArrayList<AvailabilityBean> statesBeanList = new ArrayList<>();
+                        List<OutgoingStockpickingBean.ResultBean.ResDataBean.CompleteRateBean> complete_rate = bean.getResult().getRes_data().getComplete_rate();
+                        for (OutgoingStockpickingBean.ResultBean.ResDataBean.CompleteRateBean completeRateBean : complete_rate) {
+                            statesBeanList.add(new AvailabilityBean(completeRateBean.getComplete_rate(),
+                                    completeRateBean.getComplete_rate_count()));
                         }
+                        OutgoingStockpickingBean.ResultBean.ResDataBean.StateBean state = bean.getResult().getRes_data().getState();
+                        //完成的给的1000
+                        statesBeanList.add(new AvailabilityBean(1000, state.getState_count()));
                         SalesStatesAdapter salesStatesAdapter = new SalesStatesAdapter(R.layout.salesout_adapter, statesBeanList);
-                        initSalesStatesListener(salesStatesAdapter,statesBeanList);
                         recyclerviewStates.setAdapter(salesStatesAdapter);
+                        initSalesStatesListener(salesStatesAdapter);
                     }
-                }
-
-            }
-            @Override
-            public void onFailure(Call<GetGroupByListresponse> call, Throwable t) {
-                showDefultProgressDialog();
-                MyLog.e(TAG,t.toString());
-            }
-        });
-
+                }, SalesOutActivity.this));
 
     }
 
-    private void initSalesStatesListener(SalesStatesAdapter salesStatesAdapter,
-                                         final ArrayList<GetGroupByListresponse.ResultBean.ResDataBean.StatesBean> statesBeanList) {
+    private void initSalesStatesListener(final SalesStatesAdapter salesStatesAdapter) {
         salesStatesAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+            public void onItemClick(BaseQuickAdapter adapter, View view, final int position) {
                 HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-                objectObjectHashMap.put("state",statesBeanList.get(position).getState());
-                objectObjectHashMap.put("limit",80);
-                objectObjectHashMap.put("offset",0);
-                objectObjectHashMap.put("picking_type_code","outgoing");
-                Call<GetSaleListResponse> inComingOutgoingList = inventoryApi.getInComingOutgoingList(objectObjectHashMap);
-                showDefultProgressDialog();
-                inComingOutgoingList.enqueue(new Callback<GetSaleListResponse>() {
-                    @Override
-                    public void onResponse(Call<GetSaleListResponse> call, Response<GetSaleListResponse> response) {
-                        dismissDefultProgressDialog();
-                        List<GetSaleListResponse.TResult.TRes_data> res_data = response.body().getResult().getRes_data();
-                        Intent intent = new Intent(SalesOutActivity.this, SalesListActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("bundle", (Serializable) res_data);
-                        intent.putExtra("intent",bundle);
-                        startActivity(intent);
-                    }
-
-                    @Override
-                    public void onFailure(Call<GetSaleListResponse> call, Throwable t) {
-                        dismissDefultProgressDialog();
-                            MyLog.e(TAG,t.toString());
-                    }
-                });
-
-
-
+                final List<AvailabilityBean> data = salesStatesAdapter.getData();
+                String state = null;
+                int complete_rate = 0 ;
+                int per = data.get(position).getPer();
+                switch (per){
+                    case 100:
+                        complete_rate = 100 ;
+                        state = "";
+                        break;
+                    case 99:
+                        complete_rate = 99 ;
+                        state = "";
+                        break;
+                    case 0:
+                        complete_rate = 0 ;
+                        state = "";
+                        break;
+                    case 1000:
+                        complete_rate = 0 ;
+                        state = "done";
+                        break;
+                }
+                objectObjectHashMap.put("complete_rate", complete_rate);
+                objectObjectHashMap.put("limit", 80);
+                objectObjectHashMap.put("offset", 0);
+                objectObjectHashMap.put("state", state);
+                Observable<SalesOutListResponse> inComingOutgoingList = inventoryApi.getOutgoingStockpickingList(objectObjectHashMap);
+                final int finalComplete_rate = complete_rate;
+                final String finalState = state;
+                inComingOutgoingList.subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(new ProgressSubscriber<>(new SubscriberOnNextListener<SalesOutListResponse>() {
+                            @Override
+                            public void onNext(SalesOutListResponse bean) {
+                                List<SalesOutListResponse.TResult.TRes_data> res_data = bean.getResult().getRes_data();
+                                Intent intent = new Intent(SalesOutActivity.this, SalesListActivity.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("count",data.get(position).getNumber());
+                                bundle.putSerializable("bundle", (Serializable) res_data);
+                                bundle.putString("state",finalState);
+                                bundle.putInt("complete_rate", finalComplete_rate);
+                                intent.putExtra("intent", bundle);
+                                startActivity(intent);
+                            }
+                        },SalesOutActivity.this));
             }
         });
 
@@ -159,8 +171,8 @@ public class SalesOutActivity extends ToolBarActivity {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                if (s==null||s.length()==0){
-                    if (customerAdapter!=null){
+                if (s == null || s.length() == 0) {
+                    if (customerAdapter != null) {
                         customerAdapter.getData().clear();
                         recyclerview.setVisibility(View.GONE);
                     }
@@ -218,7 +230,7 @@ public class SalesOutActivity extends ToolBarActivity {
             @Override
             public void onFailure(Call<GetSaleListResponse> call, Throwable t) {
                 dismissDefultProgressDialog();
-                MyLog.e(TAG,t.toString());
+                MyLog.e(TAG, t.toString());
             }
         });
 

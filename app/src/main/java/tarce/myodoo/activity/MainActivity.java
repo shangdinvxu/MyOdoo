@@ -35,12 +35,12 @@ import tarce.model.LoadActionBean;
 import tarce.model.greendaoBean.LoadResponse;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
-import tarce.myodoo.bean.DataFromServer;
 import tarce.myodoo.fragment.WarehouseFragment;
 import tarce.myodoo.fragment.ProduceFragment;
 import tarce.myodoo.fragment.InspectionFragment;
 import tarce.myodoo.fragment.MeFragment;
 import tarce.myodoo.view.NoScrollViewPager;
+import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
 
 import static com.facebook.stetho.inspector.network.PrettyPrinterDisplayType.JSON;
@@ -95,10 +95,12 @@ public class MainActivity extends AppCompatActivity {
                 "linkloving_mrp_extend.menu_mrp_waiting_post_inventory"} ;
         objectObjectHashMap.put("xml_names",names);
         objectObjectHashMap.put("user_id", MyApplication.userID);
+        AlertAialogUtils.showDefultProgressDialog(MainActivity.this);
         Call<LoadActionBean> objectCall = inventoryApi.load_actionCall(objectObjectHashMap);
         objectCall.enqueue(new Callback<LoadActionBean>() {
             @Override
             public void onResponse(Call<LoadActionBean> call, Response<LoadActionBean> response) {
+                AlertAialogUtils.dismissDefultProgressDialog();
                 if (response.body()!=null&&response.body().getResult().getRes_code()==1){
                     Integer needaction_counter = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_prepare_material_ing().getNeedaction_counter();
                     Integer needaction_counter1 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
@@ -113,8 +115,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<LoadActionBean> call, Throwable t) {
+                AlertAialogUtils.dismissDefultProgressDialog();
                 MyLog.e(TAG,t.toString());
-
             }
         });
       /*  Observable<Object> stringObservable = inventoryApi.load_action(objectObjectHashMap);

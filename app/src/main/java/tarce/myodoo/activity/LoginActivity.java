@@ -232,6 +232,7 @@ public class LoginActivity extends Activity {
                     SharePreferenceUtils.putString("email", emailString, LoginActivity.this);
                     SharePreferenceUtils.putString("url",url,LoginActivity.this);
                     SharePreferenceUtils.putString("password", passwordString, LoginActivity.this);
+                    SharePreferenceUtils.putString("user_ava", response.body().getResult().getRes_data().getUser_ava(), LoginActivity.this);
                     final String name = response.body().getResult().getRes_data().getName();
                     new UserLoginUtils().insertUser(new UserLogin(emailString,passwordString));
                     List<LoginResponse.ResultBean.ResDataBean.GroupsBean> groups = response.body().getResult().getRes_data().getGroups();
@@ -338,6 +339,7 @@ public class LoginActivity extends Activity {
         if (progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
+        finish();
         IntentFactory.start_MainActivity(LoginActivity.this);
     }
 }

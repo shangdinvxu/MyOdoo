@@ -7,6 +7,7 @@ import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 
 import rx.Subscriber;
+import tarce.support.MyLog;
 
 /**
  * Created by Daniel.Xu on 2017/5/2.
@@ -20,6 +21,11 @@ public class ProgressSubscriber<T> extends Subscriber<T> implements ProgressCanc
 
     public ProgressSubscriber(SubscriberOnNextListener<T> listener, Context context){
         this.mListener = listener;
+        this.mContext = context;
+        mHandler = new ProgressDialogHandler(context,this,false);
+    }
+
+    public ProgressSubscriber( Context context){
         this.mContext = context;
         mHandler = new ProgressDialogHandler(context,this,false);
     }
@@ -61,6 +67,7 @@ public class ProgressSubscriber<T> extends Subscriber<T> implements ProgressCanc
             Toast.makeText(mContext, "网络中断，请检查您的网络状态", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(mContext, "error:" + e.getMessage(), Toast.LENGTH_SHORT).show();
+            MyLog.e("ProgressSubscriber","error:" + e.getMessage());
         }
         dismissProgressDialog();
     }
