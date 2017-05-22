@@ -49,6 +49,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.SalesInActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".activity.ReceiverProductActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 
