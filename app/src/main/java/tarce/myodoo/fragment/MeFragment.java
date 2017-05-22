@@ -1,11 +1,13 @@
 package tarce.myodoo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,8 +15,7 @@ import com.bumptech.glide.Glide;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import tarce.api.RetrofitClient;
-import tarce.api.api.LoginApi;
+import butterknife.OnClick;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.LoginActivity;
 import tarce.support.SharePreferenceUtils;
@@ -35,6 +36,8 @@ public class MeFragment extends Fragment {
     TextView address;
     @InjectView(R.id.version)
     TextView version;
+    @InjectView(R.id.button_exit)
+    Button buttonExit;
 
     @Nullable
     @Override
@@ -50,9 +53,9 @@ public class MeFragment extends Fragment {
         db.setText(database);
         String email = SharePreferenceUtils.getString("email", "error", getActivity());
         userName.setText(email);
-        String url = SharePreferenceUtils.getString("url", "null",getActivity());
+        String url = SharePreferenceUtils.getString("url", "null", getActivity());
         address.setText(url);
-        version.setText(Toolkits.getVersionCode(getActivity())+"");
+        version.setText(Toolkits.getVersionCode(getActivity()) + "");
         String user_ava = SharePreferenceUtils.getString("user_ava", "null", getActivity());
         Glide.with(getActivity()).load(user_ava).into(heard);
     }
@@ -62,5 +65,15 @@ public class MeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.reset(this);
+    }
+
+    /**
+     * 退出登录  需要删除一些本地数据，缓存的数据
+     * */
+    @OnClick(R.id.button_exit)
+    void clickExit(View view){
+        SharePreferenceUtils.putInt("user_id", 1000, getActivity());
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        startActivity(intent);
     }
 }

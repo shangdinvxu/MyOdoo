@@ -232,6 +232,7 @@ public class LoginActivity extends Activity {
                     SharePreferenceUtils.putString("email", emailString, LoginActivity.this);
                     SharePreferenceUtils.putString("url",url,LoginActivity.this);
                     SharePreferenceUtils.putString("password", passwordString, LoginActivity.this);
+                    SharePreferenceUtils.putInt("partner_id",response.body().getResult().getRes_data().getPartner_id(),LoginActivity.this);
                     SharePreferenceUtils.putString("user_ava", response.body().getResult().getRes_data().getUser_ava(), LoginActivity.this);
                     final String name = response.body().getResult().getRes_data().getName();
                     new UserLoginUtils().insertUser(new UserLogin(emailString,passwordString));

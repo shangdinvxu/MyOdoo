@@ -82,6 +82,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/button_exit"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_width="match_parent"

@@ -22,4 +22,11 @@ public class StringUtils {
         return transtring;
 
     }
+    /**
+     * 判断是否为空string
+     * */
+    public static boolean isNullOrEmpty(String str) {
+        return str == null || str.trim().length() == 0;
+    }
+
 }

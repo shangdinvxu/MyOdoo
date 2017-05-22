@@ -88,6 +88,15 @@ public class WarehouseFragment extends Fragment {
                     case "销售出库":
                         IntentFactory.start_SalesOut_Activity(getActivity());
                         break;
+                    case "生产备料":
+                        IntentFactory.start_SeProce_Activity(getActivity());
+                        break;
+                    case "生产退料":
+                        IntentFactory.start_ProducLl_Activity(getActivity(), "生产退料", "waiting_warehouse_inspection");
+                        break;
+                    case "生产入库":
+                        IntentFactory.start_WaitRework_Activity(getActivity(),"生产入库", "qc_success");
+                        break;
                 }
             }
         });

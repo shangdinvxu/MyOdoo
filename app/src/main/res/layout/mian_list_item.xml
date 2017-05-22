@@ -8,10 +8,10 @@
         android:id="@+id/text"
         android:layout_width="100dp"
         android:layout_height="match_parent"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:textSize="15sp"
         android:text="原料入库"
-        />
+        android:layout_marginLeft="15dp"/>
     <LinearLayout
         android:gravity="right|center_vertical"
         android:layout_width="match_parent"

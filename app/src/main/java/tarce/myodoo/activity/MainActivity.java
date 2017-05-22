@@ -8,15 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.RadioButton;
 
-import com.google.gson.Gson;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -24,26 +16,18 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import rx.Observable;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
-import tarce.api.dialogrequest.ProgressSubscriber;
-import tarce.api.dialogrequest.SubscriberOnNextListener;
 import tarce.model.LoadActionBean;
-import tarce.model.greendaoBean.LoadResponse;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
-import tarce.myodoo.fragment.WarehouseFragment;
-import tarce.myodoo.fragment.ProduceFragment;
 import tarce.myodoo.fragment.InspectionFragment;
 import tarce.myodoo.fragment.MeFragment;
+import tarce.myodoo.fragment.ProduceFragment;
+import tarce.myodoo.fragment.WarehouseFragment;
 import tarce.myodoo.view.NoScrollViewPager;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
-
-import static com.facebook.stetho.inspector.network.PrettyPrinterDisplayType.JSON;
 
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getSimpleName();
@@ -57,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     RadioButton radioButton3;
     @InjectView(R.id.radio_button4)
     RadioButton radioButton4;
+    /*@InjectView(R.id.show_result)
+    TextView showResult;
+    @InjectView(R.id.button_test)
+    Button buttonTest;*/
 
     private Fragment[] myfragment;
     private InventoryApi inventoryApi;
@@ -64,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
     private ProduceFragment produceFragment;
     private InspectionFragment inspectionFragment;
     private MeFragment meFragment;
+
+    private Fragment mContent;
+    private View mCurrentTab;
+
+    /*private List<TestBean.TestRSubBean.ListSubBean> listSubBeen  = new ArrayList<TestBean.TestRSubBean.ListSubBean>();
+    private List<Integer> listInterge = new ArrayList<>();*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,13 +72,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mViewPager.setCurrentItem(0,false);
-        refreshLoadAction();
+     //   mViewPager.setCurrentItem(0, false);
+      //  refreshLoadAction();
     }
 
     @OnClick(R.id.radio_button1)
-    void clickRadio_Button1(View view){
-        mViewPager.setCurrentItem(0,false);
+    void clickRadio_Button1(View view) {
+        mViewPager.setCurrentItem(0, false);
         refreshLoadAction();
     }
 
@@ -92,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
         String[] names = {"linkloving_mrp_extend.menu_mrp_prepare_material_ing",
                 "linkloving_mrp_extend.menu_mrp_waiting_inventory_material",
-                "linkloving_mrp_extend.menu_mrp_waiting_post_inventory"} ;
-        objectObjectHashMap.put("xml_names",names);
+                "linkloving_mrp_extend.menu_mrp_waiting_post_inventory"};
+        objectObjectHashMap.put("xml_names", names);
         objectObjectHashMap.put("user_id", MyApplication.userID);
         AlertAialogUtils.showDefultProgressDialog(MainActivity.this);
         Call<LoadActionBean> objectCall = inventoryApi.load_actionCall(objectObjectHashMap);
@@ -101,13 +95,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<LoadActionBean> call, Response<LoadActionBean> response) {
                 AlertAialogUtils.dismissDefultProgressDialog();
-                if (response.body()!=null&&response.body().getResult().getRes_code()==1){
+                if (response.body() != null && response.body().getResult().getRes_code() == 1) {
                     Integer needaction_counter = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_prepare_material_ing().getNeedaction_counter();
                     Integer needaction_counter1 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
-                    Integer needaction_counter2 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_post_inventory().getNeedaction_counter();
+//                    Integer needaction_counter2 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_post_inventory().getNeedaction_counter();
                     warehouseFragment.list.get(5).t.setNumber(needaction_counter);
                     warehouseFragment.list.get(6).t.setNumber(needaction_counter1);
-                    warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
+     //               warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
                     warehouseFragment.sectionAdapter.notifyDataSetChanged();
                 }
 
@@ -116,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<LoadActionBean> call, Throwable t) {
                 AlertAialogUtils.dismissDefultProgressDialog();
-                MyLog.e(TAG,t.toString());
+                MyLog.e(TAG, t.toString());
             }
         });
       /*  Observable<Object> stringObservable = inventoryApi.load_action(objectObjectHashMap);
@@ -136,24 +130,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.radio_button2)
-    void clickRadio_Button2(View view){
-        mViewPager.setCurrentItem(1,true);
-    }
-    @OnClick(R.id.radio_button3)
-    void clickRadio_Button3(View view){
-        mViewPager.setCurrentItem(2,false);
-    }
-    @OnClick(R.id.radio_button4)
-    void clickRadio_Button4(View view){
-        mViewPager.setCurrentItem(3,true);
+    void clickRadio_Button2(View view) {
+        mViewPager.setCurrentItem(1, true);
     }
 
+    @OnClick(R.id.radio_button3)
+    void clickRadio_Button3(View view) {
+        mViewPager.setCurrentItem(2, false);
+    }
+
+    @OnClick(R.id.radio_button4)
+    void clickRadio_Button4(View view) {
+        mViewPager.setCurrentItem(3, true);
+    }
 
 
     private void initFragment() {
         myfragment = new Fragment[4];
         warehouseFragment = new WarehouseFragment();
-        myfragment[0] =warehouseFragment;
+        myfragment[0] = warehouseFragment;
         produceFragment = new ProduceFragment();
         myfragment[1] = produceFragment;
         inspectionFragment = new InspectionFragment();
@@ -163,7 +158,9 @@ public class MainActivity extends AppCompatActivity {
         MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(myViewPagerAdapter);
         mViewPager.setCurrentItem(0);
+        radioButton1.setClickable(true);
     }
+
 
     class MyViewPagerAdapter extends FragmentPagerAdapter {
         private MyViewPagerAdapter(FragmentManager fm) {
@@ -181,4 +178,25 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    /*private void initView(Bundle savedInstanceState) {
+
+        if (savedInstanceState != null) {
+            mContent = getSupportFragmentManager().getFragment(
+                    savedInstanceState, "mContent");
+        }
+
+        if (mContent == null) {
+            mContent = new WarehouseFragment();
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, mContent).commit();
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        getSupportFragmentManager().putFragment(outState, "mContent", mContent);
+    }*/
+
 }

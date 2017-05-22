@@ -8,13 +8,16 @@ import retrofit2.http.POST;
 import rx.Observable;
 import tarce.model.FindProductByConditionResponse;
 import tarce.model.GetGroupByListresponse;
+import tarce.model.GetProcessBean;
 import tarce.model.GetSaleListResponse;
 import tarce.model.GetSaleResponse;
 import tarce.model.LoadActionBean;
 import tarce.model.OutgoingStockpickingBean;
 import tarce.model.SearchSupplierResponse;
-import tarce.model.greendaoBean.LoadResponse;
+import tarce.model.inventory.PickingDetailBean;
+import tarce.model.inventory.ProcessDeatilBean;
 import tarce.model.inventory.SalesOutListResponse;
+import tarce.model.inventory.GetNumProcess;
 
 /**
  * Created by Daniel.Xu on 2017/2/17.
@@ -77,7 +80,41 @@ public interface InventoryApi {
     @POST("get_outgoing_stock_picking_list")
     Observable<SalesOutListResponse> getOutgoingStockpickingList(@Body HashMap hashMap);
 
+    /**
+     *请求生产工序
+     * @param hashMap
+     * */
+    @POST("get_process_list")
+    Call<GetProcessBean> getProcess(@Body HashMap hashMap);
 
+    /**
+     * 生产工序相应延误数量
+     * */
+    @POST("get_order_count_by_process")
+    Call<GetNumProcess> getNumProcess(@Body HashMap hashMap);
 
+    /**
+     * 某一个生产工序的详细信息
+     * */
+    @POST("get_date_uncomplete_orders")
+    Call<ProcessDeatilBean> getDetailProcess(@Body HashMap hashMap);
 
+    /**
+     * 生产：领料详情
+     * 可用6个重用
+     * */
+    @POST("get_mrp_production")
+    Call<PickingDetailBean> getPicking(@Body HashMap hashMap);
+
+    /**
+     * 生产订单详情
+     * */
+    @POST("get_order_detail")
+    Call<Object> getOrderDetail(@Body HashMap hashMap);
+
+    /**
+     * 生产入库和等待返工接口
+     * */
+    @POST("get_qc_feedback")
+    Call<Object> getReworkRuku(@Body HashMap hashMap);
 }
