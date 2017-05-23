@@ -25,7 +25,8 @@ import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
 
-/**
+/**\
+ * 生产界面
  * Created by Daniel.Xu on 2017/4/20.
  */
 

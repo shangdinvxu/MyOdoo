@@ -27,6 +27,7 @@ import tarce.myodoo.bean.MenuBean;
 import tarce.support.ToolBarActivity;
 
 /**
+ * 仓库界面
  * Created by Daniel.Xu on 2017/4/20.
  */
 

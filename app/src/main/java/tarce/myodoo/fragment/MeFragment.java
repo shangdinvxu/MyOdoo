@@ -22,6 +22,7 @@ import tarce.support.SharePreferenceUtils;
 import tarce.support.Toolkits;
 
 /**
+ * 我界面
  * Created by Daniel.Xu on 2017/4/20.
  */
 
@@ -72,7 +73,7 @@ public class MeFragment extends Fragment {
      * */
     @OnClick(R.id.button_exit)
     void clickExit(View view){
-        SharePreferenceUtils.putInt("user_id", 1000, getActivity());
+        SharePreferenceUtils.putInt("user_id", -1000, getActivity());
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
     }

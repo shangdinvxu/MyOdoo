@@ -85,6 +85,7 @@ public class LoginActivity extends Activity {
     private List<UserLogin> userLogins;
     private InventoryApi inventoryApi;
     private ContactsBeanDao contactsBeanDao;
+    private ArrayList<String> userStrings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,34 +104,35 @@ public class LoginActivity extends Activity {
         initListener();
     }
 
-
-
-    private void initListener() {
-        email.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String password = userLogins.get(i).getPassword();
-                LoginActivity.this.password.setText(password);
-            }
-        });
-    }
-
     private void initEmailAdapter() {
         email.setThreshold(1);
         userLogins = new UserLoginUtils().searchAll();
-        ArrayList<String> strings = new ArrayList<>();
+        userStrings = new ArrayList<>();
         if (userLogins !=null&& userLogins.size()>0){
             for (UserLogin s : userLogins){
-                strings.add(s.getUserName());
+                userStrings.add(s.getUserName());
             }
-            ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<>(LoginActivity.this, R.layout.auto_text_listview, strings);
+            ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<>(LoginActivity.this, R.layout.auto_text_listview, userStrings);
             email.setAdapter(stringArrayAdapter);
         }
     }
 
 
+    private void initListener() {
 
-
+        /**
+         * 先获取position 再获取位置
+         */
+        email.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String item = (String) adapterView.getAdapter().getItem(i);
+                int index = userStrings.indexOf(item);
+                String password = userLogins.get(index).getPassword();
+                LoginActivity.this.password.setText(password);
+            }
+        });
+    }
 
     private void checkOutoLogin() {
         int user_id = SharePreferenceUtils.getInt("user_id", -1000, LoginActivity.this);
@@ -148,7 +150,6 @@ public class LoginActivity extends Activity {
             toLogin(new View(LoginActivity.this));
         }
     }
-
 
     @OnClick(R.id.database)
     void setDatabase(View view) {

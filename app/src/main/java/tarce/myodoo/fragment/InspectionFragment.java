@@ -21,6 +21,7 @@ import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
 
 /**
+ * 品检界面
  * Created by Daniel.Xu on 2017/4/20.
  */
 
