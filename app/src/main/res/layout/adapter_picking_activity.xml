@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="60dp">
+    android:layout_height="65dp">
 
     <TextView
         android:id="@+id/id_colum"
@@ -10,7 +10,7 @@
         android:text="1."
         android:layout_marginLeft="10dp"
         android:textColor="@color/black"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="6dp"/>
     <TextView
         android:id="@+id/tv_display_name"
         android:layout_width="wrap_content"
@@ -18,7 +18,7 @@
         android:text="M64681321"
         android:textSize="13sp"
         android:layout_toRightOf="@+id/id_colum"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="6dp"
         android:layout_marginLeft="10dp"/>
     <TextView
         android:id="@+id/tv_product_name"
@@ -26,11 +26,13 @@
         android:layout_height="wrap_content"
         android:text="[Qsdfwef]wefufhwiugfss"
         android:textSize="13sp"
-        android:maxEms="5"
+        android:maxEms="6"
         android:lines="2"
+        android:textColor="@color/cc"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/id_colum"
-        android:layout_marginLeft="10dp"/>
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="5dp"/>
     <TextView
         android:id="@+id/tv_all_name"
         android:layout_width="wrap_content"
@@ -39,7 +41,7 @@
         android:textSize="13sp"
         android:layout_centerHorizontal="true"
         android:textColor="@color/black"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="6dp"/>
     <TextView
         android:layout_marginTop="10dp"
         android:id="@+id/tv_product_qty"
@@ -58,7 +60,8 @@
         android:textSize="13sp"
         android:textColor="@color/black"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"/>
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"/>
     <TextView
         android:id="@+id/tv_date_planned_start"
         android:layout_width="wrap_content"
@@ -66,8 +69,8 @@
         android:text="2017.5.22"
         android:textSize="13sp"
         android:lines="2"
-        android:maxEms="4"
-        android:layout_marginTop="10dp"
+        android:maxEms="5"
+        android:layout_marginTop="6dp"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"/>
     <TextView
@@ -76,7 +79,8 @@
         android:layout_height="wrap_content"
         android:text="备料完成"
         android:textSize="13sp"
-        android:layout_alignParentRight="true"
+        android:textColor="@color/viewfinder_laser"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="10dp"/>
+        android:layout_marginBottom="5dp"
+        android:layout_alignLeft="@+id/tv_date_planned_start"/>
 </RelativeLayout>

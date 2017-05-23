@@ -77,6 +77,7 @@ public class ProductLlActivity extends ToolBarActivity {
     private void initView() {
         AlertAialogUtils.showDefultProgressDialog(ProductLlActivity.this);
         swipeRefreshHeader.setGravity(Gravity.CENTER);
+        swipeLoadMoreFooter.setGravity(Gravity.CENTER);
         swipeToLoad.setRefreshHeaderView(swipeRefreshHeader);
         swipeToLoad.setLoadMoreFooterView(swipeLoadMoreFooter);
 
@@ -90,7 +91,7 @@ public class ProductLlActivity extends ToolBarActivity {
                 swipeToLoad.setRefreshing(false);
             }
         });
-        swipeToLoad.setOnLoadMoreListener(new OnLoadMoreListener() {
+        /*swipeToLoad.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore() {
                 swipeToLoad.postDelayed(new Runnable() {
@@ -104,7 +105,7 @@ public class ProductLlActivity extends ToolBarActivity {
                     }
                 }, 2000);
             }
-        });
+        });*/
     }
 
     /**

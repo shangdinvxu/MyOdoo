@@ -14,6 +14,7 @@ import tarce.model.GetSaleResponse;
 import tarce.model.LoadActionBean;
 import tarce.model.OutgoingStockpickingBean;
 import tarce.model.SearchSupplierResponse;
+import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.model.inventory.ProcessDeatilBean;
 import tarce.model.inventory.SalesOutListResponse;
@@ -110,7 +111,7 @@ public interface InventoryApi {
      * 生产订单详情
      * */
     @POST("get_order_detail")
-    Call<Object> getOrderDetail(@Body HashMap hashMap);
+    Call<OrderDetailBean> getOrderDetail(@Body HashMap hashMap);
 
     /**
      * 生产入库和等待返工接口

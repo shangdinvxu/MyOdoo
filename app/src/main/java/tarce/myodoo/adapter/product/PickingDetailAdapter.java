@@ -26,7 +26,7 @@ public class PickingDetailAdapter extends BaseQuickAdapter<PickingDetailBean.Res
         helper.setText(R.id.tv_display_name, item.getDisplay_name());
         helper.setText(R.id.tv_product_name, item.getProduct_name());
         helper.setText(R.id.tv_name_process, "工序:"+item.getProcess_id().getName());
-        helper.setText(R.id.tv_product_qty, String.valueOf(item.getProduct_qty()));
+        helper.setText(R.id.tv_product_qty, String.valueOf(new Double(item.getProduct_qty()).intValue()));
         helper.setText(R.id.tv_date_planned_start, item.getDate_planned_start());
         switch (item.getState()){
             case "draft":
