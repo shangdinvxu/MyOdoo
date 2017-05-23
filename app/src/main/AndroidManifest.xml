@@ -49,6 +49,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.SalesInActivity"
             android:screenOrientation="portrait" />
+
         <activity android:name=".activity.SelectProcedureActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.ShowProcessActivity"

@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:text="[Qsdfwef]wefufhwiugfss"
         android:textSize="13sp"
-        android:maxLength="10"
+        android:maxEms="5"
         android:lines="2"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/id_colum"
@@ -35,7 +35,7 @@
         android:id="@+id/tv_all_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="生产数量/n需求数量:"
+        android:text="生产以及\n需求数量:"
         android:textSize="13sp"
         android:layout_centerHorizontal="true"
         android:textColor="@color/black"
@@ -46,6 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/tv_all_name"
+        android:layout_alignBottom="@+id/tv_all_name"
         android:text="1400"
         android:textSize="11sp"
         android:textColor="@color/black"/>
@@ -65,6 +66,7 @@
         android:text="2017.5.22"
         android:textSize="13sp"
         android:lines="2"
+        android:maxEms="4"
         android:layout_marginTop="10dp"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"/>
