@@ -1,12 +1,20 @@
 package tarce.myodoo.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.uuzuche.lib_zxing.activity.CaptureActivity;
+import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.util.HashMap;
 
@@ -41,6 +49,14 @@ public class MainActivity extends AppCompatActivity {
     RadioButton radioButton3;
     @InjectView(R.id.radio_button4)
     RadioButton radioButton4;
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
+    @InjectView(R.id.title_text)
+    TextView titleText;
+    @InjectView(R.id.search_button)
+    Button searchButton;
+    @InjectView(R.id.scan_button)
+    Button scanButton;
     /*@InjectView(R.id.show_result)
     TextView showResult;
     @InjectView(R.id.button_test)
@@ -55,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment mContent;
     private View mCurrentTab;
+    private final static int REQUEST_CODE = 5 ;
 
     /*private List<TestBean.TestRSubBean.ListSubBean> listSubBeen  = new ArrayList<TestBean.TestRSubBean.ListSubBean>();
     private List<Integer> listInterge = new ArrayList<>();*/
@@ -72,15 +89,35 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-     //   mViewPager.setCurrentItem(0, false);
-      //  refreshLoadAction();
+        //   mViewPager.setCurrentItem(0, false);
+        //  refreshLoadAction();
     }
 
     @OnClick(R.id.radio_button1)
     void clickRadio_Button1(View view) {
         mViewPager.setCurrentItem(0, false);
+        titleText.setText("仓库");
         refreshLoadAction();
     }
+
+
+    /***点击二维码扫描*/
+    @OnClick(R.id.scan_button)
+    void clickScanButton(View view){
+        Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
+        startActivityForResult(intent, REQUEST_CODE);
+
+    }
+
+
+    /*****点击搜索界面*/
+    @OnClick(R.id.search_button)
+    void clickSearchButton(View view){
+
+
+
+    }
+
 
     private void refreshLoadAction() {
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
@@ -99,10 +136,10 @@ public class MainActivity extends AppCompatActivity {
                     Integer needaction_counter = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_prepare_material_ing().getNeedaction_counter();
                     Integer needaction_counter1 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
 //                    Integer needaction_counter2 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_post_inventory().getNeedaction_counter();
-                    warehouseFragment.list.get(5).t.setNumber(needaction_counter);
-                    warehouseFragment.list.get(6).t.setNumber(needaction_counter1);
-     //               warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
-                    warehouseFragment.sectionAdapter.notifyDataSetChanged();
+//                    warehouseFragment.list.get(5).t.setNumber(needaction_counter);
+//                    warehouseFragment.list.get(6).t.setNumber(needaction_counter1);
+//                    //               warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
+//                    warehouseFragment.sectionAdapter.notifyDataSetChanged();
                 }
 
             }
@@ -132,15 +169,18 @@ public class MainActivity extends AppCompatActivity {
     @OnClick(R.id.radio_button2)
     void clickRadio_Button2(View view) {
         mViewPager.setCurrentItem(1, true);
+        titleText.setText("生产");
     }
 
     @OnClick(R.id.radio_button3)
     void clickRadio_Button3(View view) {
+        titleText.setText("品检");
         mViewPager.setCurrentItem(2, false);
     }
 
     @OnClick(R.id.radio_button4)
     void clickRadio_Button4(View view) {
+        titleText.setText("我");
         mViewPager.setCurrentItem(3, true);
     }
 
@@ -179,24 +219,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /*private void initView(Bundle savedInstanceState) {
-
-        if (savedInstanceState != null) {
-            mContent = getSupportFragmentManager().getFragment(
-                    savedInstanceState, "mContent");
-        }
-
-        if (mContent == null) {
-            mContent = new WarehouseFragment();
-        }
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, mContent).commit();
-    }
-
-
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        getSupportFragmentManager().putFragment(outState, "mContent", mContent);
-    }*/
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //扫描二维码的返回
+        if (requestCode == REQUEST_CODE) {
+            if (null != data) {
+                Bundle bundle = data.getExtras();
+                if (bundle == null) {
+                    return;
+                }
+                if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
+                    String result = bundle.getString(CodeUtils.RESULT_STRING);
+                    Toast.makeText(this, "解析结果:" + result, Toast.LENGTH_LONG).show();
+                } else if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_FAILED) {
+                    Toast.makeText(MainActivity.this, "解析二维码失败", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
 
+    }
 }

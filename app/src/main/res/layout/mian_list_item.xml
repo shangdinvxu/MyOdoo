@@ -34,8 +34,6 @@
             android:background="@mipmap/right"
             android:layout_marginEnd="10dp"
             />
-
-
     </LinearLayout>
 
 </LinearLayout>

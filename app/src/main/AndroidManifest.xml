@@ -39,7 +39,7 @@
         <activity
             android:launchMode="singleTask"
             android:name=".activity.MainActivity"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.SalesOutActivity"
             android:screenOrientation="portrait" />

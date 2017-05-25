@@ -70,6 +70,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         setTitle(intent.getStringExtra("order_name"));
         setRecyclerview(recyclerOrderDetail);
         getDetail();
+
     }
 
 
