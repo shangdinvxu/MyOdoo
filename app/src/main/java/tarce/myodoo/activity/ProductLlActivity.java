@@ -75,7 +75,7 @@ public class ProductLlActivity extends ToolBarActivity {
     }
 
     private void initView() {
-        AlertAialogUtils.showDefultProgressDialog(ProductLlActivity.this);
+        showDefultProgressDialog();
         swipeRefreshHeader.setGravity(Gravity.CENTER);
         swipeLoadMoreFooter.setGravity(Gravity.CENTER);
         swipeToLoad.setRefreshHeaderView(swipeRefreshHeader);
@@ -125,7 +125,7 @@ public class ProductLlActivity extends ToolBarActivity {
         stringCall.enqueue(new MyCallback<PickingDetailBean>() {
             @Override
             public void onResponse(Call<PickingDetailBean> call, Response<PickingDetailBean> response) {
-                AlertAialogUtils.dismissDefultProgressDialog();
+                dismissDefultProgressDialog();
                 if (response.body() == null) return;
 
                 if (action == 2) {//上拉加载
@@ -144,7 +144,7 @@ public class ProductLlActivity extends ToolBarActivity {
 
             @Override
             public void onFailure(Call<PickingDetailBean> call, Throwable t) {
-                super.onFailure(call, t);
+                dismissDefultProgressDialog();
             }
         });
     }
@@ -160,6 +160,7 @@ public class ProductLlActivity extends ToolBarActivity {
                 Intent intent = new Intent(ProductLlActivity.this, OrderDetailActivity.class);
                 intent.putExtra("order_name",beanList.get(position).getDisplay_name());
                 intent.putExtra("order_id", order_id);
+                intent.putExtra("state",beanList.get(position).getState());
                 startActivity(intent);
             }
         });

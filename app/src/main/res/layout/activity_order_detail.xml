@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/relative_one"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:background="@color/result_view"
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/tv_state_order"
             android:layout_width="50dp"
             android:layout_height="20dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"
             android:background="@drawable/bac_tv_order"
             android:gravity="center"
-            android:text="已领料"
             android:textColor="@color/white"
             android:textSize="11sp" />
 
@@ -29,6 +30,7 @@
             android:src="@mipmap/up" />
 
         <TextView
+            android:id="@+id/tv_check_state"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
@@ -37,8 +39,8 @@
             android:textColor="@color/white"
             android:textSize="11sp" />
     </RelativeLayout>
-
     <RelativeLayout
+        android:layout_below="@+id/relative_one"
         android:id="@+id/relative_order_show"
         android:layout_width="match_parent"
         android:layout_height="150dp">
@@ -105,15 +107,14 @@
                 android:id="@+id/tv_name_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="产品"
                 android:layout_gravity="left"
+                android:lines="1"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp"/>
             <TextView
                 android:id="@+id/tv_time_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="时间"
                 android:layout_gravity="left"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp" />
@@ -121,7 +122,6 @@
                 android:id="@+id/tv_rework_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="返工单"
                 android:layout_gravity="left"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp" />
@@ -129,7 +129,6 @@
                 android:id="@+id/tv_num_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="生产数量"
                 android:layout_gravity="left"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp" />
@@ -137,7 +136,6 @@
                 android:id="@+id/tv_need_num"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="需求数量"
                 android:layout_gravity="left"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp" />
@@ -166,14 +164,13 @@
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="@color/sbc_header_text"
-                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="50dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"/>
             <TextView
                 android:id="@+id/tv_gongxu_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="gongxu"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="10dp"/>
@@ -181,17 +178,107 @@
                 android:id="@+id/tv_type_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="类型"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="15dp"
                 android:layout_alignParentBottom="true"
                 android:layout_marginBottom="10dp"/>
         </RelativeLayout>
     </RelativeLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_order_detail"
+    <FrameLayout
+        android:id="@+id/framelayout_product"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="250dp"
+        android:layout_below="@+id/relative_order_show"
+        android:visibility="gone">
+    </FrameLayout>
+    <LinearLayout
+        android:id="@+id/linear_one"
+        android:layout_below="@+id/framelayout_product"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/result_view"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2.5"
+            android:gravity="center"
+            android:text="产品"
+            android:textColor="@color/white" />
 
-    </android.support.v7.widget.RecyclerView>
-</LinearLayout>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="位置"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="库存"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="需求"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="建议"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="备料"
+            android:textColor="@color/white" />
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linear_one"
+        android:layout_above="@+id/tv_start_produce">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_order_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler2_order_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </android.support.v7.widget.RecyclerView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler3_order_detail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </android.support.v7.widget.RecyclerView>
+        </LinearLayout>
+    </ScrollView>
+    <TextView
+        android:id="@+id/tv_start_produce"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/cc"
+        android:text="开始生产"
+        android:textColor="@color/white"
+        android:gravity="center"/>
+</RelativeLayout>

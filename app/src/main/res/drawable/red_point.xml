@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape android:shape="oval" xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- solid指定形状的填充色，只有android:color一个属性 -->
-    <solid android:color="#E4007F" />
+    <solid android:color="#ff0000" />
     <!-- padding设置内间距 -->
     <padding
         android:bottom="4dp"

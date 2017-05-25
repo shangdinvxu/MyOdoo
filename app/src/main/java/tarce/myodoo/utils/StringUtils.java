@@ -29,4 +29,17 @@ public class StringUtils {
         return str == null || str.trim().length() == 0;
     }
 
+    /**
+     * 将Double类型数据转换成String,去掉小数点。先转成int
+     * @param i
+     * */
+    public static String doubleToString(double i){
+        return String.valueOf(new Double(i).intValue());
+    }
+    /**
+     * double转int
+     * */
+    public static int doubleToInt(double i){
+        return new Double(i).intValue();
+    }
 }

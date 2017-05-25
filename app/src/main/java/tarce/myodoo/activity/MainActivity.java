@@ -72,8 +72,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-     //   mViewPager.setCurrentItem(0, false);
-      //  refreshLoadAction();
+        //   mViewPager.setCurrentItem(0, false);
+        //  refreshLoadAction();
     }
 
     @OnClick(R.id.radio_button1)
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 //                    Integer needaction_counter2 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_post_inventory().getNeedaction_counter();
                     warehouseFragment.list.get(5).t.setNumber(needaction_counter);
                     warehouseFragment.list.get(6).t.setNumber(needaction_counter1);
-     //               warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
+                    //               warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
                     warehouseFragment.sectionAdapter.notifyDataSetChanged();
                 }
 
@@ -113,20 +113,6 @@ public class MainActivity extends AppCompatActivity {
                 MyLog.e(TAG, t.toString());
             }
         });
-      /*  Observable<Object> stringObservable = inventoryApi.load_action(objectObjectHashMap);
-        stringObservable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ProgressSubscriber<>(new SubscriberOnNextListener<Object>() {
-                    @Override
-                    public void onNext(Object object) {
-                        String s = object.toString();
-                        try {
-                            JSONObject jsonObject = new JSONObject(s);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, this));*/
     }
 
     @OnClick(R.id.radio_button2)
@@ -158,7 +144,8 @@ public class MainActivity extends AppCompatActivity {
         MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(myViewPagerAdapter);
         mViewPager.setCurrentItem(0);
-        radioButton1.setClickable(true);
+        radioButton1.setChecked(true);
+        refreshLoadAction();
     }
 
 
@@ -178,25 +165,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
-    /*private void initView(Bundle savedInstanceState) {
-
-        if (savedInstanceState != null) {
-            mContent = getSupportFragmentManager().getFragment(
-                    savedInstanceState, "mContent");
-        }
-
-        if (mContent == null) {
-            mContent = new WarehouseFragment();
-        }
-        getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, mContent).commit();
-    }
-
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        getSupportFragmentManager().putFragment(outState, "mContent", mContent);
-    }*/
 
 }

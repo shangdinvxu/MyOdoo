@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_one"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1.添加位置图片"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:layout_marginTop="100dp"
+        android:layout_marginLeft="20dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2.输入位置信息"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        android:layout_below="@+id/tv_one"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="150dp"/>
+    <TextView
+        android:id="@+id/tv_take_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="点击上方图片编辑位置图片"
+        android:drawableTop="@drawable/person_camera_icon"
+        android:layout_toRightOf="@+id/tv_one"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="30dp"
+        android:drawablePadding="30dp"/>
+    <EditText
+        android:id="@+id/edit_area_message"
+        android:layout_width="180dp"
+        android:layout_height="35dp"
+        android:background="@drawable/edit_input_bac"
+        android:layout_toRightOf="@id/tv_one"
+        android:layout_below="@+id/tv_take_photo"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="100dp"
+        android:imeOptions="actionSearch"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_area"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/edit_area_message">
+    </android.support.v7.widget.RecyclerView>
+</RelativeLayout>

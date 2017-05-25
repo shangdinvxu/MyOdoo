@@ -77,7 +77,7 @@ public class SelectProcedureActivity extends ToolBarActivity {
      * 获取生产工序
      * */
     private void getProcessNAme() {
-        AlertAialogUtils.showDefultProgressDialog(SelectProcedureActivity.this);
+        showDefultProgressDialog();
         listSubBeen = new ArrayList<>();
         process_name = new ArrayList<>();
         process_num = new ArrayList<>();
@@ -100,7 +100,7 @@ public class SelectProcedureActivity extends ToolBarActivity {
                     numProcessCall.enqueue(new MyCallback<GetNumProcess>() {
                         @Override
                         public void onResponse(Call<GetNumProcess> call, Response<GetNumProcess> response) {
-                            AlertAialogUtils.dismissDefultProgressDialog();
+                            dismissDefultProgressDialog();
                             if (response.body() == null)return;
                             Log.i(TAG, response.body().getJsonrpc()+"  "+response.body().getId());
                             if (response.body().getResult().getRes_code() == 1){
@@ -168,6 +168,7 @@ public class SelectProcedureActivity extends ToolBarActivity {
                 //跳转至工序详情界面
                 Intent intent = new Intent(SelectProcedureActivity.this, ShowProcessActivity.class);
                 intent.putExtra("delay_num",process_num.get(position));
+                intent.putExtra("process_name", showBeanList.get(position).getProcess_name());
                 startActivity(intent);
             }
         });

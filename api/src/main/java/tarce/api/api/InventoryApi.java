@@ -14,6 +14,9 @@ import tarce.model.GetSaleResponse;
 import tarce.model.LoadActionBean;
 import tarce.model.OutgoingStockpickingBean;
 import tarce.model.SearchSupplierResponse;
+import tarce.model.inventory.AreaMessageBean;
+import tarce.model.inventory.LoadProductBean;
+import tarce.model.inventory.MaterialDetailBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.model.inventory.ProcessDeatilBean;
@@ -68,8 +71,11 @@ public interface InventoryApi {
     Call<GetSaleResponse> changeStockPicking(@Body HashMap hashMap );
 
 
+    /**
+     * 检测红色圈圈数字
+     * */
     @POST("load_needaction")
-    Observable<LoadActionBean> load_action(@Body HashMap hashMap);
+    Call<LoadProductBean> load_action(@Body HashMap hashMap);
 
     @POST("load_needaction")
     Call<LoadActionBean> load_actionCall(@Body HashMap hashMap);
@@ -118,4 +124,22 @@ public interface InventoryApi {
      * */
     @POST("get_qc_feedback")
     Call<Object> getReworkRuku(@Body HashMap hashMap);
+
+    /**
+     * 生产备料-》延误-》详情
+     * */
+    @POST("get_recent_production_order")
+    Call<MaterialDetailBean> getRecentOr(@Body HashMap hashMap);
+
+    /**
+     * 点击开始备料-》
+     * */
+    @POST("prepare_material_ing")
+    Call<OrderDetailBean> checkPrepare(@Body HashMap hashMap);
+
+    /**
+     * 搜索位置信息
+     * */
+    @POST("get_area_list")
+    Call<AreaMessageBean> getAreaMessage(@Body HashMap hashMap);
 }
