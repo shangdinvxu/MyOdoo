@@ -1,6 +1,8 @@
 package tarce.myodoo.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -8,31 +10,29 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.jph.takephoto.app.TakePhoto;
 import com.jph.takephoto.app.TakePhotoActivity;
-import com.jph.takephoto.app.TakePhotoImpl;
-import com.jph.takephoto.compress.CompressConfig;
 import com.jph.takephoto.model.CropOptions;
 import com.jph.takephoto.model.InvokeParam;
 import com.jph.takephoto.model.TContextWrap;
+import com.jph.takephoto.model.TImage;
 import com.jph.takephoto.model.TResult;
-import com.jph.takephoto.permission.InvokeListener;
 import com.jph.takephoto.permission.PermissionManager;
-import com.jph.takephoto.permission.TakePhotoInvocationHandler;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -47,7 +47,6 @@ import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.uiutil.TakePhotoDialog;
 import tarce.support.ToastUtils;
-import tarce.support.ToolBarActivity;
 
 /**
  * Created by rose.zou on 2017/5/25.
@@ -64,11 +63,16 @@ public class PhotoAreaActivity extends TakePhotoActivity {
     EditText editAreaMessage;
     @InjectView(R.id.recycler_area)
     RecyclerView recyclerArea;
+    @InjectView(R.id.image_show_photo)
+    ImageView imageShowPhoto;
+    @InjectView(R.id.relative_click_use)
+    RelativeLayout relativeClickUse;
     private InvokeParam invokeParam;
     private TakePhoto takePhoto;
     private InventoryApi inventoryApi;
     private AreaMessageAdapter adapter;
     private List<AreaMessageBean.ResultBean.ResDataBean> res_data;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +82,7 @@ public class PhotoAreaActivity extends TakePhotoActivity {
         takePhoto = getTakePhoto();
         takePhoto.onCreate(savedInstanceState);
         setTitle("物料位置信息");
-       // setRecyclerview(recyclerArea);
+        // setRecyclerview(recyclerArea);
         recyclerArea.setLayoutManager(new LinearLayoutManager(PhotoAreaActivity.this));
         recyclerArea.addItemDecoration(new DividerItemDecoration(PhotoAreaActivity.this,
                 DividerItemDecoration.VERTICAL));
@@ -87,12 +91,11 @@ public class PhotoAreaActivity extends TakePhotoActivity {
 
     /**
      * edittext的搜索监听
-     * */
+     */
     private void editListener() {
         editAreaMessage.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            public boolean onEditorAction(TextView v, int actionId,  KeyEvent event)  {
-                if (actionId== EditorInfo.IME_ACTION_SEARCH ||(event!=null&&event.getKeyCode()== KeyEvent.KEYCODE_ENTER))
-                {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     res_data = new ArrayList<>();
                     inventoryApi = RetrofitClient.getInstance(PhotoAreaActivity.this).create(InventoryApi.class);
                     HashMap<Object, Object> hashMap = new HashMap<>();
@@ -101,7 +104,7 @@ public class PhotoAreaActivity extends TakePhotoActivity {
                     areaMessage.enqueue(new MyCallback<AreaMessageBean>() {
                         @Override
                         public void onResponse(Call<AreaMessageBean> call, Response<AreaMessageBean> response) {
-                            if (response.body() == null)return;
+                            if (response.body() == null) return;
                             res_data = response.body().getResult().getRes_data();
                             adapter = new AreaMessageAdapter(R.layout.adapter_area_message, res_data);
                             recyclerArea.setAdapter(adapter);
@@ -125,14 +128,17 @@ public class PhotoAreaActivity extends TakePhotoActivity {
         });
     }
 
-    @OnClick(R.id.tv_take_photo)
-    void takePhoto(View view){
+    @OnClick(R.id.image_show_photo)
+    void takePhoto(View view) {
         new TakePhotoDialog(PhotoAreaActivity.this)
                 .setTakephoto(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        CropOptions cropOptions=new CropOptions.Builder().setAspectX(1).setAspectY(1).setWithOwnCrop(true).create();
-                        takePhoto.onPickFromCaptureWithCrop(Uri.fromFile(new File(getNewPhotoPath())), cropOptions);
+                        File file = new File(Environment.getExternalStorageDirectory(), "/linkloving/" + System.currentTimeMillis() + ".jpg");
+                        if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
+                        Uri imageUri = Uri.fromFile(file);
+                        CropOptions cropOptions = new CropOptions.Builder().setAspectX(1).setAspectY(1).setWithOwnCrop(true).create();
+                        takePhoto.onPickFromCaptureWithCrop(imageUri, cropOptions);
                     }
                 })
                 .setSelectalbum(new View.OnClickListener() {
@@ -145,17 +151,6 @@ public class PhotoAreaActivity extends TakePhotoActivity {
                 .show();
 
     }
-
-    public  String getDirPath() {
-        return Environment.getExternalStorageDirectory().getAbsolutePath()
-                + File.separator + "linkloving/";
-    }
-
-    private  String getNewPhotoPath() {
-        return getDirPath() + "/" + System.currentTimeMillis() + ".jpg";
-    }
-
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -172,7 +167,11 @@ public class PhotoAreaActivity extends TakePhotoActivity {
     @Override
     public void takeSuccess(TResult result) {
         super.takeSuccess(result);
-        ToastUtils.showCommonToast(PhotoAreaActivity.this, "????????");
+        Bitmap bitmap = BitmapFactory.decodeFile(result.getImage().getCompressPath());
+        ToastUtils.showCommonToast(PhotoAreaActivity.this, result.getImage().getCompressPath());
+        TImage image = result.getImage();
+        Glide.with(PhotoAreaActivity.this).load(result.getImage()).into(imageShowPhoto);
+       // ToastUtils.showCommonToast(PhotoAreaActivity.this, "????????");
     }
 
     @Override
@@ -184,6 +183,14 @@ public class PhotoAreaActivity extends TakePhotoActivity {
         return type;
     }
 
+    /**
+     * 空白区域点击事件
+     * */
+    @OnClick(R.id.recycler_area)
+    void clickRela(View view){
+        res_data = null;
+        adapter.notifyDataSetChanged();
+    }
     /**
      * 权限问题
      */
