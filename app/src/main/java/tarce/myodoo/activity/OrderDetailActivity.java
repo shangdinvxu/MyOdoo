@@ -127,6 +127,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         recycler2OrderDetail.setNestedScrollingEnabled(false);
         recycler3OrderDetail.setNestedScrollingEnabled(false);
         getDetail();
+
     }
 
     /**
