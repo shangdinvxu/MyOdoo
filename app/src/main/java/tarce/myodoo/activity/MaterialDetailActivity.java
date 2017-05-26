@@ -55,6 +55,13 @@ public class MaterialDetailActivity extends ToolBarActivity {
         initView();
     }
 
+   /* @Override
+    protected void onResume() {
+        super.onResume();
+        initView();
+    }
+*/
+
     private void initView() {
         showDefultProgressDialog();
         Intent intent = getIntent();
@@ -121,6 +128,9 @@ public class MaterialDetailActivity extends ToolBarActivity {
                     intent.putExtra("order_name",mainMdBeen.get(position).t.getDisplay_name());
                     intent.putExtra("order_id", order_id);
                     intent.putExtra("state",mainMdBeen.get(position).t.getState());
+                    intent.putExtra("delay_state",state);
+                    intent.putExtra("limit",limit);
+                    intent.putExtra("process_id",process_id);
                     startActivity(intent);
                 }
             });

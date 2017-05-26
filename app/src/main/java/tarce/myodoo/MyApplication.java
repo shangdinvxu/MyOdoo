@@ -42,6 +42,9 @@ public class MyApplication extends Application {
         return instances;
     }
 
+    public static Context getContext() {
+        return instances.getApplicationContext();
+    }
     /**
      * 设置greenDao
      */

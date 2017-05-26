@@ -27,11 +27,13 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
 
     private Context context;
     private String head_name;
+    private OrderDetailBean.ResultBean result;
 
-    public OrderDetailAdapter(Context context, List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list, String head_name) {
+    public OrderDetailAdapter(Context context, List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list, String head_name,OrderDetailBean.ResultBean result) {
         this.context = context;
         this.list = list;
         this.head_name = head_name;
+        this.result = result;
     }
 
     private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list;
@@ -64,7 +66,13 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                 }
                 holder.tv_kucun_order.setText(StringUtils.doubleToString(list.get(position-1).getQty_available()));
                 holder.tv_need_order.setText(StringUtils.doubleToString(list.get(position-1).getProduct_uom_qty()));
-                holder.tv_prepare_order.setText(StringUtils.doubleToString(list.get(position-1).getQuantity_ready()));
+                if (result.getRes_data().getState().equals("waiting_material")
+                        || result.getRes_data().getState().equals("prepare_material_ing")
+                        || result.getRes_data().getState().equals("finish_prepare_material")){
+                    holder.tv_prepare_order.setText(StringUtils.doubleToString(list.get(position-1).getQuantity_ready()+list.get(position-1).getQuantity_done()));
+                }else {
+                    holder.tv_prepare_order.setText(StringUtils.doubleToString(list.get(position-1).getQuantity_done()));
+                }
                 holder.itemView.setTag(list.get(position-1));
                 break;
         }

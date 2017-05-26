@@ -64,8 +64,9 @@
         <activity android:name=".activity.MaterialDetailActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.PhotoAreaActivity"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|keyboardHidden|screenSize"/>
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.AreaMessageActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 

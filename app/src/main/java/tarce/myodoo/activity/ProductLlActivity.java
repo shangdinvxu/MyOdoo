@@ -57,7 +57,8 @@ public class ProductLlActivity extends ToolBarActivity {
     private List<PickingDetailBean.ResultBean.ResDataBean> dataBeanList;
     private PickingDetailAdapter adapter;
     private int loadTime = 1;
-    private String state_activity;
+    private String state_activity;//生产状态
+    private String name_activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,11 +68,12 @@ public class ProductLlActivity extends ToolBarActivity {
 
         setRecyclerview(swipeTarget);
         Intent intent = getIntent();
-        setTitle(intent.getStringExtra("name_activity"));
+        name_activity = intent.getStringExtra("name_activity");
+        setTitle(name_activity);
         state_activity = intent.getStringExtra("state_product");
 
         initView();
-        getPicking(0, 15, Refresh_Move);
+        getPicking(0, 40, Refresh_Move);
     }
 
     private void initView() {
@@ -86,7 +88,7 @@ public class ProductLlActivity extends ToolBarActivity {
             public void onRefresh() {
                 AlertAialogUtils.showDefultProgressDialog(ProductLlActivity.this);
                // beanList.clear();
-                getPicking(0, 15, Refresh_Move);
+                getPicking(0, 40, Refresh_Move);
                 adapter.notifyDataSetChanged();
                 swipeToLoad.setRefreshing(false);
             }
@@ -161,6 +163,8 @@ public class ProductLlActivity extends ToolBarActivity {
                 intent.putExtra("order_name",beanList.get(position).getDisplay_name());
                 intent.putExtra("order_id", order_id);
                 intent.putExtra("state",beanList.get(position).getState());
+                intent.putExtra("name_activity",name_activity);
+                intent.putExtra("state_activity",state_activity);
                 startActivity(intent);
             }
         });

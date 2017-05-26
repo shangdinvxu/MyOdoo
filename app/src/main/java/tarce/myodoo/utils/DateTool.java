@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by John on 15/2/6.
@@ -124,6 +125,21 @@ public class DateTool {
         return getDateTime(datetime, pattern);
     }
 
+    /**
+     * 转换时区
+     * */
+    public static String getGMTBeijing(String dateString){
+        SimpleDateFormat format = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
+        TimeZone timeZone = TimeZone.getTimeZone("GMT+08");
+        format.setTimeZone(timeZone);
+        Date date = null;
+        try {
+            date = format.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+            return format.format(date);
+    }
 
     /**
      * 得到用指定方式格式化的日期

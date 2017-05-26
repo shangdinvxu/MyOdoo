@@ -1,15 +1,13 @@
 package tarce.myodoo.activity;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -20,14 +18,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.jph.takephoto.app.TakePhoto;
-import com.jph.takephoto.app.TakePhotoActivity;
-import com.jph.takephoto.model.CropOptions;
-import com.jph.takephoto.model.InvokeParam;
-import com.jph.takephoto.model.TContextWrap;
-import com.jph.takephoto.model.TImage;
-import com.jph.takephoto.model.TResult;
-import com.jph.takephoto.permission.PermissionManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -43,17 +33,23 @@ import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.AreaMessageBean;
+import tarce.model.inventory.UpdateMessageBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
+import tarce.myodoo.uiutil.ImageUtil;
 import tarce.myodoo.uiutil.TakePhotoDialog;
+import tarce.myodoo.utils.StringUtils;
 import tarce.support.ToastUtils;
+import tarce.support.ToolBarActivity;
+import tarce.support.ViewUtils;
+import tarce.support.BitmapUtils;
 
 /**
  * Created by rose.zou on 2017/5/25.
  * 用于产品的位置信息，拍照
  */
 
-public class PhotoAreaActivity extends TakePhotoActivity {
+public class PhotoAreaActivity extends ToolBarActivity {
 
     @InjectView(R.id.tv_one)
     TextView tvOne;
@@ -67,11 +63,22 @@ public class PhotoAreaActivity extends TakePhotoActivity {
     ImageView imageShowPhoto;
     @InjectView(R.id.relative_click_use)
     RelativeLayout relativeClickUse;
-    private InvokeParam invokeParam;
-    private TakePhoto takePhoto;
+    @InjectView(R.id.tv_finish_order)
+    TextView tvFinishOrder;
     private InventoryApi inventoryApi;
     private AreaMessageAdapter adapter;
     private List<AreaMessageBean.ResultBean.ResDataBean> res_data;
+    private static final int REQUEST_CODE_PICK_IMAGE = 0;//相册
+    private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;//拍照
+
+    private String imgPath;//图片拍照照片的本地路径
+    private String imgName;//后缀名
+    private Intent mIntentPic;
+    private String type;
+    private int order_id;
+    private int limit;
+    private String delay_state;
+    private int process_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +86,12 @@ public class PhotoAreaActivity extends TakePhotoActivity {
         setContentView(R.layout.activity_photo_area);
         ButterKnife.inject(this);
 
-        takePhoto = getTakePhoto();
-        takePhoto.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        type = intent.getStringExtra("type");
+        order_id = intent.getIntExtra("order_id", 1);
+        limit = intent.getIntExtra("limit", 1);
+        delay_state = intent.getStringExtra("delay_state");
+        process_id = intent.getIntExtra("process_id", 1);
         setTitle("物料位置信息");
         // setRecyclerview(recyclerArea);
         recyclerArea.setLayoutManager(new LinearLayoutManager(PhotoAreaActivity.this));
@@ -112,6 +123,7 @@ public class PhotoAreaActivity extends TakePhotoActivity {
                                 @Override
                                 public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                                     editAreaMessage.setText(res_data.get(position).getArea_name());
+                                    ViewUtils.collapseSoftInputMethod(PhotoAreaActivity.this, editAreaMessage);
                                 }
                             });
                         }
@@ -130,21 +142,20 @@ public class PhotoAreaActivity extends TakePhotoActivity {
 
     @OnClick(R.id.image_show_photo)
     void takePhoto(View view) {
+        imgName = "photo.jpg";
         new TakePhotoDialog(PhotoAreaActivity.this)
                 .setTakephoto(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        File file = new File(Environment.getExternalStorageDirectory(), "/linkloving/" + System.currentTimeMillis() + ".jpg");
-                        if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
-                        Uri imageUri = Uri.fromFile(file);
-                        CropOptions cropOptions = new CropOptions.Builder().setAspectX(1).setAspectY(1).setWithOwnCrop(true).create();
-                        takePhoto.onPickFromCaptureWithCrop(imageUri, cropOptions);
+                        mIntentPic = ImageUtil.takeBigPicture();
+                        startActivityForResult(mIntentPic, REQUEST_CODE_IMAGE_CAPTURE);
                     }
                 })
                 .setSelectalbum(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        takePhoto.onPickFromGallery();
+                        mIntentPic = ImageUtil.choosePicture2();
+                        startActivityForResult(mIntentPic, REQUEST_CODE_PICK_IMAGE);
                     }
                 })
                 .setCancel()
@@ -152,54 +163,82 @@ public class PhotoAreaActivity extends TakePhotoActivity {
 
     }
 
+    /**
+     * relative点击事件
+     */
+    @OnClick(R.id.recycler_area)
+    void clickRela(View view) {
+        res_data.clear();
+        adapter.notifyDataSetChanged();
+        ViewUtils.collapseSoftInputMethod(PhotoAreaActivity.this, editAreaMessage);
+    }
+
+    /**
+     * 提交物料信息
+     * */
+    @OnClick(R.id.tv_finish_order)
+    void commitMessage(View view){
+        HashMap<Object, Object> hashMap = new HashMap<>();
+        hashMap.put("type", type);
+        hashMap.put("order_id", order_id);
+        hashMap.put("area_name", editAreaMessage.getText().toString());
+        hashMap.put("img", BitmapUtils.bitmapToBase64(BitmapFactory.decodeFile(imgPath)));
+        Call<UpdateMessageBean> objectCall = inventoryApi.commitMessage(hashMap);
+        objectCall.enqueue(new MyCallback<UpdateMessageBean>() {
+            @Override
+            public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
+                if (response.body() == null)return;
+                if (response.body().getError()!=null){
+                    ToastUtils.showCommonToast(PhotoAreaActivity.this, response.body().getError().getMessage());
+                }else if (response.body().getResult()!=null){
+                    Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
+                    intent.putExtra("limit",limit);
+                    intent.putExtra("process_id", process_id);
+                    intent.putExtra("state",delay_state);
+                    startActivity(intent);
+                    PhotoAreaActivity.this.finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
+                super.onFailure(call, t);
+            }
+        });
+    }
+    /**
+     * 压缩图片
+     */
+    private void startPhotoZoom(String sourcePath) {
+        imgPath = ImageUtil.saveMyBitmap(sourcePath);
+
+        //上传
+        if (!StringUtils.isNullOrEmpty(imgPath)) {
+            Glide.with(PhotoAreaActivity.this).load(new File(imgPath)).into(imageShowPhoto);
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        takePhoto.onActivityResult(requestCode, resultCode, data);
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+        switch (requestCode) {
+            case REQUEST_CODE_IMAGE_CAPTURE:
+            case REQUEST_CODE_PICK_IMAGE:
+                String sourcePath = ImageUtil.retrievePath(PhotoAreaActivity.this, mIntentPic, data);
+                if (StringUtils.isNullOrEmpty(sourcePath)) {
+                    return;
+                }
+                startPhotoZoom(sourcePath);
+                break;
+
+        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        takePhoto.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void takeSuccess(TResult result) {
-        super.takeSuccess(result);
-        Bitmap bitmap = BitmapFactory.decodeFile(result.getImage().getCompressPath());
-        ToastUtils.showCommonToast(PhotoAreaActivity.this, result.getImage().getCompressPath());
-        TImage image = result.getImage();
-        Glide.with(PhotoAreaActivity.this).load(result.getImage()).into(imageShowPhoto);
-       // ToastUtils.showCommonToast(PhotoAreaActivity.this, "????????");
-    }
-
-    @Override
-    public PermissionManager.TPermissionType invoke(InvokeParam invokeParam) {
-        PermissionManager.TPermissionType type = PermissionManager.checkPermission(TContextWrap.of(this), invokeParam.getMethod());
-        if (PermissionManager.TPermissionType.WAIT.equals(type)) {
-            this.invokeParam = invokeParam;
-        }
-        return type;
-    }
-
-    /**
-     * 空白区域点击事件
-     * */
-    @OnClick(R.id.recycler_area)
-    void clickRela(View view){
-        res_data = null;
-        adapter.notifyDataSetChanged();
-    }
-    /**
-     * 权限问题
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        //以下代码为处理Android6.0、7.0动态权限所需
-        PermissionManager.TPermissionType type = PermissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        PermissionManager.handlePermissionsResult(this, type, invokeParam, this);
     }
 
 

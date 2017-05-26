@@ -8,14 +8,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.uuzuche.lib_zxing.activity.CaptureFragment;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
@@ -23,6 +21,7 @@ import com.uuzuche.lib_zxing.activity.CodeUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -33,8 +32,10 @@ import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.FindProductByConditionResponse;
+import tarce.model.inventory.CheckPickRegisBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
+import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.adapter.product.OrderDetailAdapter;
 import tarce.myodoo.uiutil.DialogForOrder;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
@@ -86,6 +87,9 @@ public class OrderDetailActivity extends ToolBarActivity {
     TextView tvCheckState;
     private static final int STATE_WAIT_WATERIAL = 1;
     private static final int STATE_START_PRODUCT = 2;
+    private static final int STATE_REQUSIT_RIGISTER = 3;//领料登记
+    @InjectView(R.id.tv_area_look)
+    TextView tvAreaLook;
     private int click_check;//用于底部的点击事件  根据状态加载不同的点击事件后续
     private InventoryApi inventoryApi;
     private int order_id;
@@ -101,6 +105,14 @@ public class OrderDetailActivity extends ToolBarActivity {
     private FullyLinearLayoutManager fullyLinearLayoutManager;
     private String state;//用于区分加载不同布局
     private DialogForOrder dialogForOrder;
+    private int limit;
+    private String delay_state;
+    private int process_id;
+    private OrderDetailBean.ResultBean.ResDataBean.PrepareMaterialAreaIdBean prepare_material_area_id;
+    private String prepare_material_img;
+    private String name_activity;
+    private String state_activity;
+    private OrderDetailBean.ResultBean result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +124,11 @@ public class OrderDetailActivity extends ToolBarActivity {
         order_id = intent.getIntExtra("order_id", 1);
         setTitle(intent.getStringExtra("order_name"));
         state = intent.getStringExtra("state");
+        limit = intent.getIntExtra("limit", 1);
+        delay_state = intent.getStringExtra("delay_state");
+        process_id = intent.getIntExtra("process_id", 1);
+        name_activity = intent.getStringExtra("name_activity");
+        state_activity = intent.getStringExtra("state_activity");
         initFragment();
         stateView(state);
         recyclerOrderDetail.setLayoutManager(new FullyLinearLayoutManager(OrderDetailActivity.this));
@@ -158,9 +175,22 @@ public class OrderDetailActivity extends ToolBarActivity {
             case "finish_prepare_material":
                 tvStateOrder.setText("备料完成");
                 framelayoutProduct.setVisibility(View.VISIBLE);
+                click_check = STATE_REQUSIT_RIGISTER;
+                tvStartProduce.setText("领料登记");
+                tvAreaLook.setVisibility(View.VISIBLE);
+                relativeOrderShow.setVisibility(View.GONE);
+                tvCheckState.setText("展开");
+                imgUpDown.setImageResource(R.mipmap.down);
+                up_or_down = false;
                 break;
             case "already_picking":
                 tvStateOrder.setText("已领料");
+                framelayoutProduct.setVisibility(View.GONE);
+                relativeOrderShow.setVisibility(View.VISIBLE);
+                tvCheckState.setText("收起");
+                imgUpDown.setImageResource(R.mipmap.up);
+                up_or_down = true;
+                tvStartProduce.setText("开始生产");
                 break;
             case "planned":
                 tvStateOrder.setText("安排");
@@ -207,7 +237,10 @@ public class OrderDetailActivity extends ToolBarActivity {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getResult().getRes_code() == 1) {
+                    result = response.body().getResult();
                     resDataBean = response.body().getResult().getRes_data();
+                    prepare_material_area_id = response.body().getResult().getRes_data().getPrepare_material_area_id();
+                    prepare_material_img = response.body().getResult().getRes_data().getPrepare_material_img();
                     initView();
                 }
             }
@@ -302,6 +335,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                     linesBean.setQuantity_ready((double) num);
                     adapter.notifyDataSetChanged();
                     adapter_two.notifyDataSetChanged();
+                    adapter_three.notifyDataSetChanged();
                 }
             }
         }, linesBean);
@@ -316,7 +350,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         tvNumProduct.setText(String.valueOf(new Double(resDataBean.getQty_produced()).intValue()));
         tvNeedNum.setText(String.valueOf(new Double(resDataBean.getProduct_qty()).intValue()));
         tvTimeProduct.setText(resDataBean.getDate_planned_start());
-        tvReworkProduct.setText(resDataBean.getDisplay_name());
+        tvReworkProduct.setText(resDataBean.getIn_charge_name());
         switch (resDataBean.getProduction_order_type()) {
             case "stockup":
                 tvTypeProduct.setText("备货制");
@@ -335,9 +369,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                 list_three.add(resDataBean.getStock_move_lines().get(i));
             }
         }
-        adapter = new OrderDetailAdapter(OrderDetailActivity.this, list_one, "原材料");
-        adapter_two = new OrderDetailAdapter(OrderDetailActivity.this, list_two, "半成品");
-        adapter_three = new OrderDetailAdapter(OrderDetailActivity.this, list_three, "流转品");
+        adapter = new OrderDetailAdapter(OrderDetailActivity.this, list_one, "原材料", result);
+        adapter_two = new OrderDetailAdapter(OrderDetailActivity.this, list_two, "半成品", result);
+        adapter_three = new OrderDetailAdapter(OrderDetailActivity.this, list_three, "流转品", result);
         recyclerOrderDetail.setAdapter(adapter);
         recycler2OrderDetail.setAdapter(adapter_two);
         recycler3OrderDetail.setAdapter(adapter_three);
@@ -381,6 +415,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                         if (response.body() == null) return;
                                         resDataBean = response.body().getResult().getRes_data();
                                         initView();
+                                        state = "prepare_material_ing";
                                         stateView("prepare_material_ing");
                                         // framelayoutProduct.setVisibility(View.VISIBLE);
                                     }
@@ -394,15 +429,89 @@ public class OrderDetailActivity extends ToolBarActivity {
                         }).show();
                 break;
             case STATE_START_PRODUCT:
-                AlertAialogUtils.getCommonDialog(OrderDetailActivity.this,"是否确定完成备料，下一步确认物料位置")
+                AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否确定完成备料，下一步确认物料位置")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent intent = new Intent(OrderDetailActivity.this, PhotoAreaActivity.class);
-                                //intent.putExtra()
+                                intent.putExtra("type", state);
+                                intent.putExtra("order_id", order_id);
+                                intent.putExtra("delay_state", delay_state);
+                                intent.putExtra("limit", limit);
+                                intent.putExtra("process_id", process_id);
                                 startActivity(intent);
                             }
                         }).show();
+                break;
+            case STATE_REQUSIT_RIGISTER:
+                /**
+                 * 判断流转品列表，逻辑为：备料数量至少要大于等于1，不然不能领料登记，而是提醒去修改备料数量，这时候 ， 原材料和半成品是不能点击的
+                 * */
+                boolean next = true;
+                int index = -1;
+                for (int i = 0; i < list_three.size(); i++) {
+                    if (StringUtils.doubleToInt(list_three.get(i).getQuantity_ready()) < 1) {
+                        next = false;
+                        index = i;
+                    }
+                }
+                if (next) {
+                    AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否确定领料登记")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    showDefultProgressDialog();
+                                    HashMap<Object, Object> hashMap = new HashMap();
+                                    hashMap.put("order_id", order_id);
+                                    Map[] maps = new Map[list_three.size()];
+                                    for (int i = 0; i < list_three.size(); i++) {
+                                        Map<Object, Object> mapSmall = new HashMap<>();
+                                        mapSmall.put("stock_move_lines_id", list_three.get(i).getId());
+                                        mapSmall.put("quantity_ready", list_three.get(i).getQuantity_ready());
+                                        mapSmall.put("order_id", list_three.get(i).getOrder_id());
+                                        maps[i] = mapSmall;
+                                    }
+                                    hashMap.put("stock_moves", maps);
+                                    Call<OrderDetailBean> objectCall = inventoryApi.checkPickRegister(hashMap);
+                                    objectCall.enqueue(new MyCallback<OrderDetailBean>() {
+                                        @Override
+                                        public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
+                                            dismissDefultProgressDialog();
+                                            if (response.body() == null) return;
+                                            if (response.body().getResult().getRes_code() == 1) {
+                                                resDataBean = response.body().getResult().getRes_data();
+                                                initView();
+                                                stateView("already_picking");
+                                                AlertAialogUtils.getCommonDialog(OrderDetailActivity.this,"").setMessage("领料完成")
+                                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                Intent intent = new Intent(OrderDetailActivity.this, ProductLlActivity.class);
+                                                                intent.putExtra("name_activity",name_activity);
+                                                                intent.putExtra("state_activity",state_activity);
+                                                                startActivity(intent);
+                                                                dialog.dismiss();
+                                                            }
+                                                        }).show();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<OrderDetailBean> call, Throwable t) {
+                                            dismissDefultProgressDialog();
+                                        }
+                                    });
+                                }
+                            }).show();
+                } else {
+                    AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "").setMessage("请确认： " + list_three.get(index).getProduct_id() + " 的领料数量")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                }
                 break;
         }
     }
@@ -431,6 +540,14 @@ public class OrderDetailActivity extends ToolBarActivity {
             imgUpDown.setImageResource(R.mipmap.up);
             up_or_down = true;
         }
+    }
+
+    @OnClick(R.id.tv_area_look)
+    void lookArea(View view) {
+        Intent intent = new Intent(OrderDetailActivity.this, AreaMessageActivity.class);
+        intent.putExtra("img_area", prepare_material_img);
+    //    intent.putExtra("string_area", (Boolean) prepare_material_area_id.getArea_name());
+        startActivity(intent);
     }
 
     @Override

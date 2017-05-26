@@ -111,7 +111,7 @@ public class ProduceFragment extends Fragment {
                     list.get(0).t.setNumber(needaction_counter0);
                     Integer needaction_counter1 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_already_picking().getNeedaction_counter();
                     list.get(1).t.setNumber(needaction_counter1);
-                    Integer needaction_counter2 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_done().getNeedaction_counter();
+                    Integer needaction_counter2 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
                     list.get(2).t.setNumber(needaction_counter2);
                     Integer needaction_counter3 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_rework_ing().getNeedaction_counter();
                     list.get(3).t.setNumber(needaction_counter3);

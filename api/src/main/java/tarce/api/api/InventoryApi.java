@@ -15,6 +15,7 @@ import tarce.model.LoadActionBean;
 import tarce.model.OutgoingStockpickingBean;
 import tarce.model.SearchSupplierResponse;
 import tarce.model.inventory.AreaMessageBean;
+import tarce.model.inventory.CheckPickRegisBean;
 import tarce.model.inventory.LoadProductBean;
 import tarce.model.inventory.MaterialDetailBean;
 import tarce.model.inventory.OrderDetailBean;
@@ -22,6 +23,7 @@ import tarce.model.inventory.PickingDetailBean;
 import tarce.model.inventory.ProcessDeatilBean;
 import tarce.model.inventory.SalesOutListResponse;
 import tarce.model.inventory.GetNumProcess;
+import tarce.model.inventory.UpdateMessageBean;
 
 /**
  * Created by Daniel.Xu on 2017/2/17.
@@ -142,4 +144,16 @@ public interface InventoryApi {
      * */
     @POST("get_area_list")
     Call<AreaMessageBean> getAreaMessage(@Body HashMap hashMap);
+
+    /**
+     * 提交物料信息
+     * */
+    @POST("upload_note_info")
+    Call<UpdateMessageBean> commitMessage(@Body HashMap hashMap);
+
+    /**
+     * 核实 领料登记
+     * */
+    @POST("already_picking")
+    Call<OrderDetailBean> checkPickRegister(@Body HashMap hashMap);
 }

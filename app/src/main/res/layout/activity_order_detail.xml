@@ -24,7 +24,7 @@
 
         <ImageView
             android:id="@+id/img_up_down"
-            android:layout_width="30dp"
+            android:layout_width="40dp"
             android:layout_height="30dp"
             android:layout_centerInParent="true"
             android:src="@mipmap/up" />
@@ -37,80 +37,92 @@
             android:layout_toRightOf="@+id/img_up_down"
             android:text="收起"
             android:textColor="@color/white"
-            android:textSize="11sp" />
+            android:textSize="13sp" />
     </RelativeLayout>
+
     <RelativeLayout
-        android:layout_below="@+id/relative_one"
         android:id="@+id/relative_order_show"
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="150dp"
+        android:layout_below="@+id/relative_one">
+
         <LinearLayout
             android:id="@+id/linear_colum"
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="10dp"
                 android:text="产品"
-                android:layout_gravity="right"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="10dp"
                 android:text="时间"
-                android:layout_gravity="right"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="返工单"
                 android:layout_gravity="right"
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/black"/>
+                android:text="负责人"
+                android:textColor="@color/black" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="10dp"
                 android:text="生产数量"
-                android:layout_gravity="right"
-                android:layout_marginRight="15dp"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="需求数量"
                 android:layout_gravity="right"
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="10dp"
-                android:textColor="@color/black"/>
+                android:text="需求数量"
+                android:textColor="@color/black" />
         </LinearLayout>
+
         <View
             android:layout_width="0.5dp"
             android:layout_height="match_parent"
-            android:background="@color/sbc_header_text"
-            android:layout_toRightOf="@+id/linear_colum"
+            android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"/>
+            android:layout_toRightOf="@+id/linear_colum"
+            android:background="@color/sbc_header_text" />
+
         <LinearLayout
             android:id="@+id/linear_two"
             android:layout_width="150dp"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/linear_colum"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_alignParentTop="true"
+            android:layout_toEndOf="@+id/linear_colum">
+
             <TextView
                 android:id="@+id/tv_name_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:lines="1"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp"
+                android:lines="1" />
+
             <TextView
                 android:id="@+id/tv_time_product"
                 android:layout_width="wrap_content"
@@ -118,6 +130,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp" />
+
             <TextView
                 android:id="@+id/tv_rework_product"
                 android:layout_width="wrap_content"
@@ -125,6 +138,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp" />
+
             <TextView
                 android:id="@+id/tv_num_product"
                 android:layout_width="wrap_content"
@@ -132,6 +146,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp" />
+
             <TextView
                 android:id="@+id/tv_need_num"
                 android:layout_width="wrap_content"
@@ -140,64 +155,72 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginTop="10dp" />
         </LinearLayout>
+
         <RelativeLayout
-            android:layout_toRightOf="@+id/linear_two"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/linear_two">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
                 android:text="工序"
-                android:textColor="@color/black"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"/>
+                android:textColor="@color/black" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="类型"
                 android:layout_alignParentBottom="true"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="10dp"
-                android:textColor="@color/black"
-                android:layout_marginBottom="10dp"/>
+                android:text="类型"
+                android:textColor="@color/black" />
+
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:background="@color/sbc_header_text"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="50dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"/>
+                android:background="@color/sbc_header_text" />
+
             <TextView
                 android:id="@+id/tv_gongxu_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="15dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="10dp" />
+
             <TextView
                 android:id="@+id/tv_type_product"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="15dp"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="10dp"/>
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="10dp"
+                android:layout_marginRight="15dp" />
         </RelativeLayout>
     </RelativeLayout>
+
     <FrameLayout
         android:id="@+id/framelayout_product"
         android:layout_width="match_parent"
         android:layout_height="250dp"
         android:layout_below="@+id/relative_order_show"
-        android:visibility="gone">
-    </FrameLayout>
+        android:visibility="gone"></FrameLayout>
+
     <LinearLayout
         android:id="@+id/linear_one"
-        android:layout_below="@+id/framelayout_product"
         android:layout_width="match_parent"
         android:layout_height="45dp"
+        android:layout_below="@+id/framelayout_product"
         android:background="@color/result_view"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -246,39 +269,61 @@
             android:text="备料"
             android:textColor="@color/white" />
     </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/linear_one"
-        android:layout_above="@+id/tv_start_produce">
+        android:layout_above="@+id/tv_start_produce"
+        android:layout_below="@+id/linear_one">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_order_detail"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </android.support.v7.widget.RecyclerView>
+                android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler2_order_detail"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </android.support.v7.widget.RecyclerView>
+                android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler3_order_detail"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </android.support.v7.widget.RecyclerView>
+                android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
         </LinearLayout>
     </ScrollView>
-    <TextView
-        android:id="@+id/tv_start_produce"
-        android:layout_alignParentBottom="true"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@color/cc"
-        android:text="开始生产"
-        android:textColor="@color/white"
-        android:gravity="center"/>
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_start_produce"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@color/cc"
+            android:gravity="center"
+            android:text="开始生产"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/tv_area_look"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/header"
+            android:gravity="center"
+            android:text="查看位置信息"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+    </LinearLayout>
+
 </RelativeLayout>

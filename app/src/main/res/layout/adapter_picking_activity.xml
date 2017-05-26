@@ -37,7 +37,7 @@
         android:id="@+id/tv_all_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="生产以及\n需求数量:"
+        android:text="需求数量:"
         android:textSize="13sp"
         android:layout_centerHorizontal="true"
         android:textColor="@color/black"
@@ -50,7 +50,7 @@
         android:layout_toRightOf="@+id/tv_all_name"
         android:layout_alignBottom="@+id/tv_all_name"
         android:text="1400"
-        android:textSize="11sp"
+        android:textSize="13sp"
         android:textColor="@color/black"/>
     <TextView
         android:id="@+id/tv_name_process"

@@ -7,166 +7,146 @@ import com.google.gson.annotations.SerializedName;
  */
 
 public class LoadActionBean {
-    public static class TResult {
 
-        public static class TRes_data {
+    /**
+     * jsonrpc : 2.0
+     * id : null
+     * result : {"res_data":{"linkloving_mrp_extend.mrp_production_action_qc_success":{"needaction_enabled":true,"needaction_counter":0},"linkloving_mrp_extend.menu_mrp_waiting_warehouse_inspection":{"needaction_enabled":true,"needaction_counter":9},"linkloving_mrp_extend.menu_mrp_prepare_material_ing":{"needaction_enabled":true,"needaction_counter":3}},"res_msg":"","res_code":1}
+     */
 
-            public static class TLinkloving_mrp_extend_menu_mrp_waiting_inventory_material {
+    private String jsonrpc;
+    private Object id;
+    private ResultBean result;
 
-                private Boolean needaction_enabled;	/*true*/
-                private Integer needaction_counter;	/*0*/
-
-                public void setNeedaction_enabled(Boolean value) {
-                    this.needaction_enabled = value;
-                }
-
-                public Boolean getNeedaction_enabled() {
-                    return this.needaction_enabled;
-                }
-
-                public void setNeedaction_counter(Integer value) {
-                    this.needaction_counter = value;
-                }
-
-                public Integer getNeedaction_counter() {
-                    return this.needaction_counter;
-                }
-
-            }
-
-            public static class TLinkloving_mrp_extend_menu_mrp_prepare_material_ing {
-
-                private Boolean needaction_enabled;	/*true*/
-                private Integer needaction_counter;	/*3*/
-
-                public void setNeedaction_enabled(Boolean value) {
-                    this.needaction_enabled = value;
-                }
-
-                public Boolean getNeedaction_enabled() {
-                    return this.needaction_enabled;
-                }
-
-                public void setNeedaction_counter(Integer value) {
-                    this.needaction_counter = value;
-                }
-
-                public Integer getNeedaction_counter() {
-                    return this.needaction_counter;
-                }
-
-            }
-
-            public static class TLinkloving_mrp_extend_menu_mrp_waiting_post_inventory {
-
-                private Boolean needaction_enabled;	/*true*/
-                private Integer needaction_counter;	/*2*/
-
-                public void setNeedaction_enabled(Boolean value) {
-                    this.needaction_enabled = value;
-                }
-
-                public Boolean getNeedaction_enabled() {
-                    return this.needaction_enabled;
-                }
-
-                public void setNeedaction_counter(Integer value) {
-                    this.needaction_counter = value;
-                }
-
-                public Integer getNeedaction_counter() {
-                    return this.needaction_counter;
-                }
-
-            }
-            @SerializedName("linkloving_mrp_extend.menu_mrp_prepare_material_ing")
-            private TLinkloving_mrp_extend_menu_mrp_prepare_material_ing linkloving_mrp_extend_menu_mrp_prepare_material_ing;	/*TLinkloving_mrp_extend_menu_mrp_prepare_material_ing*/
-            @SerializedName("linkloving_mrp_extend.menu_mrp_waiting_post_inventory")
-            private TLinkloving_mrp_extend_menu_mrp_waiting_post_inventory linkloving_mrp_extend_menu_mrp_waiting_post_inventory;	/*TLinkloving_mrp_extend_menu_mrp_waiting_post_inventory*/
-            @SerializedName("linkloving_mrp_extend.menu_mrp_waiting_inventory_material")
-            private TLinkloving_mrp_extend_menu_mrp_waiting_inventory_material linkloving_mrp_extend_menu_mrp_waiting_inventory_material;	/*TLinkloving_mrp_extend.menu_mrp_waiting_inventory_material*/
-
-            public void setLinkloving_mrp_extend_menu_mrp_waiting_inventory_material(TLinkloving_mrp_extend_menu_mrp_waiting_inventory_material value) {
-                this.linkloving_mrp_extend_menu_mrp_waiting_inventory_material = value;
-            }
-
-            public TLinkloving_mrp_extend_menu_mrp_waiting_inventory_material getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material() {
-                return this.linkloving_mrp_extend_menu_mrp_waiting_inventory_material;
-            }
-
-            public void setLinkloving_mrp_extend_menu_mrp_prepare_material_ing(TLinkloving_mrp_extend_menu_mrp_prepare_material_ing value) {
-                this.linkloving_mrp_extend_menu_mrp_prepare_material_ing = value;
-            }
-
-            public TLinkloving_mrp_extend_menu_mrp_prepare_material_ing getLinkloving_mrp_extend_menu_mrp_prepare_material_ing() {
-                return this.linkloving_mrp_extend_menu_mrp_prepare_material_ing;
-            }
-
-            public void setLinkloving_mrp_extend_menu_mrp_waiting_post_inventory(TLinkloving_mrp_extend_menu_mrp_waiting_post_inventory value) {
-                this.linkloving_mrp_extend_menu_mrp_waiting_post_inventory = value;
-            }
-
-            public TLinkloving_mrp_extend_menu_mrp_waiting_post_inventory getLinkloving_mrp_extend_menu_mrp_waiting_post_inventory() {
-                return this.linkloving_mrp_extend_menu_mrp_waiting_post_inventory;
-            }
-
-        }
-
-        private TRes_data res_data;	/*TRes_data*/
-        private Integer res_code;	/*1*/
-        private String res_msg;	/**/
-
-        public void setRes_data(TRes_data value) {
-            this.res_data = value;
-        }
-
-        public TRes_data getRes_data() {
-            return this.res_data;
-        }
-
-        public void setRes_code(Integer value) {
-            this.res_code = value;
-        }
-
-        public Integer getRes_code() {
-            return this.res_code;
-        }
-
-        public void setRes_msg(String value) {
-            this.res_msg = value;
-        }
-
-        public String getRes_msg() {
-            return this.res_msg;
-        }
-
+    public String getJsonrpc() {
+        return jsonrpc;
     }
 
-    private Object id;	/*Object*/
-    private TResult result;	/*TResult*/
-    private String jsonrpc;	/*2.0*/
-
-    public void setId(Object value) {
-        this.id = value;
+    public void setJsonrpc(String jsonrpc) {
+        this.jsonrpc = jsonrpc;
     }
 
     public Object getId() {
-        return this.id;
+        return id;
     }
 
-    public void setResult(TResult value) {
-        this.result = value;
+    public void setId(Object id) {
+        this.id = id;
     }
 
-    public TResult getResult() {
-        return this.result;
+    public ResultBean getResult() {
+        return result;
     }
 
-    public void setJsonrpc(String value) {
-        this.jsonrpc = value;
+    public void setResult(ResultBean result) {
+        this.result = result;
     }
 
-    public String getJsonrpc() {
-        return this.jsonrpc;
+    public static class ResultBean {
+        /**
+         * res_data : {"linkloving_mrp_extend.mrp_production_action_qc_success":{"needaction_enabled":true,"needaction_counter":0},"linkloving_mrp_extend.menu_mrp_waiting_warehouse_inspection":{"needaction_enabled":true,"needaction_counter":9},"linkloving_mrp_extend.menu_mrp_prepare_material_ing":{"needaction_enabled":true,"needaction_counter":3}}
+         * res_msg :
+         * res_code : 1
+         */
+
+        private ResDataBean res_data;
+        private String res_msg;
+        private int res_code;
+
+        public ResDataBean getRes_data() {
+            return res_data;
+        }
+
+        public void setRes_data(ResDataBean res_data) {
+            this.res_data = res_data;
+        }
+
+        public String getRes_msg() {
+            return res_msg;
+        }
+
+        public void setRes_msg(String res_msg) {
+            this.res_msg = res_msg;
+        }
+
+        public int getRes_code() {
+            return res_code;
+        }
+
+        public void setRes_code(int res_code) {
+            this.res_code = res_code;
+        }
+
+        public static class ResDataBean {
+
+            @SerializedName("linkloving_mrp_extend.mrp_production_action_qc_success")
+            private LinklovingMrpExtend linkloving_mrp_extend_mrp_production_action_qc_success;
+            @SerializedName("linkloving_mrp_extend.menu_mrp_waiting_warehouse_inspection")
+            private LinklovingMrpExtend linkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection;
+            @SerializedName("linkloving_mrp_extend.menu_mrp_prepare_material_ing")
+            private LinklovingMrpExtend linkloving_mrp_extend_menu_mrp_prepare_material_ing;
+            @SerializedName("linkloving_mrp_extend.menu_mrp_waiting_material")
+            private LinklovingMrpExtend linkloving_mrp_extend_menu_mrp_waiting_material;
+
+            public LinklovingMrpExtend getLinkloving_mrp_extend_menu_mrp_waiting_material() {
+                return linkloving_mrp_extend_menu_mrp_waiting_material;
+            }
+
+            public void setLinkloving_mrp_extend_menu_mrp_waiting_material(LinklovingMrpExtend linkloving_mrp_extend_menu_mrp_waiting_material) {
+                this.linkloving_mrp_extend_menu_mrp_waiting_material = linkloving_mrp_extend_menu_mrp_waiting_material;
+            }
+
+            public LinklovingMrpExtend getLinkloving_mrp_extend_mrp_production_action_qc_success() {
+                return linkloving_mrp_extend_mrp_production_action_qc_success;
+            }
+
+            public void setLinkloving_mrp_extend_mrp_production_action_qc_success(LinklovingMrpExtend linkloving_mrp_extend_mrp_production_action_qc_success) {
+                this.linkloving_mrp_extend_mrp_production_action_qc_success = linkloving_mrp_extend_mrp_production_action_qc_success;
+            }
+
+            public LinklovingMrpExtend getLinkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection() {
+                return linkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection;
+            }
+
+            public void setLinkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection(LinklovingMrpExtend linkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection) {
+                this.linkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection = linkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection;
+            }
+
+            public LinklovingMrpExtend getLinkloving_mrp_extend_menu_mrp_prepare_material_ing() {
+                return linkloving_mrp_extend_menu_mrp_prepare_material_ing;
+            }
+
+            public void setLinkloving_mrp_extend_menu_mrp_prepare_material_ing(LinklovingMrpExtend linkloving_mrp_extend_menu_mrp_prepare_material_ing) {
+                this.linkloving_mrp_extend_menu_mrp_prepare_material_ing = linkloving_mrp_extend_menu_mrp_prepare_material_ing;
+            }
+
+
+            public static class LinklovingMrpExtend {
+                /**
+                 * needaction_enabled : true
+                 * needaction_counter : 0
+                 */
+
+                private boolean needaction_enabled;
+                private int needaction_counter;
+
+                public boolean isNeedaction_enabled() {
+                    return needaction_enabled;
+                }
+
+                public void setNeedaction_enabled(boolean needaction_enabled) {
+                    this.needaction_enabled = needaction_enabled;
+                }
+
+                public int getNeedaction_counter() {
+                    return needaction_counter;
+                }
+
+                public void setNeedaction_counter(int needaction_counter) {
+                    this.needaction_counter = needaction_counter;
+                }
+            }
+
+        }
     }
 }
