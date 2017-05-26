@@ -31,6 +31,7 @@
                 android:id="@+id/search_button"
                 android:background="@mipmap/search"
                 android:layout_marginRight="20dp"
+
                 />
             <Button
                 android:layout_width="30dp"
