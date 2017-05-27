@@ -78,7 +78,6 @@ public class ProduceFragment extends Fragment {
         setRecyclerview(recyclerview);
         recyclerview.setAdapter(sectionAdapter);
         setOnclick();
-        AlertAialogUtils.showDefultProgressDialog(getActivity());
         initRedNum();
         return view;
     }
@@ -92,6 +91,7 @@ public class ProduceFragment extends Fragment {
      * 检测是否需要显示的相应item的红色圈圈加数字
      * */
     private void initRedNum() {
+        AlertAialogUtils.showDefultProgressDialog(getActivity());
         inventoryApi = RetrofitClient.getInstance(getActivity()).create(InventoryApi.class);
         String[] menus = {"linkloving_mrp_extend.menu_mrp_finish_prepare_material","linkloving_mrp_extend.menu_mrp_already_picking",
                 "linkloving_mrp_extend.menu_mrp_progress","linkloving_mrp_extend.menu_mrp_waiting_inventory_material",
@@ -127,6 +127,7 @@ public class ProduceFragment extends Fragment {
 
             @Override
             public void onFailure(Call<LoadProductBean> call, Throwable t) {
+                AlertAialogUtils.dismissDefultProgressDialog();
                 super.onFailure(call, t);
             }
         });

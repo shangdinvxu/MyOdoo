@@ -1,5 +1,7 @@
 package tarce.myodoo.adapter.product;
 
+import android.util.Log;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -20,6 +22,11 @@ public class PickingDetailAdapter extends BaseQuickAdapter<PickingDetailBean.Res
     public PickingDetailAdapter(int layoutResId, List<PickingDetailBean.ResultBean.ResDataBean> data) {
         super(layoutResId, data);
         this.data = data;
+    }
+
+    public void addList(List<PickingDetailBean.ResultBean.ResDataBean> data){
+        data.addAll(data);
+        notifyDataSetChanged();
     }
 
     @Override

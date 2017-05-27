@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="M64681321"
-        android:textSize="13sp"
+        android:textSize="11sp"
         android:layout_toRightOf="@+id/id_colum"
         android:layout_marginTop="6dp"
         android:layout_marginLeft="10dp"/>
@@ -43,12 +43,11 @@
         android:textColor="@color/black"
         android:layout_marginTop="6dp"/>
     <TextView
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="6dp"
         android:id="@+id/tv_product_qty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/tv_all_name"
-        android:layout_alignBottom="@+id/tv_all_name"
         android:text="1400"
         android:textSize="13sp"
         android:textColor="@color/black"/>

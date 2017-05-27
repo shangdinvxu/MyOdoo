@@ -67,6 +67,8 @@
             android:screenOrientation="portrait" />
         <activity android:name=".activity.AreaMessageActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".activity.AddPersonActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 

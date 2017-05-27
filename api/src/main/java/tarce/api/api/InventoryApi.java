@@ -16,6 +16,7 @@ import tarce.model.OutgoingStockpickingBean;
 import tarce.model.SearchSupplierResponse;
 import tarce.model.inventory.AreaMessageBean;
 import tarce.model.inventory.CheckPickRegisBean;
+import tarce.model.inventory.FreeWorkBean;
 import tarce.model.inventory.LoadProductBean;
 import tarce.model.inventory.MaterialDetailBean;
 import tarce.model.inventory.OrderDetailBean;
@@ -156,4 +157,22 @@ public interface InventoryApi {
      * */
     @POST("already_picking")
     Call<OrderDetailBean> checkPickRegister(@Body HashMap hashMap);
+
+    /**
+     * 待工员工接口
+     * */
+    @POST("find_free_workers")
+    Call<Object> getFreeWorkers(@Body HashMap hashMap);
+
+    /**
+     * 工作中员工接口
+     * */
+    @POST("find_worker_lines")
+    Call<FreeWorkBean> getWorking(@Body HashMap hashMap);
+
+    /**
+     * 扫描二维码自动添加员工
+     * */
+    @POST("add_worker")
+    Call<Object> addWorker(@Body HashMap hashMap);
 }

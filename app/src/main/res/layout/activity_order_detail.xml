@@ -273,7 +273,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/tv_start_produce"
+        android:layout_above="@+id/linear_three"
         android:layout_below="@+id/linear_one">
 
         <LinearLayout
@@ -299,6 +299,7 @@
     </ScrollView>
 
     <LinearLayout
+        android:id="@+id/linear_three"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

@@ -88,6 +88,7 @@ public class OrderDetailActivity extends ToolBarActivity {
     private static final int STATE_WAIT_WATERIAL = 1;
     private static final int STATE_START_PRODUCT = 2;
     private static final int STATE_REQUSIT_RIGISTER = 3;//领料登记
+    private static final int STATE_ALREADY_PICKING = 4;//开始生产
     @InjectView(R.id.tv_area_look)
     TextView tvAreaLook;
     private int click_check;//用于底部的点击事件  根据状态加载不同的点击事件后续
@@ -171,6 +172,10 @@ public class OrderDetailActivity extends ToolBarActivity {
                 click_check = STATE_START_PRODUCT;
                 camera_or_relative = true;
                 framelayoutProduct.setVisibility(View.VISIBLE);
+                relativeOrderShow.setVisibility(View.GONE);
+                tvCheckState.setText("展开");
+                imgUpDown.setImageResource(R.mipmap.down);
+                up_or_down = false;
                 break;
             case "finish_prepare_material":
                 tvStateOrder.setText("备料完成");
@@ -185,6 +190,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "already_picking":
                 tvStateOrder.setText("已领料");
+                click_check = STATE_ALREADY_PICKING;
                 framelayoutProduct.setVisibility(View.GONE);
                 relativeOrderShow.setVisibility(View.VISIBLE);
                 tvCheckState.setText("收起");
@@ -512,6 +518,11 @@ public class OrderDetailActivity extends ToolBarActivity {
                                 }
                             }).show();
                 }
+                break;
+            case  STATE_ALREADY_PICKING:
+                Intent intent = new Intent(OrderDetailActivity.this, AddPersonActivity.class);
+                intent.putExtra("order_id", order_id);
+                startActivity(intent);
                 break;
         }
     }
