@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,16 +15,27 @@ import android.view.ViewGroup;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import retrofit2.Call;
+import retrofit2.Response;
+import rx.Observable;
+import tarce.api.MyCallback;
+import tarce.api.RetrofitClient;
+import tarce.api.api.InventoryApi;
+import tarce.model.LoadActionBean;
+import tarce.model.inventory.LoadProductBean;
 import tarce.myodoo.IntentFactory;
+import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.WaitReworkActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
+import tarce.support.AlertAialogUtils;
 
 /**\
  * 生产界面
@@ -36,6 +48,8 @@ public class ProduceFragment extends Fragment {
     public SectionAdapter sectionAdapter;
     @InjectView(R.id.recyclerview)
     RecyclerView recyclerview;
+    private InventoryApi inventoryApi;
+    private SectionAdapter adapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,7 +78,59 @@ public class ProduceFragment extends Fragment {
         setRecyclerview(recyclerview);
         recyclerview.setAdapter(sectionAdapter);
         setOnclick();
+        initRedNum();
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    /**
+     * 检测是否需要显示的相应item的红色圈圈加数字
+     * */
+    private void initRedNum() {
+    //    AlertAialogUtils.showDefultProgressDialog(getActivity());
+        inventoryApi = RetrofitClient.getInstance(getActivity()).create(InventoryApi.class);
+        String[] menus = {"linkloving_mrp_extend.menu_mrp_finish_prepare_material","linkloving_mrp_extend.menu_mrp_already_picking",
+                "linkloving_mrp_extend.menu_mrp_progress","linkloving_mrp_extend.menu_mrp_waiting_inventory_material",
+                "linkloving_mrp_extend.mrp_production_qc_inspection_fail","linkloving_mrp_extend.menu_mrp_rework_ing"
+                ,"linkloving_mrp_extend.menu_mrp_done"};
+        HashMap<Object, Object> hashMap = new HashMap<>();
+        hashMap.put("xml_names", menus);
+        hashMap.put("user_id", MyApplication.userID);
+        Call<LoadProductBean> loadActionBeanCall = inventoryApi.load_action(hashMap);
+        loadActionBeanCall.enqueue(new MyCallback<LoadProductBean>() {
+            @Override
+            public void onResponse(Call<LoadProductBean> call, Response<LoadProductBean> response) {
+               // AlertAialogUtils.dismissDefultProgressDialog();
+                if (response.body() == null)return;
+                if (response.body().getResult().getRes_code() == 1){
+                    Integer needaction_counter0 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_finish_prepare_material().getNeedaction_counter();
+                    list.get(0).t.setNumber(needaction_counter0);
+                    Integer needaction_counter1 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_already_picking().getNeedaction_counter();
+                    list.get(1).t.setNumber(needaction_counter1);
+                    Integer needaction_counter2 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
+                    list.get(2).t.setNumber(needaction_counter2);
+                    Integer needaction_counter3 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_rework_ing().getNeedaction_counter();
+                    list.get(3).t.setNumber(needaction_counter3);
+                    Integer needaction_counter4 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_mrp_production_qc_inspection_fail().getNeedaction_counter();
+                    list.get(4).t.setNumber(needaction_counter4);
+                    Integer needaction_counter5 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
+                    list.get(5).t.setNumber(needaction_counter5);
+                    /*Integer needaction_counter6 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
+                    list.get(6).t.setNumber(needaction_counter6);*/
+                    sectionAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<LoadProductBean> call, Throwable t) {
+              //  AlertAialogUtils.dismissDefultProgressDialog();
+                super.onFailure(call, t);
+            }
+        });
     }
 
     /**
@@ -101,7 +167,6 @@ public class ProduceFragment extends Fragment {
             }
         });
     }
-
 
     public void setRecyclerview(RecyclerView recyclerview){
         recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));

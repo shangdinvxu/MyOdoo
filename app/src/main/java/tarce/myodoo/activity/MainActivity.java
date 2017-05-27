@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -36,6 +37,7 @@ import tarce.myodoo.fragment.WarehouseFragment;
 import tarce.myodoo.view.NoScrollViewPager;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
+import tarce.support.ToastUtils;
 
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getSimpleName();
@@ -121,49 +123,37 @@ public class MainActivity extends AppCompatActivity {
 
     private void refreshLoadAction() {
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-        String[] names = {"linkloving_mrp_extend.menu_mrp_prepare_material_ing",
-                "linkloving_mrp_extend.menu_mrp_waiting_inventory_material",
-                "linkloving_mrp_extend.menu_mrp_waiting_post_inventory"};
+        String[] names = {"linkloving_mrp_extend.menu_mrp_prepare_material_ing","linkloving_mrp_extend.menu_mrp_waiting_material",
+                "linkloving_mrp_extend.menu_mrp_waiting_warehouse_inspection",
+                "linkloving_mrp_extend.mrp_production_action_qc_success"};
         objectObjectHashMap.put("xml_names", names);
         objectObjectHashMap.put("user_id", MyApplication.userID);
-        AlertAialogUtils.showDefultProgressDialog(MainActivity.this);
+     //   AlertAialogUtils.showDefultProgressDialog(MainActivity.this);
         Call<LoadActionBean> objectCall = inventoryApi.load_actionCall(objectObjectHashMap);
         objectCall.enqueue(new Callback<LoadActionBean>() {
             @Override
             public void onResponse(Call<LoadActionBean> call, Response<LoadActionBean> response) {
-                AlertAialogUtils.dismissDefultProgressDialog();
+              //  AlertAialogUtils.dismissDefultProgressDialog();
                 if (response.body() != null && response.body().getResult().getRes_code() == 1) {
                     Integer needaction_counter = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_prepare_material_ing().getNeedaction_counter();
-                    Integer needaction_counter1 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
-//                    Integer needaction_counter2 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_post_inventory().getNeedaction_counter();
-//                    warehouseFragment.list.get(5).t.setNumber(needaction_counter);
-//                    warehouseFragment.list.get(6).t.setNumber(needaction_counter1);
+                    Integer needaction_counter1 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection().getNeedaction_counter();
+                    Integer needaction_counter2 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_mrp_production_action_qc_success().getNeedaction_counter();
+                    Integer needaction_counter3 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_material().getNeedaction_counter();
+                    warehouseFragment.list.get(5).t.setNumber(needaction_counter+needaction_counter3);
+                    warehouseFragment.list.get(6).t.setNumber(needaction_counter1);
+                    warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
 //                    //               warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
-//                    warehouseFragment.sectionAdapter.notifyDataSetChanged();
+                    warehouseFragment.sectionAdapter.notifyDataSetChanged();
                 }
 
             }
 
             @Override
             public void onFailure(Call<LoadActionBean> call, Throwable t) {
-                AlertAialogUtils.dismissDefultProgressDialog();
+          //      AlertAialogUtils.dismissDefultProgressDialog();
                 MyLog.e(TAG, t.toString());
             }
         });
-      /*  Observable<Object> stringObservable = inventoryApi.load_action(objectObjectHashMap);
-        stringObservable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ProgressSubscriber<>(new SubscriberOnNextListener<Object>() {
-                    @Override
-                    public void onNext(Object object) {
-                        String s = object.toString();
-                        try {
-                            JSONObject jsonObject = new JSONObject(s);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, this));*/
     }
 
     @OnClick(R.id.radio_button2)
@@ -199,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setAdapter(myViewPagerAdapter);
         mViewPager.setCurrentItem(0);
         radioButton1.setClickable(true);
+        refreshLoadAction();
     }
 
 

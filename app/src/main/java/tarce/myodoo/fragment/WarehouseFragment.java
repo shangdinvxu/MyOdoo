@@ -1,5 +1,6 @@
 package tarce.myodoo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,8 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import tarce.myodoo.IntentFactory;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.MaterialDetailActivity;
+import tarce.myodoo.activity.ShowProcessActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
@@ -93,7 +96,11 @@ public class WarehouseFragment extends Fragment {
                         IntentFactory.start_SeProce_Activity(getActivity());
                         break;
                     case "生产退料":
-                        IntentFactory.start_ProducLl_Activity(getActivity(), "生产退料", "waiting_warehouse_inspection");
+                        /*Intent intent = new Intent(getActivity(), MaterialDetailActivity.class);
+                        intent.putExtra("process_id", delay_num);
+                        intent.putExtra("state",beanList.get(position).getProcess_name());
+                        intent.putExtra("limit", beanList.get(position).getProcess_num());
+                        startActivity(intent);*/
                         break;
                     case "生产入库":
                         IntentFactory.start_WaitRework_Activity(getActivity(),"生产入库", "qc_success");

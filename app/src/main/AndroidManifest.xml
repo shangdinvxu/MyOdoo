@@ -12,6 +12,7 @@
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.MANAGE_NEWLAND"/>
@@ -59,6 +60,14 @@
         <activity android:name=".activity.WaitReworkActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.OrderDetailActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.MaterialDetailActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.PhotoAreaActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.AreaMessageActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.AddPersonActivity"
             android:screenOrientation="portrait"/>
     </application>
 

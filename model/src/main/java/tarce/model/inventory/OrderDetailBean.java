@@ -100,6 +100,25 @@ public class OrderDetailBean {
              * prepare_material_img : http://192.168.88.128:8069/linkloving_app_api/get_worker_image?worker_id=44420&model=mrp.production&field=prepare_material_img
              */
 
+            private String remark;
+
+            public String getRemark() {
+                return remark;
+            }
+
+            public void setRemark(String remark) {
+                this.remark = remark;
+            }
+
+            public String getSale_remark() {
+                return sale_remark;
+            }
+
+            public void setSale_remark(String sale_remark) {
+                this.sale_remark = sale_remark;
+            }
+
+            private String sale_remark;
             private String origin;
             private PrepareMaterialAreaIdBean prepare_material_area_id;
             private String display_name;
@@ -273,29 +292,29 @@ public class OrderDetailBean {
             }
 
             public static class PrepareMaterialAreaIdBean {
+                public Object getArea_id() {
+                    return area_id;
+                }
+
+                public void setArea_id(Object area_id) {
+                    this.area_id = area_id;
+                }
+
+                public Object getArea_name() {
+                    return area_name;
+                }
+
+                public void setArea_name(Object area_name) {
+                    this.area_name = area_name;
+                }
+
                 /**
                  * area_id : false
                  * area_name : false
                  */
 
-                private boolean area_id;
-                private boolean area_name;
-
-                public boolean isArea_id() {
-                    return area_id;
-                }
-
-                public void setArea_id(boolean area_id) {
-                    this.area_id = area_id;
-                }
-
-                public boolean isArea_name() {
-                    return area_name;
-                }
-
-                public void setArea_name(boolean area_name) {
-                    this.area_name = area_name;
-                }
+                private Object area_id;
+                private Object area_name;
             }
 
             public static class ProductIdBean {
@@ -349,24 +368,25 @@ public class OrderDetailBean {
                      * area_name : false
                      */
 
-                    private boolean area_id;
-                    private boolean area_name;
+                    private Object area_id;
+                    private Object area_name;
 
-                    public boolean isArea_id() {
+                    public Object getArea_id() {
                         return area_id;
                     }
 
-                    public void setArea_id(boolean area_id) {
+                    public void setArea_id(Object area_id) {
                         this.area_id = area_id;
                     }
 
-                    public boolean isArea_name() {
+                    public Object getArea_name() {
                         return area_name;
                     }
 
-                    public void setArea_name(boolean area_name) {
+                    public void setArea_name(Object area_name) {
                         this.area_name = area_name;
                     }
+
                 }
             }
 
@@ -464,6 +484,16 @@ public class OrderDetailBean {
                 private double quantity_done;
                 private int id;
                 private double over_picking_qty;
+
+                public ProductIdBean.AreaIdBean getArea_id() {
+                    return area_id;
+                }
+
+                public void setArea_id(ProductIdBean.AreaIdBean area_id) {
+                    this.area_id = area_id;
+                }
+
+                private ProductIdBean.AreaIdBean  area_id;
 
                 public double getQuantity_ready() {
                     return quantity_ready;

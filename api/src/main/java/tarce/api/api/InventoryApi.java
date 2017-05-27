@@ -14,11 +14,17 @@ import tarce.model.GetSaleResponse;
 import tarce.model.LoadActionBean;
 import tarce.model.OutgoingStockpickingBean;
 import tarce.model.SearchSupplierResponse;
+import tarce.model.inventory.AreaMessageBean;
+import tarce.model.inventory.CheckPickRegisBean;
+import tarce.model.inventory.FreeWorkBean;
+import tarce.model.inventory.LoadProductBean;
+import tarce.model.inventory.MaterialDetailBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.model.inventory.ProcessDeatilBean;
 import tarce.model.inventory.SalesOutListResponse;
 import tarce.model.inventory.GetNumProcess;
+import tarce.model.inventory.UpdateMessageBean;
 
 /**
  * Created by Daniel.Xu on 2017/2/17.
@@ -68,8 +74,11 @@ public interface InventoryApi {
     Call<GetSaleResponse> changeStockPicking(@Body HashMap hashMap );
 
 
+    /**
+     * 检测红色圈圈数字
+     * */
     @POST("load_needaction")
-    Observable<LoadActionBean> load_action(@Body HashMap hashMap);
+    Call<LoadProductBean> load_action(@Body HashMap hashMap);
 
     @POST("load_needaction")
     Call<LoadActionBean> load_actionCall(@Body HashMap hashMap);
@@ -118,4 +127,52 @@ public interface InventoryApi {
      * */
     @POST("get_qc_feedback")
     Call<Object> getReworkRuku(@Body HashMap hashMap);
+
+    /**
+     * 生产备料-》延误-》详情
+     * */
+    @POST("get_recent_production_order")
+    Call<MaterialDetailBean> getRecentOr(@Body HashMap hashMap);
+
+    /**
+     * 点击开始备料-》
+     * */
+    @POST("prepare_material_ing")
+    Call<OrderDetailBean> checkPrepare(@Body HashMap hashMap);
+
+    /**
+     * 搜索位置信息
+     * */
+    @POST("get_area_list")
+    Call<AreaMessageBean> getAreaMessage(@Body HashMap hashMap);
+
+    /**
+     * 提交物料信息
+     * */
+    @POST("upload_note_info")
+    Call<UpdateMessageBean> commitMessage(@Body HashMap hashMap);
+
+    /**
+     * 核实 领料登记
+     * */
+    @POST("already_picking")
+    Call<OrderDetailBean> checkPickRegister(@Body HashMap hashMap);
+
+    /**
+     * 待工员工接口
+     * */
+    @POST("find_free_workers")
+    Call<FreeWorkBean> getFreeWorkers(@Body HashMap hashMap);
+
+    /**
+     * 工作中员工接口
+     * */
+    @POST("find_worker_lines")
+    Call<FreeWorkBean> getWorking(@Body HashMap hashMap);
+
+    /**
+     * 扫描二维码自动添加员工
+     * */
+    @POST("add_worker")
+    Call<Object> addWorker(@Body HashMap hashMap);
 }

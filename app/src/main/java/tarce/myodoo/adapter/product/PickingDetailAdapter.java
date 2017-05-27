@@ -1,5 +1,7 @@
 package tarce.myodoo.adapter.product;
 
+import android.util.Log;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -7,6 +9,8 @@ import java.util.List;
 
 import tarce.model.inventory.PickingDetailBean;
 import tarce.myodoo.R;
+import tarce.myodoo.utils.DateTool;
+import tarce.myodoo.utils.StringUtils;
 
 /**
  * Created by rose.zou on 2017/5/22.
@@ -20,14 +24,20 @@ public class PickingDetailAdapter extends BaseQuickAdapter<PickingDetailBean.Res
         this.data = data;
     }
 
+    public void addList(List<PickingDetailBean.ResultBean.ResDataBean> data){
+        data.addAll(data);
+        notifyDataSetChanged();
+    }
+
     @Override
     protected void convert(BaseViewHolder helper, PickingDetailBean.ResultBean.ResDataBean item) {
         helper.setText(R.id.id_colum, helper.getPosition()+1+".");
         helper.setText(R.id.tv_display_name, item.getDisplay_name());
         helper.setText(R.id.tv_product_name, item.getProduct_name());
         helper.setText(R.id.tv_name_process, "工序:"+item.getProcess_id().getName());
-        helper.setText(R.id.tv_product_qty, String.valueOf(new Double(item.getProduct_qty()).intValue()));
+        helper.setText(R.id.tv_product_qty, StringUtils.doubleToString(item.getProduct_qty()));
         helper.setText(R.id.tv_date_planned_start, item.getDate_planned_start());
+       // helper.setText(R.id.tv_date_planned_start, DateTool.getGMTBeijing(item.getDate_planned_start()));
         switch (item.getState()){
             case "draft":
                 helper.setText(R.id.tv_state, "草稿");

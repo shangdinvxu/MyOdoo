@@ -6,7 +6,10 @@ import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
+
+import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,13 +62,16 @@ public class ShowProcessActivity extends ToolBarActivity {
     private void getDetailDelay() {
         Intent intent = getIntent();
         delay_num = intent.getIntExtra("delay_num", 3);
-        Log.i(TAG, "delay_num = "+delay_num);
+        setTitle(intent.getStringExtra("process_name"));
         beanList = new ArrayList<>();
         ProcessShowBean showBean = new ProcessShowBean();
-        beanList.add(new ProcessShowBean("延误",0));
-        beanList.add(new ProcessShowBean("今天",0));
-        beanList.add(new ProcessShowBean("明天",0));
-        beanList.add(new ProcessShowBean("后天",0));
+        beanList.add(new ProcessShowBean("延误", 0));
+        beanList.add(new ProcessShowBean("今天", 0));
+        beanList.add(new ProcessShowBean("明天", 0));
+        beanList.add(new ProcessShowBean("后天", 0));
+
+        detailAdapter = new ProcessDetailAdapter(R.layout.adapter_process_detail, beanList);
+        recyclerDetailProcess.setAdapter(detailAdapter);
 
         inventoryApi = RetrofitClient.getInstance(ShowProcessActivity.this).create(InventoryApi.class);
         HashMap<Object, Object> hashMap = new HashMap<Object, Object>();
@@ -78,31 +84,50 @@ public class ShowProcessActivity extends ToolBarActivity {
                 AlertAialogUtils.dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getResult().getRes_code() == 1) {
-                    if (response.body().getResult().getRes_data() == null){
-                        detailAdapter = new ProcessDetailAdapter(R.layout.adapter_process_detail, beanList);
-                        recyclerDetailProcess.setAdapter(detailAdapter);
+                    if (response.body().getResult().getRes_data() == null) {
+                        /*detailAdapter = new ProcessDetailAdapter(R.layout.adapter_process_detail, beanList);
+                        recyclerDetailProcess.setAdapter(detailAdapter);*/
                         return;
-                    };
-                    for(int i = 0; i < response.body().getResult().getRes_data().size(); i++) {
-                        if (response.body().getResult().getRes_data().get(i).getState().equals("delay")){
-                            beanList.set(0,new ProcessShowBean("延误", response.body().getResult().getRes_data().get(i).getCount()));
-                        }else if (response.body().getResult().getRes_data().get(i).getState().equals("today")){
-                            beanList.set(1,new ProcessShowBean("今天", response.body().getResult().getRes_data().get(i).getCount()));
-                        }else if (response.body().getResult().getRes_data().get(i).getState().equals("tomorrow")){
-                            beanList.set(2,new ProcessShowBean("明天", response.body().getResult().getRes_data().get(i).getCount()));
-                        }else if (response.body().getResult().getRes_data().get(i).getState().equals("after")){
-                            beanList.set(3,new ProcessShowBean("后天", response.body().getResult().getRes_data().get(i).getCount()));
+                    }
+                    ;
+                    for (int i = 0; i < response.body().getResult().getRes_data().size(); i++) {
+                        if (response.body().getResult().getRes_data().get(i).getState().equals("delay")) {
+                            beanList.set(0, new ProcessShowBean("延误", response.body().getResult().getRes_data().get(i).getCount()));
+                        } else if (response.body().getResult().getRes_data().get(i).getState().equals("today")) {
+                            beanList.set(1, new ProcessShowBean("今天", response.body().getResult().getRes_data().get(i).getCount()));
+                        } else if (response.body().getResult().getRes_data().get(i).getState().equals("tomorrow")) {
+                            beanList.set(2, new ProcessShowBean("明天", response.body().getResult().getRes_data().get(i).getCount()));
+                        } else if (response.body().getResult().getRes_data().get(i).getState().equals("after")) {
+                            beanList.set(3, new ProcessShowBean("后天", response.body().getResult().getRes_data().get(i).getCount()));
                         }
                     }
-                    detailAdapter = new ProcessDetailAdapter(R.layout.adapter_process_detail, beanList);
-                    recyclerDetailProcess.setAdapter(detailAdapter);
-                 //   Toast.makeText(ShowProcessActivity.this, "????", Toast.LENGTH_SHORT).show();
+                    detailAdapter.notifyDataSetChanged();
+                    itemClick();
                 }
             }
 
             @Override
             public void onFailure(Call<ProcessDeatilBean> call, Throwable t) {
+                AlertAialogUtils.dismissDefultProgressDialog();
+            }
+        });
+    }
 
+    /**
+     * item点击事件
+     */
+    private void itemClick() {
+        detailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (beanList.get(position).getProcess_num() == 0) {
+                    return;
+                }
+                Intent intent = new Intent(ShowProcessActivity.this, MaterialDetailActivity.class);
+                intent.putExtra("process_id", delay_num);
+                intent.putExtra("state",beanList.get(position).getProcess_name());
+                intent.putExtra("limit", beanList.get(position).getProcess_num());
+                startActivity(intent);
             }
         });
     }

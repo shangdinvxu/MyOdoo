@@ -235,6 +235,7 @@ public final class ViewfinderView extends View {
                 + corLength, paint);
         canvas.drawRect(frame.left, frame.top, frame.left
                 + corLength, frame.top + corWidth, paint);
+
         // 右上角
         canvas.drawRect(frame.right - corWidth, frame.top, frame.right,
                 frame.top + corLength, paint);

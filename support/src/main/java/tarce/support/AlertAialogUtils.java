@@ -24,15 +24,17 @@ public class AlertAialogUtils {
     }
 
     public  static void showDefultProgressDialog(Context context){
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Loading...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        if (progressDialog == null){
+            progressDialog = new ProgressDialog(context);
+        }
+            progressDialog.setMessage("Loading...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
     }
 
 
     public static void dismissDefultProgressDialog(){
-        if (progressDialog!=null&&progressDialog.isShowing()){
+        if (progressDialog!=null || progressDialog.isShowing()){
             progressDialog.dismiss();
         }
     }

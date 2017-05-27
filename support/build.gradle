@@ -73,8 +73,4 @@ dependencies {
     compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.12'
 
     compile 'com.amitshekhar.android:debug-db:1.0.0'
-
-
-
-
 }

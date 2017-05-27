@@ -12,16 +12,21 @@
 
     <com.uuzuche.lib_zxing.view.ViewfinderView
         android:id="@+id/viewfinder_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:inner_width="200dp"
         app:inner_height="200dp"
-        app:inner_margintop="180dp"
+        app:inner_margintop="80dp"
         app:inner_corner_length="30dp"
         app:inner_corner_width="5dp"
         app:inner_scan_bitmap="@drawable/scan_light"
         app:inner_scan_speed="10"
         app:inner_scan_iscircle="false"
         />
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="将二维码放入框内，即可自动扫描"
+        android:textColor="@color/white"
+        android:layout_gravity="bottom|center_horizontal"/>
 </FrameLayout>
