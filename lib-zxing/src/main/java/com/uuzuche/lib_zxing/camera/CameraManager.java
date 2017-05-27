@@ -255,12 +255,14 @@ public final class CameraManager {
             //我们可以通过修改下面width height 里0.8 1.0参数 来改变高和宽
             //int width = (int) (metrics.widthPixels * 0.8);
             int width = (int) (metrics.widthPixels * 1.0);
-            int height = (int) (width * 1.0);
+            int height = (int) (width * 0.65);
 
             int leftOffset = (screenResolution.x - width) / 2;
             int topOffset = (screenResolution.y - height) / 4;
-            framingRect = new Rect(leftOffset, topOffset, leftOffset + width,
-                    topOffset + height);
+            /*framingRect = new Rect(leftOffset, topOffset, leftOffset + width,
+                    topOffset + height);*/
+            framingRect = new Rect(leftOffset, 0, leftOffset + width,
+                     height);
             Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
         return framingRect;

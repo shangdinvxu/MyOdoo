@@ -91,7 +91,7 @@ public class ProduceFragment extends Fragment {
      * 检测是否需要显示的相应item的红色圈圈加数字
      * */
     private void initRedNum() {
-        AlertAialogUtils.showDefultProgressDialog(getActivity());
+    //    AlertAialogUtils.showDefultProgressDialog(getActivity());
         inventoryApi = RetrofitClient.getInstance(getActivity()).create(InventoryApi.class);
         String[] menus = {"linkloving_mrp_extend.menu_mrp_finish_prepare_material","linkloving_mrp_extend.menu_mrp_already_picking",
                 "linkloving_mrp_extend.menu_mrp_progress","linkloving_mrp_extend.menu_mrp_waiting_inventory_material",
@@ -104,7 +104,7 @@ public class ProduceFragment extends Fragment {
         loadActionBeanCall.enqueue(new MyCallback<LoadProductBean>() {
             @Override
             public void onResponse(Call<LoadProductBean> call, Response<LoadProductBean> response) {
-                AlertAialogUtils.dismissDefultProgressDialog();
+               // AlertAialogUtils.dismissDefultProgressDialog();
                 if (response.body() == null)return;
                 if (response.body().getResult().getRes_code() == 1){
                     Integer needaction_counter0 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_finish_prepare_material().getNeedaction_counter();
@@ -127,7 +127,7 @@ public class ProduceFragment extends Fragment {
 
             @Override
             public void onFailure(Call<LoadProductBean> call, Throwable t) {
-                AlertAialogUtils.dismissDefultProgressDialog();
+              //  AlertAialogUtils.dismissDefultProgressDialog();
                 super.onFailure(call, t);
             }
         });

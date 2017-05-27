@@ -162,7 +162,7 @@ public interface InventoryApi {
      * 待工员工接口
      * */
     @POST("find_free_workers")
-    Call<Object> getFreeWorkers(@Body HashMap hashMap);
+    Call<FreeWorkBean> getFreeWorkers(@Body HashMap hashMap);
 
     /**
      * 工作中员工接口

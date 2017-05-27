@@ -114,6 +114,7 @@ public class OrderDetailActivity extends ToolBarActivity {
     private String name_activity;
     private String state_activity;
     private OrderDetailBean.ResultBean result;
+    private boolean isShowDialog = true;//用于判断是否已经显示了dialog，为了防止扫描时候的连续弹出
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -330,22 +331,28 @@ public class OrderDetailActivity extends ToolBarActivity {
      */
     private void initDialog(final OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
 
-        dialogForOrder = new DialogForOrder(OrderDetailActivity.this, new DialogForOrder.OnSendCommonClickListener() {
-            @Override
-            public void OnSendCommonClick(int num) {
-                int i = StringUtils.doubleToInt(linesBean.getQty_available());
-                //   int i1 = StringUtils.doubleToInt(linesBean.getQuantity_ready());
-                if (num > i) {
-                    ToastUtils.showCommonToast(OrderDetailActivity.this, "该产品库存不足");
-                } else {
-                    linesBean.setQuantity_ready((double) num);
-                    adapter.notifyDataSetChanged();
-                    adapter_two.notifyDataSetChanged();
-                    adapter_three.notifyDataSetChanged();
+        if (isShowDialog){
+            isShowDialog = false;
+            dialogForOrder = new DialogForOrder(OrderDetailActivity.this, new DialogForOrder.OnSendCommonClickListener() {
+                @Override
+                public void OnSendCommonClick(int num) {
+                    int i = StringUtils.doubleToInt(linesBean.getQty_available());
+                    //   int i1 = StringUtils.doubleToInt(linesBean.getQuantity_ready());
+                    if (num > i) {
+                        ToastUtils.showCommonToast(OrderDetailActivity.this, "该产品库存不足");
+                    } else {
+                        linesBean.setQuantity_ready((double) num);
+                        adapter.notifyDataSetChanged();
+                        adapter_two.notifyDataSetChanged();
+                        adapter_three.notifyDataSetChanged();
+                    }
                 }
-            }
-        }, linesBean);
-        dialogForOrder.show();
+            }, linesBean);
+            dialogForOrder.show();
+        }
+        if (!dialogForOrder.isShowing()){//为防止扫描多次弹出多个对话框
+            isShowDialog = true;
+        }
     }
 
     /**

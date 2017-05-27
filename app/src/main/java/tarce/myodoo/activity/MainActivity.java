@@ -128,12 +128,12 @@ public class MainActivity extends AppCompatActivity {
                 "linkloving_mrp_extend.mrp_production_action_qc_success"};
         objectObjectHashMap.put("xml_names", names);
         objectObjectHashMap.put("user_id", MyApplication.userID);
-        AlertAialogUtils.showDefultProgressDialog(MainActivity.this);
+     //   AlertAialogUtils.showDefultProgressDialog(MainActivity.this);
         Call<LoadActionBean> objectCall = inventoryApi.load_actionCall(objectObjectHashMap);
         objectCall.enqueue(new Callback<LoadActionBean>() {
             @Override
             public void onResponse(Call<LoadActionBean> call, Response<LoadActionBean> response) {
-                AlertAialogUtils.dismissDefultProgressDialog();
+              //  AlertAialogUtils.dismissDefultProgressDialog();
                 if (response.body() != null && response.body().getResult().getRes_code() == 1) {
                     Integer needaction_counter = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_prepare_material_ing().getNeedaction_counter();
                     Integer needaction_counter1 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection().getNeedaction_counter();
@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<LoadActionBean> call, Throwable t) {
-                AlertAialogUtils.dismissDefultProgressDialog();
+          //      AlertAialogUtils.dismissDefultProgressDialog();
                 MyLog.e(TAG, t.toString());
             }
         });

@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.ButterKnife;
-
 import butterknife.InjectView;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -88,11 +87,6 @@ public class AddPersonActivity extends ToolBarActivity {
             @Override
             public void onResponse(Call<FreeWorkBean> call, Response<FreeWorkBean> response) {
                 if (response.body() == null)return;
-                if (response.body().getResult().getRes_code() == 1){
-                    res_data = response.body().getResult().getRes_data();
-                    adapter = new WorkPersonAdapter(R.layout.adapter_area_message, response.body().getResult().getRes_data());
-                    recyclerPersonWait.setAdapter(adapter);
-                }
             }
 
             @Override
@@ -108,12 +102,16 @@ public class AddPersonActivity extends ToolBarActivity {
     private void getFreeWork() {
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("order_id", order_id);
-        Call<Object> freeWorkers = inventoryApi.getFreeWorkers(hashMap);
-        freeWorkers.enqueue(new MyCallback<Object>() {
+        Call<FreeWorkBean> freeWorkers = inventoryApi.getFreeWorkers(hashMap);
+        freeWorkers.enqueue(new MyCallback<FreeWorkBean>() {
             @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
+            public void onResponse(Call<FreeWorkBean> call, Response<FreeWorkBean> response) {
                 if (response.body() == null)return;
-                Log.i(TAG, "2222222222");
+                if (response.body().getResult().getRes_code() == 1){
+                    res_data = response.body().getResult().getRes_data();
+                    adapter = new WorkPersonAdapter(res_data, AddPersonActivity.this);
+                    recyclerPersonWait.setAdapter(adapter);
+                }
             }
         });
     }

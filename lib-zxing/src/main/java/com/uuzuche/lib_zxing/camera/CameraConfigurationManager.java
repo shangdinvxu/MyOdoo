@@ -156,8 +156,16 @@ final class CameraConfigurationManager {
                 continue;
             }
 
-            //int newDiff = Math.abs(newX - screenResolution.x) + Math.abs(newY - screenResolution.y);
-            float newDiff = Math.abs(screenResolution.x * 1.0f / newY - screenResolution.y * 1.0f / newX);
+            Point screenResolutionForCamera = new Point();
+            screenResolutionForCamera.x = screenResolution.x;
+            screenResolutionForCamera.y = screenResolution.y;
+            // preview size is always something like 480*320, other 320*480
+            if (screenResolution.x < screenResolution.y) {
+                screenResolutionForCamera.x = screenResolution.y;
+                screenResolutionForCamera.y = screenResolution.x;
+            }
+            int newDiff = Math.abs(newX - screenResolutionForCamera.x) + Math.abs(newY - screenResolutionForCamera.y);
+           // float newDiff = Math.abs(screenResolution.x * 1.0f / newY - screenResolution.y * 1.0f / newX);
             if (newDiff == 0) {
                 bestX = newX;
                 bestY = newY;
