@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import butterknife.ButterKnife;
+
 import butterknife.InjectView;
 import retrofit2.Call;
 import retrofit2.Response;
