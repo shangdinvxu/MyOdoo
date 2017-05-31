@@ -29,6 +29,7 @@ import tarce.api.api.InventoryApi;
 import tarce.model.inventory.FreeWorkBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.WorkPersonAdapter;
+import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
 /**
@@ -73,7 +74,6 @@ public class AddPersonActivity extends ToolBarActivity {
         inventoryApi = RetrofitClient.getInstance(AddPersonActivity.this).create(InventoryApi.class);
         getFreeWork();
         getWorking();
-        initView();
     }
 
     /**
@@ -116,10 +116,13 @@ public class AddPersonActivity extends ToolBarActivity {
         });
     }
 
-
-    private void initView() {
+    /**
+     * 添加员工
+     * */
+    private void addPerson(){
+        HashMap<Object, Object> hashMap = new HashMap<>();
+     //   hashMap.put()
     }
-
     /**
      * 初始化扫描模块, 扫描之后自动添加
      */
@@ -133,6 +136,7 @@ public class AddPersonActivity extends ToolBarActivity {
             @Override
             public void onAnalyzeSuccess(Bitmap mBitmap, String result) {
                 Log.i(TAG, "result = "+result);
+                ToastUtils.showCommonToast(AddPersonActivity.this, result);
             }
 
             @Override

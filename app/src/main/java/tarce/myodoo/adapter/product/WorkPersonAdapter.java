@@ -2,6 +2,7 @@ package tarce.myodoo.adapter.product;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import tarce.model.inventory.FreeWorkBean;
@@ -33,7 +35,7 @@ public class WorkPersonAdapter extends RecyclerView.Adapter<WorkPersonAdapter.Wo
 
     private List<FreeWorkBean.ResultBean.ResDataBean> list;
     private Context context;
-    private List<FreeWorkBean.ResultBean.ResDataBean> selectList;
+    private List<FreeWorkBean.ResultBean.ResDataBean> selectList = new ArrayList<>();
 
     @Override
     public WorkViewHold onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -44,21 +46,41 @@ public class WorkPersonAdapter extends RecyclerView.Adapter<WorkPersonAdapter.Wo
     }
 
     @Override
-    public void onBindViewHolder(WorkViewHold holder, final int position) {
+    public void onBindViewHolder(final WorkViewHold holder, final int position) {
+        holder.mTv_show_name.setText(list.get(position).getName());
+       final FreeWorkBean.ResultBean.ResDataBean resDataBean = list.get(position);
+
+        /*if (selectList.contains(resDataBean)) {
+            holder.mTv_show_name.setChecked(true);
+            Log.i("WorkPersonAdapter","1");
+        } else {
+            holder.mTv_show_name.setChecked(false);
+            Log.i("WorkPersonAdapter","2");
+        }*/
         holder.mTv_show_name.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                selectList.add(list.get(position));
+                if (isChecked){
+                    if (!selectList.contains(holder.itemView.getTag())) {
+                        selectList.add(resDataBean);
+                        Log.i("WorkPersonAdapter","3");
+                    }
+                }else {
+                    if (selectList.contains(holder.itemView.getTag())) {
+                        selectList.remove(resDataBean);
+                        Log.i("WorkPersonAdapter","4");
+                    }
+                }
             }
         });
-        final Object obj= list.get(position);
-        if (selectList.contains(obj)) {
+        if (selectList.contains(resDataBean)) {
             holder.mTv_show_name.setChecked(true);
+            Log.i("WorkPersonAdapter","1");
         } else {
             holder.mTv_show_name.setChecked(false);
+            Log.i("WorkPersonAdapter","2");
         }
-        holder.itemView.setTag(obj);
-        holder.mTv_show_name.setText(list.get(position).getName());
+        holder.itemView.setTag(resDataBean);
     }
 
     @Override
