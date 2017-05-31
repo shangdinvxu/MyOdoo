@@ -204,7 +204,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                 tvStateOrder.setText("安排");
                 break;
             case "progress":
-                tvStateOrder.setText("生产中");
+                tvStateOrder.setText("进行中");
+                framelayoutProduct.setVisibility(View.GONE);
                 break;
             case "waiting_inspection_finish":
                 tvStateOrder.setText("等待品检完成");

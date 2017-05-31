@@ -61,7 +61,7 @@ public class PickingDetailAdapter extends BaseQuickAdapter<PickingDetailBean.Res
                 helper.setText(R.id.tv_state, "安排");
                 break;
             case "progress":
-                helper.setText(R.id.tv_state, "生产中");
+                helper.setText(R.id.tv_state, "进行中");
                 break;
             case "waiting_inspection_finish":
                 helper.setText(R.id.tv_state, "等待品检完成");

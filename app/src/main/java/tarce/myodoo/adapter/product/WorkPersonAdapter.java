@@ -50,37 +50,33 @@ public class WorkPersonAdapter extends RecyclerView.Adapter<WorkPersonAdapter.Wo
         holder.mTv_show_name.setText(list.get(position).getName());
        final FreeWorkBean.ResultBean.ResDataBean resDataBean = list.get(position);
 
-        /*if (selectList.contains(resDataBean)) {
-            holder.mTv_show_name.setChecked(true);
-            Log.i("WorkPersonAdapter","1");
-        } else {
-            holder.mTv_show_name.setChecked(false);
-            Log.i("WorkPersonAdapter","2");
-        }*/
         holder.mTv_show_name.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
                     if (!selectList.contains(holder.itemView.getTag())) {
                         selectList.add(resDataBean);
-                        Log.i("WorkPersonAdapter","3");
                     }
                 }else {
                     if (selectList.contains(holder.itemView.getTag())) {
                         selectList.remove(resDataBean);
-                        Log.i("WorkPersonAdapter","4");
                     }
                 }
             }
         });
         if (selectList.contains(resDataBean)) {
             holder.mTv_show_name.setChecked(true);
-            Log.i("WorkPersonAdapter","1");
         } else {
             holder.mTv_show_name.setChecked(false);
-            Log.i("WorkPersonAdapter","2");
         }
         holder.itemView.setTag(resDataBean);
+    }
+
+    /**
+     * 返回选中的list数据
+     * */
+    public List<FreeWorkBean.ResultBean.ResDataBean> getSelected(){
+        return selectList;
     }
 
     @Override
