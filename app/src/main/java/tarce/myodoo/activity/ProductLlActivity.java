@@ -159,13 +159,23 @@ public class ProductLlActivity extends ToolBarActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 int order_id = beanList.get(position).getOrder_id();
-                Intent intent = new Intent(ProductLlActivity.this, OrderDetailActivity.class);
-                intent.putExtra("order_name",beanList.get(position).getDisplay_name());
-                intent.putExtra("order_id", order_id);
-                intent.putExtra("state",beanList.get(position).getState());
-                intent.putExtra("name_activity",name_activity);
-                intent.putExtra("state_activity",state_activity);
-                startActivity(intent);
+                if (beanList.get(position).getState().equals("progress")){
+                    Intent intent = new Intent(ProductLlActivity.this, ProductingActivity.class);
+                    intent.putExtra("order_name",beanList.get(position).getDisplay_name());
+                    intent.putExtra("order_id", order_id);
+                    intent.putExtra("state",beanList.get(position).getState());
+                    intent.putExtra("name_activity",name_activity);
+                    intent.putExtra("state_activity",state_activity);
+                    startActivity(intent);
+                }else {
+                    Intent intent = new Intent(ProductLlActivity.this, OrderDetailActivity.class);
+                    intent.putExtra("order_name",beanList.get(position).getDisplay_name());
+                    intent.putExtra("order_id", order_id);
+                    intent.putExtra("state",beanList.get(position).getState());
+                    intent.putExtra("name_activity",name_activity);
+                    intent.putExtra("state_activity",state_activity);
+                    startActivity(intent);
+                }
             }
         });
     }

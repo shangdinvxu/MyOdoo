@@ -6,6 +6,7 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 import rx.Observable;
+import tarce.model.AddworkBean;
 import tarce.model.FindProductByConditionResponse;
 import tarce.model.GetGroupByListresponse;
 import tarce.model.GetProcessBean;
@@ -25,6 +26,7 @@ import tarce.model.inventory.ProcessDeatilBean;
 import tarce.model.inventory.SalesOutListResponse;
 import tarce.model.inventory.GetNumProcess;
 import tarce.model.inventory.UpdateMessageBean;
+import tarce.model.inventory.WorkingWorkerBean;
 
 /**
  * Created by Daniel.Xu on 2017/2/17.
@@ -168,11 +170,17 @@ public interface InventoryApi {
      * 工作中员工接口
      * */
     @POST("find_worker_lines")
-    Call<FreeWorkBean> getWorking(@Body HashMap hashMap);
+    Call<WorkingWorkerBean> getWorking(@Body HashMap hashMap);
 
     /**
      * 扫描二维码自动添加员工
      * */
     @POST("add_worker")
     Call<Object> addWorker(@Body HashMap hashMap);
+
+    /**
+     * 点击添加按钮添加员工
+     * */
+    @POST("add_worker")
+    Call<AddworkBean> addWork_id(@Body HashMap hashMap);
 }

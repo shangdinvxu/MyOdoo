@@ -206,18 +206,18 @@
         </RelativeLayout>
     </RelativeLayout>
 
-    <FrameLayout
+    <!--<FrameLayout
         android:id="@+id/framelayout_product"
         android:layout_width="match_parent"
         android:layout_height="240dp"
         android:layout_below="@+id/relative_order_show"
-        android:visibility="gone"></FrameLayout>
+        android:visibility="gone"></FrameLayout>-->
 
     <LinearLayout
         android:id="@+id/linear_one"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_below="@+id/framelayout_product"
+        android:layout_below="@+id/relative_order_show"
         android:background="@color/result_view"
         android:orientation="horizontal">
 
@@ -312,19 +312,50 @@
             android:layout_weight="1"
             android:background="@color/cc"
             android:gravity="center"
-            android:text="开始生产"
-            android:textColor="@color/white" />
+            android:text="生产完成"
+            android:textColor="@color/white"
+            android:visibility="gone"/>
 
         <TextView
-            android:id="@+id/tv_area_look"
+            android:id="@+id/tv_add_ll"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="@color/header"
+            android:background="@color/cc"
             android:gravity="center"
-            android:text="查看位置信息"
+            android:text="补领料"
             android:textColor="@color/white"
-            android:visibility="gone" />
+            android:layout_marginLeft="2dp"/>
+        <TextView
+            android:id="@+id/tv_product_out"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@color/cc"
+            android:gravity="center"
+            android:text="产出"
+            android:textColor="@color/white"
+            android:layout_marginLeft="2dp"/>
+        <TextView
+            android:id="@+id/tv_person_manage"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@color/cc"
+            android:gravity="center"
+            android:text="人员管理"
+            android:textColor="@color/white"
+            android:layout_marginLeft="2dp"/>
+        <TextView
+            android:id="@+id/tv_line_stop"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@color/cc"
+            android:gravity="center"
+            android:text="产线暂停"
+            android:textColor="@color/white"
+            android:layout_marginLeft="2dp"/>
     </LinearLayout>
 
 </RelativeLayout>

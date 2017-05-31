@@ -115,6 +115,7 @@ public class OrderDetailActivity extends ToolBarActivity {
     private String state_activity;
     private OrderDetailBean.ResultBean result;
     private boolean isShowDialog = true;//用于判断是否已经显示了dialog，为了防止扫描时候的连续弹出
+    private String scanResult = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,7 +204,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                 tvStateOrder.setText("安排");
                 break;
             case "progress":
-                tvStateOrder.setText("生产中");
+                tvStateOrder.setText("进行中");
+                framelayoutProduct.setVisibility(View.GONE);
                 break;
             case "waiting_inspection_finish":
                 tvStateOrder.setText("等待品检完成");
@@ -272,6 +274,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         captureFragment.setAnalyzeCallback(new CodeUtils.AnalyzeCallback() {
             @Override
             public void onAnalyzeSuccess(Bitmap mBitmap, String result) {
+                if (!isShowDialog)return;
                 HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
                 objectObjectHashMap.put("default_code", result);
                 HashMap<Object, Object> objectObjectHashMap1 = new HashMap<>();
