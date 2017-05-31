@@ -55,9 +55,10 @@ public class ProductLlActivity extends ToolBarActivity {
     SwipeToLoadLayout swipeToLoad;
     private InventoryApi loginApi;
     private List<PickingDetailBean.ResultBean.ResDataBean> beanList = new ArrayList<>();
-    private List<PickingDetailBean.ResultBean.ResDataBean> dataBeanList = new ArrayList<>();;
+    private List<PickingDetailBean.ResultBean.ResDataBean> dataBeanList = new ArrayList<>();
+    ;
     private PickingDetailAdapter adapter;
-    private int loadTime = 1;
+    private int loadTime = 0;
     private String state_activity;//生产状态
     private String name_activity;
 
@@ -87,7 +88,7 @@ public class ProductLlActivity extends ToolBarActivity {
         swipeToLoad.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                AlertAialogUtils.showDefultProgressDialog(ProductLlActivity.this);
+                showDefultProgressDialog();
                 getPicking(0, 20, Refresh_Move);
                 adapter.notifyDataSetChanged();
                 swipeToLoad.setRefreshing(false);
@@ -99,7 +100,8 @@ public class ProductLlActivity extends ToolBarActivity {
                 swipeToLoad.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        getPicking(20 * loadTime, 20 * (loadTime + 1) , Load_Move);
+                        loadTime++;
+                        getPicking(20 * loadTime, 20, Load_Move);
                         adapter.notifyDataSetChanged();
                         swipeToLoad.setLoadingMore(false);
                     }
@@ -111,13 +113,13 @@ public class ProductLlActivity extends ToolBarActivity {
     /**
      * 获取领料的详情
      */
-    private void getPicking(final int offset, final int limit, final int action) {
+    private void getPicking(final int offset, final int limit, final int move) {
         loginApi = RetrofitClient.getInstance(ProductLlActivity.this).create(InventoryApi.class);
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("state", state_activity);
         hashMap.put("offset", offset);
         hashMap.put("limit", limit);
-        if (!state_activity.equals("rework_ing")   || !state_activity.equals("done")) {
+        if (!state_activity.equals("rework_ing") || !state_activity.equals("done")) {
             int partner_id = SharePreferenceUtils.getInt("partner_id", 1000, ProductLlActivity.this);
             hashMap.put("partner_id", partner_id);
         }
@@ -127,21 +129,23 @@ public class ProductLlActivity extends ToolBarActivity {
             public void onResponse(Call<PickingDetailBean> call, Response<PickingDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                beanList = response.body().getResult().getRes_data();
-                if (action == Load_Move){//上拉加载
-                    if (beanList.size()==0){
-                        ToastUtils.showCommonToast(ProductLlActivity.this, "没有更多数据");
+                if (response.body().getResult().getRes_code() == 1){
+                    if (move == Refresh_Move){
+                        beanList = response.body().getResult().getRes_data();
+                        adapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, beanList);
                     }else {
-                        ToastUtils.showCommonToast(ProductLlActivity.this, "  ??"+loadTime);
-                        adapter.addList(beanList);
-                       // adapter.notifyDataSetChanged();
-                        loadTime = loadTime+1;
+                        dataBeanList = beanList;
+                        beanList = response.body().getResult().getRes_data();
+                        if (beanList == null){
+                            ToastUtils.showCommonToast(ProductLlActivity.this, "没有更多数据...");
+                            return;
+                        }
+                        dataBeanList.addAll(beanList);
+                        adapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, dataBeanList);
                     }
-                } else {//下拉刷新
-                    adapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, beanList);
                     swipeTarget.setAdapter(adapter);
+                    clickAdapterItem();
                 }
-                clickAdapterItem();
             }
 
             @Override
@@ -153,27 +157,27 @@ public class ProductLlActivity extends ToolBarActivity {
 
     /**
      * recycleView的item的点击事件
-     * */
+     */
     private void clickAdapterItem() {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 int order_id = beanList.get(position).getOrder_id();
-                if (beanList.get(position).getState().equals("progress")){
+                if (beanList.get(position).getState().equals("progress")) {
                     Intent intent = new Intent(ProductLlActivity.this, ProductingActivity.class);
-                    intent.putExtra("order_name",beanList.get(position).getDisplay_name());
+                    intent.putExtra("order_name", beanList.get(position).getDisplay_name());
                     intent.putExtra("order_id", order_id);
-                    intent.putExtra("state",beanList.get(position).getState());
-                    intent.putExtra("name_activity",name_activity);
-                    intent.putExtra("state_activity",state_activity);
+                    intent.putExtra("state", beanList.get(position).getState());
+                    intent.putExtra("name_activity", name_activity);
+                    intent.putExtra("state_activity", state_activity);
                     startActivity(intent);
-                }else {
+                } else {
                     Intent intent = new Intent(ProductLlActivity.this, OrderDetailActivity.class);
-                    intent.putExtra("order_name",beanList.get(position).getDisplay_name());
+                    intent.putExtra("order_name", beanList.get(position).getDisplay_name());
                     intent.putExtra("order_id", order_id);
-                    intent.putExtra("state",beanList.get(position).getState());
-                    intent.putExtra("name_activity",name_activity);
-                    intent.putExtra("state_activity",state_activity);
+                    intent.putExtra("state", beanList.get(position).getState());
+                    intent.putExtra("name_activity", name_activity);
+                    intent.putExtra("state_activity", state_activity);
                     startActivity(intent);
                 }
             }

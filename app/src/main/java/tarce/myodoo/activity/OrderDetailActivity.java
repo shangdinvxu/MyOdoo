@@ -532,6 +532,8 @@ public class OrderDetailActivity extends ToolBarActivity {
             case  STATE_ALREADY_PICKING:
                 Intent intent = new Intent(OrderDetailActivity.this, AddPersonActivity.class);
                 intent.putExtra("order_id", order_id);
+                intent.putExtra("state_activity", state_activity);
+                intent.putExtra("name_activity", name_activity);
                 startActivity(intent);
                 break;
         }

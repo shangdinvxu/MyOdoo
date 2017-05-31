@@ -16,6 +16,8 @@ import tarce.model.LoadActionBean;
 import tarce.model.OutgoingStockpickingBean;
 import tarce.model.SearchSupplierResponse;
 import tarce.model.inventory.AreaMessageBean;
+import tarce.model.inventory.AutoAddworkBean;
+import tarce.model.inventory.CheckOutProductBean;
 import tarce.model.inventory.CheckPickRegisBean;
 import tarce.model.inventory.FreeWorkBean;
 import tarce.model.inventory.LoadProductBean;
@@ -25,6 +27,7 @@ import tarce.model.inventory.PickingDetailBean;
 import tarce.model.inventory.ProcessDeatilBean;
 import tarce.model.inventory.SalesOutListResponse;
 import tarce.model.inventory.GetNumProcess;
+import tarce.model.inventory.StartProductBean;
 import tarce.model.inventory.UpdateMessageBean;
 import tarce.model.inventory.WorkingWorkerBean;
 
@@ -176,11 +179,23 @@ public interface InventoryApi {
      * 扫描二维码自动添加员工
      * */
     @POST("add_worker")
-    Call<Object> addWorker(@Body HashMap hashMap);
+    Call<AutoAddworkBean> addWorker(@Body HashMap hashMap);
 
     /**
      * 点击添加按钮添加员工
      * */
     @POST("add_worker")
     Call<AddworkBean> addWork_id(@Body HashMap hashMap);
+
+    /**
+     * 产出确认（符合条件）
+     * */
+    @POST("do_produce")
+    Call<CheckOutProductBean> checkOut(@Body HashMap hashMap);
+
+    /**
+     *确认开始生产
+     * */
+    @POST("start_produce")
+    Call<StartProductBean> startProduct(@Body HashMap hashMap);
 }

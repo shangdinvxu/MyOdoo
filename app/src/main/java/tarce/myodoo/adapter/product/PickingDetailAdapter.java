@@ -24,11 +24,6 @@ public class PickingDetailAdapter extends BaseQuickAdapter<PickingDetailBean.Res
         this.data = data;
     }
 
-    public void addList(List<PickingDetailBean.ResultBean.ResDataBean> data){
-        data.addAll(data);
-        notifyDataSetChanged();
-    }
-
     @Override
     protected void convert(BaseViewHolder helper, PickingDetailBean.ResultBean.ResDataBean item) {
         helper.setText(R.id.id_colum, helper.getPosition()+1+".");

@@ -1,5 +1,6 @@
 package tarce.myodoo.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import com.uuzuche.lib_zxing.activity.CodeUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -29,12 +32,15 @@ import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.AddworkBean;
+import tarce.model.inventory.AutoAddworkBean;
 import tarce.model.inventory.FreeWorkBean;
+import tarce.model.inventory.StartProductBean;
 import tarce.model.inventory.WorkingWorkerBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.adapter.product.WorkPersonAdapter;
 import tarce.myodoo.adapter.product.WorkingPersonAdapter;
+import tarce.support.AlertAialogUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
@@ -65,7 +71,12 @@ public class AddPersonActivity extends ToolBarActivity {
     private List<FreeWorkBean.ResultBean.ResDataBean> res_data;
     private WorkingPersonAdapter personAdapter;
     private List<String> res_data_working;
-    private List<String> add_name;
+    private List<String> add_name = new ArrayList<>();
+    ;
+    private List<WorkingWorkerBean.ResultBean.ResDataBean> res_dataTwo;
+    private Map<String, Integer> map;//存放work的name和id
+    private String state_activity;
+    private String name_activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +91,10 @@ public class AddPersonActivity extends ToolBarActivity {
         initFragment();
         Intent intent = getIntent();
         order_id = intent.getIntExtra("order_id", 1);
+        state_activity = intent.getStringExtra("state_activity");
+        name_activity = intent.getStringExtra("name_activity");
         inventoryApi = RetrofitClient.getInstance(AddPersonActivity.this).create(InventoryApi.class);
+        showDefultProgressDialog();
         getFreeWork();
         getWorking();
     }
@@ -90,21 +104,23 @@ public class AddPersonActivity extends ToolBarActivity {
      */
     private void getWorking() {
         res_data_working = new ArrayList<>();
+        res_dataTwo = new ArrayList<>();
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("order_id", order_id);
         Call<WorkingWorkerBean> working = inventoryApi.getWorking(hashMap);
         working.enqueue(new MyCallback<WorkingWorkerBean>() {
             @Override
             public void onResponse(Call<WorkingWorkerBean> call, Response<WorkingWorkerBean> response) {
-                if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
-                    List<WorkingWorkerBean.ResultBean.ResDataBean> res_dataTwo = response.body().getResult().getRes_data();
+                if (response.body() == null && response.body().getResult().getRes_data() == null)
+                    return;
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
+                    res_dataTwo = response.body().getResult().getRes_data();
                     for (int i = 0; i < res_dataTwo.size(); i++) {
                         res_data_working.add(res_dataTwo.get(i).getWorker().getName());
                     }
-                    personAdapter = new WorkingPersonAdapter(R.layout.adapte_working_person, res_data_working);
-                    recyclerPersonWork.setAdapter(personAdapter);
                 }
+                personAdapter = new WorkingPersonAdapter(R.layout.adapte_working_person, res_data_working);
+                recyclerPersonWork.setAdapter(personAdapter);
             }
 
             @Override
@@ -124,12 +140,22 @@ public class AddPersonActivity extends ToolBarActivity {
         freeWorkers.enqueue(new MyCallback<FreeWorkBean>() {
             @Override
             public void onResponse(Call<FreeWorkBean> call, Response<FreeWorkBean> response) {
+                dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getResult().getRes_code() == 1) {
                     res_data = response.body().getResult().getRes_data();
+                    map = new HashMap<String, Integer>();
+                    for (int i = 0; i < res_data.size(); i++) {
+                        map.put(res_data.get(i).getName(), res_data.get(i).getWorker_id());
+                    }
                     adapter = new WorkPersonAdapter(res_data, AddPersonActivity.this);
                     recyclerPersonWait.setAdapter(adapter);
                 }
+            }
+
+            @Override
+            public void onFailure(Call<FreeWorkBean> call, Throwable t) {
+                dismissDefultProgressDialog();
             }
         });
     }
@@ -147,7 +173,30 @@ public class AddPersonActivity extends ToolBarActivity {
             @Override
             public void onAnalyzeSuccess(Bitmap mBitmap, String result) {
                 Log.i(TAG, "result = " + result);
-                ToastUtils.showCommonToast(AddPersonActivity.this, result);
+                HashMap<Object, Object> hashMap = new HashMap<>();
+                hashMap.put("order_id", order_id);
+                hashMap.put("is_add", 0);
+                hashMap.put("barcode", result);
+                Call<AutoAddworkBean> objectCall = inventoryApi.addWorker(hashMap);
+                objectCall.enqueue(new MyCallback<AutoAddworkBean>() {
+                    @Override
+                    public void onResponse(Call<AutoAddworkBean> call, Response<AutoAddworkBean> response) {
+                        if (response.body() == null) return;
+                        if (response.body().getResult().getRes_code() == 1) {
+                            if (res_data_working.contains(response.body().getResult().getRes_data().getName())) {
+                                ToastUtils.showCommonToast(AddPersonActivity.this, "已经添加该员工");
+                            } else {
+                                res_data_working.add(response.body().getResult().getRes_data().getName());
+                                personAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<AutoAddworkBean> call, Throwable t) {
+                        super.onFailure(call, t);
+                    }
+                });
             }
 
             @Override
@@ -165,12 +214,16 @@ public class AddPersonActivity extends ToolBarActivity {
      */
     @OnClick(R.id.icon_to_right)
     void addToRight(View view) {
-        add_name = new ArrayList<>();
+        add_name.clear();
         for (int i = 0; i < adapter.getSelected().size(); i++) {
-            add_name.add(adapter.getSelected().get(i).getName());
+            if (!res_data_working.contains(adapter.getSelected().get(i).getName())) {
+                add_name.add(adapter.getSelected().get(i).getName());
+            }
         }
         res_data_working.addAll(add_name);
         personAdapter.notifyDataSetChanged();
+        res_data.removeAll(adapter.getSelected());
+        adapter.notifyDataSetChanged();
     }
 
     /**
@@ -178,12 +231,12 @@ public class AddPersonActivity extends ToolBarActivity {
      */
     @OnClick(R.id.tv_add_true)
     void add(View view) {
-        HashMap<Object, Object> hashMap = new HashMap<>();
+        final HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("is_add", 1);
         hashMap.put("order_id", order_id);
-        int[] work_id = new int[adapter.getSelected().size()];
-        for (int i = 0; i < adapter.getSelected().size(); i++) {
-            work_id[i] = adapter.getSelected().get(i).getWorker_id();
+        int[] work_id = new int[res_data_working.size()];
+        for (int i = 0; i < res_data_working.size(); i++) {
+            work_id[i] = (int)map.get(res_data_working.get(i));
         }
         hashMap.put("worker_ids", work_id);
         Call<AddworkBean> objectCall = inventoryApi.addWork_id(hashMap);
@@ -192,10 +245,35 @@ public class AddPersonActivity extends ToolBarActivity {
             public void onResponse(Call<AddworkBean> call, Response<AddworkBean> response) {
                 if (response.body() == null) return;
                 if (response.body().getResult().getRes_code() == 1) {
+                    AlertAialogUtils.getCommonDialog(AddPersonActivity.this, "").setMessage("员工添加完成，确定开始生产？")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which){
+                                    HashMap<Object, Object> hashMap1 = new HashMap<Object, Object>();
+                                    hashMap1.put("order_id", order_id);
+                                    Call<StartProductBean> objectCall1 = inventoryApi.startProduct(hashMap1);
+                                    objectCall1.enqueue(new MyCallback<StartProductBean>() {
+                                        @Override
+                                        public void onResponse(Call<StartProductBean> call, Response<StartProductBean> response) {
+                                            if (response.body() == null)return;
+                                            if(response.body().getResult().getRes_code() == 1){
+                                                Intent intent = new Intent(AddPersonActivity.this, ProductLlActivity.class);
+                                                intent.putExtra("name_activity",name_activity);
+                                                intent.putExtra("state_product",state_activity);
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                        }
 
+                                        @Override
+                                        public void onFailure(Call<StartProductBean> call, Throwable t){
+                                            super.onFailure(call, t);
+                                        }
+                                    });
+                                }
+                            }).show();
                 }
             }
-
             @Override
             public void onFailure(Call<AddworkBean> call, Throwable t) {
                 super.onFailure(call, t);

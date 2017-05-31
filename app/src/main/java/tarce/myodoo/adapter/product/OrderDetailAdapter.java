@@ -36,6 +36,11 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
         this.result = result;
     }
 
+    public OrderDetailAdapter(Context context, List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list) {
+        this.context = context;
+        this.list = list;
+    }
+
     private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list;
     @Override
     public OrderViewhold onCreateViewHolder(ViewGroup parent, int viewType) {
