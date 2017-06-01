@@ -38,7 +38,7 @@ public class WorkPersonAdapter extends RecyclerView.Adapter<WorkPersonAdapter.Wo
     private List<FreeWorkBean.ResultBean.ResDataBean> selectList = new ArrayList<>();
 
     @Override
-    public WorkViewHold onCreateViewHolder(ViewGroup parent, int viewType) {
+    public WorkViewHold onCreateViewHolder(ViewGroup parent, int viewType){
         WorkViewHold viewHold = null;
         View view = LayoutInflater.from(context).inflate(R.layout.adapter_work_person, parent, false);
         viewHold = new WorkViewHold(view);

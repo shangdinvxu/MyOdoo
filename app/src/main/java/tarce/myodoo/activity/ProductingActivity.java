@@ -1,29 +1,36 @@
 package tarce.myodoo.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
+import tarce.model.inventory.CheckOutProductBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.OrderDetailAdapter;
 import tarce.myodoo.uiutil.DialogForOrder;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
+import tarce.myodoo.uiutil.InsertNumDialog;
 import tarce.myodoo.utils.StringUtils;
+import tarce.support.AlertAialogUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
@@ -80,15 +87,16 @@ public class ProductingActivity extends ToolBarActivity {
     private OrderDetailBean.ResultBean.ResDataBean.PrepareMaterialAreaIdBean prepare_material_area_id;
     private String prepare_material_img;
     private OrderDetailBean.ResultBean.ResDataBean resDataBean;
-    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_one;
-    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_two;
-    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_three;
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_one = new ArrayList<>();
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_two = new ArrayList<>();
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_three = new ArrayList<>();
     private OrderDetailBean.ResultBean result;
     private OrderDetailAdapter adapter;
     private OrderDetailAdapter adapter_two;
     private OrderDetailAdapter adapter_three;
     private DialogForOrder dialogForOrder;
     private boolean isShowDialog = true;
+    private InsertNumDialog insertNumDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,7 +220,11 @@ public class ProductingActivity extends ToolBarActivity {
      */
     private void initView() {
         tvNameProduct.setText(resDataBean.getProduct_name());
-        tvNumProduct.setText(String.valueOf(new Double(resDataBean.getQty_produced()).intValue()));
+        int num_product = new Double(resDataBean.getQty_produced()).intValue();
+        tvNumProduct.setText(String.valueOf(num_product));
+        if (num_product > 0) {
+            tvStartProduce.setVisibility(View.VISIBLE);
+        }
         tvNeedNum.setText(String.valueOf(new Double(resDataBean.getProduct_qty()).intValue()));
         tvTimeProduct.setText(resDataBean.getDate_planned_start());
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
@@ -240,7 +252,7 @@ public class ProductingActivity extends ToolBarActivity {
         recyclerOrderDetail.setAdapter(adapter);
         recycler2OrderDetail.setAdapter(adapter_two);
         recycler3OrderDetail.setAdapter(adapter_three);
-        adapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
+       /* adapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
             @Override
             public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
                 initDialog(linesBean);
@@ -257,7 +269,7 @@ public class ProductingActivity extends ToolBarActivity {
             public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
                 initDialog(linesBean);
             }
-        });
+        });*/
     }
 
     /**
@@ -267,7 +279,7 @@ public class ProductingActivity extends ToolBarActivity {
      */
     private void initDialog(final OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
 
-        if (isShowDialog){
+        if (isShowDialog) {
             isShowDialog = false;
             dialogForOrder = new DialogForOrder(ProductingActivity.this, new DialogForOrder.OnSendCommonClickListener() {
                 @Override
@@ -286,8 +298,90 @@ public class ProductingActivity extends ToolBarActivity {
             }, linesBean);
             dialogForOrder.show();
         }
-        if (!dialogForOrder.isShowing()){//为防止扫描多次弹出多个对话框
+        if (!dialogForOrder.isShowing()) {//为防止扫描多次弹出多个对话框
             isShowDialog = true;
         }
+    }
+
+    /**
+     * 点击产出
+     */
+    @OnClick(R.id.tv_product_out)
+    void outProduct(View view) {
+        insertNumDialog = new InsertNumDialog(ProductingActivity.this, R.style.MyDialogStyle,
+                new InsertNumDialog.OnSendCommonClickListener() {
+                    @Override
+                    public void OnSendCommonClick(final int num) {
+                        for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
+                            if ((num + resDataBean.getQty_produced()) / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(i)
+                                    .getProduct_uom_qty() >= resDataBean.getStock_move_lines().get(i).getQuantity_done()) {
+                                AlertAialogUtils.getCommonDialog(ProductingActivity.this, "提示")
+                                        .setMessage("提交产品成功，等待生产品检")
+                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                HashMap<Object, Object> hashMap = new HashMap<>();
+                                                hashMap.put("order_id", order_id);
+                                                hashMap.put("produce_qty", num);
+                                                Call<CheckOutProductBean> objectCall = inventoryApi.checkOut(hashMap);
+                                                objectCall.enqueue(new MyCallback<CheckOutProductBean>() {
+                                                    @Override
+                                                    public void onResponse(Call<CheckOutProductBean> call, Response<CheckOutProductBean> response) {
+                                                        if (response.body() == null) return;
+                                                        if (response.body().getResult().getRes_code() == 1) {
+                                                            tvStartProduce.setVisibility(View.VISIBLE);
+                                                            tvNumProduct.setText(String.valueOf(new Double(response.body().getResult().getRes_data()
+                                                                    .getQty_produced()).intValue()));
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<CheckOutProductBean> call, Throwable t) {
+                                                        super.onFailure(call, t);
+                                                    }
+                                                });
+                                            }
+                                        }).show();
+                            } else {
+                                AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
+                                        .setMessage(resDataBean.getStock_move_lines().get(i).getProduct_id() + "备料数量不足，请补料")
+                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        }).show();
+                            }
+                        }
+                    }
+                }, resDataBean.getProduct_name());
+        insertNumDialog.show();
+    }
+
+    /**
+     * 点击补领料
+     */
+    @OnClick(R.id.tv_add_ll)
+    void addLl(View view) {
+        Intent intent = new Intent(ProductingActivity.this, BuGetLiaoActivity.class);
+        intent.putExtra("value", resDataBean);
+        intent.putExtra("state", resDataBean.getState());
+        startActivity(intent);
+    }
+
+    /**
+     * 点击人员管理
+     */
+    @OnClick(R.id.tv_person_manage)
+    void managePerson(View view) {
+
+    }
+
+    /**
+     * 点击产线暂停
+     */
+    @OnClick(R.id.tv_line_stop)
+    void stopLine(View view) {
+
     }
 }

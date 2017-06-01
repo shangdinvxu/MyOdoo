@@ -71,6 +71,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.ProductingActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".activity.BuGetLiaoActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 

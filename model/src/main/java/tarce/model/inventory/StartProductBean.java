@@ -1,20 +1,17 @@
 package tarce.model.inventory;
 
-import android.os.Parcelable;
-
-import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by rose.zou on 2017/5/22.
- * 生产订单详情
+ * Created by rose.zou on 2017/5/31.
+ * 确定开始生产返回数据
  */
 
-public class OrderDetailBean {
+public class StartProductBean {
     /**
      * jsonrpc : 2.0
      * id : null
-     * result : {"res_data":{"origin":"MO170514126:MO170514126","prepare_material_area_id":{"area_id":false,"area_name":false},"display_name":"MO170514127","product_id":{"product_ll_type":"semi-finished","area_id":{"area_id":false,"area_name":false},"product_id":66193,"product_name":"[QJ.0JP217.001] 全检制程品-JP217-木板(松鼠)-2-1+2"},"production_order_type":"stockup","order_id":44420,"qty_produced":0,"cur_location":null,"stock_move_lines":[{"quantity_ready":1200,"virtual_available":0,"product_id":"[CY.0JP217.001] 冲压制程品-JP217-木板(松鼠)-2-1+2","suggest_qty":1236,"product_uom_qty":1200,"order_id":44420,"return_qty":0,"product_tmpl_id":46938,"product_type":"semi-finished","quantity_available":0,"qty_available":0,"quantity_done":1200,"id":74113,"over_picking_qty":0}],"state":"finish_prepare_material","process_id":{"process_id":8,"name":"全检","is_rework":false},"bom_name":"[QJ.0JP217.001] 全检制程品-JP217-木板(松鼠)-2-1+2","feedback_on_rework":{"feedback_id":false,"name":null},"product_qty":1200,"in_charge_name":"陈小娟","date_planned_start":"2017-07-13 19:03:26","product_name":"[QJ.0JP217.001] 全检制程品-JP217-木板(松鼠)-2-1+2","is_pending":false,"prepare_material_img":"http://192.168.88.128:8069/linkloving_app_api/get_worker_image?worker_id=44420&model=mrp.production&field=prepare_material_img"},"res_msg":"","res_code":1}
+     * result : {"res_data":{"origin":false,"remark":"","prepare_material_area_id":{"area_id":226,"area_name":"A3G2"},"display_name":"MO170525081","product_id":{"product_ll_type":"semi-finished","area_id":{"area_id":false,"area_name":false},"product_id":61413,"product_name":"[BZ.BA504S.001] 裱纸制程品-BA504S(东吴战船)-RT-5-1"},"production_order_type":"stockup","order_id":47972,"sale_remark":"","qty_produced":0,"cur_location":null,"stock_move_lines":[{"quantity_ready":0,"area_id":{"area_id":218,"area_name":"A3E2"},"virtual_available":0,"product_id":"[45.BA504S.001] BA504S裱纸(古战船)-RT-5-1","suggest_qty":2168,"product_uom_qty":2105,"order_id":47972,"return_qty":0,"product_tmpl_id":45184,"product_type":"material","quantity_available":0,"qty_available":0,"quantity_done":2105,"id":87084,"over_picking_qty":0},{"quantity_ready":0,"area_id":{"area_id":101,"area_name":"A1E3"},"virtual_available":-3570,"product_id":"[KB.1C0000.006] 卡板制程品(300*225*3mm 双杨单清)","suggest_qty":2168,"product_uom_qty":2105,"order_id":47972,"return_qty":0,"product_tmpl_id":60539,"product_type":"material","quantity_available":2105,"qty_available":21652,"quantity_done":0,"id":87085,"over_picking_qty":0}],"state":"progress","process_id":{"process_id":3,"name":"裱纸","is_rework":false},"bom_name":"[BZ.BA504S.001] 裱纸制程品-BA504S(东吴战船)-RT-5-1","feedback_on_rework":{"feedback_id":false,"name":null},"product_qty":2105,"in_charge_name":"陈小娟","date_planned_start":"2017-05-25 01:53:30","product_name":"[BZ.BA504S.001] 裱纸制程品-BA504S(东吴战船)-RT-5-1","is_pending":false,"prepare_material_img":"http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=47972&model=mrp.production&field=prepare_material_img"},"res_msg":"","res_code":1}
      */
 
     private String jsonrpc;
@@ -47,7 +44,7 @@ public class OrderDetailBean {
 
     public static class ResultBean {
         /**
-         * res_data : {"origin":"MO170514126:MO170514126","prepare_material_area_id":{"area_id":false,"area_name":false},"display_name":"MO170514127","product_id":{"product_ll_type":"semi-finished","area_id":{"area_id":false,"area_name":false},"product_id":66193,"product_name":"[QJ.0JP217.001] 全检制程品-JP217-木板(松鼠)-2-1+2"},"production_order_type":"stockup","order_id":44420,"qty_produced":0,"cur_location":null,"stock_move_lines":[{"quantity_ready":1200,"virtual_available":0,"product_id":"[CY.0JP217.001] 冲压制程品-JP217-木板(松鼠)-2-1+2","suggest_qty":1236,"product_uom_qty":1200,"order_id":44420,"return_qty":0,"product_tmpl_id":46938,"product_type":"semi-finished","quantity_available":0,"qty_available":0,"quantity_done":1200,"id":74113,"over_picking_qty":0}],"state":"finish_prepare_material","process_id":{"process_id":8,"name":"全检","is_rework":false},"bom_name":"[QJ.0JP217.001] 全检制程品-JP217-木板(松鼠)-2-1+2","feedback_on_rework":{"feedback_id":false,"name":null},"product_qty":1200,"in_charge_name":"陈小娟","date_planned_start":"2017-07-13 19:03:26","product_name":"[QJ.0JP217.001] 全检制程品-JP217-木板(松鼠)-2-1+2","is_pending":false,"prepare_material_img":"http://192.168.88.128:8069/linkloving_app_api/get_worker_image?worker_id=44420&model=mrp.production&field=prepare_material_img"}
+         * res_data : {"origin":false,"remark":"","prepare_material_area_id":{"area_id":226,"area_name":"A3G2"},"display_name":"MO170525081","product_id":{"product_ll_type":"semi-finished","area_id":{"area_id":false,"area_name":false},"product_id":61413,"product_name":"[BZ.BA504S.001] 裱纸制程品-BA504S(东吴战船)-RT-5-1"},"production_order_type":"stockup","order_id":47972,"sale_remark":"","qty_produced":0,"cur_location":null,"stock_move_lines":[{"quantity_ready":0,"area_id":{"area_id":218,"area_name":"A3E2"},"virtual_available":0,"product_id":"[45.BA504S.001] BA504S裱纸(古战船)-RT-5-1","suggest_qty":2168,"product_uom_qty":2105,"order_id":47972,"return_qty":0,"product_tmpl_id":45184,"product_type":"material","quantity_available":0,"qty_available":0,"quantity_done":2105,"id":87084,"over_picking_qty":0},{"quantity_ready":0,"area_id":{"area_id":101,"area_name":"A1E3"},"virtual_available":-3570,"product_id":"[KB.1C0000.006] 卡板制程品(300*225*3mm 双杨单清)","suggest_qty":2168,"product_uom_qty":2105,"order_id":47972,"return_qty":0,"product_tmpl_id":60539,"product_type":"material","quantity_available":2105,"qty_available":21652,"quantity_done":0,"id":87085,"over_picking_qty":0}],"state":"progress","process_id":{"process_id":3,"name":"裱纸","is_rework":false},"bom_name":"[BZ.BA504S.001] 裱纸制程品-BA504S(东吴战船)-RT-5-1","feedback_on_rework":{"feedback_id":false,"name":null},"product_qty":2105,"in_charge_name":"陈小娟","date_planned_start":"2017-05-25 01:53:30","product_name":"[BZ.BA504S.001] 裱纸制程品-BA504S(东吴战船)-RT-5-1","is_pending":false,"prepare_material_img":"http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=47972&model=mrp.production&field=prepare_material_img"}
          * res_msg :
          * res_code : 1
          */
@@ -80,54 +77,39 @@ public class OrderDetailBean {
             this.res_code = res_code;
         }
 
-        public static class ResDataBean implements Serializable{
+        public static class ResDataBean {
             /**
-             * origin : MO170514126:MO170514126
-             * prepare_material_area_id : {"area_id":false,"area_name":false}
-             * display_name : MO170514127
-             * product_id : {"product_ll_type":"semi-finished","area_id":{"area_id":false,"area_name":false},"product_id":66193,"product_name":"[QJ.0JP217.001] 全检制程品-JP217-木板(松鼠)-2-1+2"}
+             * origin : false
+             * remark :
+             * prepare_material_area_id : {"area_id":226,"area_name":"A3G2"}
+             * display_name : MO170525081
+             * product_id : {"product_ll_type":"semi-finished","area_id":{"area_id":false,"area_name":false},"product_id":61413,"product_name":"[BZ.BA504S.001] 裱纸制程品-BA504S(东吴战船)-RT-5-1"}
              * production_order_type : stockup
-             * order_id : 44420
+             * order_id : 47972
+             * sale_remark :
              * qty_produced : 0.0
              * cur_location : null
-             * stock_move_lines : [{"quantity_ready":1200,"virtual_available":0,"product_id":"[CY.0JP217.001] 冲压制程品-JP217-木板(松鼠)-2-1+2","suggest_qty":1236,"product_uom_qty":1200,"order_id":44420,"return_qty":0,"product_tmpl_id":46938,"product_type":"semi-finished","quantity_available":0,"qty_available":0,"quantity_done":1200,"id":74113,"over_picking_qty":0}]
-             * state : finish_prepare_material
-             * process_id : {"process_id":8,"name":"全检","is_rework":false}
-             * bom_name : [QJ.0JP217.001] 全检制程品-JP217-木板(松鼠)-2-1+2
+             * stock_move_lines : [{"quantity_ready":0,"area_id":{"area_id":218,"area_name":"A3E2"},"virtual_available":0,"product_id":"[45.BA504S.001] BA504S裱纸(古战船)-RT-5-1","suggest_qty":2168,"product_uom_qty":2105,"order_id":47972,"return_qty":0,"product_tmpl_id":45184,"product_type":"material","quantity_available":0,"qty_available":0,"quantity_done":2105,"id":87084,"over_picking_qty":0},{"quantity_ready":0,"area_id":{"area_id":101,"area_name":"A1E3"},"virtual_available":-3570,"product_id":"[KB.1C0000.006] 卡板制程品(300*225*3mm 双杨单清)","suggest_qty":2168,"product_uom_qty":2105,"order_id":47972,"return_qty":0,"product_tmpl_id":60539,"product_type":"material","quantity_available":2105,"qty_available":21652,"quantity_done":0,"id":87085,"over_picking_qty":0}]
+             * state : progress
+             * process_id : {"process_id":3,"name":"裱纸","is_rework":false}
+             * bom_name : [BZ.BA504S.001] 裱纸制程品-BA504S(东吴战船)-RT-5-1
              * feedback_on_rework : {"feedback_id":false,"name":null}
-             * product_qty : 1200.0
+             * product_qty : 2105.0
              * in_charge_name : 陈小娟
-             * date_planned_start : 2017-07-13 19:03:26
-             * product_name : [QJ.0JP217.001] 全检制程品-JP217-木板(松鼠)-2-1+2
+             * date_planned_start : 2017-05-25 01:53:30
+             * product_name : [BZ.BA504S.001] 裱纸制程品-BA504S(东吴战船)-RT-5-1
              * is_pending : false
-             * prepare_material_img : http://192.168.88.128:8069/linkloving_app_api/get_worker_image?worker_id=44420&model=mrp.production&field=prepare_material_img
+             * prepare_material_img : http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=47972&model=mrp.production&field=prepare_material_img
              */
 
+            private boolean origin;
             private String remark;
-
-            public String getRemark() {
-                return remark;
-            }
-
-            public void setRemark(String remark) {
-                this.remark = remark;
-            }
-
-            public String getSale_remark() {
-                return sale_remark;
-            }
-
-            public void setSale_remark(String sale_remark) {
-                this.sale_remark = sale_remark;
-            }
-
-            private String sale_remark;
-            private String origin;
             private PrepareMaterialAreaIdBean prepare_material_area_id;
             private String display_name;
             private ProductIdBean product_id;
             private String production_order_type;
             private int order_id;
+            private String sale_remark;
             private double qty_produced;
             private Object cur_location;
             private String state;
@@ -142,12 +124,20 @@ public class OrderDetailBean {
             private String prepare_material_img;
             private List<StockMoveLinesBean> stock_move_lines;
 
-            public String getOrigin() {
+            public boolean isOrigin() {
                 return origin;
             }
 
-            public void setOrigin(String origin) {
+            public void setOrigin(boolean origin) {
                 this.origin = origin;
+            }
+
+            public String getRemark() {
+                return remark;
+            }
+
+            public void setRemark(String remark) {
+                this.remark = remark;
             }
 
             public PrepareMaterialAreaIdBean getPrepare_material_area_id() {
@@ -188,6 +178,14 @@ public class OrderDetailBean {
 
             public void setOrder_id(int order_id) {
                 this.order_id = order_id;
+            }
+
+            public String getSale_remark() {
+                return sale_remark;
+            }
+
+            public void setSale_remark(String sale_remark) {
+                this.sale_remark = sale_remark;
             }
 
             public double getQty_produced() {
@@ -295,37 +293,37 @@ public class OrderDetailBean {
             }
 
             public static class PrepareMaterialAreaIdBean {
-                public Object getArea_id() {
+                /**
+                 * area_id : 226
+                 * area_name : A3G2
+                 */
+
+                private int area_id;
+                private String area_name;
+
+                public int getArea_id() {
                     return area_id;
                 }
 
-                public void setArea_id(Object area_id) {
+                public void setArea_id(int area_id) {
                     this.area_id = area_id;
                 }
 
-                public Object getArea_name() {
+                public String getArea_name() {
                     return area_name;
                 }
 
-                public void setArea_name(Object area_name) {
+                public void setArea_name(String area_name) {
                     this.area_name = area_name;
                 }
-
-                /**
-                 * area_id : false
-                 * area_name : false
-                 */
-
-                private Object area_id;
-                private Object area_name;
             }
 
             public static class ProductIdBean {
                 /**
                  * product_ll_type : semi-finished
                  * area_id : {"area_id":false,"area_name":false}
-                 * product_id : 66193
-                 * product_name : [QJ.0JP217.001] 全检制程品-JP217-木板(松鼠)-2-1+2
+                 * product_id : 61413
+                 * product_name : [BZ.BA504S.001] 裱纸制程品-BA504S(东吴战船)-RT-5-1
                  */
 
                 private String product_ll_type;
@@ -371,32 +369,31 @@ public class OrderDetailBean {
                      * area_name : false
                      */
 
-                    private Object area_id;
-                    private Object area_name;
+                    private boolean area_id;
+                    private boolean area_name;
 
-                    public Object getArea_id() {
+                    public boolean isArea_id() {
                         return area_id;
                     }
 
-                    public void setArea_id(Object area_id) {
+                    public void setArea_id(boolean area_id) {
                         this.area_id = area_id;
                     }
 
-                    public Object getArea_name() {
+                    public boolean isArea_name() {
                         return area_name;
                     }
 
-                    public void setArea_name(Object area_name) {
+                    public void setArea_name(boolean area_name) {
                         this.area_name = area_name;
                     }
-
                 }
             }
 
             public static class ProcessIdBean {
                 /**
-                 * process_id : 8
-                 * name : 全检
+                 * process_id : 3
+                 * name : 裱纸
                  * is_rework : false
                  */
 
@@ -457,23 +454,25 @@ public class OrderDetailBean {
 
             public static class StockMoveLinesBean {
                 /**
-                 * quantity_ready : 1200.0
+                 * quantity_ready : 0.0
+                 * area_id : {"area_id":218,"area_name":"A3E2"}
                  * virtual_available : 0.0
-                 * product_id : [CY.0JP217.001] 冲压制程品-JP217-木板(松鼠)-2-1+2
-                 * suggest_qty : 1236.0
-                 * product_uom_qty : 1200.0
-                 * order_id : 44420
+                 * product_id : [45.BA504S.001] BA504S裱纸(古战船)-RT-5-1
+                 * suggest_qty : 2168.0
+                 * product_uom_qty : 2105.0
+                 * order_id : 47972
                  * return_qty : 0.0
-                 * product_tmpl_id : 46938
-                 * product_type : semi-finished
+                 * product_tmpl_id : 45184
+                 * product_type : material
                  * quantity_available : 0.0
                  * qty_available : 0.0
-                 * quantity_done : 1200.0
-                 * id : 74113
+                 * quantity_done : 2105.0
+                 * id : 87084
                  * over_picking_qty : 0.0
                  */
 
                 private double quantity_ready;
+                private AreaIdBeanX area_id;
                 private double virtual_available;
                 private String product_id;
                 private double suggest_qty;
@@ -488,22 +487,20 @@ public class OrderDetailBean {
                 private int id;
                 private double over_picking_qty;
 
-                public ProductIdBean.AreaIdBean getArea_id() {
-                    return area_id;
-                }
-
-                public void setArea_id(ProductIdBean.AreaIdBean area_id) {
-                    this.area_id = area_id;
-                }
-
-                private ProductIdBean.AreaIdBean  area_id;
-
                 public double getQuantity_ready() {
                     return quantity_ready;
                 }
 
                 public void setQuantity_ready(double quantity_ready) {
                     this.quantity_ready = quantity_ready;
+                }
+
+                public AreaIdBeanX getArea_id() {
+                    return area_id;
+                }
+
+                public void setArea_id(AreaIdBeanX area_id) {
+                    this.area_id = area_id;
                 }
 
                 public double getVirtual_available() {
@@ -608,6 +605,32 @@ public class OrderDetailBean {
 
                 public void setOver_picking_qty(double over_picking_qty) {
                     this.over_picking_qty = over_picking_qty;
+                }
+
+                public static class AreaIdBeanX {
+                    /**
+                     * area_id : 218
+                     * area_name : A3E2
+                     */
+
+                    private int area_id;
+                    private String area_name;
+
+                    public int getArea_id() {
+                        return area_id;
+                    }
+
+                    public void setArea_id(int area_id) {
+                        this.area_id = area_id;
+                    }
+
+                    public String getArea_name() {
+                        return area_name;
+                    }
+
+                    public void setArea_name(String area_name) {
+                        this.area_name = area_name;
+                    }
                 }
             }
         }
