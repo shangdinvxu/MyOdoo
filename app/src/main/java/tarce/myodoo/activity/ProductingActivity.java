@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -23,7 +24,9 @@ import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.CheckOutProductBean;
+import tarce.model.inventory.FinishProductBean;
 import tarce.model.inventory.OrderDetailBean;
+import tarce.model.inventory.StopProductlineBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.OrderDetailAdapter;
 import tarce.myodoo.uiutil.DialogForOrder;
@@ -97,6 +100,7 @@ public class ProductingActivity extends ToolBarActivity {
     private DialogForOrder dialogForOrder;
     private boolean isShowDialog = true;
     private InsertNumDialog insertNumDialog;
+    private boolean product_line = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -218,7 +222,7 @@ public class ProductingActivity extends ToolBarActivity {
     /**
      * 根据数据赋值显示view
      */
-    private void initView() {
+    private void initView(){
         tvNameProduct.setText(resDataBean.getProduct_name());
         int num_product = new Double(resDataBean.getQty_produced()).intValue();
         tvNumProduct.setText(String.valueOf(num_product));
@@ -270,37 +274,6 @@ public class ProductingActivity extends ToolBarActivity {
                 initDialog(linesBean);
             }
         });*/
-    }
-
-    /**
-     * 初始化dialog并进行相关后续操作
-     *
-     * @param linesBean
-     */
-    private void initDialog(final OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
-
-        if (isShowDialog) {
-            isShowDialog = false;
-            dialogForOrder = new DialogForOrder(ProductingActivity.this, new DialogForOrder.OnSendCommonClickListener() {
-                @Override
-                public void OnSendCommonClick(int num) {
-                    int i = StringUtils.doubleToInt(linesBean.getQty_available());
-                    //   int i1 = StringUtils.doubleToInt(linesBean.getQuantity_ready());
-                    if (num > i) {
-                        ToastUtils.showCommonToast(ProductingActivity.this, "该产品库存不足");
-                    } else {
-                        linesBean.setQuantity_ready((double) num);
-                        adapter.notifyDataSetChanged();
-                        adapter_two.notifyDataSetChanged();
-                        adapter_three.notifyDataSetChanged();
-                    }
-                }
-            }, linesBean);
-            dialogForOrder.show();
-        }
-        if (!dialogForOrder.isShowing()) {//为防止扫描多次弹出多个对话框
-            isShowDialog = true;
-        }
     }
 
     /**
@@ -366,6 +339,7 @@ public class ProductingActivity extends ToolBarActivity {
         Intent intent = new Intent(ProductingActivity.this, BuGetLiaoActivity.class);
         intent.putExtra("value", resDataBean);
         intent.putExtra("state", resDataBean.getState());
+        intent.putExtra("order_id", order_id);
         startActivity(intent);
     }
 
@@ -375,6 +349,12 @@ public class ProductingActivity extends ToolBarActivity {
     @OnClick(R.id.tv_person_manage)
     void managePerson(View view) {
 
+        Intent intent = new Intent(ProductingActivity.this, AddPersonActivity.class);
+        intent.putExtra("order_id", order_id);
+        intent.putExtra("state_activity", state_activity);
+        intent.putExtra("name_activity", name_activity);
+        intent.putExtra("close", true);
+        startActivity(intent);
     }
 
     /**
@@ -382,6 +362,109 @@ public class ProductingActivity extends ToolBarActivity {
      */
     @OnClick(R.id.tv_line_stop)
     void stopLine(View view) {
+        if (product_line){
+            AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
+                    .setMessage("是否确定暂停产线")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            stopProductLine("outline", 1);
+                        }
+                    }).show();
+        }else {
+            AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
+                    .setMessage("是否确定恢复产线")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            stopProductLine("online", 0);
+                        }
+                    }).show();
+        }
+    }
 
+    /**
+     * 暂停产线  恢复产线
+     * */
+    private void stopProductLine(String state, int is_all_pending){
+        HashMap<Object, Object> hashMap = new HashMap<>();
+        hashMap.put("order_id",order_id);
+        hashMap.put("state",state);
+        hashMap.put("is_all_pending", is_all_pending);
+        Call<StopProductlineBean> objectCall = inventoryApi.stopProductLine(hashMap);
+        objectCall.enqueue(new MyCallback<StopProductlineBean>() {
+            @Override
+            public void onResponse(Call<StopProductlineBean> call, Response<StopProductlineBean> response) {
+                if (response.body() == null)return;
+                if (response.body().getResult().getRes_code() == 1){
+                        if (product_line){
+                            tvLineStop.setText("恢复产线");
+                            product_line = false;
+                        }else {
+                            tvLineStop.setText("产线暂停");
+                            product_line = true;
+                        }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<StopProductlineBean> call, Throwable t) {
+                super.onFailure(call, t);
+            }
+        });
+    }
+
+    /**
+     * 生产完成
+     * */
+    @OnClick(R.id.tv_start_produce)
+    void finishProduct(View view){
+        AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
+                .setMessage("本单共产出"+tvNumProduct.getText().toString()+",请确认")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        HashMap<Object,Object> hashMap = new HashMap<>();
+                        hashMap.put("order_id", order_id);
+                        Call<FinishProductBean> objectCall = inventoryApi.finishProduct(hashMap);
+                        objectCall.enqueue(new MyCallback<FinishProductBean>() {
+                            @Override
+                            public void onResponse(Call<FinishProductBean> call, final Response<FinishProductBean> response) {
+                                if (response.body() == null)return;
+                                if (response.body().getResult().getRes_code() == 1){
+                                    AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
+                                            .setMessage("生产完成，是否拍摄产品位置信息")
+                                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Intent intent = new Intent(ProductingActivity.this, PhotoAreaActivity.class);
+                                                    intent.putExtra("type", state);
+                                                    intent.putExtra("order_id", order_id);
+                                                    intent.putExtra("delay_state", delay_state);
+                                                    intent.putExtra("limit", limit);
+                                                    intent.putExtra("process_id", process_id);
+                                                    intent.putExtra("change", true);
+                                                    startActivity(intent);
+                                                }
+                                            })
+                                            .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Intent intent = new Intent(ProductingActivity.this, ProductLlActivity.class);
+                                                    intent.putExtra("name_activity","生产中");
+                                                    intent.putExtra("state_product",state);
+                                                    startActivity(intent);
+                                                }
+                                            }).show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<FinishProductBean> call, Throwable t) {
+                                super.onFailure(call, t);
+                            }
+                        });
+                    }
+                }).show();
     }
 }

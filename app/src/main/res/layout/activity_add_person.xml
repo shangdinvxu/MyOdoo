@@ -25,14 +25,14 @@
                 android:textColor="@color/black"/>
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_weight="0.5"
                 android:layout_height="match_parent"
                 android:text="移动"
                 android:gravity="center"
                 android:textColor="@color/black"/>
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
                 android:layout_height="match_parent"
                 android:text="工作中"
                 android:gravity="center"
@@ -52,7 +52,7 @@
             </android.support.v7.widget.RecyclerView>
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_weight="0.5"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <ImageView
@@ -73,7 +73,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_person_work"
                 android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_weight="1.5"
                 android:layout_height="match_parent">
 
             </android.support.v7.widget.RecyclerView>

@@ -1,9 +1,15 @@
 package tarce.myodoo.activity;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +27,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,6 +46,7 @@ import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.uiutil.ImageUtil;
 import tarce.myodoo.uiutil.TakePhotoDialog;
 import tarce.myodoo.utils.StringUtils;
+import tarce.support.AlertAialogUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 import tarce.support.ViewUtils;
@@ -68,6 +76,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
     private InventoryApi inventoryApi;
     private AreaMessageAdapter adapter;
     private List<AreaMessageBean.ResultBean.ResDataBean> res_data;
+    private String selectedImagePath = "";
     private static final int REQUEST_CODE_PICK_IMAGE = 0;//相册
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;//拍照
 
@@ -79,6 +88,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
     private int limit;
     private String delay_state;
     private int process_id;
+    private boolean change;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,12 +102,17 @@ public class PhotoAreaActivity extends ToolBarActivity {
         limit = intent.getIntExtra("limit", 1);
         delay_state = intent.getStringExtra("delay_state");
         process_id = intent.getIntExtra("process_id", 1);
+        change = intent.getBooleanExtra("change", true);
+        if (change){
+            tvFinishOrder.setText("提交产品位置信息");
+        }
         setTitle("物料位置信息");
         // setRecyclerview(recyclerArea);
         recyclerArea.setLayoutManager(new LinearLayoutManager(PhotoAreaActivity.this));
         recyclerArea.addItemDecoration(new DividerItemDecoration(PhotoAreaActivity.this,
                 DividerItemDecoration.VERTICAL));
         editListener();
+
     }
 
     /**
@@ -147,15 +162,22 @@ public class PhotoAreaActivity extends ToolBarActivity {
                 .setTakephoto(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mIntentPic = ImageUtil.takeBigPicture();
-                        startActivityForResult(mIntentPic, REQUEST_CODE_IMAGE_CAPTURE);
+                        /*mIntentPic = ImageUtil.takeBigPicture();
+                        startActivityForResult(mIntentPic, REQUEST_CODE_IMAGE_CAPTURE);*/
+                        final Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, setImageUri());
+                        startActivityForResult(intent, REQUEST_CODE_IMAGE_CAPTURE);
                     }
                 })
                 .setSelectalbum(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mIntentPic = ImageUtil.choosePicture2();
-                        startActivityForResult(mIntentPic, REQUEST_CODE_PICK_IMAGE);
+                        /*mIntentPic = ImageUtil.choosePicture2();
+                        startActivityForResult(mIntentPic, REQUEST_CODE_PICK_IMAGE);*/
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent, ""), REQUEST_CODE_PICK_IMAGE);
                     }
                 })
                 .setCancel()
@@ -178,37 +200,82 @@ public class PhotoAreaActivity extends ToolBarActivity {
      * */
     @OnClick(R.id.tv_finish_order)
     void commitMessage(View view){
-        HashMap<Object, Object> hashMap = new HashMap<>();
-        hashMap.put("type", type);
-        hashMap.put("order_id", order_id);
-        hashMap.put("area_name", editAreaMessage.getText().toString());
-        hashMap.put("img", BitmapUtils.bitmapToBase64(BitmapFactory.decodeFile(imgPath)));
-        Call<UpdateMessageBean> objectCall = inventoryApi.commitMessage(hashMap);
-        objectCall.enqueue(new MyCallback<UpdateMessageBean>() {
-            @Override
-            public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
-                if (response.body() == null)return;
-                if (response.body().getError()!=null){
-                    ToastUtils.showCommonToast(PhotoAreaActivity.this, response.body().getError().getMessage());
-                }else if (response.body().getResult()!=null){
-                    Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
-                    intent.putExtra("limit",limit);
-                    intent.putExtra("process_id", process_id);
-                    intent.putExtra("state",delay_state);
-                    startActivity(intent);
-                    PhotoAreaActivity.this.finish();
-                }
-            }
+        if (StringUtils.isNullOrEmpty(editAreaMessage.getText().toString())){
+            ToastUtils.showCommonToast(PhotoAreaActivity.this,"请填写位置信息");
+            return;
+        }
+        if (change){
+            AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "")
+                    .setMessage("是否确定提交产品位置信息")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            HashMap<Object,Object> hashMap = new HashMap<>();
+                            hashMap.put("order_id",order_id);
+                            hashMap.put("area_name",editAreaMessage.getText().toString());
+                            hashMap.put("procure_img", BitmapUtils.bitmapToBase64(BitmapFactory.decodeFile(selectedImagePath)));
+                            Call<UpdateMessageBean> objectCall = inventoryApi.uploadProductArea(hashMap);
+                            objectCall.enqueue(new MyCallback<UpdateMessageBean>() {
+                                @Override
+                                public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
+                                    if (response.body() == null)return;
+                                    if (response.body().getResult().getRes_code() == 1){
+                                        Intent intent = new Intent(PhotoAreaActivity.this, ProductLlActivity.class);
+                                        intent.putExtra("name_activity","生产中");
+                                        intent.putExtra("state_product","progress");
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }
 
-            @Override
-            public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
-                super.onFailure(call, t);
-            }
-        });
+                                @Override
+                                public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
+                                    super.onFailure(call, t);
+                                }
+                            });
+                        }
+                    }).show();
+        }else {
+            HashMap<Object, Object> hashMap = new HashMap<>();
+            hashMap.put("type", type);
+            hashMap.put("order_id", order_id);
+            hashMap.put("area_name", editAreaMessage.getText().toString());
+            hashMap.put("img", BitmapUtils.bitmapToBase64(BitmapFactory.decodeFile(selectedImagePath)));
+            Call<UpdateMessageBean> objectCall = inventoryApi.commitMessage(hashMap);
+            objectCall.enqueue(new MyCallback<UpdateMessageBean>() {
+                @Override
+                public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
+                    if (response.body() == null)return;
+                    /*if (response.body().getError()!=null){
+                        ToastUtils.showCommonToast(PhotoAreaActivity.this, response.body().getError().getMessage());
+                    }else if (response.body().getResult()!=null){
+                        Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
+                        intent.putExtra("limit",limit);
+                        intent.putExtra("process_id", process_id);
+                        intent.putExtra("state",delay_state);
+                        startActivity(intent);
+                        PhotoAreaActivity.this.finish();
+                    }*/
+                    if (response.body().getResult().getRes_code() == 1){
+                        Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
+                        intent.putExtra("limit",limit);
+                        intent.putExtra("process_id", process_id);
+                        intent.putExtra("state",delay_state);
+                        startActivity(intent);
+                        PhotoAreaActivity.this.finish();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
+                    super.onFailure(call, t);
+                }
+            });
+        }
     }
     /**
      * 压缩图片
-     */
+     *//*
     private void startPhotoZoom(String sourcePath) {
         imgPath = ImageUtil.saveMyBitmap(sourcePath);
 
@@ -216,9 +283,9 @@ public class PhotoAreaActivity extends ToolBarActivity {
         if (!StringUtils.isNullOrEmpty(imgPath)) {
             Glide.with(PhotoAreaActivity.this).load(new File(imgPath)).into(imageShowPhoto);
         }
-    }
+    }*/
 
-    @Override
+    /*@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) {
             return;
@@ -234,7 +301,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
                 break;
 
         }
-    }
+    }*/
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -242,4 +309,71 @@ public class PhotoAreaActivity extends ToolBarActivity {
     }
 
 
+    public Uri setImageUri() {
+        // Store image in dcim
+        File file = new File(Environment.getExternalStorageDirectory() + "/DCIM/", "image" + new Date().getTime() + ".png");
+        Uri imgUri = Uri.fromFile(file);
+        this.imgPath = file.getAbsolutePath();
+        return imgUri;
+    }
+
+
+    public String getImagePath() {
+        return imgPath;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_CANCELED) {
+            if (requestCode == REQUEST_CODE_PICK_IMAGE) {
+                selectedImagePath = getAbsolutePath(data.getData());
+                Glide.with(PhotoAreaActivity.this).load(new File(selectedImagePath)).into(imageShowPhoto);
+                //imgUser.setImageBitmap(decodeFile(selectedImagePath));
+            } else if (requestCode == REQUEST_CODE_IMAGE_CAPTURE) {
+                selectedImagePath = getImagePath();
+                Glide.with(PhotoAreaActivity.this).load(new File(selectedImagePath)).into(imageShowPhoto);
+                //imgUser.setImageBitmap(decodeFile(selectedImagePath));
+            } else {
+                super.onActivityResult(requestCode, resultCode, data);
+            }
+        }
+
+    }
+
+
+    public Bitmap decodeFile(String path) {
+        try {
+            // Decode image size
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(path, o);
+            // The new size we want to scale to
+            final int REQUIRED_SIZE = 70;
+
+            // Find the correct scale value. It should be the power of 2.
+            int scale = 1;
+            while (o.outWidth / scale / 2 >= REQUIRED_SIZE && o.outHeight / scale / 2 >= REQUIRED_SIZE)
+                scale *= 2;
+
+            // Decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            return BitmapFactory.decodeFile(path, o2);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public String getAbsolutePath(Uri uri) {
+        String[] projection = { MediaStore.MediaColumns.DATA };
+        @SuppressWarnings("deprecation")
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        if (cursor != null) {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } else
+            return null;
+    }
 }

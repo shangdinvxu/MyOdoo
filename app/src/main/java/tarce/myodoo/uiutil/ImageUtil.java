@@ -156,7 +156,6 @@ public class ImageUtil {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        Log.i("LoginActivity", "fOut = "+fOut);
         mBitmap.compress(Bitmap.CompressFormat.JPEG, 90, fOut);
         try {
             fOut.flush();

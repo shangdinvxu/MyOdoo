@@ -34,11 +34,13 @@ public class InsertNumDialog extends Dialog {
     TextView cancelInsertDialog;
     @InjectView(R.id.true_inset_dialog)
     TextView trueInsetDialog;
+    @InjectView(R.id.tv_tip_dialog)
+    TextView tvTipDialog;
     private LayoutInflater inflater;
     private Display display;
     private Context context;
     private View view;
-    private InsertNumDialog.OnSendCommonClickListener sendCommonClickListener;
+    private OnSendCommonClickListener sendCommonClickListener;
     private String product_name;
 
     public InsertNumDialog(@NonNull Context context) {
@@ -86,11 +88,21 @@ public class InsertNumDialog extends Dialog {
             }
         });
 
-        nameProductDialog.setText("产品名称: "+product_name);
+        nameProductDialog.setText("产品名称: " + product_name);
     }
 
     public interface OnSendCommonClickListener {
         void OnSendCommonClick(int num);
+    }
+
+    public InsertNumDialog changeTitle(String title) {
+        nameProductDialog.setText(title);
+        return this;
+    }
+
+    public InsertNumDialog dismissTip() {
+        tvTipDialog.setVisibility(View.GONE);
+        return this;
     }
 
 
@@ -101,7 +113,7 @@ public class InsertNumDialog extends Dialog {
 
     @OnClick(R.id.true_inset_dialog)
     void trueAction(View view) {
-        if (StringUtils.isNullOrEmpty(eidtOutNum.getText().toString())){
+        if (StringUtils.isNullOrEmpty(eidtOutNum.getText().toString())) {
             Toast.makeText(context, "请确认数量？", Toast.LENGTH_SHORT).show();
             return;
         }

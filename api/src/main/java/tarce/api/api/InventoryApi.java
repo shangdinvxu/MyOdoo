@@ -7,6 +7,8 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 import rx.Observable;
 import tarce.model.AddworkBean;
+import tarce.model.BuLlBean;
+import tarce.model.ChangeStateBean;
 import tarce.model.FindProductByConditionResponse;
 import tarce.model.GetGroupByListresponse;
 import tarce.model.GetProcessBean;
@@ -19,7 +21,9 @@ import tarce.model.inventory.AreaMessageBean;
 import tarce.model.inventory.AutoAddworkBean;
 import tarce.model.inventory.CheckOutProductBean;
 import tarce.model.inventory.CheckPickRegisBean;
+import tarce.model.inventory.FinishProductBean;
 import tarce.model.inventory.FreeWorkBean;
+import tarce.model.inventory.LoadInspectionBean;
 import tarce.model.inventory.LoadProductBean;
 import tarce.model.inventory.MaterialDetailBean;
 import tarce.model.inventory.OrderDetailBean;
@@ -28,6 +32,7 @@ import tarce.model.inventory.ProcessDeatilBean;
 import tarce.model.inventory.SalesOutListResponse;
 import tarce.model.inventory.GetNumProcess;
 import tarce.model.inventory.StartProductBean;
+import tarce.model.inventory.StopProductlineBean;
 import tarce.model.inventory.UpdateMessageBean;
 import tarce.model.inventory.WorkingWorkerBean;
 
@@ -88,6 +93,8 @@ public interface InventoryApi {
     @POST("load_needaction")
     Call<LoadActionBean> load_actionCall(@Body HashMap hashMap);
 
+    @POST("load_needaction")
+    Call<LoadInspectionBean> load_actionInspec(@Body HashMap hashMap);
 
     @POST("get_outgoing_stock_picking")
     Observable<OutgoingStockpickingBean> getOutgoingStockpicking(@Body HashMap hashMap);
@@ -198,4 +205,34 @@ public interface InventoryApi {
      * */
     @POST("start_produce")
     Call<StartProductBean> startProduct(@Body HashMap hashMap);
+
+    /**
+     * 补领料确认
+     * */
+    @POST("over_picking")
+    Call<BuLlBean> buLl(@Body HashMap hashMap);
+
+    /**
+     * 改变员工状态
+     * */
+    @POST("change_worker_state")
+    Call<ChangeStateBean> changeState(@Body HashMap hashMap);
+
+    /**
+     * 产线的暂停与恢复
+     * */
+    @POST("change_worker_state")
+    Call<StopProductlineBean> stopProductLine(@Body HashMap hashMap);
+
+    /**
+     * 生产完成
+     * */
+    @POST("produce_finish")
+    Call<FinishProductBean> finishProduct(@Body HashMap hashMap);
+
+    /**
+     * 提交产品位置信息
+     * */
+    @POST("upload_procure_info")
+    Call<UpdateMessageBean> uploadProductArea(@Body HashMap hashMap);
 }

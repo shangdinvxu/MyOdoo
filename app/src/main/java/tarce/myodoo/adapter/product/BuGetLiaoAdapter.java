@@ -27,9 +27,9 @@ public class BuGetLiaoAdapter extends BaseQuickAdapter<OrderDetailBean.ResultBea
     @Override
     protected void convert(BaseViewHolder helper, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean item) {
         helper.setText(R.id.tv_id_product, item.getProduct_id());
-        if (item.getArea_id()!=null){
+        /*if (item.getArea_id()!=null){
             helper.setText(R.id.tv_area_order, item.getArea_id().getArea_name()+"");
-        }
+        }*/
         helper.setText(R.id.tv_advice_order, StringUtils.doubleToString(item.getSuggest_qty()));
         helper.setText(R.id.tv_kucun_order, StringUtils.doubleToString(item.getQty_available()));
         helper.setText(R.id.tv_need_order, StringUtils.doubleToString(item.getProduct_uom_qty()));
@@ -38,5 +38,7 @@ public class BuGetLiaoAdapter extends BaseQuickAdapter<OrderDetailBean.ResultBea
         }else {
             helper.setText(R.id.tv_prepare_order, StringUtils.doubleToString(item.getQuantity_done()));
         }
+
+        helper.setText(R.id.tv_out_num, StringUtils.doubleToString(item.getOver_picking_qty()));
     }
 }

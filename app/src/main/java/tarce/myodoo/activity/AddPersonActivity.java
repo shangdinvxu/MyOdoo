@@ -32,6 +32,7 @@ import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.AddworkBean;
+import tarce.model.ChangeStateBean;
 import tarce.model.inventory.AutoAddworkBean;
 import tarce.model.inventory.FreeWorkBean;
 import tarce.model.inventory.StartProductBean;
@@ -40,6 +41,7 @@ import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.adapter.product.WorkPersonAdapter;
 import tarce.myodoo.adapter.product.WorkingPersonAdapter;
+import tarce.myodoo.bean.WorkingStateBean;
 import tarce.support.AlertAialogUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
@@ -71,12 +73,14 @@ public class AddPersonActivity extends ToolBarActivity {
     private List<FreeWorkBean.ResultBean.ResDataBean> res_data;
     private WorkingPersonAdapter personAdapter;
     private List<String> res_data_working;
-    private List<String> add_name = new ArrayList<>();
+    private List<WorkingStateBean> add_name = new ArrayList<>();
     ;
     private List<WorkingWorkerBean.ResultBean.ResDataBean> res_dataTwo;
+    private List<WorkingStateBean> adapterList = new ArrayList<>();
     private Map<String, Integer> map;//存放work的name和id
     private String state_activity;
     private String name_activity;
+    private boolean close;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +94,7 @@ public class AddPersonActivity extends ToolBarActivity {
 
         initFragment();
         Intent intent = getIntent();
+        close = intent.getBooleanExtra("close", true);
         order_id = intent.getIntExtra("order_id", 1);
         state_activity = intent.getStringExtra("state_activity");
         name_activity = intent.getStringExtra("name_activity");
@@ -97,12 +102,15 @@ public class AddPersonActivity extends ToolBarActivity {
         showDefultProgressDialog();
         getFreeWork();
         getWorking();
+        if (close){
+            tvAddTrue.setVisibility(View.GONE);
+        }
     }
 
     /**
      * 工作中员工的数据请求
      */
-    private void getWorking() {
+    private void getWorking(){
         res_data_working = new ArrayList<>();
         res_dataTwo = new ArrayList<>();
         HashMap<Object, Object> hashMap = new HashMap<>();
@@ -117,10 +125,28 @@ public class AddPersonActivity extends ToolBarActivity {
                     res_dataTwo = response.body().getResult().getRes_data();
                     for (int i = 0; i < res_dataTwo.size(); i++) {
                         res_data_working.add(res_dataTwo.get(i).getWorker().getName());
+                        adapterList.add(new WorkingStateBean(res_dataTwo.get(i).getWorker().getName(), res_dataTwo.get(i).getLine_state()));
                     }
                 }
-                personAdapter = new WorkingPersonAdapter(R.layout.adapte_working_person, res_data_working);
+                personAdapter = new WorkingPersonAdapter(adapterList, AddPersonActivity.this, close) ;
                 recyclerPersonWork.setAdapter(personAdapter);
+                personAdapter.setOnSwipeListener(new WorkingPersonAdapter.onSwipeListener() {
+                    @Override
+                    public void onOffline(int position) {
+                        changeState(position, "offline");
+                    }
+
+                    @Override
+                    public void onOnline(int position) {
+                        changeState(position, "online");
+                    }
+
+                    @Override
+                    public void onOutline(int position) {
+                        changeState(position, "outline");
+                    }
+                });
+
             }
 
             @Override
@@ -217,10 +243,10 @@ public class AddPersonActivity extends ToolBarActivity {
         add_name.clear();
         for (int i = 0; i < adapter.getSelected().size(); i++) {
             if (!res_data_working.contains(adapter.getSelected().get(i).getName())) {
-                add_name.add(adapter.getSelected().get(i).getName());
+                add_name.add(new WorkingStateBean(adapter.getSelected().get(i).getName(),""));
             }
         }
-        res_data_working.addAll(add_name);
+        adapterList.addAll(add_name);
         personAdapter.notifyDataSetChanged();
         res_data.removeAll(adapter.getSelected());
         adapter.notifyDataSetChanged();
@@ -280,4 +306,30 @@ public class AddPersonActivity extends ToolBarActivity {
             }
         });
     }
+
+    /**
+     * 改变员工状态
+     * */
+    private void  changeState(final int position, final String state){
+        HashMap<Object,Object> hashMap = new HashMap<>();
+        hashMap.put("state", state);
+        hashMap.put("worker_line_id", map.get(res_data_working.get(position)));
+        Call<ChangeStateBean> objectCall = inventoryApi.changeState(hashMap);
+        objectCall.enqueue(new MyCallback<ChangeStateBean>() {
+            @Override
+            public void onResponse(Call<ChangeStateBean> call, Response<ChangeStateBean> response) {
+                if (response.body() == null)return;
+                if (response.body().getResult().getRes_code() == 1){
+                    adapterList.set(position, new WorkingStateBean(adapterList.get(position).getName(), state));
+                    personAdapter.notifyItemChanged(position);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ChangeStateBean> call, Throwable t) {
+                super.onFailure(call, t);
+            }
+        });
+    }
+
 }

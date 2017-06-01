@@ -1,16 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.mcxtzhang.swipemenulib.SwipeMenuLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="40dp"
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/tv_show_woring"
-        android:layout_width="60dp"
-        android:layout_height="35dp"
-        android:textColor="@color/black"
-        android:textSize="15sp"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:background="@drawable/bac_work_person"/>
-</LinearLayout>
+    android:orientation="horizontal">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tv_show_woring"
+            android:layout_width="0dp"
+            android:layout_weight="4"
+            android:layout_height="35dp"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:background="@drawable/bac_work_person"/>
+        <TextView
+            android:id="@+id/tv_state_worker"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:textSize="12sp"
+            android:gravity="center" />
+    </LinearLayout>
+    <Button
+        android:id="@+id/but_state_offline"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:text="请假"
+        android:background="@color/sbc_header_text"/>
+    <Button
+        android:id="@+id/but_state_outline"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:text="退出"
+        android:background="@color/viewfinder_laser"/>
+    <Button
+        android:id="@+id/but_state_online"
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:text="在线"
+        android:background="@color/sbc_header_text"/>
+</com.mcxtzhang.swipemenulib.SwipeMenuLayout>

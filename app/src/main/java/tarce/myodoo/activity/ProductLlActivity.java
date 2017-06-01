@@ -132,6 +132,7 @@ public class ProductLlActivity extends ToolBarActivity {
                 if (response.body().getResult().getRes_code() == 1){
                     if (move == Refresh_Move){
                         beanList = response.body().getResult().getRes_data();
+                        dataBeanList = beanList;
                         adapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, beanList);
                     }else {
                         dataBeanList = beanList;
@@ -162,20 +163,20 @@ public class ProductLlActivity extends ToolBarActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                int order_id = beanList.get(position).getOrder_id();
-                if (beanList.get(position).getState().equals("progress")) {
+                int order_id = dataBeanList.get(position).getOrder_id();
+                if (dataBeanList.get(position).getState().equals("progress")) {
                     Intent intent = new Intent(ProductLlActivity.this, ProductingActivity.class);
-                    intent.putExtra("order_name", beanList.get(position).getDisplay_name());
+                    intent.putExtra("order_name", dataBeanList.get(position).getDisplay_name());
                     intent.putExtra("order_id", order_id);
-                    intent.putExtra("state", beanList.get(position).getState());
+                    intent.putExtra("state", dataBeanList.get(position).getState());
                     intent.putExtra("name_activity", name_activity);
                     intent.putExtra("state_activity", state_activity);
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(ProductLlActivity.this, OrderDetailActivity.class);
-                    intent.putExtra("order_name", beanList.get(position).getDisplay_name());
+                    intent.putExtra("order_name", dataBeanList.get(position).getDisplay_name());
                     intent.putExtra("order_id", order_id);
-                    intent.putExtra("state", beanList.get(position).getState());
+                    intent.putExtra("state", dataBeanList.get(position).getState());
                     intent.putExtra("name_activity", name_activity);
                     intent.putExtra("state_activity", state_activity);
                     startActivity(intent);

@@ -172,7 +172,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 tvStateOrder.setText("备料中");
                 tvStartProduce.setText("备料完成");
                 click_check = STATE_START_PRODUCT;
-                camera_or_relative = true;
+                camera_or_relative = false;
                 framelayoutProduct.setVisibility(View.VISIBLE);
                 relativeOrderShow.setVisibility(View.GONE);
                 tvCheckState.setText("展开");
@@ -455,6 +455,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                 intent.putExtra("delay_state", delay_state);
                                 intent.putExtra("limit", limit);
                                 intent.putExtra("process_id", process_id);
+                                intent.putExtra("change", false);
                                 startActivity(intent);
                             }
                         }).show();
@@ -534,6 +535,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 intent.putExtra("order_id", order_id);
                 intent.putExtra("state_activity", state_activity);
                 intent.putExtra("name_activity", name_activity);
+                intent.putExtra("close", false);
                 startActivity(intent);
                 break;
         }
