@@ -115,9 +115,6 @@ public class MainActivity extends AppCompatActivity {
     /*****点击搜索界面*/
     @OnClick(R.id.search_button)
     void clickSearchButton(View view){
-
-
-
     }
 
 

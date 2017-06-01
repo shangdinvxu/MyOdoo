@@ -5,12 +5,18 @@ import android.util.Log;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import tarce.model.inventory.PickingDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
+import tarce.support.MyLog;
+import tarce.support.TimeUtils;
 
 /**
  * Created by rose.zou on 2017/5/22.
@@ -31,8 +37,7 @@ public class PickingDetailAdapter extends BaseQuickAdapter<PickingDetailBean.Res
         helper.setText(R.id.tv_product_name, item.getProduct_name());
         helper.setText(R.id.tv_name_process, "工序:"+item.getProcess_id().getName());
         helper.setText(R.id.tv_product_qty, StringUtils.doubleToString(item.getProduct_qty()));
-        helper.setText(R.id.tv_date_planned_start, item.getDate_planned_start());
-       // helper.setText(R.id.tv_date_planned_start, DateTool.getGMTBeijing(item.getDate_planned_start()));
+        helper.setText(R.id.tv_date_planned_start, TimeUtils.utc2Local(item.getDate_planned_start()));
         switch (item.getState()){
             case "draft":
                 helper.setText(R.id.tv_state, "草稿");
