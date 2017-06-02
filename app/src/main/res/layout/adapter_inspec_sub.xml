@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="40dp"
-    android:background="@color/cc">
-
+    android:layout_height="45dp">
     <TextView
+        android:id="@+id/tv_receipts_origin"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent"
-        android:text="源单据"
+        android:gravity="center"
+        android:textSize="13sp"/>
+    <TextView
+        android:id="@+id/tv_nameproduct_inspec"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="12sp"/>
+    <TextView
+        android:id="@+id/tv_num_inspection"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"
         android:gravity="center"/>
     <TextView
+        android:id="@+id/tv_state_inspection"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent"
-        android:text="产品名"
-        android:gravity="center"/>
-    <TextView
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:text="品检数量"
-        android:gravity="center"/>
-    <TextView
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"
-        android:text="状态"
         android:gravity="center"/>
 </LinearLayout>

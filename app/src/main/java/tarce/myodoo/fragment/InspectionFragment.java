@@ -60,6 +60,11 @@ public class InspectionFragment extends Fragment {
         list.add(new MainItemBean(new MenuBean("入库品检", 0)));
     }
 
+    @Override
+    public void onResume() {
+        initRedNum();
+        super.onResume();
+    }
 
     @Nullable
     @Override
@@ -85,9 +90,14 @@ public class InspectionFragment extends Fragment {
                 switch (name){
                     case "等待生产品检":
                         Intent intent = new Intent(getActivity(), InspectionSubActivity.class);
+                        intent.putExtra("state", "draft");
+                        intent.putExtra("autoRefresh", 0);
                         startActivity(intent);
                         break;
                     case "品检中":
+                        Intent intent1 = new Intent(getActivity(), InspectionSubActivity.class);
+                        intent1.putExtra("state", "qc_ing");
+                        startActivity(intent1);
                         break;
                 }
             }

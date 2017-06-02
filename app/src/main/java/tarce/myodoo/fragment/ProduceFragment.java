@@ -31,7 +31,6 @@ import tarce.model.inventory.LoadProductBean;
 import tarce.myodoo.IntentFactory;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
-import tarce.myodoo.activity.WaitReworkActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
@@ -113,11 +112,11 @@ public class ProduceFragment extends Fragment {
                     list.get(1).t.setNumber(needaction_counter1);
                     Integer needaction_counter2 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
                     list.get(2).t.setNumber(needaction_counter2);
-                    Integer needaction_counter3 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_rework_ing().getNeedaction_counter();
+                    Integer needaction_counter3 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
                     list.get(3).t.setNumber(needaction_counter3);
                     Integer needaction_counter4 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_mrp_production_qc_inspection_fail().getNeedaction_counter();
                     list.get(4).t.setNumber(needaction_counter4);
-                    Integer needaction_counter5 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
+                    Integer needaction_counter5 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_rework_ing().getNeedaction_counter();
                     list.get(5).t.setNumber(needaction_counter5);
                     /*Integer needaction_counter6 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
                     list.get(6).t.setNumber(needaction_counter6);*/

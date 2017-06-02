@@ -29,8 +29,12 @@ import tarce.model.inventory.MaterialDetailBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.model.inventory.ProcessDeatilBean;
+import tarce.model.inventory.QcFeedbaskBean;
+import tarce.model.inventory.RejectResultBean;
+import tarce.model.inventory.RukuBean;
 import tarce.model.inventory.SalesOutListResponse;
 import tarce.model.inventory.GetNumProcess;
+import tarce.model.inventory.StartInspectBean;
 import tarce.model.inventory.StartProductBean;
 import tarce.model.inventory.StopProductlineBean;
 import tarce.model.inventory.UpdateMessageBean;
@@ -235,4 +239,28 @@ public interface InventoryApi {
      * */
     @POST("upload_procure_info")
     Call<UpdateMessageBean> uploadProductArea(@Body HashMap hashMap);
+
+    /**
+     * 等待生产品检
+     * */
+    @POST("get_qc_feedback")
+    Call<QcFeedbaskBean> getQcfb(@Body HashMap hashMap);
+
+    /**
+     * 开始品检
+     * */
+    @POST("start_quality_inspection")
+    Call<StartInspectBean> startInspection(@Body HashMap hashMap);
+
+    /**
+     * 品检通过,品检不通过
+     * */
+    @POST("inspection_result")
+    Call<RejectResultBean> resultInspec(@Body HashMap hashMap);
+
+    /**
+     * 入库
+     * */
+    @POST("produce_done")
+    Call<RukuBean> produceDone(@Body HashMap hashMap);
 }

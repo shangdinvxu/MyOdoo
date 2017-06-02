@@ -89,6 +89,7 @@ public class OrderDetailActivity extends ToolBarActivity {
     private static final int STATE_START_PRODUCT = 2;
     private static final int STATE_REQUSIT_RIGISTER = 3;//领料登记
     private static final int STATE_ALREADY_PICKING = 4;//开始生产
+    private static final int WRITE_WATERIAL_OUT = 5;//填写退料
     @InjectView(R.id.tv_area_look)
     TextView tvAreaLook;
     private int click_check;//用于底部的点击事件  根据状态加载不同的点击事件后续
@@ -218,6 +219,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "waiting_inventory_material":
                 tvStateOrder.setText("等待清点退料");
+                framelayoutProduct.setVisibility(View.GONE);
+                tvStartProduce.setText("填写退料");
+                click_check = WRITE_WATERIAL_OUT;
                 break;
             case "waiting_warehouse_inspection":
                 tvStateOrder.setText("等待检验退料");
@@ -537,6 +541,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                 intent.putExtra("name_activity", name_activity);
                 intent.putExtra("close", false);
                 startActivity(intent);
+                break;
+            case WRITE_WATERIAL_OUT://填写退料
+              //  Intent intent1 = new Intent(OrderDetailActivity.this, );
                 break;
         }
     }

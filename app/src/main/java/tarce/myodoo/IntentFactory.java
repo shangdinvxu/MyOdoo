@@ -3,12 +3,12 @@ package tarce.myodoo;
 import android.content.Context;
 import android.content.Intent;
 
+import tarce.myodoo.activity.InspectionSubActivity;
 import tarce.myodoo.activity.MainActivity;
 import tarce.myodoo.activity.ProductLlActivity;
 import tarce.myodoo.activity.SalesInActivity;
 import tarce.myodoo.activity.SalesOutActivity;
 import tarce.myodoo.activity.SelectProcedureActivity;
-import tarce.myodoo.activity.WaitReworkActivity;
 
 
 /**
@@ -69,9 +69,8 @@ public class IntentFactory {
      * 跳转至等待返工，生产入库详细页面
      * */
     public static void start_WaitRework_Activity(Context context, String name, String state){
-        Intent intent = new Intent(context, WaitReworkActivity.class);
-        intent.putExtra("name_activity",name);
-        intent.putExtra("state_product",state);
+        Intent intent = new Intent(context, InspectionSubActivity.class);
+        intent.putExtra("state",state);
         context.startActivity(intent);
     }
 }

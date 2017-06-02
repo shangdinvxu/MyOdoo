@@ -24,7 +24,18 @@ import tarce.support.TimeUtils;
  */
 
 public class PickingDetailAdapter extends BaseQuickAdapter<PickingDetailBean.ResultBean.ResDataBean, BaseViewHolder>{
+    
     private List<PickingDetailBean.ResultBean.ResDataBean> data;
+
+    @Override
+    public List<PickingDetailBean.ResultBean.ResDataBean> getData() {
+        return data;
+    }
+
+    public void setData(List<PickingDetailBean.ResultBean.ResDataBean> data) {
+        this.data = data;
+    }
+
     public PickingDetailAdapter(int layoutResId, List<PickingDetailBean.ResultBean.ResDataBean> data) {
         super(layoutResId, data);
         this.data = data;

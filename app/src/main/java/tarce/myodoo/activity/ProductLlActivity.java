@@ -130,21 +130,20 @@ public class ProductLlActivity extends ToolBarActivity {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getResult().getRes_code() == 1){
+                    beanList = response.body().getResult().getRes_data();
                     if (move == Refresh_Move){
-                        beanList = response.body().getResult().getRes_data();
                         dataBeanList = beanList;
                         adapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, beanList);
+                        swipeTarget.setAdapter(adapter);
                     }else {
-                        dataBeanList = beanList;
-                        beanList = response.body().getResult().getRes_data();
                         if (beanList == null){
                             ToastUtils.showCommonToast(ProductLlActivity.this, "没有更多数据...");
                             return;
                         }
+                        dataBeanList = adapter.getData();
                         dataBeanList.addAll(beanList);
-                        adapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, dataBeanList);
+                        adapter.setData(dataBeanList);
                     }
-                    swipeTarget.setAdapter(adapter);
                     clickAdapterItem();
                 }
             }
