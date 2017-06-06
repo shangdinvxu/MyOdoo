@@ -3,15 +3,15 @@ package tarce.model.inventory;
 import java.util.List;
 
 /**
- * Created by rose.zou on 2017/6/2.
- * 品检通过  不通过
+ * Created by rose.zou on 2017/6/6.
+ * 开始返工  数据
  */
 
-public class RejectResultBean {
+public class StartReworkBean {
     /**
      * jsonrpc : 2.0
      * id : null
-     * result : {"res_data":{"qc_test_qty":100,"qc_img":["http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=20&model=qc.feedback.img&field=qc_img"],"qc_fail_rate":50,"qty_produced":200,"qc_rate":50,"name":"QCF/201705250081","qc_fail_qty":50,"feedback_id":701,"qc_note":"可以","state":"qc_success","production_id":{"order_id":47654,"display_name":"MO1705231797","product_id":{"product_id":71769,"product_name":"P220S-成品-裱纸 -秘鲁minimudo"}}},"res_msg":"","res_code":1}
+     * result : {"res_data":{"qc_test_qty":66,"qc_img":[],"qc_fail_rate":0,"qty_produced":200,"qc_rate":33,"name":"QCF/201705250052","qc_fail_qty":0,"feedback_id":672,"qc_note":"u","state":"check_to_rework","production_id":{"order_id":45982,"display_name":"MO170523126","product_id":{"product_id":48302,"product_name":"MA03-3-成品(霸王龙)-RT-ENG-库存用完换MA13"}}},"res_msg":"","res_code":1}
      */
 
     private String jsonrpc;
@@ -44,7 +44,7 @@ public class RejectResultBean {
 
     public static class ResultBean {
         /**
-         * res_data : {"qc_test_qty":100,"qc_img":["http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=20&model=qc.feedback.img&field=qc_img"],"qc_fail_rate":50,"qty_produced":200,"qc_rate":50,"name":"QCF/201705250081","qc_fail_qty":50,"feedback_id":701,"qc_note":"可以","state":"qc_success","production_id":{"order_id":47654,"display_name":"MO1705231797","product_id":{"product_id":71769,"product_name":"P220S-成品-裱纸 -秘鲁minimudo"}}}
+         * res_data : {"qc_test_qty":66,"qc_img":[],"qc_fail_rate":0,"qty_produced":200,"qc_rate":33,"name":"QCF/201705250052","qc_fail_qty":0,"feedback_id":672,"qc_note":"u","state":"check_to_rework","production_id":{"order_id":45982,"display_name":"MO170523126","product_id":{"product_id":48302,"product_name":"MA03-3-成品(霸王龙)-RT-ENG-库存用完换MA13"}}}
          * res_msg :
          * res_code : 1
          */
@@ -87,17 +87,17 @@ public class RejectResultBean {
             }
 
             /**
-             * qc_test_qty : 100.0
-             * qc_img : ["http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=20&model=qc.feedback.img&field=qc_img"]
-             * qc_fail_rate : 50.0
+             * qc_test_qty : 66.0
+             * qc_img : []
+             * qc_fail_rate : 0.0
              * qty_produced : 200.0
-             * qc_rate : 50.0
-             * name : QCF/201705250081
-             * qc_fail_qty : 50.0
-             * feedback_id : 701
-             * qc_note : 可以
-             * state : qc_success
-             * production_id : {"order_id":47654,"display_name":"MO1705231797","product_id":{"product_id":71769,"product_name":"P220S-成品-裱纸 -秘鲁minimudo"}}
+             * qc_rate : 33.0
+             * name : QCF/201705250052
+             * qc_fail_qty : 0.0
+             * feedback_id : 672
+             * qc_note : u
+             * state : check_to_rework
+             * production_id : {"order_id":45982,"display_name":"MO170523126","product_id":{"product_id":48302,"product_name":"MA03-3-成品(霸王龙)-RT-ENG-库存用完换MA13"}}
              */
 
             private String error;
@@ -111,7 +111,7 @@ public class RejectResultBean {
             private String qc_note;
             private String state;
             private ProductionIdBean production_id;
-            private List<String> qc_img;
+            private List<?> qc_img;
 
             public double getQc_test_qty() {
                 return qc_test_qty;
@@ -193,19 +193,19 @@ public class RejectResultBean {
                 this.production_id = production_id;
             }
 
-            public List<String> getQc_img() {
+            public List<?> getQc_img() {
                 return qc_img;
             }
 
-            public void setQc_img(List<String> qc_img) {
+            public void setQc_img(List<?> qc_img) {
                 this.qc_img = qc_img;
             }
 
             public static class ProductionIdBean {
                 /**
-                 * order_id : 47654
-                 * display_name : MO1705231797
-                 * product_id : {"product_id":71769,"product_name":"P220S-成品-裱纸 -秘鲁minimudo"}
+                 * order_id : 45982
+                 * display_name : MO170523126
+                 * product_id : {"product_id":48302,"product_name":"MA03-3-成品(霸王龙)-RT-ENG-库存用完换MA13"}
                  */
 
                 private int order_id;
@@ -238,8 +238,8 @@ public class RejectResultBean {
 
                 public static class ProductIdBean {
                     /**
-                     * product_id : 71769
-                     * product_name : P220S-成品-裱纸 -秘鲁minimudo
+                     * product_id : 48302
+                     * product_name : MA03-3-成品(霸王龙)-RT-ENG-库存用完换MA13
                      */
 
                     private int product_id;

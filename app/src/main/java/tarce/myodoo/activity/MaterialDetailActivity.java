@@ -55,14 +55,7 @@ public class MaterialDetailActivity extends ToolBarActivity {
         initView();
     }
 
-   /* @Override
-    protected void onResume() {
-        super.onResume();
-        initView();
-    }
-*/
-
-    private void initView() {
+    private void initView(){
         showDefultProgressDialog();
         Intent intent = getIntent();
         state = intent.getStringExtra("state");

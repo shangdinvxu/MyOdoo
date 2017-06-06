@@ -49,6 +49,7 @@ public class ProduceFragment extends Fragment {
     RecyclerView recyclerview;
     private InventoryApi inventoryApi;
     private SectionAdapter adapter;
+    private LoadProductBean.LoadResultBean.ThreeSubResult res_data;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +84,9 @@ public class ProduceFragment extends Fragment {
 
     @Override
     public void onResume() {
+        if (res_data==null){
+            initRedNum();
+        }
         super.onResume();
     }
 
@@ -106,6 +110,7 @@ public class ProduceFragment extends Fragment {
                // AlertAialogUtils.dismissDefultProgressDialog();
                 if (response.body() == null)return;
                 if (response.body().getResult().getRes_code() == 1){
+                    res_data = response.body().getResult().getRes_data();
                     Integer needaction_counter0 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_finish_prepare_material().getNeedaction_counter();
                     list.get(0).t.setNumber(needaction_counter0);
                     Integer needaction_counter1 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_already_picking().getNeedaction_counter();
@@ -171,6 +176,12 @@ public class ProduceFragment extends Fragment {
         recyclerview.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerview.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL));
+    }
+
+    @Override
+    public void onPause() {
+        res_data = null;
+        super.onPause();
     }
 
     @Override

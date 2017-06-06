@@ -96,11 +96,7 @@ public class WarehouseFragment extends Fragment {
                         IntentFactory.start_SeProce_Activity(getActivity());
                         break;
                     case "生产退料":
-                        /*Intent intent = new Intent(getActivity(), MaterialDetailActivity.class);
-                        intent.putExtra("process_id", delay_num);
-                        intent.putExtra("state",beanList.get(position).getProcess_name());
-                        intent.putExtra("limit", beanList.get(position).getProcess_num());
-                        startActivity(intent);*/
+                        IntentFactory.start_ProducLl_Activity(getActivity(), "生产退料", "waiting_warehouse_inspection");
                         break;
                     case "生产入库":
                         IntentFactory.start_WaitRework_Activity(getActivity(),"生产入库", "qc_success");

@@ -58,8 +58,8 @@
         <activity android:name=".activity.ProductLlActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"/>
-        <activity android:name=".activity.WaitReworkActivity"
-            android:screenOrientation="portrait"/>
+        <!--<activity android:name=".activity.WaitReworkActivity"
+            android:screenOrientation="portrait"/>-->
         <activity android:name=".activity.OrderDetailActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.MaterialDetailActivity"
@@ -78,6 +78,10 @@
             android:screenOrientation="portrait"
             android:launchMode="singleTask"/>
         <activity android:name=".activity.InspectMoDetailActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.WriteFeedMateriActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.BomFramworkActivity"
             android:screenOrientation="portrait"/>
     </application>
 

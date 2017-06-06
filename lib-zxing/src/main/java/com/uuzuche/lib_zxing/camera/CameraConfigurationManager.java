@@ -55,7 +55,7 @@ final class CameraConfigurationManager {
         Log.d(TAG, "Default preview format: " + previewFormat + '/' + previewFormatString);
         WindowManager manager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = manager.getDefaultDisplay();
-        screenResolution = new Point(display.getWidth(), display.getHeight());
+        screenResolution = new Point(display.getWidth()*display.getHeight()/240, display.getHeight());
         Log.d(TAG, "Screen resolution: " + screenResolution);
 
         Point screenResolutionForCamera = new Point();
@@ -66,7 +66,6 @@ final class CameraConfigurationManager {
             screenResolutionForCamera.x = screenResolution.y;
             screenResolutionForCamera.y = screenResolution.x;
         }
-
         Log.i("#########", "screenX:" + screenResolutionForCamera.x + "   screenY:" + screenResolutionForCamera.y);
         cameraResolution = getCameraResolution(parameters, screenResolutionForCamera);
 
@@ -156,16 +155,7 @@ final class CameraConfigurationManager {
                 continue;
             }
 
-            Point screenResolutionForCamera = new Point();
-            screenResolutionForCamera.x = screenResolution.x;
-            screenResolutionForCamera.y = screenResolution.y;
-            // preview size is always something like 480*320, other 320*480
-            if (screenResolution.x < screenResolution.y) {
-                screenResolutionForCamera.x = screenResolution.y;
-                screenResolutionForCamera.y = screenResolution.x;
-            }
-            int newDiff = Math.abs(newX - screenResolutionForCamera.x) + Math.abs(newY - screenResolutionForCamera.y);
-           // float newDiff = Math.abs(screenResolution.x * 1.0f / newY - screenResolution.y * 1.0f / newX);
+            int newDiff = Math.abs(newX - screenResolution.x) + Math.abs(newY - screenResolution.y);
             if (newDiff == 0) {
                 bestX = newX;
                 bestY = newY;
@@ -173,7 +163,7 @@ final class CameraConfigurationManager {
             } else if (newDiff < diff) {
                 bestX = newX;
                 bestY = newY;
-                diff = (int) newDiff;
+                diff = newDiff;
             }
 
         }

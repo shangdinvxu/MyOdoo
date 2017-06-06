@@ -3,15 +3,15 @@ package tarce.model.inventory;
 import java.util.List;
 
 /**
- * Created by rose.zou on 2017/6/1.
- * 点击生产完成返回的数据
+ * Created by rose.zou on 2017/6/5.
+ * 提交退料数量的接口返回数据
  */
 
-public class FinishProductBean {
+public class CommitNumFeedBean {
     /**
      * jsonrpc : 2.0
      * id : null
-     * result : {"res_data":{"origin":"SO2017042401913:MO/2017042538659","remark":"","prepare_material_area_id":{"area_id":false,"area_name":false},"display_name":"MO/2017042538672","product_id":{"product_ll_type":"semi-finished","area_id":{"area_id":false,"area_name":false},"product_id":70887,"product_name":"[QJ.1PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-1"},"production_order_type":"stockup","order_id":38724,"sale_remark":"","qty_produced":324,"cur_location":null,"stock_move_lines":[{"quantity_ready":0,"virtual_available":0,"product_id":"[CY.1PD656.110] 冲压制程品-JPD656-裱纸-西班牙EBS-6-1","suggest_qty":3337,"product_uom_qty":3240,"order_id":38724,"return_qty":0,"product_tmpl_id":70878,"product_type":"semi-finished","quantity_available":0,"qty_available":0,"quantity_done":3240,"id":56038,"over_picking_qty":0}],"state":"waiting_inventory_material","process_id":{"process_id":8,"name":"全检","is_rework":false},"bom_name":"[QJ.1PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-1","feedback_on_rework":{"feedback_id":false,"name":null},"product_qty":3240,"in_charge_name":"陈小娟","date_planned_start":"2017-05-25 09:56:12","product_name":"[QJ.1PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-1","is_pending":false,"prepare_material_img":"http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=38724&model=mrp.production&field=prepare_material_img"},"res_msg":"","res_code":1}
+     * result : {"res_data":{"origin":"SO2017042401913:MO/2017042538659","cur_location":null,"product_qty":3240,"display_name":"MO/2017042538675","prepare_material_area_id":{"area_id":false,"area_name":false},"state":"done","in_charge_name":"陈小娟","product_name":"[QJ.2PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-2","order_id":38727,"qty_produced":3240,"stock_move_lines":[{"quantity_ready":0,"virtual_available":0,"product_id":"[CY.2PD656.110] 冲压制程品-JPD656-裱纸-西班牙EBS-6-2","suggest_qty":3337,"product_uom_qty":3240,"order_id":38727,"return_qty":0,"product_tmpl_id":70882,"product_type":"semi-finished","quantity_available":0,"qty_available":0,"quantity_done":3240,"id":56042,"over_picking_qty":0}],"process_id":{"process_id":8,"name":"全检","is_rework":false},"bom_name":"[QJ.2PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-2","prepare_material_img":"http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=38727&model=mrp.production&field=prepare_material_img","remark":"","sale_remark":"","date_planned_start":"2017-06-25 09:56:17","product_id":{"product_ll_type":"semi-finished","area_id":{"area_id":false,"area_name":false},"product_specs":"370*230*3mm","product_id":70888,"product_name":"[QJ.2PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-2"},"production_order_type":"stockup","feedback_on_rework":{"feedback_id":false,"name":null},"is_bom_update":false,"is_pending":true},"res_msg":"","res_code":1}
      */
 
     private String jsonrpc;
@@ -44,7 +44,7 @@ public class FinishProductBean {
 
     public static class ResultBean {
         /**
-         * res_data : {"origin":"SO2017042401913:MO/2017042538659","remark":"","prepare_material_area_id":{"area_id":false,"area_name":false},"display_name":"MO/2017042538672","product_id":{"product_ll_type":"semi-finished","area_id":{"area_id":false,"area_name":false},"product_id":70887,"product_name":"[QJ.1PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-1"},"production_order_type":"stockup","order_id":38724,"sale_remark":"","qty_produced":324,"cur_location":null,"stock_move_lines":[{"quantity_ready":0,"virtual_available":0,"product_id":"[CY.1PD656.110] 冲压制程品-JPD656-裱纸-西班牙EBS-6-1","suggest_qty":3337,"product_uom_qty":3240,"order_id":38724,"return_qty":0,"product_tmpl_id":70878,"product_type":"semi-finished","quantity_available":0,"qty_available":0,"quantity_done":3240,"id":56038,"over_picking_qty":0}],"state":"waiting_inventory_material","process_id":{"process_id":8,"name":"全检","is_rework":false},"bom_name":"[QJ.1PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-1","feedback_on_rework":{"feedback_id":false,"name":null},"product_qty":3240,"in_charge_name":"陈小娟","date_planned_start":"2017-05-25 09:56:12","product_name":"[QJ.1PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-1","is_pending":false,"prepare_material_img":"http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=38724&model=mrp.production&field=prepare_material_img"}
+         * res_data : {"origin":"SO2017042401913:MO/2017042538659","cur_location":null,"product_qty":3240,"display_name":"MO/2017042538675","prepare_material_area_id":{"area_id":false,"area_name":false},"state":"done","in_charge_name":"陈小娟","product_name":"[QJ.2PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-2","order_id":38727,"qty_produced":3240,"stock_move_lines":[{"quantity_ready":0,"virtual_available":0,"product_id":"[CY.2PD656.110] 冲压制程品-JPD656-裱纸-西班牙EBS-6-2","suggest_qty":3337,"product_uom_qty":3240,"order_id":38727,"return_qty":0,"product_tmpl_id":70882,"product_type":"semi-finished","quantity_available":0,"qty_available":0,"quantity_done":3240,"id":56042,"over_picking_qty":0}],"process_id":{"process_id":8,"name":"全检","is_rework":false},"bom_name":"[QJ.2PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-2","prepare_material_img":"http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=38727&model=mrp.production&field=prepare_material_img","remark":"","sale_remark":"","date_planned_start":"2017-06-25 09:56:17","product_id":{"product_ll_type":"semi-finished","area_id":{"area_id":false,"area_name":false},"product_specs":"370*230*3mm","product_id":70888,"product_name":"[QJ.2PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-2"},"production_order_type":"stockup","feedback_on_rework":{"feedback_id":false,"name":null},"is_bom_update":false,"is_pending":true}
          * res_msg :
          * res_code : 1
          */
@@ -80,48 +80,50 @@ public class FinishProductBean {
         public static class ResDataBean {
             /**
              * origin : SO2017042401913:MO/2017042538659
-             * remark :
-             * prepare_material_area_id : {"area_id":false,"area_name":false}
-             * display_name : MO/2017042538672
-             * product_id : {"product_ll_type":"semi-finished","area_id":{"area_id":false,"area_name":false},"product_id":70887,"product_name":"[QJ.1PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-1"}
-             * production_order_type : stockup
-             * order_id : 38724
-             * sale_remark :
-             * qty_produced : 324.0
              * cur_location : null
-             * stock_move_lines : [{"quantity_ready":0,"virtual_available":0,"product_id":"[CY.1PD656.110] 冲压制程品-JPD656-裱纸-西班牙EBS-6-1","suggest_qty":3337,"product_uom_qty":3240,"order_id":38724,"return_qty":0,"product_tmpl_id":70878,"product_type":"semi-finished","quantity_available":0,"qty_available":0,"quantity_done":3240,"id":56038,"over_picking_qty":0}]
-             * state : waiting_inventory_material
-             * process_id : {"process_id":8,"name":"全检","is_rework":false}
-             * bom_name : [QJ.1PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-1
-             * feedback_on_rework : {"feedback_id":false,"name":null}
              * product_qty : 3240.0
+             * display_name : MO/2017042538675
+             * prepare_material_area_id : {"area_id":false,"area_name":false}
+             * state : done
              * in_charge_name : 陈小娟
-             * date_planned_start : 2017-05-25 09:56:12
-             * product_name : [QJ.1PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-1
-             * is_pending : false
-             * prepare_material_img : http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=38724&model=mrp.production&field=prepare_material_img
+             * product_name : [QJ.2PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-2
+             * order_id : 38727
+             * qty_produced : 3240.0
+             * stock_move_lines : [{"quantity_ready":0,"virtual_available":0,"product_id":"[CY.2PD656.110] 冲压制程品-JPD656-裱纸-西班牙EBS-6-2","suggest_qty":3337,"product_uom_qty":3240,"order_id":38727,"return_qty":0,"product_tmpl_id":70882,"product_type":"semi-finished","quantity_available":0,"qty_available":0,"quantity_done":3240,"id":56042,"over_picking_qty":0}]
+             * process_id : {"process_id":8,"name":"全检","is_rework":false}
+             * bom_name : [QJ.2PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-2
+             * prepare_material_img : http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=38727&model=mrp.production&field=prepare_material_img
+             * remark :
+             * sale_remark :
+             * date_planned_start : 2017-06-25 09:56:17
+             * product_id : {"product_ll_type":"semi-finished","area_id":{"area_id":false,"area_name":false},"product_specs":"370*230*3mm","product_id":70888,"product_name":"[QJ.2PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-2"}
+             * production_order_type : stockup
+             * feedback_on_rework : {"feedback_id":false,"name":null}
+             * is_bom_update : false
+             * is_pending : true
              */
 
             private String origin;
-            private String remark;
-            private PrepareMaterialAreaIdBean prepare_material_area_id;
-            private String display_name;
-            private ProductIdBean product_id;
-            private String production_order_type;
-            private int order_id;
-            private String sale_remark;
-            private double qty_produced;
             private Object cur_location;
+            private double product_qty;
+            private String display_name;
+            private PrepareMaterialAreaIdBean prepare_material_area_id;
             private String state;
+            private String in_charge_name;
+            private String product_name;
+            private int order_id;
+            private double qty_produced;
             private ProcessIdBean process_id;
             private String bom_name;
-            private FeedbackOnReworkBean feedback_on_rework;
-            private double product_qty;
-            private String in_charge_name;
-            private String date_planned_start;
-            private String product_name;
-            private boolean is_pending;
             private String prepare_material_img;
+            private String remark;
+            private String sale_remark;
+            private String date_planned_start;
+            private ProductIdBean product_id;
+            private String production_order_type;
+            private FeedbackOnReworkBean feedback_on_rework;
+            private boolean is_bom_update;
+            private boolean is_pending;
             private List<StockMoveLinesBean> stock_move_lines;
 
             public String getOrigin() {
@@ -132,20 +134,20 @@ public class FinishProductBean {
                 this.origin = origin;
             }
 
-            public String getRemark() {
-                return remark;
+            public Object getCur_location() {
+                return cur_location;
             }
 
-            public void setRemark(String remark) {
-                this.remark = remark;
+            public void setCur_location(Object cur_location) {
+                this.cur_location = cur_location;
             }
 
-            public PrepareMaterialAreaIdBean getPrepare_material_area_id() {
-                return prepare_material_area_id;
+            public double getProduct_qty() {
+                return product_qty;
             }
 
-            public void setPrepare_material_area_id(PrepareMaterialAreaIdBean prepare_material_area_id) {
-                this.prepare_material_area_id = prepare_material_area_id;
+            public void setProduct_qty(double product_qty) {
+                this.product_qty = product_qty;
             }
 
             public String getDisplay_name() {
@@ -156,20 +158,36 @@ public class FinishProductBean {
                 this.display_name = display_name;
             }
 
-            public ProductIdBean getProduct_id() {
-                return product_id;
+            public PrepareMaterialAreaIdBean getPrepare_material_area_id() {
+                return prepare_material_area_id;
             }
 
-            public void setProduct_id(ProductIdBean product_id) {
-                this.product_id = product_id;
+            public void setPrepare_material_area_id(PrepareMaterialAreaIdBean prepare_material_area_id) {
+                this.prepare_material_area_id = prepare_material_area_id;
             }
 
-            public String getProduction_order_type() {
-                return production_order_type;
+            public String getState() {
+                return state;
             }
 
-            public void setProduction_order_type(String production_order_type) {
-                this.production_order_type = production_order_type;
+            public void setState(String state) {
+                this.state = state;
+            }
+
+            public String getIn_charge_name() {
+                return in_charge_name;
+            }
+
+            public void setIn_charge_name(String in_charge_name) {
+                this.in_charge_name = in_charge_name;
+            }
+
+            public String getProduct_name() {
+                return product_name;
+            }
+
+            public void setProduct_name(String product_name) {
+                this.product_name = product_name;
             }
 
             public int getOrder_id() {
@@ -180,36 +198,12 @@ public class FinishProductBean {
                 this.order_id = order_id;
             }
 
-            public String getSale_remark() {
-                return sale_remark;
-            }
-
-            public void setSale_remark(String sale_remark) {
-                this.sale_remark = sale_remark;
-            }
-
             public double getQty_produced() {
                 return qty_produced;
             }
 
             public void setQty_produced(double qty_produced) {
                 this.qty_produced = qty_produced;
-            }
-
-            public Object getCur_location() {
-                return cur_location;
-            }
-
-            public void setCur_location(Object cur_location) {
-                this.cur_location = cur_location;
-            }
-
-            public String getState() {
-                return state;
-            }
-
-            public void setState(String state) {
-                this.state = state;
             }
 
             public ProcessIdBean getProcess_id() {
@@ -228,28 +222,28 @@ public class FinishProductBean {
                 this.bom_name = bom_name;
             }
 
-            public FeedbackOnReworkBean getFeedback_on_rework() {
-                return feedback_on_rework;
+            public String getPrepare_material_img() {
+                return prepare_material_img;
             }
 
-            public void setFeedback_on_rework(FeedbackOnReworkBean feedback_on_rework) {
-                this.feedback_on_rework = feedback_on_rework;
+            public void setPrepare_material_img(String prepare_material_img) {
+                this.prepare_material_img = prepare_material_img;
             }
 
-            public double getProduct_qty() {
-                return product_qty;
+            public String getRemark() {
+                return remark;
             }
 
-            public void setProduct_qty(double product_qty) {
-                this.product_qty = product_qty;
+            public void setRemark(String remark) {
+                this.remark = remark;
             }
 
-            public String getIn_charge_name() {
-                return in_charge_name;
+            public String getSale_remark() {
+                return sale_remark;
             }
 
-            public void setIn_charge_name(String in_charge_name) {
-                this.in_charge_name = in_charge_name;
+            public void setSale_remark(String sale_remark) {
+                this.sale_remark = sale_remark;
             }
 
             public String getDate_planned_start() {
@@ -260,12 +254,36 @@ public class FinishProductBean {
                 this.date_planned_start = date_planned_start;
             }
 
-            public String getProduct_name() {
-                return product_name;
+            public ProductIdBean getProduct_id() {
+                return product_id;
             }
 
-            public void setProduct_name(String product_name) {
-                this.product_name = product_name;
+            public void setProduct_id(ProductIdBean product_id) {
+                this.product_id = product_id;
+            }
+
+            public String getProduction_order_type() {
+                return production_order_type;
+            }
+
+            public void setProduction_order_type(String production_order_type) {
+                this.production_order_type = production_order_type;
+            }
+
+            public FeedbackOnReworkBean getFeedback_on_rework() {
+                return feedback_on_rework;
+            }
+
+            public void setFeedback_on_rework(FeedbackOnReworkBean feedback_on_rework) {
+                this.feedback_on_rework = feedback_on_rework;
+            }
+
+            public boolean isIs_bom_update() {
+                return is_bom_update;
+            }
+
+            public void setIs_bom_update(boolean is_bom_update) {
+                this.is_bom_update = is_bom_update;
             }
 
             public boolean isIs_pending() {
@@ -274,14 +292,6 @@ public class FinishProductBean {
 
             public void setIs_pending(boolean is_pending) {
                 this.is_pending = is_pending;
-            }
-
-            public String getPrepare_material_img() {
-                return prepare_material_img;
-            }
-
-            public void setPrepare_material_img(String prepare_material_img) {
-                this.prepare_material_img = prepare_material_img;
             }
 
             public List<StockMoveLinesBean> getStock_move_lines() {
@@ -298,47 +308,74 @@ public class FinishProductBean {
                  * area_name : false
                  */
 
-                private Object area_id;
+                private boolean area_id;
+                private boolean area_name;
 
-                public Object getArea_id() {
-                    if (area_id instanceof Boolean){
-                        return 0;
-                    }else if (area_id instanceof Double){
-                        return new Double((Double) area_id).intValue();
-                    }
+                public boolean isArea_id() {
                     return area_id;
                 }
 
-                public void setArea_id(Object area_id) {
+                public void setArea_id(boolean area_id) {
                     this.area_id = area_id;
                 }
 
-                public Object getArea_name() {
-                    if (area_name instanceof Boolean){
-                        return "";
-                    }
+                public boolean isArea_name() {
                     return area_name;
                 }
 
-                public void setArea_name(Object area_name) {
+                public void setArea_name(boolean area_name) {
                     this.area_name = area_name;
                 }
+            }
 
-                private Object area_name;
+            public static class ProcessIdBean {
+                /**
+                 * process_id : 8
+                 * name : 全检
+                 * is_rework : false
+                 */
 
+                private int process_id;
+                private String name;
+                private boolean is_rework;
 
+                public int getProcess_id() {
+                    return process_id;
+                }
+
+                public void setProcess_id(int process_id) {
+                    this.process_id = process_id;
+                }
+
+                public String getName() {
+                    return name;
+                }
+
+                public void setName(String name) {
+                    this.name = name;
+                }
+
+                public boolean isIs_rework() {
+                    return is_rework;
+                }
+
+                public void setIs_rework(boolean is_rework) {
+                    this.is_rework = is_rework;
+                }
             }
 
             public static class ProductIdBean {
                 /**
                  * product_ll_type : semi-finished
                  * area_id : {"area_id":false,"area_name":false}
-                 * product_id : 70887
-                 * product_name : [QJ.1PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-1
+                 * product_specs : 370*230*3mm
+                 * product_id : 70888
+                 * product_name : [QJ.2PD656.110] 全检制程品-JPD656-裱纸-西班牙EBS-6-2
                  */
 
                 private String product_ll_type;
                 private AreaIdBean area_id;
+                private String product_specs;
                 private int product_id;
                 private String product_name;
 
@@ -356,6 +393,14 @@ public class FinishProductBean {
 
                 public void setArea_id(AreaIdBean area_id) {
                     this.area_id = area_id;
+                }
+
+                public String getProduct_specs() {
+                    return product_specs;
+                }
+
+                public void setProduct_specs(String product_specs) {
+                    this.product_specs = product_specs;
                 }
 
                 public int getProduct_id() {
@@ -401,42 +446,6 @@ public class FinishProductBean {
                 }
             }
 
-            public static class ProcessIdBean {
-                /**
-                 * process_id : 8
-                 * name : 全检
-                 * is_rework : false
-                 */
-
-                private int process_id;
-                private String name;
-                private boolean is_rework;
-
-                public int getProcess_id() {
-                    return process_id;
-                }
-
-                public void setProcess_id(int process_id) {
-                    this.process_id = process_id;
-                }
-
-                public String getName() {
-                    return name;
-                }
-
-                public void setName(String name) {
-                    this.name = name;
-                }
-
-                public boolean isIs_rework() {
-                    return is_rework;
-                }
-
-                public void setIs_rework(boolean is_rework) {
-                    this.is_rework = is_rework;
-                }
-            }
-
             public static class FeedbackOnReworkBean {
                 /**
                  * feedback_id : false
@@ -467,17 +476,17 @@ public class FinishProductBean {
                 /**
                  * quantity_ready : 0.0
                  * virtual_available : 0.0
-                 * product_id : [CY.1PD656.110] 冲压制程品-JPD656-裱纸-西班牙EBS-6-1
+                 * product_id : [CY.2PD656.110] 冲压制程品-JPD656-裱纸-西班牙EBS-6-2
                  * suggest_qty : 3337.0
                  * product_uom_qty : 3240.0
-                 * order_id : 38724
+                 * order_id : 38727
                  * return_qty : 0.0
-                 * product_tmpl_id : 70878
+                 * product_tmpl_id : 70882
                  * product_type : semi-finished
                  * quantity_available : 0.0
                  * qty_available : 0.0
                  * quantity_done : 3240.0
-                 * id : 56038
+                 * id : 56042
                  * over_picking_qty : 0.0
                  */
 

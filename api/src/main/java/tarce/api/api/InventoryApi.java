@@ -19,8 +19,11 @@ import tarce.model.OutgoingStockpickingBean;
 import tarce.model.SearchSupplierResponse;
 import tarce.model.inventory.AreaMessageBean;
 import tarce.model.inventory.AutoAddworkBean;
+import tarce.model.inventory.BomFramworkBean;
 import tarce.model.inventory.CheckOutProductBean;
 import tarce.model.inventory.CheckPickRegisBean;
+import tarce.model.inventory.CommitNumFeedBean;
+import tarce.model.inventory.DoneCommitNumBean;
 import tarce.model.inventory.FinishProductBean;
 import tarce.model.inventory.FreeWorkBean;
 import tarce.model.inventory.LoadInspectionBean;
@@ -36,6 +39,7 @@ import tarce.model.inventory.SalesOutListResponse;
 import tarce.model.inventory.GetNumProcess;
 import tarce.model.inventory.StartInspectBean;
 import tarce.model.inventory.StartProductBean;
+import tarce.model.inventory.StartReworkBean;
 import tarce.model.inventory.StopProductlineBean;
 import tarce.model.inventory.UpdateMessageBean;
 import tarce.model.inventory.WorkingWorkerBean;
@@ -263,4 +267,34 @@ public interface InventoryApi {
      * */
     @POST("produce_done")
     Call<RukuBean> produceDone(@Body HashMap hashMap);
+
+    /**
+     * 提交退料数量
+     * */
+    @POST("return_material")
+    Call<CommitNumFeedBean> commitFeedNum(@Body HashMap hashMap);
+
+    /**
+     * 清点退料/提交退料数量
+     * */
+    @POST("semi_finished_return_material")
+    Call<DoneCommitNumBean> semiCommitReturn(@Body HashMap hashMap);
+
+    /**
+     * 开始返工
+     * */
+    @POST("start_rework")
+    Call<StartReworkBean> startRework(@Body HashMap hashMap);
+
+    /**
+     * 返工中
+     * */
+    @POST("get_rework_ing_production")
+    Call<PickingDetailBean> reworkIng(@Body HashMap hashMap);
+
+    /**
+     * bom结构
+     * */
+    @POST("get_bom_detail")
+    Call<BomFramworkBean> getBomDetail(@Body HashMap hashMap);
 }

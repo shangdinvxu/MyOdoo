@@ -332,6 +332,18 @@ public class OrderDetailBean {
                 private AreaIdBean area_id;
                 private int product_id;
                 private String product_name;
+                private Object product_specs;
+
+                public Object getProduct_specs() {
+                    if (product_specs instanceof Boolean){
+                        return 0;
+                    }
+                    return product_specs;
+                }
+
+                public void setProduct_specs(String product_specs) {
+                    this.product_specs = product_specs;
+                }
 
                 public String getProduct_ll_type() {
                     return product_ll_type;
@@ -430,21 +442,28 @@ public class OrderDetailBean {
             }
 
             public static class FeedbackOnReworkBean implements Serializable{
+                public Object getFeedback_id() {
+                    if (feedback_id instanceof Boolean){
+                        return 0;
+                    }
+                    return feedback_id;
+                }
+
+                public void setFeedback_id(Object feedback_id){
+                    this.feedback_id = feedback_id;
+                }
+
                 /**
                  * feedback_id : false
                  * name : null
                  */
 
-                private boolean feedback_id;
+                private Object feedback_id;
                 private Object name;
 
-                public boolean isFeedback_id() {
-                    return feedback_id;
-                }
 
-                public void setFeedback_id(boolean feedback_id) {
-                    this.feedback_id = feedback_id;
-                }
+
+
 
                 public Object getName() {
                     return name;

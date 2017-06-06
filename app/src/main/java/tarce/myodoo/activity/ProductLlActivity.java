@@ -14,6 +14,7 @@ import com.aspsine.swipetoloadlayout.OnRefreshListener;
 import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
+import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -78,7 +79,14 @@ public class ProductLlActivity extends ToolBarActivity {
         getPicking(0, 20, Refresh_Move);
     }
 
-    private void initView() {
+    @Override
+    protected void onResume() {
+        if (dataBeanList == null)
+        swipeToLoad.setRefreshing(true);
+        super.onResume();
+    }
+
+    private void initView(){
         showDefultProgressDialog();
         swipeRefreshHeader.setGravity(Gravity.CENTER);
         swipeLoadMoreFooter.setGravity(Gravity.CENTER);
@@ -116,14 +124,24 @@ public class ProductLlActivity extends ToolBarActivity {
     private void getPicking(final int offset, final int limit, final int move) {
         loginApi = RetrofitClient.getInstance(ProductLlActivity.this).create(InventoryApi.class);
         HashMap<Object, Object> hashMap = new HashMap<>();
-        hashMap.put("state", state_activity);
+        if (!"rework_ing".equals(state_activity)){
+            hashMap.put("state", state_activity);
+        }
         hashMap.put("offset", offset);
         hashMap.put("limit", limit);
-        if (!state_activity.equals("rework_ing") || !state_activity.equals("done")) {
+        if ("rework_ing".equals(state_activity) || "finish_prepare_material".equals(state_activity) || "already_picking".equals(state_activity)
+                || "progress".equals(state_activity) || "waiting_rework".equals(state_activity) || "rework_ing".equals(state_activity)
+                || "waiting_inventory_material".equals(state_activity)) {
             int partner_id = SharePreferenceUtils.getInt("partner_id", 1000, ProductLlActivity.this);
             hashMap.put("partner_id", partner_id);
         }
-        Call<PickingDetailBean> stringCall = loginApi.getPicking(hashMap);
+        Call<PickingDetailBean> stringCall;
+        if ("rework_ing".equals(state_activity)){
+            stringCall = loginApi.reworkIng(hashMap);
+        }else {
+            stringCall = loginApi.getPicking(hashMap);
+        }
+
         stringCall.enqueue(new MyCallback<PickingDetailBean>() {
             @Override
             public void onResponse(Call<PickingDetailBean> call, Response<PickingDetailBean> response) {
@@ -167,7 +185,7 @@ public class ProductLlActivity extends ToolBarActivity {
                     Intent intent = new Intent(ProductLlActivity.this, ProductingActivity.class);
                     intent.putExtra("order_name", dataBeanList.get(position).getDisplay_name());
                     intent.putExtra("order_id", order_id);
-                    intent.putExtra("state", dataBeanList.get(position).getState());
+                    intent.putExtra("state", "progress");
                     intent.putExtra("name_activity", name_activity);
                     intent.putExtra("state_activity", state_activity);
                     startActivity(intent);
@@ -182,5 +200,17 @@ public class ProductLlActivity extends ToolBarActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        dataBeanList = null;
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        dataBeanList = null;
+        super.onDestroy();
     }
 }

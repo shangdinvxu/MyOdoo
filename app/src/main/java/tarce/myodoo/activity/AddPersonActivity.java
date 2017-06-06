@@ -59,8 +59,8 @@ public class AddPersonActivity extends ToolBarActivity {
     LinearLayout linearTitle;
     @InjectView(R.id.recycler_person_wait)
     RecyclerView recyclerPersonWait;
-    @InjectView(R.id.icon_to_left)
-    ImageView iconToLeft;
+    /*@InjectView(R.id.icon_to_left)
+    ImageView iconToLeft;*/
     @InjectView(R.id.icon_to_right)
     ImageView iconToRight;
     @InjectView(R.id.recycler_person_work)

@@ -8,6 +8,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -79,6 +80,10 @@ public class ProductingActivity extends ToolBarActivity {
     TextView tvPersonManage;
     @InjectView(R.id.tv_line_stop)
     TextView tvLineStop;
+    @InjectView(R.id.tv_string_guige)
+    TextView tvStringGuige;
+    @InjectView(R.id.relative_order_show)
+    RelativeLayout relativeOrderShow;
     private int order_id;
     private String state;
     private int limit;
@@ -101,6 +106,7 @@ public class ProductingActivity extends ToolBarActivity {
     private boolean isShowDialog = true;
     private InsertNumDialog insertNumDialog;
     private boolean product_line = true;
+    private boolean up_or_down = true;//判断是收起还是展开,默认展开
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,7 +220,7 @@ public class ProductingActivity extends ToolBarActivity {
 
             @Override
             public void onFailure(Call<OrderDetailBean> call, Throwable t) {
-                super.onFailure(call, t);
+                dismissDefultProgressDialog();
             }
         });
     }
@@ -232,6 +238,7 @@ public class ProductingActivity extends ToolBarActivity {
         tvNeedNum.setText(String.valueOf(new Double(resDataBean.getProduct_qty()).intValue()));
         tvTimeProduct.setText(resDataBean.getDate_planned_start());
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
+        tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));
         switch (resDataBean.getProduction_order_type()) {
             case "stockup":
                 tvTypeProduct.setText("备货制");
@@ -315,6 +322,7 @@ public class ProductingActivity extends ToolBarActivity {
                                                 });
                                             }
                                         }).show();
+                                break;
                             } else {
                                 AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
                                         .setMessage(resDataBean.getStock_move_lines().get(i).getProduct_id() + "备料数量不足，请补料")
@@ -324,6 +332,7 @@ public class ProductingActivity extends ToolBarActivity {
                                                 dialog.dismiss();
                                             }
                                         }).show();
+                                break;
                             }
                         }
                     }
@@ -387,7 +396,10 @@ public class ProductingActivity extends ToolBarActivity {
      * 暂停产线  恢复产线
      * */
     private void stopProductLine(String state, int is_all_pending){
-        HashMap<Object, Object> hashMap = new HashMap<>();
+        Intent intent = new Intent(ProductingActivity.this, BomFramworkActivity.class);
+        intent.putExtra("order_id", order_id);
+        startActivity(intent);
+        /*HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("order_id",order_id);
         hashMap.put("state",state);
         hashMap.put("is_all_pending", is_all_pending);
@@ -411,7 +423,7 @@ public class ProductingActivity extends ToolBarActivity {
             public void onFailure(Call<StopProductlineBean> call, Throwable t) {
                 super.onFailure(call, t);
             }
-        });
+        });*/
     }
 
     /**
@@ -466,5 +478,23 @@ public class ProductingActivity extends ToolBarActivity {
                         });
                     }
                 }).show();
+    }
+
+    /**
+     * 收起，展开
+     */
+    @OnClick(R.id.img_up_down)
+    void onClickImage(View v) {
+        if (up_or_down) {
+            relativeOrderShow.setVisibility(View.GONE);
+            tvCheckState.setText("展开");
+            imgUpDown.setImageResource(R.mipmap.down);
+            up_or_down = false;
+        } else {
+            relativeOrderShow.setVisibility(View.VISIBLE);
+            tvCheckState.setText("收起");
+            imgUpDown.setImageResource(R.mipmap.up);
+            up_or_down = true;
+        }
     }
 }

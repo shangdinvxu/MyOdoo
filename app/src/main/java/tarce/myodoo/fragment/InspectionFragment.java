@@ -44,6 +44,7 @@ public class InspectionFragment extends Fragment {
     @InjectView(R.id.recyclerview)
     RecyclerView recyclerview;
     private InventoryApi inventoryApi;
+    private LoadInspectionBean.ResultBean.ResDataBean res_data;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,7 +63,9 @@ public class InspectionFragment extends Fragment {
 
     @Override
     public void onResume() {
-        initRedNum();
+        if (res_data == null){
+            initRedNum();
+        }
         super.onResume();
     }
 
@@ -116,6 +119,7 @@ public class InspectionFragment extends Fragment {
             public void onResponse(Call<LoadInspectionBean> call, Response<LoadInspectionBean> response) {
                     if (response.body() == null)return;
                     if (response.body().getResult().getRes_code() == 1){
+                        res_data = response.body().getResult().getRes_data();
                         Integer needaction_counter0 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_mrp_production_wait_qc_inspection().getNeedaction_counter();
                         list.get(1).t.setNumber(needaction_counter0);
                         Integer needaction_counter1 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_mrp_production_qc_inspecting().getNeedaction_counter();
@@ -137,6 +141,12 @@ public class InspectionFragment extends Fragment {
                 DividerItemDecoration.VERTICAL));
     }
 
+
+    @Override
+    public void onPause() {
+        res_data = null;
+        super.onPause();
+    }
 
     @Override
     public void onDestroyView() {

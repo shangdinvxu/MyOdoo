@@ -85,11 +85,15 @@ public class OrderDetailActivity extends ToolBarActivity {
     FrameLayout framelayoutProduct;
     @InjectView(R.id.tv_check_state)
     TextView tvCheckState;
+    @InjectView(R.id.tv_string_guige)
+    TextView tvStringGuige;
     private static final int STATE_WAIT_WATERIAL = 1;
     private static final int STATE_START_PRODUCT = 2;
     private static final int STATE_REQUSIT_RIGISTER = 3;//领料登记
     private static final int STATE_ALREADY_PICKING = 4;//开始生产
     private static final int WRITE_WATERIAL_OUT = 5;//填写退料
+    private static final int LOOK_MESSAGE_FEEDBACK = 6;//仓库查看退料信息
+    private static final int CHECK_MATERIAL_RETURN = 7;//清点退料
     @InjectView(R.id.tv_area_look)
     TextView tvAreaLook;
     private int click_check;//用于底部的点击事件  根据状态加载不同的点击事件后续
@@ -225,12 +229,18 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "waiting_warehouse_inspection":
                 tvStateOrder.setText("等待检验退料");
+                framelayoutProduct.setVisibility(View.GONE);
+                tvStartProduce.setText("仓库查看退料信息");
+                click_check = LOOK_MESSAGE_FEEDBACK;
                 break;
             case "waiting_post_inventory":
                 tvStateOrder.setText("等待入库");
                 break;
             case "done":
                 tvStateOrder.setText("完成");
+                framelayoutProduct.setVisibility(View.GONE);
+                tvStartProduce.setText("清点退料");
+                click_check = CHECK_MATERIAL_RETURN;
                 break;
         }
     }
@@ -371,6 +381,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         tvNeedNum.setText(String.valueOf(new Double(resDataBean.getProduct_qty()).intValue()));
         tvTimeProduct.setText(resDataBean.getDate_planned_start());
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
+        tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));
         switch (resDataBean.getProduction_order_type()) {
             case "stockup":
                 tvTypeProduct.setText("备货制");
@@ -466,7 +477,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case STATE_REQUSIT_RIGISTER:
                 /**
-                 * 判断流转品列表，逻辑为：备料数量至少要大于等于1，不然不能领料登记，而是提醒去修改备料数量，这时候 ， 原材料和半成品是不能点击的
+                 * 判断流转品列表，逻辑为：备料数量至少要大于等于1，不然不能领料登记，而是提醒去修改备料数量，这时候 ，原材料和半成品是不能点击的
                  * */
                 boolean next = true;
                 int index = -1;
@@ -543,7 +554,25 @@ public class OrderDetailActivity extends ToolBarActivity {
                 startActivity(intent);
                 break;
             case WRITE_WATERIAL_OUT://填写退料
-              //  Intent intent1 = new Intent(OrderDetailActivity.this, );
+                Intent intent1 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
+                intent1.putExtra("recycler_data", resDataBean);
+                intent1.putExtra("order_id", order_id);
+                intent1.putExtra("from", "write");
+                startActivity(intent1);
+                break;
+            case LOOK_MESSAGE_FEEDBACK:
+                Intent intent2 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
+                intent2.putExtra("recycler_data", resDataBean);
+                intent2.putExtra("order_id", order_id);
+                intent2.putExtra("from", "look");
+                startActivity(intent2);
+                break;
+            case CHECK_MATERIAL_RETURN:
+                Intent intent3 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
+                intent3.putExtra("recycler_data", resDataBean);
+                intent3.putExtra("order_id", order_id);
+                intent3.putExtra("from", "check");
+                startActivity(intent3);
                 break;
         }
     }

@@ -36,6 +36,7 @@ import tarce.model.inventory.QcFeedbaskBean;
 import tarce.model.inventory.RejectResultBean;
 import tarce.model.inventory.RukuBean;
 import tarce.model.inventory.StartInspectBean;
+import tarce.model.inventory.StartReworkBean;
 import tarce.myodoo.R;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
@@ -202,9 +203,9 @@ public class InspectMoDetailActivity extends ToolBarActivity {
      */
     @OnClick(R.id.tv_click_finish)
     void clickFinish(View view) {
-        showDefultProgressDialog();
         switch (tvClickFinish.getText().toString()) {
             case "开始品检":
+                showDefultProgressDialog();
                 HashMap<Object, Object> hashMap = new HashMap<>();
                 hashMap.put("feedback_id", dataBean.getFeedback_id());
                 hashMap.put("order_id", dataBean.getProduction_id().getOrder_id());
@@ -236,24 +237,18 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                 });
                 break;
             case "品检通过":
-                if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())){
-                    ToastUtils.showCommonToast(InspectMoDetailActivity.this, "请填写品检数量");
-                    return;
-                }
-                if (StringUtils.isNullOrEmpty(numSampleInspecdetail.getText().toString())){
-                    ToastUtils.showCommonToast(InspectMoDetailActivity.this, "请填写品检通过数量");
-                    return;
-                }
                 AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "")
                         .setMessage("是否确实品检通过")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                showDefultProgressDialog();
                                 checkResult(1);
                             }
                         }).show();
                 break;
             case "入库":
+                showDefultProgressDialog();
                 HashMap<Object, Object> doneHashmap = new HashMap<>();
                 doneHashmap.put("feedback_id",dataBean.getFeedback_id());
                 Call<RukuBean> objectCall1 = inventoryApi.produceDone(doneHashmap);
@@ -284,8 +279,46 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                     }
                 });
                 break;
+            case "品检不通过":
+                AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "")
+                        .setMessage("是否确实品检不通过")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                checkResult(0);
+                            }
+                        }).show();
+                break;
             case "开始返工":
+                HashMap<Object, Object> hashMap1 = new HashMap<>();
+                hashMap1.put("feedback_id", dataBean.getFeedback_id());
+                //hashMap1.put("feedback_id", 1);
+                Call<StartReworkBean> objectCall2 = inventoryApi.startRework(hashMap1);
+                objectCall2.enqueue(new MyCallback<StartReworkBean>() {
+                    @Override
+                    public void onResponse(Call<StartReworkBean> call, Response<StartReworkBean> response) {
+                        if (response.body() == null)return;
+                        if (response.body().getResult().getRes_code() == 1){
+                                AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "该单据开始返工")
+                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent intent = new Intent(InspectMoDetailActivity.this, InspectionSubActivity.class);
+                                                intent.putExtra("state","qc_fail");
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                        }).show();
+                        }else if (response.body().getResult().getRes_code() == -1){
+                              ToastUtils.showCommonToast(InspectMoDetailActivity.this, response.body().getResult().getRes_data().getError());
+                        }
+                    }
 
+                    @Override
+                    public void onFailure(Call<StartReworkBean> call, Throwable t) {
+
+                    }
+                });
                 break;
         }
     }
@@ -315,11 +348,27 @@ public class InspectMoDetailActivity extends ToolBarActivity {
      * 品检通过或者不通过接口
      * */
     private void checkResult(final int result){
+        if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())){
+            ToastUtils.showCommonToast(InspectMoDetailActivity.this, "请填写品检数量");
+            return;
+        }
+        if (StringUtils.isNullOrEmpty(numSampleInspecdetail.getText().toString())){
+            ToastUtils.showCommonToast(InspectMoDetailActivity.this, "请填写品检通过数量");
+            return;
+        }
         HashMap<Object, Object> resultMap = new HashMap<>();
         resultMap.put("feedback_id", dataBean.getFeedback_id());
         resultMap.put("result", result);
-        resultMap.put("qc_test_qty", Integer.parseInt(numSampleInspecdetail.getText().toString()));
-        resultMap.put("qc_fail_qty", Integer.parseInt(numRejectsInspecdetail.getText().toString()));
+        if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())){
+            resultMap.put("qc_fail_qty", 0);
+        }else {
+            resultMap.put("qc_fail_qty", Integer.parseInt(numRejectsInspecdetail.getText().toString()));
+        }
+        if (StringUtils.isNullOrEmpty(numSampleInspecdetail.getText().toString())){
+            resultMap.put("qc_test_qty", 0);
+        }else {
+            resultMap.put("qc_test_qty", Integer.parseInt(numSampleInspecdetail.getText().toString()));
+        }
         resultMap.put("qc_note", commentsOfInspecdetail.getText().toString());
         if (StringUtils.isNullOrEmpty(selectedImagePath)){
             String[] img_strNull = {""};
@@ -358,6 +407,8 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                                     }
                                 }).show();
                     }
+                }else if (response.body().getResult().getRes_code() == -1){
+                    ToastUtils.showCommonToast(InspectMoDetailActivity.this, response.body().getResult().getRes_data().getError());
                 }
             }
 
