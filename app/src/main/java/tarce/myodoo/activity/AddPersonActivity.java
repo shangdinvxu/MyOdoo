@@ -70,7 +70,7 @@ public class AddPersonActivity extends ToolBarActivity {
     private InventoryApi inventoryApi;
     private int order_id;
     private WorkPersonAdapter adapter;
-    private List<FreeWorkBean.ResultBean.ResDataBean> res_data;
+    private List<FreeWorkBean.ResultBean.ResDataBean> res_data = new ArrayList<>();
     private WorkingPersonAdapter personAdapter;
     private List<String> res_data_working;
     private List<WorkingStateBean> add_name = new ArrayList<>();
@@ -93,16 +93,16 @@ public class AddPersonActivity extends ToolBarActivity {
         setRecyclerview(recyclerPersonWork);
 
         initFragment();
+        showDefultProgressDialog();
         Intent intent = getIntent();
         close = intent.getBooleanExtra("close", true);
         order_id = intent.getIntExtra("order_id", 1);
         state_activity = intent.getStringExtra("state_activity");
         name_activity = intent.getStringExtra("name_activity");
         inventoryApi = RetrofitClient.getInstance(AddPersonActivity.this).create(InventoryApi.class);
-        showDefultProgressDialog();
         getFreeWork();
         getWorking();
-        if (close){
+        if (close) {
             tvAddTrue.setVisibility(View.GONE);
         }
     }
@@ -110,7 +110,7 @@ public class AddPersonActivity extends ToolBarActivity {
     /**
      * 工作中员工的数据请求
      */
-    private void getWorking(){
+    private void getWorking() {
         res_data_working = new ArrayList<>();
         res_dataTwo = new ArrayList<>();
         HashMap<Object, Object> hashMap = new HashMap<>();
@@ -119,6 +119,7 @@ public class AddPersonActivity extends ToolBarActivity {
         working.enqueue(new MyCallback<WorkingWorkerBean>() {
             @Override
             public void onResponse(Call<WorkingWorkerBean> call, Response<WorkingWorkerBean> response) {
+                dismissDefultProgressDialog();
                 if (response.body() == null && response.body().getResult().getRes_data() == null)
                     return;
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
@@ -128,7 +129,7 @@ public class AddPersonActivity extends ToolBarActivity {
                         adapterList.add(new WorkingStateBean(res_dataTwo.get(i).getWorker().getName(), res_dataTwo.get(i).getLine_state()));
                     }
                 }
-                personAdapter = new WorkingPersonAdapter(adapterList, AddPersonActivity.this, close) ;
+                personAdapter = new WorkingPersonAdapter(adapterList, AddPersonActivity.this, false);
                 recyclerPersonWork.setAdapter(personAdapter);
                 personAdapter.setOnSwipeListener(new WorkingPersonAdapter.onSwipeListener() {
                     @Override
@@ -151,7 +152,7 @@ public class AddPersonActivity extends ToolBarActivity {
 
             @Override
             public void onFailure(Call<WorkingWorkerBean> call, Throwable t) {
-                super.onFailure(call, t);
+                dismissDefultProgressDialog();
             }
         });
     }
@@ -168,9 +169,9 @@ public class AddPersonActivity extends ToolBarActivity {
             public void onResponse(Call<FreeWorkBean> call, Response<FreeWorkBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     res_data = response.body().getResult().getRes_data();
-                    map = new HashMap<String, Integer>();
+                    map = new HashMap<>();
                     for (int i = 0; i < res_data.size(); i++) {
                         map.put(res_data.get(i).getName(), res_data.get(i).getWorker_id());
                     }
@@ -243,8 +244,11 @@ public class AddPersonActivity extends ToolBarActivity {
         add_name.clear();
         for (int i = 0; i < adapter.getSelected().size(); i++) {
             if (!res_data_working.contains(adapter.getSelected().get(i).getName())) {
-                add_name.add(new WorkingStateBean(adapter.getSelected().get(i).getName(),""));
-            }
+                add_name.add(new WorkingStateBean(adapter.getSelected().get(i).getName(), ""));
+                res_data_working.add(adapter.getSelected().get(i).getName());
+            } /*else {
+                ToastUtils.showCommonToast(AddPersonActivity.this, "已经添加该员工");
+            }*/
         }
         adapterList.addAll(add_name);
         personAdapter.notifyDataSetChanged();
@@ -257,49 +261,62 @@ public class AddPersonActivity extends ToolBarActivity {
      */
     @OnClick(R.id.tv_add_true)
     void add(View view) {
+        showDefultProgressDialog();
         final HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("is_add", 1);
         hashMap.put("order_id", order_id);
-        int[] work_id = new int[res_data_working.size()];
-        for (int i = 0; i < res_data_working.size(); i++) {
-            work_id[i] = (int)map.get(res_data_working.get(i));
+        Integer[] work_id;
+        if (add_name.size() == 0){
+            work_id = new Integer[res_dataTwo.size()];
+            for (int i = 0; i < res_dataTwo.size(); i++) {
+                work_id[i] = res_dataTwo.get(i).getWorker().getWorker_id();
+            }
+        }else {
+            work_id = new Integer[res_data_working.size()];
+            for (int i = 0; i < res_data_working.size(); i++) {
+                work_id[i] = map.get(res_data_working.get(i));
+            }
         }
         hashMap.put("worker_ids", work_id);
         Call<AddworkBean> objectCall = inventoryApi.addWork_id(hashMap);
         objectCall.enqueue(new MyCallback<AddworkBean>() {
             @Override
             public void onResponse(Call<AddworkBean> call, Response<AddworkBean> response) {
+                dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getResult().getRes_code() == 1) {
                     AlertAialogUtils.getCommonDialog(AddPersonActivity.this, "").setMessage("员工添加完成，确定开始生产？")
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
-                                public void onClick(DialogInterface dialog, int which){
+                                public void onClick(DialogInterface dialog, int which) {
+                                    showDefultProgressDialog();
                                     HashMap<Object, Object> hashMap1 = new HashMap<Object, Object>();
                                     hashMap1.put("order_id", order_id);
                                     Call<StartProductBean> objectCall1 = inventoryApi.startProduct(hashMap1);
                                     objectCall1.enqueue(new MyCallback<StartProductBean>() {
                                         @Override
                                         public void onResponse(Call<StartProductBean> call, Response<StartProductBean> response) {
-                                            if (response.body() == null)return;
-                                            if(response.body().getResult().getRes_code() == 1){
+                                            dismissDefultProgressDialog();
+                                            if (response.body() == null) return;
+                                            if (response.body().getResult().getRes_code() == 1){
                                                 Intent intent = new Intent(AddPersonActivity.this, ProductLlActivity.class);
-                                                intent.putExtra("name_activity",name_activity);
-                                                intent.putExtra("state_product",state_activity);
+                                                intent.putExtra("name_activity", name_activity);
+                                                intent.putExtra("state_product", state_activity);
                                                 startActivity(intent);
                                                 finish();
                                             }
                                         }
 
                                         @Override
-                                        public void onFailure(Call<StartProductBean> call, Throwable t){
-                                            super.onFailure(call, t);
+                                        public void onFailure(Call<StartProductBean> call, Throwable t) {
+                                            dismissDefultProgressDialog();
                                         }
                                     });
                                 }
                             }).show();
                 }
             }
+
             @Override
             public void onFailure(Call<AddworkBean> call, Throwable t) {
                 super.onFailure(call, t);
@@ -309,17 +326,17 @@ public class AddPersonActivity extends ToolBarActivity {
 
     /**
      * 改变员工状态
-     * */
-    private void  changeState(final int position, final String state){
-        HashMap<Object,Object> hashMap = new HashMap<>();
+     */
+    private void changeState(final int position, final String state) {
+        HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("state", state);
         hashMap.put("worker_line_id", map.get(res_data_working.get(position)));
         Call<ChangeStateBean> objectCall = inventoryApi.changeState(hashMap);
         objectCall.enqueue(new MyCallback<ChangeStateBean>() {
             @Override
             public void onResponse(Call<ChangeStateBean> call, Response<ChangeStateBean> response) {
-                if (response.body() == null)return;
-                if (response.body().getResult().getRes_code() == 1){
+                if (response.body() == null) return;
+                if (response.body().getResult().getRes_code() == 1) {
                     adapterList.set(position, new WorkingStateBean(adapterList.get(position).getName(), state));
                     personAdapter.notifyItemChanged(position);
                 }
@@ -332,4 +349,9 @@ public class AddPersonActivity extends ToolBarActivity {
         });
     }
 
+    /*@Override
+    protected void onDestroy() {
+        dismissDefultProgressDialog();
+        super.onDestroy();
+    }*/
 }

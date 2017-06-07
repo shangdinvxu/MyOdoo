@@ -93,7 +93,7 @@ public class BomFramworkBean{
 
             private int product_tmpl_id;
             public String process_id;
-            private String code;
+            public String code;
             private String uuid;
             public String name;
             private int bom_id;
@@ -196,7 +196,7 @@ public class BomFramworkBean{
                  * product_id : 50611
                  */
 
-                private String code;
+                public String code;
                 public String product_specs;
                 private double qty;
                 private String process_id;
@@ -337,7 +337,7 @@ public class BomFramworkBean{
                      * product_id : 70406
                      */
 
-                    private String code;
+                    public String code;
                     private double qty;
                     private boolean process_id;
                     private int id;
@@ -348,7 +348,7 @@ public class BomFramworkBean{
                     private String uuid;
                     private int product_tmpl_id;
                     private int product_id;
-                    private List<BomSubBean> bom_ids;
+                    public List<BomSubBean> bom_ids;
 
                     public String getCode() {
                         return code;

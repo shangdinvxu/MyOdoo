@@ -39,6 +39,7 @@ import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.adapter.product.OrderDetailAdapter;
 import tarce.myodoo.uiutil.DialogForOrder;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
+import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
 import tarce.support.ToastUtils;
@@ -103,9 +104,9 @@ public class OrderDetailActivity extends ToolBarActivity {
     private boolean camera_or_relative;//判断是否显示camera,true为显示
     private OrderDetailBean.ResultBean.ResDataBean resDataBean;
     private OrderDetailAdapter adapter;
-    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_one = new ArrayList<>();
-    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_two = new ArrayList<>();
-    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_three = new ArrayList<>();
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_one;
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_two;
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_three;
     private OrderDetailAdapter adapter_two;
     private OrderDetailAdapter adapter_three;
     private FullyLinearLayoutManager fullyLinearLayoutManager;
@@ -270,7 +271,7 @@ public class OrderDetailActivity extends ToolBarActivity {
 
             @Override
             public void onFailure(Call<OrderDetailBean> call, Throwable t) {
-                super.onFailure(call, t);
+                dismissDefultProgressDialog();
             }
         });
     }
@@ -379,7 +380,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         tvNameProduct.setText(resDataBean.getProduct_name());
         tvNumProduct.setText(String.valueOf(new Double(resDataBean.getQty_produced()).intValue()));
         tvNeedNum.setText(String.valueOf(new Double(resDataBean.getProduct_qty()).intValue()));
-        tvTimeProduct.setText(resDataBean.getDate_planned_start());
+        tvTimeProduct.setText(DateTool.getGMTBeijing(resDataBean.getDate_planned_start()));
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
         tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));
         switch (resDataBean.getProduction_order_type()) {
@@ -391,6 +392,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
         }
         tvGongxuProduct.setText(resDataBean.getProcess_id().getName());
+        list_one = new ArrayList<>();
+        list_two = new ArrayList<>();
+        list_three = new ArrayList<>();
         for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
             if (resDataBean.getStock_move_lines().get(i).getProduct_type().equals("material")) {
                 list_one.add(resDataBean.getStock_move_lines().get(i));
@@ -406,24 +410,31 @@ public class OrderDetailActivity extends ToolBarActivity {
         recyclerOrderDetail.setAdapter(adapter);
         recycler2OrderDetail.setAdapter(adapter_two);
         recycler3OrderDetail.setAdapter(adapter_three);
-        adapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
-                initDialog(linesBean);
-            }
-        });
-        adapter_two.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
-                initDialog(linesBean);
-            }
-        });
-        adapter_three.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
-                initDialog(linesBean);
-            }
-        });
+        if (state.equals("waiting_material") || state.equals("prepare_material_ing")){
+            adapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
+                @Override
+                public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
+                    isShowDialog = true;
+                    initDialog(linesBean);
+                }
+            });
+            adapter_two.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
+                @Override
+                public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
+                    isShowDialog = true;
+                    initDialog(linesBean);
+                }
+            });
+        }
+        if (state.equals("finish_prepare_material")){
+            adapter_three.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
+                @Override
+                public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
+                    isShowDialog = true;
+                    initDialog(linesBean);
+                }
+            });
+        }
     }
 
     @OnClick(R.id.tv_start_produce)
@@ -464,6 +475,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                showDefultProgressDialog();
                                 Intent intent = new Intent(OrderDetailActivity.this, PhotoAreaActivity.class);
                                 intent.putExtra("type", state);
                                 intent.putExtra("order_id", order_id);
@@ -471,7 +483,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                                 intent.putExtra("limit", limit);
                                 intent.putExtra("process_id", process_id);
                                 intent.putExtra("change", false);
+                                intent.putExtra("bean", resDataBean);
                                 startActivity(intent);
+                                finish();
                             }
                         }).show();
                 break;
@@ -605,10 +619,17 @@ public class OrderDetailActivity extends ToolBarActivity {
 
     @OnClick(R.id.tv_area_look)
     void lookArea(View view) {
+        ToastUtils.showCommonToast(OrderDetailActivity.this, "正在跳转");
         Intent intent = new Intent(OrderDetailActivity.this, AreaMessageActivity.class);
         intent.putExtra("img_area", prepare_material_img);
-    //    intent.putExtra("string_area", (Boolean) prepare_material_area_id.getArea_name());
+        intent.putExtra("string_area", (String) prepare_material_area_id.getArea_name());
         startActivity(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        dismissDefultProgressDialog();
+        super.onPause();
     }
 
     @Override

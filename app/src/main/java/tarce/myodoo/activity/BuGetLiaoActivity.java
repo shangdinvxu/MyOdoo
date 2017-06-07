@@ -83,9 +83,10 @@ public class BuGetLiaoActivity extends ToolBarActivity {
     void buLl(View view) {
         AlertAialogUtils.getCommonDialog(BuGetLiaoActivity.this, "")
                 .setMessage("是否确定")
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                .setPositiveButton("确定", new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        showDefultProgressDialog();
                         InventoryApi inventoryApi = RetrofitClient.getInstance(BuGetLiaoActivity.this).create(InventoryApi.class);
                         HashMap<Object, Object> hashMap = new HashMap<>();
                         hashMap.put("order_id", order_id);
@@ -102,6 +103,7 @@ public class BuGetLiaoActivity extends ToolBarActivity {
                         objectCall.enqueue(new MyCallback<BuLlBean>() {
                             @Override
                             public void onResponse(Call<BuLlBean> call, Response<BuLlBean> response) {
+                                dismissDefultProgressDialog();
                                 if (response.body() == null)return;
                                 if (response.body().getResult().getRes_code() == 1){
                                     finish();
@@ -110,7 +112,7 @@ public class BuGetLiaoActivity extends ToolBarActivity {
 
                             @Override
                             public void onFailure(Call<BuLlBean> call, Throwable t) {
-                                super.onFailure(call, t);
+                                dismissDefultProgressDialog();
                             }
                         });
                     }

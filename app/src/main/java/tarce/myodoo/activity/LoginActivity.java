@@ -59,6 +59,7 @@ import tarce.myodoo.greendaoUtils.UserLoginUtils;
 import tarce.support.DbUtils;
 import tarce.support.MyLog;
 import tarce.support.SharePreferenceUtils;
+import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
 /**
@@ -226,6 +227,10 @@ public class LoginActivity extends Activity {
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
                 if (response.body()==null)
                     return;
+                if (response.body().getError()!=null){
+                    ToastUtils.showCommonToast(LoginActivity.this, response.body().getError().getMessage());
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1) {
                     final int user_id = response.body().getResult().getRes_data().getUser_id();
                     MyApplication.userID = user_id ;
@@ -251,7 +256,7 @@ public class LoginActivity extends Activity {
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, response.body().getResult().getRes_data().getError(), Toast.LENGTH_SHORT).show();
                 }
             }
 

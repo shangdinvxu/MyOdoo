@@ -51,17 +51,18 @@
             android:layout_height="35dp"
             android:background="@drawable/edit_input_bac"
             android:layout_toRightOf="@id/tv_one"
+            android:imeOptions="actionSearch"
+            android:singleLine="true"
             android:layout_below="@+id/tv_take_photo"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="10dp"
-            android:imeOptions="actionSearch"/>
+            android:layout_marginTop="10dp" />
     </RelativeLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_area"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/relative_click_use">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_above="@+id/tv_finish_order"
+        android:layout_below="@+id/relative_click_use"/>
     <TextView
         android:id="@+id/tv_finish_order"
         android:layout_width="match_parent"
@@ -70,6 +71,5 @@
         android:background="@color/cc"
         android:textColor="@color/white"
         android:text="提交物料信息"
-        android:gravity="center"
-        android:layout_marginTop="5dp"/>
+        android:gravity="center" />
 </RelativeLayout>

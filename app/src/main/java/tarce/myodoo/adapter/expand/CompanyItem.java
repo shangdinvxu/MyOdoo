@@ -15,6 +15,7 @@ import tarce.myodoo.R;
 public class CompanyItem extends AbstractExpandableAdapterItem {
 
     private TextView mName;
+    private TextView mProcess;
     private ImageView mArrow;
     private BomFramworkBean.ResultBean.ResDataBean mCompany;
 
@@ -32,10 +33,11 @@ public class CompanyItem extends AbstractExpandableAdapterItem {
             @Override
             public void onClick(View view) {
                 doExpandOrUnexpand();
-                Toast.makeText(root.getContext(), "click company：" +mCompany.name, Toast.LENGTH_SHORT).show();
+           //     Toast.makeText(root.getContext(), "click company：" +mCompany.name, Toast.LENGTH_SHORT).show();
             }
         });
         mName = (TextView) root.findViewById(R.id.tv_name);
+        mProcess = (TextView) root.findViewById(R.id.tv_process_id);
         mArrow = (ImageView) root.findViewById(R.id.iv_arrow);
     }
 
@@ -66,7 +68,8 @@ public class CompanyItem extends AbstractExpandableAdapterItem {
         onSetViews();
         onExpansionToggled(getExpandableListItem().isExpanded());
         mCompany = (BomFramworkBean.ResultBean.ResDataBean) model;
-        mName.setText(mCompany.name);
+        mName.setText("["+mCompany.code+"]"+mCompany.name);
+        mProcess.setText(mCompany.process_id);
     }
 
 

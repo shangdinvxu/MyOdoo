@@ -24,6 +24,7 @@ import tarce.model.inventory.CheckOutProductBean;
 import tarce.model.inventory.CheckPickRegisBean;
 import tarce.model.inventory.CommitNumFeedBean;
 import tarce.model.inventory.DoneCommitNumBean;
+import tarce.model.inventory.FinishPrepareMaBean;
 import tarce.model.inventory.FinishProductBean;
 import tarce.model.inventory.FreeWorkBean;
 import tarce.model.inventory.LoadInspectionBean;
@@ -243,6 +244,12 @@ public interface InventoryApi {
      * */
     @POST("upload_procure_info")
     Call<UpdateMessageBean> uploadProductArea(@Body HashMap hashMap);
+
+    /**
+     * 提交备料
+     * */
+    @POST("finish_prepare_material")
+    Call<FinishPrepareMaBean> finishPrepareMa(@Body HashMap hashMap);
 
     /**
      * 等待生产品检

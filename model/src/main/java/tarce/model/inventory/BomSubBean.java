@@ -9,7 +9,7 @@ import java.util.List;
  * bom结构里面一个小类
  */
 
-public class BomSubBean{
+public class BomSubBean {
     public String code;
     private double qty;
     private boolean process_id;

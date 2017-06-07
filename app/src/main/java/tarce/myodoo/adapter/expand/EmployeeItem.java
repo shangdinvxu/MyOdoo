@@ -5,8 +5,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.zaihuishou.expandablerecycleradapter.model.ExpandableListItem;
 import com.zaihuishou.expandablerecycleradapter.viewholder.AbstractAdapterItem;
 import com.zaihuishou.expandablerecycleradapter.viewholder.AbstractExpandableAdapterItem;
+
+import java.util.List;
 
 import tarce.model.inventory.BomFramworkBean;
 import tarce.myodoo.R;
@@ -48,10 +51,18 @@ public class EmployeeItem extends AbstractExpandableAdapterItem {
     }
 
     @Override
-    public void onUpdateViews(Object model, int position) {
-        if (model instanceof BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean) {
-            BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean employee = (BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean) model;
-            mName.setText(employee.name);
+    public void onUpdateViews(Object model, int position){
+        super.onUpdateViews(model, position);
+        onSetViews();
+        BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean employee = (BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean) model;
+        mName.setText("["+employee.code+"]"+employee.name);
+        mExpand.setText(employee.product_specs);
+        ExpandableListItem parentListItem = (ExpandableListItem) model;
+        List<?> childItemList = parentListItem.getChildItemList();
+        if (childItemList != null && !childItemList.isEmpty()){
+            mArrow.setVisibility(View.VISIBLE);
+        }else {
+            mArrow.setVisibility(View.GONE);
         }
     }
 

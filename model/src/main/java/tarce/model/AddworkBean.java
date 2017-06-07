@@ -78,6 +78,14 @@ public class AddworkBean {
         }
 
         public static class ResDataBean {
+            public String getError() {
+                return error;
+            }
+
+            public void setError(String error) {
+                this.error = error;
+            }
+
             /**
              * amount_of_money : 0.08
              * worker : {"worker_id":556,"name":"仲倩"}
@@ -88,6 +96,7 @@ public class AddworkBean {
              * xishu : 1.0
              */
 
+            private String error;
             private double amount_of_money;
             private WorkerBean worker;
             private String line_state;

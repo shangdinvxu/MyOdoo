@@ -2,10 +2,12 @@ package tarce.myodoo.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -33,6 +35,7 @@ import tarce.myodoo.adapter.product.OrderDetailAdapter;
 import tarce.myodoo.uiutil.DialogForOrder;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.InsertNumDialog;
+import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
 import tarce.support.ToastUtils;
@@ -95,9 +98,9 @@ public class ProductingActivity extends ToolBarActivity {
     private OrderDetailBean.ResultBean.ResDataBean.PrepareMaterialAreaIdBean prepare_material_area_id;
     private String prepare_material_img;
     private OrderDetailBean.ResultBean.ResDataBean resDataBean;
-    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_one = new ArrayList<>();
-    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_two = new ArrayList<>();
-    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_three = new ArrayList<>();
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_one;
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_two;
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_three;
     private OrderDetailBean.ResultBean result;
     private OrderDetailAdapter adapter;
     private OrderDetailAdapter adapter_two;
@@ -137,7 +140,16 @@ public class ProductingActivity extends ToolBarActivity {
         recyclerOrderDetail.setNestedScrollingEnabled(false);
         recycler2OrderDetail.setNestedScrollingEnabled(false);
         recycler3OrderDetail.setNestedScrollingEnabled(false);
+        showDefultProgressDialog();
         getDetail();
+    }
+
+    @Override
+    protected void onResume() {
+        if (resDataBean == null && result == null){
+            getDetail();
+        }
+        super.onResume();
     }
 
     /**
@@ -199,7 +211,6 @@ public class ProductingActivity extends ToolBarActivity {
      * 订单详情
      */
     private void getDetail() {
-        showDefultProgressDialog();
         inventoryApi = RetrofitClient.getInstance(ProductingActivity.this).create(InventoryApi.class);
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("order_id", order_id);
@@ -229,6 +240,7 @@ public class ProductingActivity extends ToolBarActivity {
      * 根据数据赋值显示view
      */
     private void initView(){
+        tvNameProduct.getPaint().setFlags(Paint. UNDERLINE_TEXT_FLAG );
         tvNameProduct.setText(resDataBean.getProduct_name());
         int num_product = new Double(resDataBean.getQty_produced()).intValue();
         tvNumProduct.setText(String.valueOf(num_product));
@@ -236,10 +248,10 @@ public class ProductingActivity extends ToolBarActivity {
             tvStartProduce.setVisibility(View.VISIBLE);
         }
         tvNeedNum.setText(String.valueOf(new Double(resDataBean.getProduct_qty()).intValue()));
-        tvTimeProduct.setText(resDataBean.getDate_planned_start());
+        tvTimeProduct.setText(DateTool.getGMTBeijing(resDataBean.getDate_planned_start()));
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
         tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));
-        switch (resDataBean.getProduction_order_type()) {
+        switch (resDataBean.getProduction_order_type()){
             case "stockup":
                 tvTypeProduct.setText("备货制");
                 break;
@@ -248,6 +260,9 @@ public class ProductingActivity extends ToolBarActivity {
                 break;
         }
         tvGongxuProduct.setText(resDataBean.getProcess_id().getName());
+        list_one = new ArrayList<>();
+        list_two = new ArrayList<>();
+        list_three = new ArrayList<>();
         for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
             if (resDataBean.getStock_move_lines().get(i).getProduct_type().equals("material")) {
                 list_one.add(resDataBean.getStock_move_lines().get(i));
@@ -289,13 +304,33 @@ public class ProductingActivity extends ToolBarActivity {
     @OnClick(R.id.tv_product_out)
     void outProduct(View view) {
         insertNumDialog = new InsertNumDialog(ProductingActivity.this, R.style.MyDialogStyle,
-                new InsertNumDialog.OnSendCommonClickListener() {
+                new InsertNumDialog.OnSendCommonClickListener(){
                     @Override
                     public void OnSendCommonClick(final int num) {
                         for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
                             if ((num + resDataBean.getQty_produced()) / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(i)
-                                    .getProduct_uom_qty() >= resDataBean.getStock_move_lines().get(i).getQuantity_done()) {
-                                AlertAialogUtils.getCommonDialog(ProductingActivity.this, "提示")
+                                    .getProduct_uom_qty() <= resDataBean.getStock_move_lines().get(i).getQuantity_done()) {
+                                HashMap<Object, Object> hashMap = new HashMap<>();
+                                hashMap.put("order_id", order_id);
+                                hashMap.put("produce_qty", num);
+                                Call<CheckOutProductBean> objectCall = inventoryApi.checkOut(hashMap);
+                                objectCall.enqueue(new MyCallback<CheckOutProductBean>() {
+                                    @Override
+                                    public void onResponse(Call<CheckOutProductBean> call, Response<CheckOutProductBean> response) {
+                                        if (response.body() == null) return;
+                                        if (response.body().getResult().getRes_code() == 1) {
+                                            tvStartProduce.setVisibility(View.VISIBLE);
+                                            tvNumProduct.setText(StringUtils.doubleToString(response.body().getResult().getRes_data()
+                                                    .getQty_produced()));
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<CheckOutProductBean> call, Throwable t) {
+                                        super.onFailure(call, t);
+                                    }
+                                });
+                                /*AlertAialogUtils.getCommonDialog(ProductingActivity.this, "提示")
                                         .setMessage("提交产品成功，等待生产品检")
                                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                             @Override
@@ -321,8 +356,8 @@ public class ProductingActivity extends ToolBarActivity {
                                                     }
                                                 });
                                             }
-                                        }).show();
-                                break;
+                                        }).show();*/
+                   //             break;
                             } else {
                                 AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
                                         .setMessage(resDataBean.getStock_move_lines().get(i).getProduct_id() + "备料数量不足，请补料")
@@ -396,10 +431,7 @@ public class ProductingActivity extends ToolBarActivity {
      * 暂停产线  恢复产线
      * */
     private void stopProductLine(String state, int is_all_pending){
-        Intent intent = new Intent(ProductingActivity.this, BomFramworkActivity.class);
-        intent.putExtra("order_id", order_id);
-        startActivity(intent);
-        /*HashMap<Object, Object> hashMap = new HashMap<>();
+        HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("order_id",order_id);
         hashMap.put("state",state);
         hashMap.put("is_all_pending", is_all_pending);
@@ -423,7 +455,7 @@ public class ProductingActivity extends ToolBarActivity {
             public void onFailure(Call<StopProductlineBean> call, Throwable t) {
                 super.onFailure(call, t);
             }
-        });*/
+        });
     }
 
     /**
@@ -496,5 +528,19 @@ public class ProductingActivity extends ToolBarActivity {
             imgUpDown.setImageResource(R.mipmap.up);
             up_or_down = true;
         }
+    }
+
+    @OnClick(R.id.tv_name_product)
+    void bomDetail(View view){
+        Intent intent = new Intent(ProductingActivity.this, BomFramworkActivity.class);
+        intent.putExtra("order_id", order_id);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        resDataBean = null;
+        result = null;
+        super.onPause();
     }
 }

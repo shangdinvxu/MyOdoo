@@ -68,7 +68,7 @@ public class DepartmentItem extends AbstractExpandableAdapterItem {
         super.onUpdateViews(model, position);
         onSetViews();
         BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX department = (BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX) model;
-        mName.setText(department.name);
+        mName.setText("["+department.code+"]"+department.name);
         mExpand.setText(department.product_specs);
         ExpandableListItem parentListItem = (ExpandableListItem) model;
         List<?> childItemList = parentListItem.getChildItemList();

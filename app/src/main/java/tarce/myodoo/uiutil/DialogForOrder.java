@@ -20,6 +20,7 @@ import butterknife.OnClick;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.utils.StringUtils;
+import tarce.support.ViewUtils;
 
 /**
  * Created by rose.zou on 2017/5/24.
@@ -95,10 +96,15 @@ public class DialogForOrder extends Dialog {
         tvKucunNum.setText(StringUtils.doubleToString(linesBean.getQty_available()));
         dialogNeedNum.setText(StringUtils.doubleToString(linesBean.getProduct_uom_qty()));
         dialogAdviceNum.setText(StringUtils.doubleToString(linesBean.getSuggest_qty()));
-        tvPrepareNum.setText(StringUtils.doubleToString(linesBean.getQuantity_ready()));
+        if (linesBean.getQty_available()>=linesBean.getProduct_uom_qty()){
+            tvPrepareNum.setText(StringUtils.doubleToString(linesBean.getProduct_uom_qty()));
+        }else {
+            tvPrepareNum.setText("");
+        }
+        tvPrepareNum.setSelection(tvPrepareNum.getText().length());
     }
 
-    public interface OnSendCommonClickListener {
+    public interface OnSendCommonClickListener{
         void OnSendCommonClick(int num);
     }
 
@@ -109,7 +115,7 @@ public class DialogForOrder extends Dialog {
     }
 
     @OnClick(R.id.tv_true_dialog)
-    void trueAction(View view) {
+    void trueAction(View view){
         if (StringUtils.isNullOrEmpty(tvPrepareNum.getText().toString())){
             Toast.makeText(context, "请确认数量？", Toast.LENGTH_SHORT).show();
             return;

@@ -102,7 +102,7 @@ public class CheckOutProductBean {
              * prepare_material_img : http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=38712&model=mrp.production&field=prepare_material_img
              */
 
-            private String origin;
+            private Object origin;
             private String remark;
             private PrepareMaterialAreaIdBean prepare_material_area_id;
             private String display_name;
@@ -124,11 +124,14 @@ public class CheckOutProductBean {
             private String prepare_material_img;
             private List<StockMoveLinesBean> stock_move_lines;
 
-            public String getOrigin() {
+            public Object getOrigin() {
+                if (origin instanceof Boolean){
+                    origin = "0";
+                }
                 return origin;
             }
 
-            public void setOrigin(String origin) {
+            public void setOrigin(Object origin) {
                 this.origin = origin;
             }
 
@@ -293,29 +296,35 @@ public class CheckOutProductBean {
             }
 
             public static class PrepareMaterialAreaIdBean {
-                /**
-                 * area_id : false
-                 * area_name : false
-                 */
-
-                private boolean area_id;
-                private boolean area_name;
-
-                public boolean isArea_id() {
+                public Object getArea_id() {
+                    if (area_id instanceof Boolean){
+                        area_id = 0;
+                    }
                     return area_id;
                 }
 
-                public void setArea_id(boolean area_id) {
+                public void setArea_id(Object area_id) {
                     this.area_id = area_id;
                 }
 
-                public boolean isArea_name() {
+                public Object getArea_name() {
+                    if (area_name instanceof Boolean){
+                        area_name = "";
+                    }
                     return area_name;
                 }
 
-                public void setArea_name(boolean area_name) {
+                public void setArea_name(Object area_name) {
                     this.area_name = area_name;
                 }
+
+                /**
+                 * area_id : 218
+                 * area_name : A3E2
+                 */
+
+                private Object area_id;
+                private Object area_name;
             }
 
             public static class ProductIdBean {
@@ -364,29 +373,35 @@ public class CheckOutProductBean {
                 }
 
                 public static class AreaIdBean {
-                    /**
-                     * area_id : false
-                     * area_name : false
-                     */
-
-                    private boolean area_id;
-                    private boolean area_name;
-
-                    public boolean isArea_id() {
+                    public Object getArea_id() {
+                        if (area_id instanceof Boolean){
+                            area_id = 0;
+                        }
                         return area_id;
                     }
 
-                    public void setArea_id(boolean area_id) {
+                    public void setArea_id(Object area_id) {
                         this.area_id = area_id;
                     }
 
-                    public boolean isArea_name() {
+                    public Object getArea_name() {
+                        if (area_name instanceof Boolean){
+                            area_name = "";
+                        }
                         return area_name;
                     }
 
-                    public void setArea_name(boolean area_name) {
+                    public void setArea_name(Object area_name) {
                         this.area_name = area_name;
                     }
+
+                    /**
+                     * area_id : 218
+                     * area_name : A3E2
+                     */
+
+                    private Object area_id;
+                    private Object area_name;
                 }
             }
 

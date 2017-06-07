@@ -52,7 +52,6 @@ public class ShowProcessActivity extends ToolBarActivity {
         ButterKnife.inject(this);
         setRecyclerview(recyclerDetailProcess);
 
-        AlertAialogUtils.showDefultProgressDialog(ShowProcessActivity.this);
         getDetailDelay();
     }
 
@@ -60,6 +59,7 @@ public class ShowProcessActivity extends ToolBarActivity {
      * 连接接口
      */
     private void getDetailDelay() {
+        showDefultProgressDialog();
         Intent intent = getIntent();
         delay_num = intent.getIntExtra("delay_num", 3);
         setTitle(intent.getStringExtra("process_name"));
@@ -81,7 +81,7 @@ public class ShowProcessActivity extends ToolBarActivity {
         threeCall.enqueue(new Callback<ProcessDeatilBean>() {
             @Override
             public void onResponse(Call<ProcessDeatilBean> call, Response<ProcessDeatilBean> response) {
-                AlertAialogUtils.dismissDefultProgressDialog();
+                dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getResult().getRes_code() == 1) {
                     if (response.body().getResult().getRes_data() == null) {
@@ -108,7 +108,7 @@ public class ShowProcessActivity extends ToolBarActivity {
 
             @Override
             public void onFailure(Call<ProcessDeatilBean> call, Throwable t) {
-                AlertAialogUtils.dismissDefultProgressDialog();
+                dismissDefultProgressDialog();
             }
         });
     }

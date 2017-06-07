@@ -295,7 +295,18 @@ public class OrderDetailBean {
             }
 
             public static class PrepareMaterialAreaIdBean implements Serializable{
+                /**
+                 * area_id : false
+                 * area_name : false
+                 */
+
+                private Object area_id;
+                private Object area_name;
+
                 public Object getArea_id() {
+                    if (area_id instanceof Boolean){
+                        area_id = 0;
+                    }
                     return area_id;
                 }
 
@@ -304,20 +315,15 @@ public class OrderDetailBean {
                 }
 
                 public Object getArea_name() {
+                    if (area_name instanceof Boolean){
+                        area_name = "0";
+                    }
                     return area_name;
                 }
 
                 public void setArea_name(Object area_name) {
                     this.area_name = area_name;
                 }
-
-                /**
-                 * area_id : false
-                 * area_name : false
-                 */
-
-                private Object area_id;
-                private Object area_name;
             }
 
             public static class ProductIdBean implements Serializable{

@@ -18,7 +18,7 @@ public class ViewUtils {
     /**
      * 收起软键盘
      */
-    public static void collapseSoftInputMethod(Context context, View v) {
+    public static void collapseSoftInputMethod(Context context, View v){
         if (v != null) {
             InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(v.getWindowToken(), 0);

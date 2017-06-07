@@ -42,6 +42,7 @@ public class LastItem extends AbstractAdapterItem {
         if (model instanceof BomSubBean) {
             BomSubBean employee = (BomSubBean) model;
             mTv_name.setText("["+employee.code+"]"+employee.name);
+         //   mTv_name.setText(employee.name);
             mTv_gongxu.setText(employee.product_specs);
         }
     }

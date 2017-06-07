@@ -32,8 +32,8 @@ public class AreaMessageActivity extends ToolBarActivity {
 
         Intent intent = getIntent();
         String img_area = intent.getStringExtra("img_area");
-        //String string_area = intent.getStringExtra("string_area");
+        String string_area = intent.getStringExtra("string_area");
         Glide.with(AreaMessageActivity.this).load(img_area).into(imageShowArea);
-      //  tvStringAreaMessage.setText(string_area);
+        tvStringAreaMessage.setText(string_area);
     }
 }

@@ -79,7 +79,7 @@ public class BomFramworkActivity extends ToolBarActivity {
                         @Override
                         public AbstractAdapterItem<Object> getItemView(Object type) {
                             int itemType = (int) type;
-                            switch (itemType) {
+                            switch (itemType){
                                 case ITEM_TYPE_COMPANY:
                                     return new CompanyItem();
                                 case ITEM_TYPE_DEPARTMENT:
@@ -114,11 +114,13 @@ public class BomFramworkActivity extends ToolBarActivity {
     private BomFramworkBean.ResultBean.ResDataBean createCompany(BomFramworkBean.ResultBean.ResDataBean resDataBean, boolean isExpandDefault) {
         BomFramworkBean.ResultBean.ResDataBean firstCompany = new BomFramworkBean.ResultBean.ResDataBean();
         firstCompany.name = resDataBean.getName();
+        firstCompany.code = resDataBean.getCode();
         firstCompany.process_id = resDataBean.getProcess_id();
         List<BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX> departments = new ArrayList<>();
         for (int i = 0; i < resDataBean.getBom_ids().size(); i++){
             BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX department = new BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX();
             department.name = resDataBean.getBom_ids().get(i).getName();
+            department.code = resDataBean.getBom_ids().get(i).getCode();
             department.product_specs = resDataBean.getBom_ids().get(i).getProduct_specs();
             if (i == 0) {
                 department.setExpanded(false);
@@ -126,13 +128,19 @@ public class BomFramworkActivity extends ToolBarActivity {
                 for (int j = 0; j < resDataBean.getBom_ids().get(i).getBom_ids().size(); j++) {
                     BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean employee = new BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean();
                     employee.name = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getName();
+                    employee.code = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getCode();
+                    employee.product_specs = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getProduct_specs();
                     if (j == 0){
                         employee.setExpanded(false);
                         List<BomSubBean> lastList = new ArrayList<>();
-                        for (int k = 0; k < resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().size(); k++) {
+                        for (int k = 0; k < resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().size(); k++){
                             BomSubBean last = new BomSubBean();
                             last.name = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().get(k).getName();
+                            last.code = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().get(k).getCode();
+                            last.product_specs = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().get(k).getProduct_specs();
+                            lastList.add(last);
                         }
+                        employee.bom_ids = lastList;
                     }
                     employeeList.add(employee);
                 }
