@@ -83,7 +83,7 @@ public class ProduceFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
+    public void onResume(){
         if (res_data==null){
             initRedNum();
         }

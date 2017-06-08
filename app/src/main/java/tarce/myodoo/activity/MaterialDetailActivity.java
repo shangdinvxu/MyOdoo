@@ -3,9 +3,11 @@ package tarce.myodoo.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 
+import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
 import com.aspsine.swipetoloadlayout.OnRefreshListener;
 import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -67,6 +69,7 @@ public class MaterialDetailActivity extends ToolBarActivity {
     @Override
     protected void onResume() {
         if (dataBeanList == null){
+            adapter.notifyDataSetChanged();
             swipeToLoad.setRefreshing(true);
         }
         super.onResume();
@@ -86,6 +89,17 @@ public class MaterialDetailActivity extends ToolBarActivity {
             }
         });
 
+        swipeToLoad.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                try {
+                    Thread.sleep(1000);
+                    swipeToLoad.setLoadingMore(false);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         Intent intent = getIntent();
         state = intent.getStringExtra("state");
         process_id = intent.getIntExtra("process_id", 1);
@@ -131,7 +145,9 @@ public class MaterialDetailActivity extends ToolBarActivity {
                     }
                     adapter = new PrepareMdAdapter(R.layout.adapter_mater_detail, R.layout.adapter_head_md, mainMdBeen);
                     recyclerMaterdetail.setAdapter(adapter);
-                    initListener();
+                    if (dataBeanList!=null){
+                        initListener();
+                    }
                 }
             }
 
@@ -149,6 +165,10 @@ public class MaterialDetailActivity extends ToolBarActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+
+                if (mainMdBeen == null || position == 0){
+                    return;
+                }
                 int order_id = mainMdBeen.get(position).t.getOrder_id();
                 Intent intent = new Intent(MaterialDetailActivity.this, OrderDetailActivity.class);
                 intent.putExtra("order_name", mainMdBeen.get(position).t.getDisplay_name());

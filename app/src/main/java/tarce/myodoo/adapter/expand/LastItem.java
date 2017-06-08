@@ -39,8 +39,8 @@ public class LastItem extends AbstractAdapterItem {
 
     @Override
     public void onUpdateViews(Object model, int position) {
-        if (model instanceof BomSubBean) {
-            BomSubBean employee = (BomSubBean) model;
+        if (model instanceof BomSubBean.BomBottomBean) {
+            BomSubBean.BomBottomBean employee = (BomSubBean.BomBottomBean) model;
             mTv_name.setText("["+employee.code+"]"+employee.name);
          //   mTv_name.setText(employee.name);
             mTv_gongxu.setText(employee.product_specs);

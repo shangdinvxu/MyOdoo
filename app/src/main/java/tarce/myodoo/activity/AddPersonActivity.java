@@ -209,6 +209,10 @@ public class AddPersonActivity extends ToolBarActivity {
                     @Override
                     public void onResponse(Call<AutoAddworkBean> call, Response<AutoAddworkBean> response) {
                         if (response.body() == null) return;
+                         if (response.body().getError() !=null){
+                             ToastUtils.showCommonToast(AddPersonActivity.this, "不在员工列表中？");
+                             return;
+                         }
                         if (response.body().getResult().getRes_code() == 1) {
                             if (res_data_working.contains(response.body().getResult().getRes_data().getName())) {
                                 ToastUtils.showCommonToast(AddPersonActivity.this, "已经添加该员工");
@@ -221,7 +225,7 @@ public class AddPersonActivity extends ToolBarActivity {
 
                     @Override
                     public void onFailure(Call<AutoAddworkBean> call, Throwable t) {
-                        super.onFailure(call, t);
+                        ToastUtils.showCommonToast(AddPersonActivity.this, t.toString());
                     }
                 });
             }

@@ -78,6 +78,14 @@ public class CommitNumFeedBean {
         }
 
         public static class ResDataBean {
+            public Object getOrigin() {
+                return origin;
+            }
+
+            public void setOrigin(Object origin) {
+                this.origin = origin;
+            }
+
             /**
              * origin : SO2017042401913:MO/2017042538659
              * cur_location : null
@@ -103,7 +111,7 @@ public class CommitNumFeedBean {
              * is_pending : true
              */
 
-            private String origin;
+            private Object origin;
             private Object cur_location;
             private double product_qty;
             private String display_name;
@@ -126,13 +134,7 @@ public class CommitNumFeedBean {
             private boolean is_pending;
             private List<StockMoveLinesBean> stock_move_lines;
 
-            public String getOrigin() {
-                return origin;
-            }
 
-            public void setOrigin(String origin) {
-                this.origin = origin;
-            }
 
             public Object getCur_location() {
                 return cur_location;
@@ -305,27 +307,36 @@ public class CommitNumFeedBean {
             public static class PrepareMaterialAreaIdBean {
                 /**
                  * area_id : false
-                 * area_name : false
-                 */
+                        * area_name : false
+                        */
 
-                private boolean area_id;
-                private boolean area_name;
+                private Object area_id;
 
-                public boolean isArea_id() {
+                public Object getArea_id() {
+                    if (area_id instanceof Boolean){
+                        return 0;
+                    }else if (area_id instanceof Double){
+                        return new Double((Double) area_id).intValue();
+                    }
                     return area_id;
                 }
 
-                public void setArea_id(boolean area_id) {
+                public void setArea_id(Object area_id) {
                     this.area_id = area_id;
                 }
 
-                public boolean isArea_name() {
+                public Object getArea_name() {
+                    if (area_name instanceof Boolean){
+                        return "";
+                    }
                     return area_name;
                 }
 
-                public void setArea_name(boolean area_name) {
+                public void setArea_name(Object area_name) {
                     this.area_name = area_name;
                 }
+
+                private Object area_name;
             }
 
             public static class ProcessIdBean {
@@ -425,24 +436,33 @@ public class CommitNumFeedBean {
                      * area_name : false
                      */
 
-                    private boolean area_id;
-                    private boolean area_name;
+                    private Object area_id;
 
-                    public boolean isArea_id() {
+                    public Object getArea_id() {
+                        if (area_id instanceof Boolean){
+                            return 0;
+                        }else if (area_id instanceof Double){
+                            return new Double((Double) area_id).intValue();
+                        }
                         return area_id;
                     }
 
-                    public void setArea_id(boolean area_id) {
+                    public void setArea_id(Object area_id) {
                         this.area_id = area_id;
                     }
 
-                    public boolean isArea_name() {
+                    public Object getArea_name() {
+                        if (area_name instanceof Boolean){
+                            return "";
+                        }
                         return area_name;
                     }
 
-                    public void setArea_name(boolean area_name) {
+                    public void setArea_name(Object area_name) {
                         this.area_name = area_name;
                     }
+
+                    private Object area_name;
                 }
             }
 

@@ -4,10 +4,10 @@ package tarce.model;
  * Created by Daniel.Xu on 2017/1/5.
  */
 
-public class loginBean {
+public class LoginBean {
     private String login ;
 
-    public loginBean(String login, String password, String db) {
+    public LoginBean(String login, String password, String db) {
         this.db = db;
         this.login = login;
         this.password = password;
@@ -15,7 +15,6 @@ public class loginBean {
 
     private String password ;
     private String db ;
-
 
 
 

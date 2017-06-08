@@ -4,18 +4,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import butterknife.ButterKnife;
@@ -35,10 +33,10 @@ import tarce.myodoo.adapter.product.OrderDetailAdapter;
 import tarce.myodoo.uiutil.DialogForOrder;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.InsertNumDialog;
-import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
+import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
-import tarce.support.ToastUtils;
+import tarce.support.TimeUtils;
 import tarce.support.ToolBarActivity;
 
 /**
@@ -87,6 +85,8 @@ public class ProductingActivity extends ToolBarActivity {
     TextView tvStringGuige;
     @InjectView(R.id.relative_order_show)
     RelativeLayout relativeOrderShow;
+    @InjectView(R.id.linear_three)
+    LinearLayout linearThree;
     private int order_id;
     private String state;
     private int limit;
@@ -146,7 +146,7 @@ public class ProductingActivity extends ToolBarActivity {
 
     @Override
     protected void onResume() {
-        if (resDataBean == null && result == null){
+        if (resDataBean == null && result == null) {
             getDetail();
         }
         super.onResume();
@@ -166,10 +166,12 @@ public class ProductingActivity extends ToolBarActivity {
             case "waiting_material":
                 tvStateOrder.setText("等待备料");
                 tvStartProduce.setText("开始备料");
+                showLinThreePro();
                 break;
             case "prepare_material_ing":
                 tvStateOrder.setText("备料中");
                 tvStartProduce.setText("备料完成");
+                showLinThreePro();
                 break;
             case "finish_prepare_material":
                 tvStateOrder.setText("备料完成");
@@ -237,10 +239,19 @@ public class ProductingActivity extends ToolBarActivity {
     }
 
     /**
+     * 是否显示底部（生产）
+     */
+    public void showLinThreePro() {
+        if (!UserManager.getSingleton().getGrops().contains("group_charge_produce")) {
+            linearThree.setVisibility(View.GONE);
+        }
+    }
+
+    /**
      * 根据数据赋值显示view
      */
-    private void initView(){
-        tvNameProduct.getPaint().setFlags(Paint. UNDERLINE_TEXT_FLAG );
+    private void initView() {
+        tvNameProduct.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         tvNameProduct.setText(resDataBean.getProduct_name());
         int num_product = new Double(resDataBean.getQty_produced()).intValue();
         tvNumProduct.setText(String.valueOf(num_product));
@@ -248,10 +259,10 @@ public class ProductingActivity extends ToolBarActivity {
             tvStartProduce.setVisibility(View.VISIBLE);
         }
         tvNeedNum.setText(String.valueOf(new Double(resDataBean.getProduct_qty()).intValue()));
-        tvTimeProduct.setText(DateTool.getGMTBeijing(resDataBean.getDate_planned_start()));
+        tvTimeProduct.setText(TimeUtils.utc2Local(resDataBean.getDate_planned_start()));
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
         tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));
-        switch (resDataBean.getProduction_order_type()){
+        switch (resDataBean.getProduction_order_type()) {
             case "stockup":
                 tvTypeProduct.setText("备货制");
                 break;
@@ -304,60 +315,14 @@ public class ProductingActivity extends ToolBarActivity {
     @OnClick(R.id.tv_product_out)
     void outProduct(View view) {
         insertNumDialog = new InsertNumDialog(ProductingActivity.this, R.style.MyDialogStyle,
-                new InsertNumDialog.OnSendCommonClickListener(){
+                new InsertNumDialog.OnSendCommonClickListener() {
                     @Override
                     public void OnSendCommonClick(final int num) {
+                        boolean isCanAdd = false;
                         for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
                             if ((num + resDataBean.getQty_produced()) / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(i)
                                     .getProduct_uom_qty() <= resDataBean.getStock_move_lines().get(i).getQuantity_done()) {
-                                HashMap<Object, Object> hashMap = new HashMap<>();
-                                hashMap.put("order_id", order_id);
-                                hashMap.put("produce_qty", num);
-                                Call<CheckOutProductBean> objectCall = inventoryApi.checkOut(hashMap);
-                                objectCall.enqueue(new MyCallback<CheckOutProductBean>() {
-                                    @Override
-                                    public void onResponse(Call<CheckOutProductBean> call, Response<CheckOutProductBean> response) {
-                                        if (response.body() == null) return;
-                                        if (response.body().getResult().getRes_code() == 1) {
-                                            tvStartProduce.setVisibility(View.VISIBLE);
-                                            tvNumProduct.setText(StringUtils.doubleToString(response.body().getResult().getRes_data()
-                                                    .getQty_produced()));
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<CheckOutProductBean> call, Throwable t) {
-                                        super.onFailure(call, t);
-                                    }
-                                });
-                                /*AlertAialogUtils.getCommonDialog(ProductingActivity.this, "提示")
-                                        .setMessage("提交产品成功，等待生产品检")
-                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                HashMap<Object, Object> hashMap = new HashMap<>();
-                                                hashMap.put("order_id", order_id);
-                                                hashMap.put("produce_qty", num);
-                                                Call<CheckOutProductBean> objectCall = inventoryApi.checkOut(hashMap);
-                                                objectCall.enqueue(new MyCallback<CheckOutProductBean>() {
-                                                    @Override
-                                                    public void onResponse(Call<CheckOutProductBean> call, Response<CheckOutProductBean> response) {
-                                                        if (response.body() == null) return;
-                                                        if (response.body().getResult().getRes_code() == 1) {
-                                                            tvStartProduce.setVisibility(View.VISIBLE);
-                                                            tvNumProduct.setText(String.valueOf(new Double(response.body().getResult().getRes_data()
-                                                                    .getQty_produced()).intValue()));
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void onFailure(Call<CheckOutProductBean> call, Throwable t) {
-                                                        super.onFailure(call, t);
-                                                    }
-                                                });
-                                            }
-                                        }).show();*/
-                   //             break;
+                                isCanAdd = true;
                             } else {
                                 AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
                                         .setMessage(resDataBean.getStock_move_lines().get(i).getProduct_id() + "备料数量不足，请补料")
@@ -369,6 +334,28 @@ public class ProductingActivity extends ToolBarActivity {
                                         }).show();
                                 break;
                             }
+                        }
+                        if (isCanAdd) {
+                            HashMap<Object, Object> hashMap = new HashMap<>();
+                            hashMap.put("order_id", order_id);
+                            hashMap.put("produce_qty", num);
+                            Call<CheckOutProductBean> objectCall = inventoryApi.checkOut(hashMap);
+                            objectCall.enqueue(new MyCallback<CheckOutProductBean>() {
+                                @Override
+                                public void onResponse(Call<CheckOutProductBean> call, Response<CheckOutProductBean> response) {
+                                    if (response.body() == null) return;
+                                    if (response.body().getResult().getRes_code() == 1) {
+                                        tvStartProduce.setVisibility(View.VISIBLE);
+                                        tvNumProduct.setText(StringUtils.doubleToString(response.body().getResult().getRes_data()
+                                                .getQty_produced()));
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<CheckOutProductBean> call, Throwable t) {
+                                    super.onFailure(call, t);
+                                }
+                            });
                         }
                     }
                 }, resDataBean.getProduct_name());
@@ -406,7 +393,7 @@ public class ProductingActivity extends ToolBarActivity {
      */
     @OnClick(R.id.tv_line_stop)
     void stopLine(View view) {
-        if (product_line){
+        if (product_line) {
             AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
                     .setMessage("是否确定暂停产线")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -415,7 +402,7 @@ public class ProductingActivity extends ToolBarActivity {
                             stopProductLine("outline", 1);
                         }
                     }).show();
-        }else {
+        } else {
             AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
                     .setMessage("是否确定恢复产线")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -429,53 +416,57 @@ public class ProductingActivity extends ToolBarActivity {
 
     /**
      * 暂停产线  恢复产线
-     * */
-    private void stopProductLine(String state, int is_all_pending){
+     */
+    private void stopProductLine(String state, int is_all_pending) {
+        showDefultProgressDialog();
         HashMap<Object, Object> hashMap = new HashMap<>();
-        hashMap.put("order_id",order_id);
-        hashMap.put("state",state);
+        hashMap.put("order_id", order_id);
+        hashMap.put("state", state);
         hashMap.put("is_all_pending", is_all_pending);
         Call<StopProductlineBean> objectCall = inventoryApi.stopProductLine(hashMap);
         objectCall.enqueue(new MyCallback<StopProductlineBean>() {
             @Override
             public void onResponse(Call<StopProductlineBean> call, Response<StopProductlineBean> response) {
-                if (response.body() == null)return;
-                if (response.body().getResult().getRes_code() == 1){
-                        if (product_line){
-                            tvLineStop.setText("恢复产线");
-                            product_line = false;
-                        }else {
-                            tvLineStop.setText("产线暂停");
-                            product_line = true;
-                        }
+                dismissDefultProgressDialog();
+                if (response.body() == null) return;
+                if (response.body().getResult().getRes_code() == 1) {
+                    if (product_line) {
+                        tvLineStop.setText("恢复产线");
+                        product_line = false;
+                    } else {
+                        tvLineStop.setText("产线暂停");
+                        product_line = true;
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<StopProductlineBean> call, Throwable t) {
-                super.onFailure(call, t);
+                dismissDefultProgressDialog();
             }
         });
     }
 
     /**
      * 生产完成
-     * */
+     */
     @OnClick(R.id.tv_start_produce)
-    void finishProduct(View view){
+    void finishProduct(View view) {
         AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
-                .setMessage("本单共产出"+tvNumProduct.getText().toString()+",请确认")
+                .setMessage("本单共产出" + tvNumProduct.getText().toString() + ",请确认")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        HashMap<Object,Object> hashMap = new HashMap<>();
+                        showDefultProgressDialog();
+                        HashMap<Object, Object> hashMap = new HashMap<>();
                         hashMap.put("order_id", order_id);
                         Call<FinishProductBean> objectCall = inventoryApi.finishProduct(hashMap);
                         objectCall.enqueue(new MyCallback<FinishProductBean>() {
                             @Override
                             public void onResponse(Call<FinishProductBean> call, final Response<FinishProductBean> response) {
-                                if (response.body() == null)return;
-                                if (response.body().getResult().getRes_code() == 1){
+                                dismissDefultProgressDialog();
+                                if (response.body() == null) return;
+                                if (response.body().getResult().getRes_code() == 1) {
                                     AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
                                             .setMessage("生产完成，是否拍摄产品位置信息")
                                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -495,8 +486,8 @@ public class ProductingActivity extends ToolBarActivity {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
                                                     Intent intent = new Intent(ProductingActivity.this, ProductLlActivity.class);
-                                                    intent.putExtra("name_activity","生产中");
-                                                    intent.putExtra("state_product",state);
+                                                    intent.putExtra("name_activity", "生产中");
+                                                    intent.putExtra("state_product", state);
                                                     startActivity(intent);
                                                 }
                                             }).show();
@@ -505,7 +496,7 @@ public class ProductingActivity extends ToolBarActivity {
 
                             @Override
                             public void onFailure(Call<FinishProductBean> call, Throwable t) {
-                                super.onFailure(call, t);
+                                dismissDefultProgressDialog();
                             }
                         });
                     }
@@ -530,8 +521,11 @@ public class ProductingActivity extends ToolBarActivity {
         }
     }
 
+    /**
+     * 点击查看BOM结构
+     */
     @OnClick(R.id.tv_name_product)
-    void bomDetail(View view){
+    void bomDetail(View view) {
         Intent intent = new Intent(ProductingActivity.this, BomFramworkActivity.class);
         intent.putExtra("order_id", order_id);
         startActivity(intent);

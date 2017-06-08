@@ -89,6 +89,9 @@ public class InspectionFragment extends Fragment {
         sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (position==0 || position==3){
+                    return;
+                }
                 String name = list.get(position).t.getName();
                 switch (name){
                     case "等待生产品检":

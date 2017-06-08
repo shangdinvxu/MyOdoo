@@ -8,7 +8,7 @@ import rx.Observable;
 import tarce.model.GetMenuListResponse;
 import tarce.model.LoginDatabase;
 import tarce.model.LoginResponse;
-import tarce.model.loginBean;
+import tarce.model.LoginBean;
 
 /**
  * Created by Daniel.Xu on 2017/1/5.
@@ -19,10 +19,10 @@ public interface LoginApi {
     Observable<LoginDatabase> getDatabase();
 
     @POST("login")
-    Call<LoginResponse> toLogin(@Body loginBean bean);
+    Call<LoginResponse> toLogin(@Body LoginBean bean);
 
     @POST("login")
-    Call<String> toLoginstring(@Body loginBean bean);
+    Call<String> toLoginstring(@Body LoginBean bean);
 
 
 

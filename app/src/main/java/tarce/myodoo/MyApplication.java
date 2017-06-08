@@ -11,6 +11,7 @@ import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 import greendao.DaoMaster;
 import greendao.DaoSession;
 import tarce.myodoo.greendaoUtils.GreenDaoManager;
+import tarce.myodoo.utils.UserManager;
 
 /**
  * Created by Daniel.Xu on 2017/4/20.
@@ -36,6 +37,7 @@ public class MyApplication extends Application {
         //        GreenDao的初始化
         Stetho.initializeWithDefaults(this);
         ZXingLibrary.initDisplayOpinion(this);
+        UserManager.getSingleton();
     }
 
     public static MyApplication getInstances() {

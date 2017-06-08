@@ -78,6 +78,14 @@ public class StopProductlineBean {
         }
 
         public static class ResDataBean {
+            public Object getOrigin() {
+                return origin;
+            }
+
+            public void setOrigin(Object origin) {
+                this.origin = origin;
+            }
+
             /**
              * origin : SO2017042401913:MO/2017042538659
              * remark :
@@ -102,7 +110,7 @@ public class StopProductlineBean {
              * prepare_material_img : http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=38724&model=mrp.production&field=prepare_material_img
              */
 
-            private String origin;
+            private Object origin;
             private String remark;
             private PrepareMaterialAreaIdBean prepare_material_area_id;
             private String display_name;
@@ -124,13 +132,7 @@ public class StopProductlineBean {
             private String prepare_material_img;
             private List<StockMoveLinesBean> stock_move_lines;
 
-            public String getOrigin() {
-                return origin;
-            }
 
-            public void setOrigin(String origin) {
-                this.origin = origin;
-            }
 
             public String getRemark() {
                 return remark;
@@ -293,29 +295,35 @@ public class StopProductlineBean {
             }
 
             public static class PrepareMaterialAreaIdBean {
+                public Object getArea_id() {
+                    if (area_id instanceof Boolean){
+                        area_id = 0;
+                    }
+                    return area_id;
+                }
+
+                public void setArea_id(Object area_id) {
+                    this.area_id = area_id;
+                }
+
+                public Object getArea_name() {
+                    if (area_name instanceof Boolean){
+                        area_name = "0";
+                    }
+                    return area_name;
+                }
+
+                public void setArea_name(Object area_name) {
+                    this.area_name = area_name;
+                }
+
                 /**
                  * area_id : false
                  * area_name : false
                  */
 
-                private boolean area_id;
-                private boolean area_name;
-
-                public boolean isArea_id() {
-                    return area_id;
-                }
-
-                public void setArea_id(boolean area_id) {
-                    this.area_id = area_id;
-                }
-
-                public boolean isArea_name() {
-                    return area_name;
-                }
-
-                public void setArea_name(boolean area_name) {
-                    this.area_name = area_name;
-                }
+                private Object area_id;
+                private Object area_name;
             }
 
             public static class ProductIdBean {
@@ -364,29 +372,35 @@ public class StopProductlineBean {
                 }
 
                 public static class AreaIdBean {
+                    public Object getArea_id() {
+                        if (area_id instanceof Boolean){
+                            area_id = 0;
+                        }
+                        return area_id;
+                    }
+
+                    public void setArea_id(Object area_id) {
+                        this.area_id = area_id;
+                    }
+
+                    public Object getArea_name() {
+                        if (area_name instanceof Boolean){
+                            area_name = "0";
+                        }
+                        return area_name;
+                    }
+
+                    public void setArea_name(Object area_name) {
+                        this.area_name = area_name;
+                    }
+
                     /**
                      * area_id : false
                      * area_name : false
                      */
 
-                    private boolean area_id;
-                    private boolean area_name;
-
-                    public boolean isArea_id() {
-                        return area_id;
-                    }
-
-                    public void setArea_id(boolean area_id) {
-                        this.area_id = area_id;
-                    }
-
-                    public boolean isArea_name() {
-                        return area_name;
-                    }
-
-                    public void setArea_name(boolean area_name) {
-                        this.area_name = area_name;
-                    }
+                    private Object area_id;
+                    private Object area_name;
                 }
             }
 

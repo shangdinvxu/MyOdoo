@@ -9,12 +9,6 @@
         android:text="1."
         android:layout_marginLeft="10dp" />
     <TextView
-        android:id="@+id/tv_area_order"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:gravity="center" />
-    <TextView
         android:id="@+id/tv_id_product"
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -22,6 +16,13 @@
         android:gravity="center"
         android:lines="3"
         android:maxEms="4"/>
+
+    <TextView
+        android:id="@+id/tv_area_order"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center" />
 
     <TextView
         android:id="@+id/tv_kucun_order"

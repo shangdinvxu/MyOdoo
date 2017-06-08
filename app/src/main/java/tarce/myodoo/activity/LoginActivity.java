@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,10 +14,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.amitshekhar.DebugDB;
-import com.google.gson.Gson;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,17 +45,15 @@ import tarce.model.greendaoBean.ContactsBean;
 import tarce.model.greendaoBean.LoginResponseBean;
 import tarce.model.greendaoBean.MenuListBean;
 import tarce.model.greendaoBean.UserLogin;
-import tarce.model.loginBean;
+import tarce.model.LoginBean;
 import tarce.myodoo.IntentFactory;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
-import tarce.myodoo.greendaoUtils.GreenDaoManager;
 import tarce.myodoo.greendaoUtils.UserLoginUtils;
-import tarce.support.DbUtils;
+import tarce.myodoo.utils.UserManager;
 import tarce.support.MyLog;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
-import tarce.support.ToolBarActivity;
 
 /**
  * Created by Daniel.Xu on 2017/4/20.
@@ -221,7 +214,7 @@ public class LoginActivity extends Activity {
         final String emailString = this.email.getText().toString();
         final String passwordString = password.getText().toString();
         final String url = httpUrl.getText().toString();
-        Call<LoginResponse> stringCall = loginApi.toLogin(new loginBean(emailString, passwordString, chooseDB));
+        Call<LoginResponse> stringCall = loginApi.toLogin(new LoginBean(emailString, passwordString, chooseDB));
         stringCall.enqueue(new MyCallback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
@@ -231,7 +224,9 @@ public class LoginActivity extends Activity {
                     ToastUtils.showCommonToast(LoginActivity.this, response.body().getError().getMessage());
                     return;
                 }
-                if (response.body().getResult().getRes_code() == 1) {
+                if (response.body().getResult().getRes_code() == 1){
+                    UserManager.getSingleton().setUserInfoBean(response.body());//单例存储
+                    UserManager.getSingleton().reFreshUserInfo(response.body());//单例存储
                     final int user_id = response.body().getResult().getRes_data().getUser_id();
                     MyApplication.userID = user_id ;
                     SharePreferenceUtils.putInt("user_id", user_id, LoginActivity.this);

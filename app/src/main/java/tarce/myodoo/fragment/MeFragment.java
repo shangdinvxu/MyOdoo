@@ -18,6 +18,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.LoginActivity;
+import tarce.myodoo.utils.UserManager;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.Toolkits;
 
@@ -49,6 +50,12 @@ public class MeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        initData();
+        super.onResume();
+    }
+
     private void initData() {
         String database = SharePreferenceUtils.getString("database", "null", getActivity());
         db.setText(database);
@@ -75,8 +82,11 @@ public class MeFragment extends Fragment {
     void clickExit(View view){
         SharePreferenceUtils.putInt("user_id", -1000, getActivity());
         SharePreferenceUtils.putString("email", "", getActivity());
-        SharePreferenceUtils.putString("password", "", getActivity());
+        SharePreferenceUtils.putString("user_ava", "", getActivity());
+        UserManager.getSingleton().setUserInfoBean(null);
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
+        getActivity().finish();
     }
+
 }

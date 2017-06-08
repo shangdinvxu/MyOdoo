@@ -10,19 +10,24 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -38,11 +43,14 @@ import tarce.model.inventory.RukuBean;
 import tarce.model.inventory.StartInspectBean;
 import tarce.model.inventory.StartReworkBean;
 import tarce.myodoo.R;
+import tarce.myodoo.adapter.product.ImgRecycAdapter;
 import tarce.myodoo.utils.StringUtils;
+import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
 import tarce.support.BitmapUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
+import tarce.support.ViewUtils;
 
 /**
  * Created by rose.zou on 2017/6/2.
@@ -72,6 +80,12 @@ public class InspectMoDetailActivity extends ToolBarActivity {
     TextView tvPassOr;
     @InjectView(R.id.img_take_photo)
     ImageView imgTakePhoto;
+    @InjectView(R.id.tv_look_bom)
+    TextView tvLookBom;
+    @InjectView(R.id.linear_three)
+    LinearLayout linearThree;
+    @InjectView(R.id.img_grid_recycler)
+    RecyclerView imgGridRecycler;
     private QcFeedbaskBean.ResultBean.ResDataBean dataBean;
     private InventoryApi inventoryApi;
     private TextWatcher mEditnumSample = new TextWatcher() {
@@ -114,19 +128,21 @@ public class InspectMoDetailActivity extends ToolBarActivity {
         public void afterTextChanged(Editable s) {
             if (temp.length() > 0) {
                 float input = Float.parseFloat(temp.toString());
-           //     long input = Integer.parseInt(temp.toString());
+                //     long input = Integer.parseInt(temp.toString());
                 float chouyang_num = Float.parseFloat(numSampleInspecdetail.getText().toString());
                 //long chouyang_num = Integer.parseInt(numSampleInspecdetail.getText().toString());
-                float num = input / chouyang_num *100;
+                float num = input / chouyang_num * 100;
                 numRateRejects.setText(num + "%");
             }
         }
     };
     private String selectedImagePath = "";
     private String imgPath;//图片拍照照片的本地路径
+    private List<String> imgList = new ArrayList<>();
+    private ImgRecycAdapter imgRecycAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inspec_detail);
         ButterKnife.inject(this);
@@ -137,6 +153,12 @@ public class InspectMoDetailActivity extends ToolBarActivity {
         initView();
     }
 
+    private void initRecycler(){
+        GridLayoutManager layoutManager = new GridLayoutManager(InspectMoDetailActivity.this, 4);
+        imgGridRecycler.setLayoutManager(layoutManager);
+
+
+    }
     private void initView() {
         setTitle(dataBean.getProduction_id().getDisplay_name());
         switch (dataBean.getState()) {
@@ -149,6 +171,7 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                 numSampleInspecdetail.setFocusable(false);
                 numSampleInspecdetail.setText("0");
                 commentsOfInspecdetail.setFocusable(false);
+                showLinThreePin();
                 break;
             case "qc_ing":
                 stateInspectDetail.setText("品检中");
@@ -157,45 +180,75 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                 numRateRejects.setText("");
                 tvRateInspecdetail.setText("");
                 imgTakePhoto.setVisibility(View.VISIBLE);
+                showLinThreePin();
                 break;
             case "qc_success":
                 stateInspectDetail.setText("等待入库");
-                numRateRejects.setText(Math.rint(dataBean.getQc_fail_rate())+"%");
-                tvRateInspecdetail.setText(Math.rint(dataBean.getQc_rate())+"%");
+                numRateRejects.setText(Math.rint(dataBean.getQc_fail_rate()) + "%");
+                tvRateInspecdetail.setText(Math.rint(dataBean.getQc_rate()) + "%");
                 numRejectsInspecdetail.setFocusable(false);
                 numRejectsInspecdetail.setText(StringUtils.doubleToString(dataBean.getQc_fail_qty()));
                 numSampleInspecdetail.setFocusable(false);
                 numSampleInspecdetail.setText(StringUtils.doubleToString(dataBean.getQc_test_qty()));
                 commentsOfInspecdetail.setFocusable(false);
                 commentsOfInspecdetail.setText(dataBean.getQc_note());
-                if (dataBean.getQc_img().size()>0){
+                if (dataBean.getQc_img().size() > 0) {
                     imgTakePhoto.setVisibility(View.VISIBLE);
                     Glide.with(InspectMoDetailActivity.this).load(dataBean.getQc_img().get(0)).into(imgTakePhoto);
                     imgTakePhoto.setClickable(false);
                 }
                 tvClickFinish.setText("入库");
+                showLinThreeCang();
                 break;
             case "qc_fail":
                 stateInspectDetail.setText("品检失败");
-                numRateRejects.setText(Math.rint(dataBean.getQc_fail_rate())+"%");
-                tvRateInspecdetail.setText(Math.rint(dataBean.getQc_rate())+"%");
+                numRateRejects.setText(Math.rint(dataBean.getQc_fail_rate()) + "%");
+                tvRateInspecdetail.setText(Math.rint(dataBean.getQc_rate()) + "%");
                 numRejectsInspecdetail.setFocusable(false);
                 numRejectsInspecdetail.setText(StringUtils.doubleToString(dataBean.getQc_fail_qty()));
                 numSampleInspecdetail.setFocusable(false);
                 numSampleInspecdetail.setText(StringUtils.doubleToString(dataBean.getQc_test_qty()));
                 commentsOfInspecdetail.setFocusable(false);
                 commentsOfInspecdetail.setText(dataBean.getQc_note());
-                if (dataBean.getQc_img().size()>0){
+                if (dataBean.getQc_img().size() > 0) {
                     imgTakePhoto.setVisibility(View.VISIBLE);
                     Glide.with(InspectMoDetailActivity.this).load(dataBean.getQc_img().get(0)).into(imgTakePhoto);
                     imgTakePhoto.setClickable(false);
                 }
                 tvClickFinish.setText("开始返工");
+                showLinThreePro();
                 break;
         }
         numProductInspecdetail.setText(StringUtils.doubleToString(dataBean.getQty_produced()));
         numSampleInspecdetail.addTextChangedListener(mEditnumSample);
         numRejectsInspecdetail.addTextChangedListener(mEditnumRejects);
+    }
+
+    /**
+     * 是否显示底部(仓库)
+     */
+    public void showLinThreeCang() {
+        if (!UserManager.getSingleton().getGrops().contains("group_charge_warehouse")) {
+            linearThree.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 是否显示底部（生产）
+     */
+    public void showLinThreePro() {
+        if (!UserManager.getSingleton().getGrops().contains("group_charge_produce")) {
+            linearThree.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 是否显示底部（品检）
+     */
+    public void showLinThreePin() {
+        if (!UserManager.getSingleton().getGrops().contains("group_charge_inspection")) {
+            linearThree.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -214,7 +267,7 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                     @Override
                     public void onResponse(Call<StartInspectBean> call, Response<StartInspectBean> response) {
                         dismissDefultProgressDialog();
-                        if (response.body() == null) return;
+                        if (response.body() == null || response.body().getResult() == null) return;
                         if (response.body().getResult().getRes_code() == 1) {
                             AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "")
                                     .setMessage("该单据状态变为品检中")
@@ -250,14 +303,14 @@ public class InspectMoDetailActivity extends ToolBarActivity {
             case "入库":
                 showDefultProgressDialog();
                 HashMap<Object, Object> doneHashmap = new HashMap<>();
-                doneHashmap.put("feedback_id",dataBean.getFeedback_id());
+                doneHashmap.put("feedback_id", dataBean.getFeedback_id());
                 Call<RukuBean> objectCall1 = inventoryApi.produceDone(doneHashmap);
                 objectCall1.enqueue(new MyCallback<RukuBean>() {
                     @Override
                     public void onResponse(Call<RukuBean> call, Response<RukuBean> response) {
                         dismissDefultProgressDialog();
-                        if (response.body() == null)return;
-                        if (response.body().getResult().getRes_code() == 1){
+                        if (response.body() == null) return;
+                        if (response.body().getResult().getRes_code() == 1) {
                             AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "")
                                     .setMessage("入库成功")
                                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -297,20 +350,20 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                 objectCall2.enqueue(new MyCallback<StartReworkBean>() {
                     @Override
                     public void onResponse(Call<StartReworkBean> call, Response<StartReworkBean> response) {
-                        if (response.body() == null)return;
-                        if (response.body().getResult().getRes_code() == 1){
-                                AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "该单据开始返工")
-                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Intent intent = new Intent(InspectMoDetailActivity.this, InspectionSubActivity.class);
-                                                intent.putExtra("state","qc_fail");
-                                                startActivity(intent);
-                                                finish();
-                                            }
-                                        }).show();
-                        }else if (response.body().getResult().getRes_code() == -1){
-                              ToastUtils.showCommonToast(InspectMoDetailActivity.this, response.body().getResult().getRes_data().getError());
+                        if (response.body() == null) return;
+                        if (response.body().getResult().getRes_code() == 1) {
+                            AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "该单据开始返工")
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            Intent intent = new Intent(InspectMoDetailActivity.this, InspectionSubActivity.class);
+                                            intent.putExtra("state", "qc_fail");
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                    }).show();
+                        } else if (response.body().getResult().getRes_code() == -1) {
+                            ToastUtils.showCommonToast(InspectMoDetailActivity.this, response.body().getResult().getRes_data().getError());
                         }
                     }
 
@@ -322,8 +375,30 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                 break;
         }
     }
+
+    /**
+     * 查看bom结构
+     */
+    @OnClick(R.id.tv_look_bom)
+    void lookBom(View view) {
+        Intent intent = new Intent(InspectMoDetailActivity.this, BomFramworkActivity.class);
+        intent.putExtra("order_id", dataBean.getProduction_id().getOrder_id());
+        startActivity(intent);
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev){
+        ViewUtils.collapseSoftInputMethod(InspectMoDetailActivity.this, numSampleInspecdetail);
+        ViewUtils.collapseSoftInputMethod(InspectMoDetailActivity.this, numRejectsInspecdetail);
+        ViewUtils.collapseSoftInputMethod(InspectMoDetailActivity.this, commentsOfInspecdetail);
+        return super.dispatchTouchEvent(ev);
+    }
+
+    /**
+     * 拍照
+     */
     @OnClick(R.id.img_take_photo)
-    void takePhoto(View view){
+    void takePhoto(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, setImageUri());
         startActivityForResult(intent, REQUEST_CODE_IMAGE_CAPTURE);
@@ -331,9 +406,9 @@ public class InspectMoDetailActivity extends ToolBarActivity {
 
     /**
      * 品检不通过
-     * */
+     */
     @OnClick(R.id.tv_pass_or)
-    void resultFalse(View view){
+    void resultFalse(View view) {
         AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "")
                 .setMessage("是否确定品检不通过")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -346,34 +421,34 @@ public class InspectMoDetailActivity extends ToolBarActivity {
 
     /**
      * 品检通过或者不通过接口
-     * */
-    private void checkResult(final int result){
-        if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())){
+     */
+    private void checkResult(final int result) {
+        if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())) {
             ToastUtils.showCommonToast(InspectMoDetailActivity.this, "请填写品检数量");
             return;
         }
-        if (StringUtils.isNullOrEmpty(numSampleInspecdetail.getText().toString())){
+        if (StringUtils.isNullOrEmpty(numSampleInspecdetail.getText().toString())) {
             ToastUtils.showCommonToast(InspectMoDetailActivity.this, "请填写品检通过数量");
             return;
         }
         HashMap<Object, Object> resultMap = new HashMap<>();
         resultMap.put("feedback_id", dataBean.getFeedback_id());
         resultMap.put("result", result);
-        if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())){
+        if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())) {
             resultMap.put("qc_fail_qty", 0);
-        }else {
+        } else {
             resultMap.put("qc_fail_qty", Integer.parseInt(numRejectsInspecdetail.getText().toString()));
         }
-        if (StringUtils.isNullOrEmpty(numSampleInspecdetail.getText().toString())){
+        if (StringUtils.isNullOrEmpty(numSampleInspecdetail.getText().toString())) {
             resultMap.put("qc_test_qty", 0);
-        }else {
+        } else {
             resultMap.put("qc_test_qty", Integer.parseInt(numSampleInspecdetail.getText().toString()));
         }
         resultMap.put("qc_note", commentsOfInspecdetail.getText().toString());
-        if (StringUtils.isNullOrEmpty(selectedImagePath)){
+        if (StringUtils.isNullOrEmpty(selectedImagePath)) {
             String[] img_strNull = {""};
             resultMap.put("qc_img", img_strNull);
-        }else {
+        } else {
             String[] img_str = {BitmapUtils.bitmapToBase64(decodeFile(selectedImagePath))};
             resultMap.put("qc_img", img_str);
         }
@@ -382,10 +457,10 @@ public class InspectMoDetailActivity extends ToolBarActivity {
             @Override
             public void onResponse(Call<RejectResultBean> call, Response<RejectResultBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null)return;
-                if (response.body().getResult().getRes_code() == 1){
-                    if (result == 1){
-                        AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this,"品检成功，等待入库")
+                if (response.body() == null) return;
+                if (response.body().getResult().getRes_code() == 1) {
+                    if (result == 1) {
+                        AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "品检成功，等待入库")
                                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -395,8 +470,8 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                                         finish();
                                     }
                                 }).show();
-                    }else {
-                        AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this,"品检不通过，等待返工")
+                    } else {
+                        AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "品检不通过，等待返工")
                                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -407,7 +482,7 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                                     }
                                 }).show();
                     }
-                }else if (response.body().getResult().getRes_code() == -1){
+                } else if (response.body().getResult().getRes_code() == -1) {
                     ToastUtils.showCommonToast(InspectMoDetailActivity.this, response.body().getResult().getRes_data().getError());
                 }
             }
@@ -418,6 +493,7 @@ public class InspectMoDetailActivity extends ToolBarActivity {
             }
         });
     }
+
     public Uri setImageUri() {
         // Store image in dcim
         File file = new File(Environment.getExternalStorageDirectory() + "/DCIM/", "image" + new Date().getTime() + ".png");
@@ -433,10 +509,13 @@ public class InspectMoDetailActivity extends ToolBarActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != Activity.RESULT_CANCELED){
+        if (resultCode != Activity.RESULT_CANCELED) {
             if (requestCode == REQUEST_CODE_IMAGE_CAPTURE) {
                 selectedImagePath = getImagePath();
-                Glide.with(InspectMoDetailActivity.this).load(new File(selectedImagePath)).into(imgTakePhoto);
+                imgList.add(selectedImagePath);
+          //      Glide.with(InspectMoDetailActivity.this).load(new File(selectedImagePath)).into(imgTakePhoto);
+                imgRecycAdapter = new ImgRecycAdapter(R.layout.adapter_img_recyc, imgList);
+                imgGridRecycler.setAdapter(imgRecycAdapter);
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
             }
@@ -470,7 +549,7 @@ public class InspectMoDetailActivity extends ToolBarActivity {
     }
 
     public String getAbsolutePath(Uri uri) {
-        String[] projection = { MediaStore.MediaColumns.DATA };
+        String[] projection = {MediaStore.MediaColumns.DATA};
         @SuppressWarnings("deprecation")
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         if (cursor != null) {

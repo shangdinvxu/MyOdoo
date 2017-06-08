@@ -81,8 +81,10 @@ public class ProductLlActivity extends ToolBarActivity {
 
     @Override
     protected void onResume() {
-        if (dataBeanList == null)
-        swipeToLoad.setRefreshing(true);
+        if (dataBeanList == null){
+            swipeToLoad.setRefreshing(true);
+            loadTime = 0;
+        }
         super.onResume();
     }
 

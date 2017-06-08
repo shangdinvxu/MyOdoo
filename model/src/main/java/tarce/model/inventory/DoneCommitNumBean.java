@@ -78,6 +78,7 @@ public class DoneCommitNumBean {
         }
 
         public static class ResDataBean {
+
             /**
              * origin : MO/2017041831627:MO/2017041831634
              * cur_location : null
@@ -103,7 +104,7 @@ public class DoneCommitNumBean {
              * is_pending : false
              */
 
-            private String origin;
+            private Object origin;
             private Object cur_location;
             private double product_qty;
             private String display_name;
@@ -126,11 +127,12 @@ public class DoneCommitNumBean {
             private boolean is_pending;
             private List<StockMoveLinesBean> stock_move_lines;
 
-            public String getOrigin() {
+
+            public Object getOrigin() {
                 return origin;
             }
 
-            public void setOrigin(String origin) {
+            public void setOrigin(Object origin) {
                 this.origin = origin;
             }
 
@@ -308,24 +310,33 @@ public class DoneCommitNumBean {
                  * area_name : false
                  */
 
-                private boolean area_id;
-                private boolean area_name;
+                private Object area_id;
 
-                public boolean isArea_id() {
+                public Object getArea_id() {
+                    if (area_id instanceof Boolean){
+                        return 0;
+                    }else if (area_id instanceof Double){
+                        return new Double((Double) area_id).intValue();
+                    }
                     return area_id;
                 }
 
-                public void setArea_id(boolean area_id) {
+                public void setArea_id(Object area_id) {
                     this.area_id = area_id;
                 }
 
-                public boolean isArea_name() {
+                public Object getArea_name() {
+                    if (area_name instanceof Boolean){
+                        return "";
+                    }
                     return area_name;
                 }
 
-                public void setArea_name(boolean area_name) {
+                public void setArea_name(Object area_name) {
                     this.area_name = area_name;
                 }
+
+                private Object area_name;
             }
 
             public static class ProcessIdBean {
@@ -425,24 +436,33 @@ public class DoneCommitNumBean {
                      * area_name : false
                      */
 
-                    private boolean area_id;
-                    private boolean area_name;
+                    private Object area_id;
 
-                    public boolean isArea_id() {
+                    public Object getArea_id() {
+                        if (area_id instanceof Boolean){
+                            return 0;
+                        }else if (area_id instanceof Double){
+                            return new Double((Double) area_id).intValue();
+                        }
                         return area_id;
                     }
 
-                    public void setArea_id(boolean area_id) {
+                    public void setArea_id(Object area_id) {
                         this.area_id = area_id;
                     }
 
-                    public boolean isArea_name() {
+                    public Object getArea_name() {
+                        if (area_name instanceof Boolean){
+                            return "";
+                        }
                         return area_name;
                     }
 
-                    public void setArea_name(boolean area_name) {
+                    public void setArea_name(Object area_name) {
                         this.area_name = area_name;
                     }
+
+                    private Object area_name;
                 }
             }
 
@@ -629,28 +649,37 @@ public class DoneCommitNumBean {
 
                 public static class AreaIdBeanX {
                     /**
-                     * area_id : 214
-                     * area_name : A3D2
+                     * area_id : false
+                     * area_name : false
                      */
 
-                    private int area_id;
-                    private String area_name;
+                    private Object area_id;
 
-                    public int getArea_id() {
+                    public Object getArea_id() {
+                        if (area_id instanceof Boolean){
+                            return 0;
+                        }else if (area_id instanceof Double){
+                            return new Double((Double) area_id).intValue();
+                        }
                         return area_id;
                     }
 
-                    public void setArea_id(int area_id) {
+                    public void setArea_id(Object area_id) {
                         this.area_id = area_id;
                     }
 
-                    public String getArea_name() {
+                    public Object getArea_name() {
+                        if (area_name instanceof Boolean){
+                            return "";
+                        }
                         return area_name;
                     }
 
-                    public void setArea_name(String area_name) {
+                    public void setArea_name(Object area_name) {
                         this.area_name = area_name;
                     }
+
+                    private Object area_name;
                 }
             }
         }

@@ -78,7 +78,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
     TextView tvFinishOrder;
     private InventoryApi inventoryApi;
     private AreaMessageAdapter adapter;
-    private List<AreaMessageBean.ResultBean.ResDataBean> res_data;
+    private List<AreaMessageBean.ResultBean.ResDataBean> res_data = new ArrayList<>();;
     private String selectedImagePath = "";
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;//拍照
 
@@ -128,7 +128,6 @@ public class PhotoAreaActivity extends ToolBarActivity {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     ViewUtils.collapseSoftInputMethod(PhotoAreaActivity.this, editAreaMessage);
-                    res_data = new ArrayList<>();
                     HashMap<Object, Object> hashMap = new HashMap<>();
                     hashMap.put("condition", editAreaMessage.getText().toString());
                     Call<AreaMessageBean> areaMessage = inventoryApi.getAreaMessage(hashMap);
@@ -136,21 +135,24 @@ public class PhotoAreaActivity extends ToolBarActivity {
                         @Override
                         public void onResponse(Call<AreaMessageBean> call, Response<AreaMessageBean> response) {
                             if (response.body() == null) return;
-                            res_data = response.body().getResult().getRes_data();
-                            adapter = new AreaMessageAdapter(R.layout.adapter_area_message, res_data);
-                            recyclerArea.setAdapter(adapter);
-                            adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                                    editAreaMessage.setText(res_data.get(position).getArea_name());
-                                    ViewUtils.collapseSoftInputMethod(PhotoAreaActivity.this, editAreaMessage);
-                                }
-                            });
+                            if (response.body().getResult().getRes_code() == 1){
+                                res_data = response.body().getResult().getRes_data();
+                                adapter = new AreaMessageAdapter(R.layout.adapter_area_message, res_data);
+                                recyclerArea.setAdapter(adapter);
+                                if (res_data == null)return;
+                                adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                                        editAreaMessage.setText(res_data.get(position).getArea_name());
+                                        ViewUtils.collapseSoftInputMethod(PhotoAreaActivity.this, editAreaMessage);
+                                    }
+                                });
+                            }
                         }
 
                         @Override
                         public void onFailure(Call<AreaMessageBean> call, Throwable t) {
-                            super.onFailure(call, t);
+                            ToastUtils.showCommonToast(PhotoAreaActivity.this, t.toString());
                         }
                     });
                     return true;
@@ -168,17 +170,6 @@ public class PhotoAreaActivity extends ToolBarActivity {
         startActivityForResult(intent, REQUEST_CODE_IMAGE_CAPTURE);
     }
 
-    /**
-     * relative点击事件
-     *//*
-    @OnClick(R.id.recycler_area)
-    void clickRela(View view){
-        if (res_data!=null){
-            res_data.clear();
-            adapter.notifyDataSetChanged();
-        }
-        ViewUtils.collapseSoftInputMethod(PhotoAreaActivity.this, editAreaMessage);
-    }*/
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
@@ -227,6 +218,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
 
                                 @Override
                                 public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
+                                    Log.e("zouwansheng", "t = "+t.toString());
                                     dismissDefultProgressDialog();
                                 }
                             });

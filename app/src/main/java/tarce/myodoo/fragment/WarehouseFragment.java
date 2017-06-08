@@ -87,6 +87,9 @@ public class WarehouseFragment extends Fragment {
         sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (position==0 || position==4 || position==9 || position==12 || position==15){
+                    return;
+                }
                 String name = list.get(position).t.getName();
                 switch (name){
                     case "销售出库":

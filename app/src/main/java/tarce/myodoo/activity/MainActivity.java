@@ -17,7 +17,9 @@ import android.widget.Toast;
 import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -28,18 +30,20 @@ import retrofit2.Response;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.LoadActionBean;
+import tarce.model.LoginResponse;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.fragment.InspectionFragment;
 import tarce.myodoo.fragment.MeFragment;
 import tarce.myodoo.fragment.ProduceFragment;
 import tarce.myodoo.fragment.WarehouseFragment;
+import tarce.myodoo.utils.UserManager;
 import tarce.myodoo.view.NoScrollViewPager;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     private final static String TAG = MainActivity.class.getSimpleName();
     @InjectView(R.id.viewpager)
     NoScrollViewPager mViewPager;
@@ -74,25 +78,26 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mContent;
     private View mCurrentTab;
     private final static int REQUEST_CODE = 5 ;
+    private LoadActionBean.ResultBean.ResDataBean res_data;
 
     /*private List<TestBean.TestRSubBean.ListSubBean> listSubBeen  = new ArrayList<TestBean.TestRSubBean.ListSubBean>();
     private List<Integer> listInterge = new ArrayList<>();*/
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         inventoryApi = RetrofitClient.getInstance(MainActivity.this).create(InventoryApi.class);
         initFragment();
-
     }
 
     @Override
     protected void onResume() {
+        if (res_data == null){
+            refreshLoadAction();
+        }
         super.onResume();
-        //   mViewPager.setCurrentItem(0, false);
-        //  refreshLoadAction();
     }
 
     @OnClick(R.id.radio_button1)
@@ -132,10 +137,11 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<LoadActionBean> call, Response<LoadActionBean> response) {
               //  AlertAialogUtils.dismissDefultProgressDialog();
                 if (response.body() != null && response.body().getResult().getRes_code() == 1) {
-                    Integer needaction_counter = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_prepare_material_ing().getNeedaction_counter();
-                    Integer needaction_counter1 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection().getNeedaction_counter();
-                    Integer needaction_counter2 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_mrp_production_action_qc_success().getNeedaction_counter();
-                    Integer needaction_counter3 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_material().getNeedaction_counter();
+                    res_data = response.body().getResult().getRes_data();
+                    Integer needaction_counter = res_data.getLinkloving_mrp_extend_menu_mrp_prepare_material_ing().getNeedaction_counter();
+                    Integer needaction_counter1 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection().getNeedaction_counter();
+                    Integer needaction_counter2 = res_data.getLinkloving_mrp_extend_mrp_production_action_qc_success().getNeedaction_counter();
+                    Integer needaction_counter3 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_material().getNeedaction_counter();
                     warehouseFragment.list.get(5).t.setNumber(needaction_counter+needaction_counter3);
                     warehouseFragment.list.get(6).t.setNumber(needaction_counter1);
                     warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
@@ -172,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void initFragment() {
+    private void initFragment(){
         myfragment = new Fragment[4];
         warehouseFragment = new WarehouseFragment();
         myfragment[0] = warehouseFragment;
@@ -225,6 +231,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
 
+    @Override
+    protected void onPause() {
+        res_data = null;
+        super.onPause();
     }
 }

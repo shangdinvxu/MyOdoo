@@ -81,7 +81,8 @@
             android:screenOrientation="portrait"
             android:launchMode="singleTask"/>
         <activity android:name=".activity.InspectMoDetailActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity android:name=".activity.WriteFeedMateriActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.BomFramworkActivity"

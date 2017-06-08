@@ -79,25 +79,24 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
             public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
                 insertNumDialog = new InsertNumDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle,
                         new InsertNumDialog.OnSendCommonClickListener() {
-                            public double v;//备料数量
+                            public double beiNum;//备料数量
 
                             @Override
                             public void OnSendCommonClick(int num) {
                                 if (resDataBean.getState().equals("waiting_material")
                                         || resDataBean.getState().equals("prepare_material_ing")
                                         || resDataBean.getState().equals("finish_prepare_material")){
-                                    v = resDataBean.getStock_move_lines().get(position).getQuantity_ready() + resDataBean.getStock_move_lines().get(position).getQuantity_done();
+                                    beiNum = resDataBean.getStock_move_lines().get(position).getQuantity_ready() + resDataBean.getStock_move_lines().get(position).getQuantity_done();
                                 }else {
-                                    v = resDataBean.getStock_move_lines().get(position).getQuantity_done();
+                                    beiNum = resDataBean.getStock_move_lines().get(position).getQuantity_done();
                                 }
-                                Log.i("zouwansheng", "v = "+v+"v-生产 = "+(v-resDataBean.getStock_move_lines().get(position).getProduct_uom_qty()));
-                                if ((v-resDataBean.getStock_move_lines().get(position).getProduct_uom_qty())<num) {
-                                    ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料过多");
-                                }else if (v<num){
-                                    ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料过多");
-                                }else {
+                                // TODO: 2017/6/8 生产num/需求num*item的需求num
+                                double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(position).getProduct_uom_qty();
+                                if (num<=(beiNum-v)){
                                     resDataBean.getStock_move_lines().get(position).setReturn_qty(num);
                                     adapter.notifyDataSetChanged();
+                                }else {
+                                    ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料过多");
                                 }
                             }
                         }, resDataBean.getStock_move_lines().get(position).getProduct_id())
