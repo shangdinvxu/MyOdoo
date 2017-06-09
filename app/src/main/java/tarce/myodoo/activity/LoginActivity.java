@@ -130,6 +130,7 @@ public class LoginActivity extends Activity {
 
     private void checkOutoLogin() {
         int user_id = SharePreferenceUtils.getInt("user_id", -1000, LoginActivity.this);
+        httpUrl.setText(RetrofitClient.Url);
         if (user_id != -1000) {
             String url = SharePreferenceUtils.getString("url", "null", LoginActivity.this);
             LoginActivity.this.httpUrl.setText(url);
@@ -248,7 +249,7 @@ public class LoginActivity extends Activity {
                             });
                     getMenuList();
                 }else {
-                    if (progressDialog.isShowing()) {
+                    if (progressDialog.isShowing()){
                         progressDialog.dismiss();
                     }
                     Toast.makeText(LoginActivity.this, response.body().getResult().getRes_data().getError(), Toast.LENGTH_SHORT).show();

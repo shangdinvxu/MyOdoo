@@ -1,5 +1,6 @@
 package tarce.myodoo.adapter.product;
 
+import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 
@@ -26,6 +27,5 @@ public class ImgRecycAdapter extends BaseQuickAdapter<String, BaseViewHolder>{
     @Override
     protected void convert(BaseViewHolder helper, String item) {
         helper.setImageBitmap(R.id.recycler_img_photo, BitmapFactory.decodeFile(item));
-  //      Glide.with(mContext).load(new File(item)).into((ImageView) helper.getView(R.id.recycler_img_photo));
     }
 }

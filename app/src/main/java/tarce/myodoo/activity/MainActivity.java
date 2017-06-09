@@ -163,6 +163,7 @@ public class MainActivity extends AppCompatActivity{
     void clickRadio_Button2(View view) {
         mViewPager.setCurrentItem(1, true);
         titleText.setText("生产");
+        produceFragment.onResume();
     }
 
     @OnClick(R.id.radio_button3)

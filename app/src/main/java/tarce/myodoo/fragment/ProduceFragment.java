@@ -111,17 +111,17 @@ public class ProduceFragment extends Fragment {
                 if (response.body() == null)return;
                 if (response.body().getResult().getRes_code() == 1){
                     res_data = response.body().getResult().getRes_data();
-                    Integer needaction_counter0 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_finish_prepare_material().getNeedaction_counter();
+                    Integer needaction_counter0 = res_data.getLinkloving_mrp_extend_menu_mrp_finish_prepare_material().getNeedaction_counter();
                     list.get(0).t.setNumber(needaction_counter0);
-                    Integer needaction_counter1 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_already_picking().getNeedaction_counter();
+                    Integer needaction_counter1 = res_data.getLinkloving_mrp_extend_menu_mrp_already_picking().getNeedaction_counter();
                     list.get(1).t.setNumber(needaction_counter1);
-                    Integer needaction_counter2 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
+                    Integer needaction_counter2 = res_data.getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
                     list.get(2).t.setNumber(needaction_counter2);
-                    Integer needaction_counter3 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
+                    Integer needaction_counter3 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
                     list.get(3).t.setNumber(needaction_counter3);
-                    Integer needaction_counter4 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_mrp_production_qc_inspection_fail().getNeedaction_counter();
+                    Integer needaction_counter4 = res_data.getLinkloving_mrp_extend_mrp_production_qc_inspection_fail().getNeedaction_counter();
                     list.get(4).t.setNumber(needaction_counter4);
-                    Integer needaction_counter5 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_rework_ing().getNeedaction_counter();
+                    Integer needaction_counter5 = res_data.getLinkloving_mrp_extend_menu_mrp_rework_ing().getNeedaction_counter();
                     list.get(5).t.setNumber(needaction_counter5);
                     /*Integer needaction_counter6 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
                     list.get(6).t.setNumber(needaction_counter6);*/

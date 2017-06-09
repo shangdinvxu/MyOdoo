@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -44,6 +45,7 @@ import tarce.model.inventory.StartInspectBean;
 import tarce.model.inventory.StartReworkBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.ImgRecycAdapter;
+import tarce.myodoo.uiutil.FullyGridLayoutManager;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
@@ -84,6 +86,8 @@ public class InspectMoDetailActivity extends ToolBarActivity {
     TextView tvLookBom;
     @InjectView(R.id.linear_three)
     LinearLayout linearThree;
+    /*@InjectView(R.id.relative_img_take)
+    RelativeLayout relativeImgTake;*/
     @InjectView(R.id.img_grid_recycler)
     RecyclerView imgGridRecycler;
     private QcFeedbaskBean.ResultBean.ResDataBean dataBean;
@@ -151,14 +155,19 @@ public class InspectMoDetailActivity extends ToolBarActivity {
         Intent intent = getIntent();
         dataBean = (QcFeedbaskBean.ResultBean.ResDataBean) intent.getSerializableExtra("data");
         initView();
+        initRecycler();
     }
 
-    private void initRecycler(){
-        GridLayoutManager layoutManager = new GridLayoutManager(InspectMoDetailActivity.this, 4);
+    private void initRecycler() {
+        FullyGridLayoutManager layoutManager = new FullyGridLayoutManager(InspectMoDetailActivity.this, 4);
+        layoutManager.setAutoMeasureEnabled(true);
         imgGridRecycler.setLayoutManager(layoutManager);
-
-
+        imgGridRecycler.setNestedScrollingEnabled(false);
+        imgGridRecycler.setHasFixedSize(true);
+        imgRecycAdapter = new ImgRecycAdapter(R.layout.adapter_img_recyc, imgList);
+        imgGridRecycler.setAdapter(imgRecycAdapter);
     }
+
     private void initView() {
         setTitle(dataBean.getProduction_id().getDisplay_name());
         switch (dataBean.getState()) {
@@ -193,9 +202,7 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                 commentsOfInspecdetail.setFocusable(false);
                 commentsOfInspecdetail.setText(dataBean.getQc_note());
                 if (dataBean.getQc_img().size() > 0) {
-                    imgTakePhoto.setVisibility(View.VISIBLE);
-                    Glide.with(InspectMoDetailActivity.this).load(dataBean.getQc_img().get(0)).into(imgTakePhoto);
-                    imgTakePhoto.setClickable(false);
+                    imgRecycAdapter = new ImgRecycAdapter(R.layout.adapter_img_recyc, (List<String>) dataBean.getQc_img());
                 }
                 tvClickFinish.setText("入库");
                 showLinThreeCang();
@@ -211,9 +218,7 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                 commentsOfInspecdetail.setFocusable(false);
                 commentsOfInspecdetail.setText(dataBean.getQc_note());
                 if (dataBean.getQc_img().size() > 0) {
-                    imgTakePhoto.setVisibility(View.VISIBLE);
-                    Glide.with(InspectMoDetailActivity.this).load(dataBean.getQc_img().get(0)).into(imgTakePhoto);
-                    imgTakePhoto.setClickable(false);
+                    imgRecycAdapter = new ImgRecycAdapter(R.layout.adapter_img_recyc, (List<String>) dataBean.getQc_img());
                 }
                 tvClickFinish.setText("开始返工");
                 showLinThreePro();
@@ -387,7 +392,7 @@ public class InspectMoDetailActivity extends ToolBarActivity {
     }
 
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev){
+    public boolean dispatchTouchEvent(MotionEvent ev) {
         ViewUtils.collapseSoftInputMethod(InspectMoDetailActivity.this, numSampleInspecdetail);
         ViewUtils.collapseSoftInputMethod(InspectMoDetailActivity.this, numRejectsInspecdetail);
         ViewUtils.collapseSoftInputMethod(InspectMoDetailActivity.this, commentsOfInspecdetail);
@@ -449,7 +454,11 @@ public class InspectMoDetailActivity extends ToolBarActivity {
             String[] img_strNull = {""};
             resultMap.put("qc_img", img_strNull);
         } else {
-            String[] img_str = {BitmapUtils.bitmapToBase64(decodeFile(selectedImagePath))};
+            String[] img_str = new String[imgList.size()];
+            for (int i = 0; i < imgList.size(); i++) {
+                img_str[i] = imgList.get(i);
+            }
+               //     String[] img_str = {BitmapUtils.bitmapToBase64(decodeFile(selectedImagePath))};
             resultMap.put("qc_img", img_str);
         }
         Call<RejectResultBean> objectCall1 = inventoryApi.resultInspec(resultMap);
@@ -513,9 +522,7 @@ public class InspectMoDetailActivity extends ToolBarActivity {
             if (requestCode == REQUEST_CODE_IMAGE_CAPTURE) {
                 selectedImagePath = getImagePath();
                 imgList.add(selectedImagePath);
-          //      Glide.with(InspectMoDetailActivity.this).load(new File(selectedImagePath)).into(imgTakePhoto);
-                imgRecycAdapter = new ImgRecycAdapter(R.layout.adapter_img_recyc, imgList);
-                imgGridRecycler.setAdapter(imgRecycAdapter);
+                imgRecycAdapter.notifyDataSetChanged();
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
             }

@@ -105,6 +105,9 @@ public interface InventoryApi {
     @POST("load_needaction")
     Call<LoadInspectionBean> load_actionInspec(@Body HashMap hashMap);
 
+    /**
+     * 出库信息查询
+     * */
     @POST("get_outgoing_stock_picking")
     Observable<OutgoingStockpickingBean> getOutgoingStockpicking(@Body HashMap hashMap);
 

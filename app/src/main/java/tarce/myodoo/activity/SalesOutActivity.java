@@ -87,7 +87,7 @@ public class SalesOutActivity extends ToolBarActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new ProgressSubscriber<>(new SubscriberOnNextListener<OutgoingStockpickingBean>() {
                     @Override
-                    public void onNext(OutgoingStockpickingBean bean) {
+                    public void onNext(OutgoingStockpickingBean bean){
                         ArrayList<AvailabilityBean> statesBeanList = new ArrayList<>();
                         List<OutgoingStockpickingBean.ResultBean.ResDataBean.CompleteRateBean> complete_rate = bean.getResult().getRes_data().getComplete_rate();
                         for (OutgoingStockpickingBean.ResultBean.ResDataBean.CompleteRateBean completeRateBean : complete_rate) {
@@ -196,7 +196,7 @@ public class SalesOutActivity extends ToolBarActivity {
         });
     }
 
-    private void initSearchFormDB(String s) {
+    private void initSearchFormDB(String s){
 
         List<ContactsBean> contactsBeen = contactBeanUtils.searchByName(s);
         if (contactsBeen != null && contactsBeen.size() > 0) {
