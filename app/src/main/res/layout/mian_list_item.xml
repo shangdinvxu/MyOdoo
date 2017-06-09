@@ -10,7 +10,6 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:textSize="15sp"
-        android:text="原料入库"
         android:layout_marginLeft="15dp"/>
     <LinearLayout
         android:layout_alignParentRight="true"

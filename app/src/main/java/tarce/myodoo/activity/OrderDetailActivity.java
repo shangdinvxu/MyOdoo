@@ -99,11 +99,13 @@ public class OrderDetailActivity extends ToolBarActivity {
     TextView tvAreaLook;
     @InjectView(R.id.linear_three)
     LinearLayout linearThree;
+    @InjectView(R.id.tv_show_code)
+    TextView tvShowCode;
     private int click_check;//用于底部的点击事件  根据状态加载不同的点击事件后续
     private InventoryApi inventoryApi;
     private int order_id;
     private boolean up_or_down = true;//判断是收起还是展开,默认展开
-    private boolean camera_or_relative;//判断是否显示camera,true为显示
+    private boolean camera_or_relative = true;//判断是否显示camera,true为显示
     private OrderDetailBean.ResultBean.ResDataBean resDataBean;
     private OrderDetailAdapter adapter;
     private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_one;
@@ -142,7 +144,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         process_id = intent.getIntExtra("process_id", 1);
         name_activity = intent.getStringExtra("name_activity");
         state_activity = intent.getStringExtra("state_activity");
-        initFragment();
+        // initFragment();
         stateView(state);
         recyclerOrderDetail.setLayoutManager(new FullyLinearLayoutManager(OrderDetailActivity.this));
         recyclerOrderDetail.addItemDecoration(new DividerItemDecoration(OrderDetailActivity.this,
@@ -175,16 +177,17 @@ public class OrderDetailActivity extends ToolBarActivity {
                 tvStateOrder.setText("等待备料");
                 tvStartProduce.setText("开始备料");
                 click_check = STATE_WAIT_WATERIAL;
-                camera_or_relative = false;
-                framelayoutProduct.setVisibility(View.GONE);
+              //  camera_or_relative = false;
+               // framelayoutProduct.setVisibility(View.GONE);
+                tvShowCode.setVisibility(View.GONE);
                 showLinThreeCang();
                 break;
             case "prepare_material_ing":
                 tvStateOrder.setText("备料中");
                 tvStartProduce.setText("备料完成");
                 click_check = STATE_START_PRODUCT;
-                camera_or_relative = false;
-                framelayoutProduct.setVisibility(View.VISIBLE);
+              //  camera_or_relative = true;
+               // framelayoutProduct.setVisibility(View.VISIBLE);
                 relativeOrderShow.setVisibility(View.GONE);
                 tvCheckState.setText("展开");
                 imgUpDown.setImageResource(R.mipmap.down);
@@ -193,7 +196,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "finish_prepare_material":
                 tvStateOrder.setText("备料完成");
-                framelayoutProduct.setVisibility(View.VISIBLE);
+           //     framelayoutProduct.setVisibility(View.VISIBLE);
                 click_check = STATE_REQUSIT_RIGISTER;
                 tvStartProduce.setText("领料登记");
                 tvAreaLook.setVisibility(View.VISIBLE);
@@ -206,7 +209,8 @@ public class OrderDetailActivity extends ToolBarActivity {
             case "already_picking":
                 tvStateOrder.setText("已领料");
                 click_check = STATE_ALREADY_PICKING;
-                framelayoutProduct.setVisibility(View.GONE);
+               // framelayoutProduct.setVisibility(View.GONE);
+                tvShowCode.setVisibility(View.GONE);
                 relativeOrderShow.setVisibility(View.VISIBLE);
                 tvCheckState.setText("收起");
                 imgUpDown.setImageResource(R.mipmap.up);
@@ -219,7 +223,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "progress":
                 tvStateOrder.setText("进行中");
-                framelayoutProduct.setVisibility(View.GONE);
+             //   framelayoutProduct.setVisibility(View.GONE);
+                tvShowCode.setVisibility(View.GONE);
                 break;
             case "waiting_inspection_finish":
                 tvStateOrder.setText("等待品检完成");
@@ -232,14 +237,16 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "waiting_inventory_material":
                 tvStateOrder.setText("等待清点退料");
-                framelayoutProduct.setVisibility(View.GONE);
+       //         framelayoutProduct.setVisibility(View.GONE);
+                tvShowCode.setVisibility(View.GONE);
                 tvStartProduce.setText("填写退料");
                 click_check = WRITE_WATERIAL_OUT;
                 showLinThreePro();
                 break;
             case "waiting_warehouse_inspection":
                 tvStateOrder.setText("等待检验退料");
-                framelayoutProduct.setVisibility(View.GONE);
+             //   framelayoutProduct.setVisibility(View.GONE);
+                tvShowCode.setVisibility(View.GONE);
                 tvStartProduce.setText("仓库查看退料信息");
                 click_check = LOOK_MESSAGE_FEEDBACK;
                 showLinThreeCang();
@@ -249,7 +256,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "done":
                 tvStateOrder.setText("完成");
-                framelayoutProduct.setVisibility(View.GONE);
+       //         framelayoutProduct.setVisibility(View.GONE);
+                tvShowCode.setVisibility(View.GONE);
                 tvStartProduce.setText("清点退料");
                 click_check = CHECK_MATERIAL_RETURN;
                 break;
@@ -258,20 +266,22 @@ public class OrderDetailActivity extends ToolBarActivity {
 
     /**
      * 是否显示底部（生产）
-     * */
-    public void showLinThreePro(){
-        if (!UserManager.getSingleton().getGrops().contains("group_charge_produce")){
+     */
+    public void showLinThreePro() {
+        if (!UserManager.getSingleton().getGrops().contains("group_charge_produce")) {
             linearThree.setVisibility(View.GONE);
         }
     }
+
     /**
      * 是否显示底部(仓库)
-     * */
-    public void showLinThreeCang(){
-        if (!UserManager.getSingleton().getGrops().contains("group_charge_warehouse")){
+     */
+    public void showLinThreeCang() {
+        if (!UserManager.getSingleton().getGrops().contains("group_charge_warehouse")) {
             linearThree.setVisibility(View.GONE);
         }
     }
+
     /**
      * 订单详情
      */
@@ -437,7 +447,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         recyclerOrderDetail.setAdapter(adapter);
         recycler2OrderDetail.setAdapter(adapter_two);
         recycler3OrderDetail.setAdapter(adapter_three);
-        if (state.equals("waiting_material") || state.equals("prepare_material_ing")) {
+        if (state.equals("prepare_material_ing")) {
             adapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
                 @Override
                 public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
@@ -624,23 +634,31 @@ public class OrderDetailActivity extends ToolBarActivity {
     @OnClick(R.id.img_up_down)
     void onClickImage(View v) {
         if (up_or_down) {
-            if (camera_or_relative) {
-                framelayoutProduct.setVisibility(View.GONE);
-            } else {
-                relativeOrderShow.setVisibility(View.GONE);
-            }
+            relativeOrderShow.setVisibility(View.GONE);
             tvCheckState.setText("展开");
             imgUpDown.setImageResource(R.mipmap.down);
             up_or_down = false;
         } else {
-            if (camera_or_relative) {
-                framelayoutProduct.setVisibility(View.VISIBLE);
-            } else {
-                relativeOrderShow.setVisibility(View.VISIBLE);
-            }
+            relativeOrderShow.setVisibility(View.VISIBLE);
             tvCheckState.setText("收起");
             imgUpDown.setImageResource(R.mipmap.up);
             up_or_down = true;
+        }
+    }
+
+    /**
+     * 显示二维码
+     * */
+    @OnClick(R.id.tv_show_code)
+    void useCode(View view){
+        if (camera_or_relative){
+            initFragment();
+            tvShowCode.setText("关闭扫描");
+            camera_or_relative = false;
+        }else{
+            framelayoutProduct.setVisibility(View.GONE);
+            tvShowCode.setText("打开扫描");
+            camera_or_relative = true;
         }
     }
 
@@ -667,8 +685,7 @@ public class OrderDetailActivity extends ToolBarActivity {
     }
 
     @Override
-    protected void onPause() {
-        captureFragment.onPause();
+    protected void onPause(){
         dismissDefultProgressDialog();
         super.onPause();
     }
@@ -693,7 +710,6 @@ public class OrderDetailActivity extends ToolBarActivity {
     }*/
     @Override
     protected void onDestroy() {
-        captureFragment.onDestroy();
         if (dialogForOrder != null) {
             dialogForOrder = null;
         }

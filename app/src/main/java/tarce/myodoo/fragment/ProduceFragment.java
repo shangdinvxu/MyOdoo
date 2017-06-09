@@ -32,6 +32,7 @@ import tarce.myodoo.IntentFactory;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.SectionAdapter;
+import tarce.myodoo.adapter.product.ProduceRednumAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
 import tarce.support.AlertAialogUtils;
@@ -43,12 +44,11 @@ import tarce.support.AlertAialogUtils;
 
 public class ProduceFragment extends Fragment {
 
-    public List<MainItemBean> list;
-    public SectionAdapter sectionAdapter;
+    public List<MenuBean> list;
+    public ProduceRednumAdapter sectionAdapter;
     @InjectView(R.id.recyclerview)
     RecyclerView recyclerview;
     private InventoryApi inventoryApi;
-    private SectionAdapter adapter;
     private LoadProductBean.LoadResultBean.ThreeSubResult res_data;
 
     @Override
@@ -59,13 +59,13 @@ public class ProduceFragment extends Fragment {
 
     private void initData() {
         list = new ArrayList<>();
-        list.add(new MainItemBean(new MenuBean("领料", 0)));
-        list.add(new MainItemBean(new MenuBean("等待生产", 0)));
-        list.add(new MainItemBean(new MenuBean("生产中", 0)));
-        list.add(new MainItemBean(new MenuBean("退料", 0)));
-        list.add(new MainItemBean(new MenuBean("等待返工", 0)));
-        list.add(new MainItemBean(new MenuBean("返工中", 0)));
-        list.add(new MainItemBean(new MenuBean("已完成", 0)));
+        list.add(new MenuBean("领料", 0));
+        list.add(new MenuBean("等待生产", 0));
+        list.add(new MenuBean("生产中", 0));
+        list.add(new MenuBean("退料", 0));
+        list.add(new MenuBean("等待返工", 0));
+        list.add(new MenuBean("返工中", 0));
+        list.add(new MenuBean("已完成", 0));
     }
 
 
@@ -74,7 +74,7 @@ public class ProduceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_2, null);
         ButterKnife.inject(this, view);
-        sectionAdapter = new SectionAdapter(R.layout.mian_list_item, R.layout.adapter_head, list);
+        sectionAdapter = new ProduceRednumAdapter(R.layout.mian_list_item, list);
         setRecyclerview(recyclerview);
         recyclerview.setAdapter(sectionAdapter);
         setOnclick();
@@ -112,19 +112,19 @@ public class ProduceFragment extends Fragment {
                 if (response.body().getResult().getRes_code() == 1){
                     res_data = response.body().getResult().getRes_data();
                     Integer needaction_counter0 = res_data.getLinkloving_mrp_extend_menu_mrp_finish_prepare_material().getNeedaction_counter();
-                    list.get(0).t.setNumber(needaction_counter0);
+                    list.get(0).setNumber(needaction_counter0);
                     Integer needaction_counter1 = res_data.getLinkloving_mrp_extend_menu_mrp_already_picking().getNeedaction_counter();
-                    list.get(1).t.setNumber(needaction_counter1);
+                    list.get(1).setNumber(needaction_counter1);
                     Integer needaction_counter2 = res_data.getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
-                    list.get(2).t.setNumber(needaction_counter2);
+                    list.get(2).setNumber(needaction_counter2);
                     Integer needaction_counter3 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
-                    list.get(3).t.setNumber(needaction_counter3);
+                    list.get(3).setNumber(needaction_counter3);
                     Integer needaction_counter4 = res_data.getLinkloving_mrp_extend_mrp_production_qc_inspection_fail().getNeedaction_counter();
-                    list.get(4).t.setNumber(needaction_counter4);
+                    list.get(4).setNumber(needaction_counter4);
                     Integer needaction_counter5 = res_data.getLinkloving_mrp_extend_menu_mrp_rework_ing().getNeedaction_counter();
-                    list.get(5).t.setNumber(needaction_counter5);
-                    /*Integer needaction_counter6 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
-                    list.get(6).t.setNumber(needaction_counter6);*/
+                    list.get(5).setNumber(needaction_counter5);
+                //    Integer needaction_counter6 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
+                 //   list.get(6).setNumber(0);
                     sectionAdapter.notifyDataSetChanged();
                 }
             }
@@ -144,7 +144,7 @@ public class ProduceFragment extends Fragment {
         sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                String name = list.get(position).t.getName();
+                String name = list.get(position).getName();
                 switch (name){
                     case "领料":
                         IntentFactory.start_ProducLl_Activity(getActivity(), "领料", "finish_prepare_material");

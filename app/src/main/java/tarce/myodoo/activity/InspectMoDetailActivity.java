@@ -300,7 +300,6 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                showDefultProgressDialog();
                                 checkResult(1);
                             }
                         }).show();
@@ -429,13 +428,14 @@ public class InspectMoDetailActivity extends ToolBarActivity {
      */
     private void checkResult(final int result) {
         if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())) {
-            ToastUtils.showCommonToast(InspectMoDetailActivity.this, "请填写品检数量");
+            ToastUtils.showCommonToast(InspectMoDetailActivity.this, "品检数量不能为0");
             return;
         }
         if (StringUtils.isNullOrEmpty(numSampleInspecdetail.getText().toString())) {
             ToastUtils.showCommonToast(InspectMoDetailActivity.this, "请填写品检通过数量");
             return;
         }
+        showDefultProgressDialog();
         HashMap<Object, Object> resultMap = new HashMap<>();
         resultMap.put("feedback_id", dataBean.getFeedback_id());
         resultMap.put("result", result);

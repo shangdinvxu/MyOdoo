@@ -129,7 +129,7 @@ public class AddPersonActivity extends ToolBarActivity {
                         adapterList.add(new WorkingStateBean(res_dataTwo.get(i).getWorker().getName(), res_dataTwo.get(i).getLine_state()));
                     }
                 }
-                personAdapter = new WorkingPersonAdapter(adapterList, AddPersonActivity.this, false);
+                personAdapter = new WorkingPersonAdapter(adapterList, AddPersonActivity.this, close);
                 recyclerPersonWork.setAdapter(personAdapter);
                 personAdapter.setOnSwipeListener(new WorkingPersonAdapter.onSwipeListener() {
                     @Override
@@ -334,13 +334,17 @@ public class AddPersonActivity extends ToolBarActivity {
     private void changeState(final int position, final String state) {
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("state", state);
-        hashMap.put("worker_line_id", map.get(res_data_working.get(position)));
+        if (map.get(res_data_working.get(position)) == null){
+            hashMap.put("worker_line_id", res_dataTwo.get(position).getWorker().getWorker_id());
+        }else {
+            hashMap.put("worker_line_id", map.get(res_data_working.get(position)));
+        }
         Call<ChangeStateBean> objectCall = inventoryApi.changeState(hashMap);
         objectCall.enqueue(new MyCallback<ChangeStateBean>() {
             @Override
             public void onResponse(Call<ChangeStateBean> call, Response<ChangeStateBean> response) {
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
+                if (response.body().getResult().getRes_code() == 1){
                     adapterList.set(position, new WorkingStateBean(adapterList.get(position).getName(), state));
                     personAdapter.notifyItemChanged(position);
                 }

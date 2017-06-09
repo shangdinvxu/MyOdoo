@@ -38,7 +38,18 @@
             android:layout_toRightOf="@+id/img_up_down"
             android:text="收起"
             android:textColor="@color/white"
-            android:textSize="13sp" />
+            android:textSize="13sp"/>
+
+        <TextView
+            android:id="@+id/tv_show_code"
+            android:layout_width="80dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/bac_tv_order"
+            android:layout_centerVertical="true"
+            android:textColor="@color/white"
+            android:text="打开扫描"
+            android:gravity="center"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -121,8 +132,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
-                android:lines="1" />
+                android:textSize="10sp"/>
 
             <TextView
                 android:id="@+id/tv_time_product"
