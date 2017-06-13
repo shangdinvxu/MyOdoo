@@ -126,11 +126,19 @@ public class SelectProcedureActivity extends ToolBarActivity {
                                     map = new HashMap<>();
                                     Log.i(TAG,"size:  "+delay_num.size());
                                     showBeanList = new ArrayList<ProcessShowBean>();
+                                    int count;
+                                    int sum = 0;
                                     for (int i = 0; i < delay_num.size(); i++) {
                                         JSONArray jsonArray = jsonObject1.getJSONArray(String.valueOf(delay_num.get(i)));
                                         if (jsonArray.length()>0){
-                                            JSONObject jsonObject = jsonArray.getJSONObject(0);
-                                            map.put(delay_num.get(i),jsonObject.getInt("count"));
+                                            for (int j = 0; j < jsonArray.length(); j++) {
+                                                JSONObject jsonObject = jsonArray.getJSONObject(j);
+                                                count = jsonObject.getInt("count");
+                                                sum = sum + count;
+                                            }
+                                            map.put(delay_num.get(i),sum);
+                                            count = 0;
+                                            sum = 0;
                                         }else {
                                             map.put(delay_num.get(i),0);
                                         }

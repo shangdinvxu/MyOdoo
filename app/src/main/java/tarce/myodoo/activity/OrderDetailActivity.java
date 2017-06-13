@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.uuzuche.lib_zxing.activity.CaptureFragment;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
+import com.uuzuche.lib_zxing.camera.CameraManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -496,7 +497,20 @@ public class OrderDetailActivity extends ToolBarActivity {
                                         initView();
                                         state = "prepare_material_ing";
                                         stateView("prepare_material_ing");
-                                        // framelayoutProduct.setVisibility(View.VISIBLE);
+                                        adapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
+                                            @Override
+                                            public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
+                                                isShowDialog = true;
+                                                initDialog(linesBean);
+                                            }
+                                        });
+                                        adapter_two.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
+                                            @Override
+                                            public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
+                                                isShowDialog = true;
+                                                initDialog(linesBean);
+                                            }
+                                        });
                                     }
 
                                     @Override
@@ -656,6 +670,8 @@ public class OrderDetailActivity extends ToolBarActivity {
             tvShowCode.setText("关闭扫描");
             camera_or_relative = false;
         }else{
+          //  captureFragment.onDestroyView();
+            CameraManager.get().stopPreview();
             framelayoutProduct.setVisibility(View.GONE);
             tvShowCode.setText("打开扫描");
             camera_or_relative = true;

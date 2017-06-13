@@ -336,6 +336,7 @@ public class ProductingActivity extends ToolBarActivity {
                             }
                         }
                         if (isCanAdd) {
+                            showDefultProgressDialog();
                             HashMap<Object, Object> hashMap = new HashMap<>();
                             hashMap.put("order_id", order_id);
                             hashMap.put("produce_qty", num);
@@ -343,6 +344,7 @@ public class ProductingActivity extends ToolBarActivity {
                             objectCall.enqueue(new MyCallback<CheckOutProductBean>() {
                                 @Override
                                 public void onResponse(Call<CheckOutProductBean> call, Response<CheckOutProductBean> response) {
+                                    dismissDefultProgressDialog();
                                     if (response.body() == null) return;
                                     if (response.body().getResult().getRes_code() == 1) {
                                         tvStartProduce.setVisibility(View.VISIBLE);
@@ -353,7 +355,7 @@ public class ProductingActivity extends ToolBarActivity {
 
                                 @Override
                                 public void onFailure(Call<CheckOutProductBean> call, Throwable t) {
-                                    super.onFailure(call, t);
+                                    dismissDefultProgressDialog();
                                 }
                             });
                         }

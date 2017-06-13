@@ -99,7 +99,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                     ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料过多");
                                 }
                             }
-                        }, resDataBean.getStock_move_lines().get(position).getProduct_id())
+                        },resDataBean.getStock_move_lines().get(position).getProduct_id(), position, resDataBean)
                 .changeTitle("输入 "+resDataBean.getStock_move_lines().get(position).getProduct_id()+" 的退料数量");
                 insertNumDialog.show();
             }

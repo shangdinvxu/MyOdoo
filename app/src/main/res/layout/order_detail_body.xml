@@ -14,8 +14,7 @@
         android:layout_height="match_parent"
         android:layout_weight="2"
         android:gravity="center"
-        android:lines="3"
-        android:maxEms="4"/>
+        android:textSize="12sp"/>
 
     <TextView
         android:id="@+id/tv_area_order"

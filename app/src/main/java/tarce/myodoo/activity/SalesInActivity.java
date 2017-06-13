@@ -57,12 +57,18 @@ public class SalesInActivity extends Activity {
 //        initDevice();
     }
 
+    /**
+     * 连接
+     * */
     @OnClick(R.id.connect)
     void setConnect(View view){
         initDevice();
     }
 
 
+    /**
+     * 打印
+     * */
     @OnClick(R.id.print)
     void  setPrint(View view){
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
@@ -70,6 +76,9 @@ public class SalesInActivity extends Activity {
     }
 
 
+    /**
+     * s设置打印内容？
+     * */
     @OnClick(R.id.printEdittext)
     void setPrintEdittext(View view)
     {
@@ -78,6 +87,9 @@ public class SalesInActivity extends Activity {
     }
 
 
+    /**
+     * 打印的图片？
+     * */
     @OnClick(R.id.printPicture)
     void setpicture(View view)
     {
@@ -109,8 +121,12 @@ public class SalesInActivity extends Activity {
 //        intent.putExtra("scanType", 0x00);
 //        mainActivity.startActivity(intent);
     }
+    /**
+     * 连接设备打印机
+     * */
     private void initDevice() {
-        deviceManager = ConnUtils.getDeviceManager();
+        deviceManager = ConnUtils.getDeviceManager
+                ();
         try {
             deviceManager.init(SalesInActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
                 @Override
@@ -134,7 +150,6 @@ public class SalesInActivity extends Activity {
             e.printStackTrace();
             ToastUtils.showCommonToast(SalesInActivity.this, "链接异常,请检查设备或重新连接.." + e);
         }
-
     }
 
 

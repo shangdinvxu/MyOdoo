@@ -43,13 +43,13 @@
     <RelativeLayout
         android:id="@+id/relative_order_show"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
+        android:layout_height="180dp"
         android:layout_below="@+id/relative_one">
 
         <LinearLayout
             android:id="@+id/linear_colum"
             android:layout_width="80dp"
-            android:layout_height="match_parent"
+            android:layout_height="150dp"
             android:orientation="vertical">
 
             <TextView
@@ -66,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginRight="15dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="20dp"
                 android:text="时间"
                 android:textColor="@color/black" />
 
@@ -75,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginRight="15dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:text="负责人"
                 android:textColor="@color/black" />
 
@@ -84,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginRight="15dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:text="生产数量"
                 android:textColor="@color/black" />
 
@@ -93,14 +93,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginRight="15dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
                 android:text="需求数量"
                 android:textColor="@color/black" />
         </LinearLayout>
 
         <View
             android:layout_width="0.5dp"
-            android:layout_height="match_parent"
+            android:layout_height="150dp"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             android:layout_toRightOf="@+id/linear_colum"
@@ -109,7 +109,7 @@
         <LinearLayout
             android:id="@+id/linear_two"
             android:layout_width="150dp"
-            android:layout_height="match_parent"
+            android:layout_height="150dp"
             android:orientation="vertical"
             android:layout_alignParentTop="true"
             android:layout_toEndOf="@+id/linear_colum">
@@ -128,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="20dp" />
 
             <TextView
                 android:id="@+id/tv_rework_product"
@@ -136,7 +136,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="5dp" />
 
             <TextView
                 android:id="@+id/tv_num_product"
@@ -144,7 +144,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="5dp" />
 
             <TextView
                 android:id="@+id/tv_need_num"
@@ -152,12 +152,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="5dp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="150dp"
             android:orientation="horizontal"
             android:layout_toRightOf="@+id/linear_two">
             <LinearLayout
@@ -196,7 +196,7 @@
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_weight="2"
-                android:layout_height="match_parent"
+                android:layout_height="150dp"
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/tv_string_guige"
@@ -218,6 +218,39 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"/>
             </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:id="@+id/line_beizhu"
+            android:layout_below="@+id/linear_colum"
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="MO备注"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="15dp"/>
+            <EditText
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="5dp"
+                android:focusable="false"
+                android:background="@drawable/bac_inspect_edit"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="销售单备注"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="15dp"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusable="false"
+                android:background="@drawable/bac_inspect_edit"
+                android:layout_marginLeft="5dp"/>
         </LinearLayout>
     </RelativeLayout>
 

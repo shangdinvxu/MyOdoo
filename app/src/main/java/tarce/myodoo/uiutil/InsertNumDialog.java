@@ -17,6 +17,7 @@ import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.utils.StringUtils;
 
@@ -42,6 +43,9 @@ public class InsertNumDialog extends Dialog {
     private View view;
     private OnSendCommonClickListener sendCommonClickListener;
     private String product_name;
+    private OrderDetailBean.ResultBean.ResDataBean resDataBean;
+    private int position;
+    private double beiNum;
 
     public InsertNumDialog(@NonNull Context context) {
         super(context, R.style.MyDialogStyle);
@@ -58,6 +62,21 @@ public class InsertNumDialog extends Dialog {
         super(context, R.style.MyDialogStyle);
 
         this.product_name = product_name;
+        this.sendCommonClickListener = sendCommonClickListener;
+        this.context = context;
+        inflater = LayoutInflater.from(context);
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        display = windowManager.getDefaultDisplay();
+        initView();
+    }
+
+    public InsertNumDialog(@NonNull Context context, @StyleRes int themeResId, OnSendCommonClickListener sendCommonClickListener,
+                           String product_name, int position, OrderDetailBean.ResultBean.ResDataBean resDataBean) {
+        super(context, R.style.MyDialogStyle);
+
+        this.product_name = product_name;
+        this.position = position;
+        this.resDataBean = resDataBean;
         this.sendCommonClickListener = sendCommonClickListener;
         this.context = context;
         inflater = LayoutInflater.from(context);
@@ -89,6 +108,19 @@ public class InsertNumDialog extends Dialog {
         });
 
         nameProductDialog.setText("产品名称: " + product_name);
+        if (resDataBean!=null){
+            if (resDataBean.getState().equals("waiting_material")
+                    || resDataBean.getState().equals("prepare_material_ing")
+                    || resDataBean.getState().equals("finish_prepare_material")){
+                beiNum = resDataBean.getStock_move_lines().get(position).getQuantity_ready() + resDataBean.getStock_move_lines().get(position).getQuantity_done();
+            }else {
+                beiNum = resDataBean.getStock_move_lines().get(position).getQuantity_done();
+            }
+            // TODO: 2017/6/8 生产num/需求num*item的需求num
+            double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(position).getProduct_uom_qty();
+            eidtOutNum.setText(StringUtils.doubleToString(beiNum-v));
+        }
+        eidtOutNum.setSelection(eidtOutNum.getText().length());
     }
 
     public interface OnSendCommonClickListener {

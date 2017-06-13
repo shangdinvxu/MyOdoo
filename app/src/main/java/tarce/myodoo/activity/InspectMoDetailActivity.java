@@ -295,6 +295,14 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                 });
                 break;
             case "品检通过":
+                if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())) {
+                    ToastUtils.showCommonToast(InspectMoDetailActivity.this, "品检数量不能为0");
+                    return;
+                }
+                if (StringUtils.isNullOrEmpty(numSampleInspecdetail.getText().toString())) {
+                    ToastUtils.showCommonToast(InspectMoDetailActivity.this, "请填写品检通过数量");
+                    return;
+                }
                 AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "")
                         .setMessage("是否确实品检通过")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -337,6 +345,14 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                 });
                 break;
             case "品检不通过":
+                if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())) {
+                    ToastUtils.showCommonToast(InspectMoDetailActivity.this, "品检数量不能为0");
+                    return;
+                }
+                if (StringUtils.isNullOrEmpty(numSampleInspecdetail.getText().toString())) {
+                    ToastUtils.showCommonToast(InspectMoDetailActivity.this, "请填写品检通过数量");
+                    return;
+                }
                 AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "")
                         .setMessage("是否确实品检不通过")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -427,14 +443,14 @@ public class InspectMoDetailActivity extends ToolBarActivity {
      * 品检通过或者不通过接口
      */
     private void checkResult(final int result) {
-        if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())) {
+        /*if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())) {
             ToastUtils.showCommonToast(InspectMoDetailActivity.this, "品检数量不能为0");
             return;
         }
         if (StringUtils.isNullOrEmpty(numSampleInspecdetail.getText().toString())) {
             ToastUtils.showCommonToast(InspectMoDetailActivity.this, "请填写品检通过数量");
             return;
-        }
+        }*/
         showDefultProgressDialog();
         HashMap<Object, Object> resultMap = new HashMap<>();
         resultMap.put("feedback_id", dataBean.getFeedback_id());
