@@ -245,6 +245,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="15dp"/>
             <EditText
+                android:id="@+id/eidt_mo_note"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="5dp"
@@ -258,6 +259,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="15dp"/>
             <EditText
+                android:id="@+id/edit_sale_note"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:focusable="false"
@@ -271,7 +273,7 @@
         android:layout_width="match_parent"
         android:layout_height="240dp"
         android:layout_below="@+id/relative_order_show"
-        android:visibility="gone"></FrameLayout>
+        android:visibility="gone"/>
 
     <LinearLayout
         android:id="@+id/linear_one"

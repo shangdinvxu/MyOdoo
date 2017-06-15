@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -37,7 +36,7 @@ public class ActivityScoller extends ToolBarActivity {
         recyclerview.setLayoutManager(linearLayoutManager);
         recyclerview.addItemDecoration(new DividerItemDecoration(ActivityScoller.this,
                 DividerItemDecoration.VERTICAL));
-        final List<ArrayList<String>> date = new ArrayList<ArrayList<String>>();
+        final List<ArrayList<String>> date = new ArrayList<>();
         final ArrayList<String> objects = new ArrayList<>();
         Observable.range(2,100).subscribe(new Action1<Integer>() {
             @Override

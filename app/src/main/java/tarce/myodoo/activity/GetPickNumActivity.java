@@ -14,31 +14,28 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
+import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.ProcessDeatilBean;
 import tarce.model.inventory.ProcessShowBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.ProcessDetailAdapter;
+import tarce.support.SharePreferenceUtils;
 import tarce.support.ToolBarActivity;
 
 /**
- * Created by rose.zou on 2017/5/19.
- * 点击某个工序的详细页面
+ * Created by rose.zou on 2017/6/15.
+ * 等待生产后续页面
  */
 
-public class ShowProcessActivity extends ToolBarActivity {
-
-    private final static String TAG = ShowProcessActivity.class.getSimpleName();
+public class GetPickNumActivity extends ToolBarActivity {
     @InjectView(R.id.recycler_detail_process)
     RecyclerView recyclerDetailProcess;
-
     private ProcessDetailAdapter detailAdapter;
-    private InventoryApi inventoryApi;
-    private int delay_num;
     private List<ProcessShowBean> beanList;
+    private InventoryApi inventoryApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,17 +44,12 @@ public class ShowProcessActivity extends ToolBarActivity {
         ButterKnife.inject(this);
         setRecyclerview(recyclerDetailProcess);
 
-        getDetailDelay();
+        getData();
     }
 
-    /**
-     * 连接接口
-     */
-    private void getDetailDelay() {
+    //获取数据
+    private void getData() {
         showDefultProgressDialog();
-        Intent intent = getIntent();
-        delay_num = intent.getIntExtra("delay_num", 3);
-        setTitle(intent.getStringExtra("process_name"));
         beanList = new ArrayList<>();
         ProcessShowBean showBean = new ProcessShowBean();
         beanList.add(new ProcessShowBean("延误", 0));
@@ -68,20 +60,18 @@ public class ShowProcessActivity extends ToolBarActivity {
         detailAdapter = new ProcessDetailAdapter(R.layout.adapter_process_detail, beanList);
         recyclerDetailProcess.setAdapter(detailAdapter);
 
-        inventoryApi = RetrofitClient.getInstance(ShowProcessActivity.this).create(InventoryApi.class);
+        inventoryApi = RetrofitClient.getInstance(GetPickNumActivity.this).create(InventoryApi.class);
         HashMap<Object, Object> hashMap = new HashMap<>();
-        //按照展示process——name的顺序，请求相应的工序id
-        hashMap.put("process_id", delay_num);
-        Call<ProcessDeatilBean> threeCall = inventoryApi.getDetailProcess(hashMap);
-        threeCall.enqueue(new Callback<ProcessDeatilBean>() {
+        int partner_id = SharePreferenceUtils.getInt("partner_id", 1000, GetPickNumActivity.this);
+        hashMap.put("partner_id", partner_id);
+        Call<ProcessDeatilBean> pickCount = inventoryApi.getPickCount(hashMap);
+        pickCount.enqueue(new MyCallback<ProcessDeatilBean>() {
             @Override
             public void onResponse(Call<ProcessDeatilBean> call, Response<ProcessDeatilBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getResult().getRes_code() == 1) {
                     if (response.body().getResult().getRes_data() == null) {
-                        /*detailAdapter = new ProcessDetailAdapter(R.layout.adapter_process_detail, beanList);
-                        recyclerDetailProcess.setAdapter(detailAdapter);*/
                         return;
                     }
                     for (int i = 0; i < response.body().getResult().getRes_data().size(); i++) {
@@ -99,7 +89,6 @@ public class ShowProcessActivity extends ToolBarActivity {
                     itemClick();
                 }
             }
-
             @Override
             public void onFailure(Call<ProcessDeatilBean> call, Throwable t) {
                 dismissDefultProgressDialog();
@@ -108,21 +97,18 @@ public class ShowProcessActivity extends ToolBarActivity {
     }
 
     /**
-     * item点击事件
-     */
+     * 点击事件
+     * */
     private void itemClick() {
         detailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (beanList.get(position).getProcess_num() == 0) {
-                    return;
-                }
-                Intent intent = new Intent(ShowProcessActivity.this, MaterialDetailActivity.class);
-                intent.putExtra("process_id", delay_num);
-                intent.putExtra("state",beanList.get(position).getProcess_name());
-                intent.putExtra("limit", beanList.get(position).getProcess_num());
+                if (beanList.get(position).getProcess_num() == 0)return;
+                Intent intent = new Intent(GetPickNumActivity.this, WaitProdListActivity.class);
+                intent.putExtra("state_delay",beanList.get(position).getProcess_name());
                 startActivity(intent);
             }
         });
+
     }
 }

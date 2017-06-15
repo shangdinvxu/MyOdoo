@@ -5,7 +5,6 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
-import tarce.model.GetGroupByListresponse;
 import tarce.myodoo.R;
 import tarce.myodoo.bean.AvailabilityBean;
 import tarce.support.MyLog;

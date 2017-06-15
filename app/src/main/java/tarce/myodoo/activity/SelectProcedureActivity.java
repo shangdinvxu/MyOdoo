@@ -1,49 +1,33 @@
 package tarce.myodoo.activity;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
-import rx.Observable;
-import rx.Scheduler;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
-import tarce.model.FindProductByConditionResponse;
 import tarce.model.GetProcessBean;
 import tarce.model.inventory.GetNumProcess;
-import tarce.model.inventory.ProcessDeatilBean;
 import tarce.model.inventory.ProcessShowBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.ProcessListAdapter;
@@ -101,7 +85,7 @@ public class SelectProcedureActivity extends ToolBarActivity {
                         process_name.add(listSubBeen.get(i).getName());
                         process_num.add(listSubBeen.get(i).getProcess_id());
                     }
-                    HashMap<Object,Object> hashMap = new HashMap<Object, Object>();
+                    HashMap<Object,Object> hashMap = new HashMap<>();
                     hashMap.put("process_ids",process_num);
                     //根据返回的int数组获取延误的数目
                     Call<GetNumProcess> numProcessCall = inventoryApi.getNumProcess(hashMap);
@@ -125,7 +109,7 @@ public class SelectProcedureActivity extends ToolBarActivity {
                                     }
                                     map = new HashMap<>();
                                     Log.i(TAG,"size:  "+delay_num.size());
-                                    showBeanList = new ArrayList<ProcessShowBean>();
+                                    showBeanList = new ArrayList<>();
                                     int count;
                                     int sum = 0;
                                     for (int i = 0; i < delay_num.size(); i++) {

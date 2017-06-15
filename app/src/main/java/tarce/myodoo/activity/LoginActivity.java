@@ -227,7 +227,7 @@ public class LoginActivity extends Activity {
                 }
                 if (response.body().getResult().getRes_code() == 1){
                     UserManager.getSingleton().setUserInfoBean(response.body());//单例存储
-                    UserManager.getSingleton().reFreshUserInfo(response.body());//单例存储
+                   // UserManager.getSingleton().reFreshUserInfo(response.body());//单例存储
                     final int user_id = response.body().getResult().getRes_data().getUser_id();
                     MyApplication.userID = user_id ;
                     SharePreferenceUtils.putInt("user_id", user_id, LoginActivity.this);

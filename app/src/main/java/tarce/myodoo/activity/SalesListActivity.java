@@ -17,7 +17,6 @@ import butterknife.InjectView;
 import retrofit2.Call;
 import retrofit2.Response;
 import rx.Observable;
-import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;

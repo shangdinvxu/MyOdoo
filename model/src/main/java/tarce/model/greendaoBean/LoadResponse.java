@@ -3,7 +3,6 @@ package tarce.model.greendaoBean;
 import java.io.Serializable;
 import java.util.List;
 
-import tarce.model.GetGroupByListresponse;
 
 /**
  * Created by Daniel.Xu on 2017/5/2.

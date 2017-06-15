@@ -2,7 +2,6 @@ package tarce.myodoo.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.IntegerRes;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -22,14 +21,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rx.Observable;
-import rx.Scheduler;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.api.dialogrequest.ProgressSubscriber;
 import tarce.api.dialogrequest.SubscriberOnNextListener;
-import tarce.model.GetGroupByListresponse;
 import tarce.model.GetSaleListResponse;
 import tarce.model.OutgoingStockpickingBean;
 import tarce.model.SearchSupplierResponse;
@@ -79,30 +77,34 @@ public class SalesOutActivity extends ToolBarActivity {
     }
 
     private void initData() {
+        showDefultProgressDialog();
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("partner_id", 0);
-        Observable<OutgoingStockpickingBean> outgoingStockpicking = inventoryApi.getOutgoingStockpicking(objectObjectHashMap);
-        outgoingStockpicking
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new ProgressSubscriber<>(new SubscriberOnNextListener<OutgoingStockpickingBean>() {
-                    @Override
-                    public void onNext(OutgoingStockpickingBean bean){
-                        ArrayList<AvailabilityBean> statesBeanList = new ArrayList<>();
-                        List<OutgoingStockpickingBean.ResultBean.ResDataBean.CompleteRateBean> complete_rate = bean.getResult().getRes_data().getComplete_rate();
-                        for (OutgoingStockpickingBean.ResultBean.ResDataBean.CompleteRateBean completeRateBean : complete_rate) {
-                            statesBeanList.add(new AvailabilityBean(completeRateBean.getComplete_rate(),
-                                    completeRateBean.getComplete_rate_count()));
-                        }
-                        OutgoingStockpickingBean.ResultBean.ResDataBean.StateBean state = bean.getResult().getRes_data().getState();
-                        //完成的给的1000
-                        statesBeanList.add(new AvailabilityBean(1000, state.getState_count()));
-                        SalesStatesAdapter salesStatesAdapter = new SalesStatesAdapter(R.layout.salesout_adapter, statesBeanList);
-                        recyclerviewStates.setAdapter(salesStatesAdapter);
-                        initSalesStatesListener(salesStatesAdapter);
-                    }
-                }, SalesOutActivity.this));
+        Call<OutgoingStockpickingBean> outgoingStockpicking = inventoryApi.getOutgoingStockpicking(objectObjectHashMap);
+        outgoingStockpicking.enqueue(new MyCallback<OutgoingStockpickingBean>() {
+            @Override
+            public void onResponse(Call<OutgoingStockpickingBean> call, Response<OutgoingStockpickingBean> response) {
+                dismissDefultProgressDialog();
+                if (response.body() == null)return;
+                /*ArrayList<AvailabilityBean> statesBeanList = new ArrayList<>();
+                List<OutgoingStockpickingBean.ResultBean.ResDataBean.CompleteRateBean> complete_rate = bean.getResult().getRes_data().getComplete_rate();
+                for (OutgoingStockpickingBean.ResultBean.ResDataBean.CompleteRateBean completeRateBean : complete_rate) {
+                    statesBeanList.add(new AvailabilityBean(completeRateBean.getComplete_rate(),
+                            completeRateBean.getComplete_rate_count()));
+                }
+                OutgoingStockpickingBean.ResultBean.ResDataBean.StateBean state = bean.getResult().getRes_data().getState();
+                //完成的给的1000
+                statesBeanList.add(new AvailabilityBean(1000, state.getState_count()));
+                SalesStatesAdapter salesStatesAdapter = new SalesStatesAdapter(R.layout.salesout_adapter, statesBeanList);
+                recyclerviewStates.setAdapter(salesStatesAdapter);
+                initSalesStatesListener(salesStatesAdapter);
+            }
 
+            @Override
+            public void onFailure(Call<OutgoingStockpickingBean> call, Throwable t) {
+                dismissDefultProgressDialog();
+            }
+        });
     }
 
     private void initSalesStatesListener(final SalesStatesAdapter salesStatesAdapter) {
@@ -136,10 +138,10 @@ public class SalesOutActivity extends ToolBarActivity {
                 objectObjectHashMap.put("limit", 80);
                 objectObjectHashMap.put("offset", 0);
                 objectObjectHashMap.put("state", state);
-                Observable<SalesOutListResponse> inComingOutgoingList = inventoryApi.getOutgoingStockpickingList(objectObjectHashMap);
+                Call<SalesOutListResponse> inComingOutgoingList = inventoryApi.getOutgoingStockpickingList(objectObjectHashMap);
                 final int finalComplete_rate = complete_rate;
                 final String finalState = state;
-                inComingOutgoingList.subscribeOn(Schedulers.io())
+                /*inComingOutgoingList.subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new ProgressSubscriber<>(new SubscriberOnNextListener<SalesOutListResponse>() {
                             @Override
@@ -154,7 +156,7 @@ public class SalesOutActivity extends ToolBarActivity {
                                 intent.putExtra("intent", bundle);
                                 startActivity(intent);
                             }
-                        },SalesOutActivity.this));
+                        },SalesOutActivity.this));*/
             }
         });
 

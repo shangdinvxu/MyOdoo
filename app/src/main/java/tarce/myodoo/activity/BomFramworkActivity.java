@@ -2,7 +2,6 @@ package tarce.myodoo.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
 import com.zaihuishou.expandablerecycleradapter.adapter.BaseExpandableAdapter;
@@ -27,7 +26,6 @@ import tarce.myodoo.adapter.expand.DepartmentItem;
 import tarce.myodoo.adapter.expand.EmployeeItem;
 import tarce.myodoo.adapter.expand.LastItem;
 import tarce.myodoo.adapter.expand.WorkerItem;
-import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
 /**

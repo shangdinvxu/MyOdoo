@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -17,31 +16,27 @@ import android.widget.Toast;
 import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import cn.hugeterry.updatefun.UpdateFunGO;
+import cn.hugeterry.updatefun.config.UpdateKey;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.LoadActionBean;
-import tarce.model.LoginResponse;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.fragment.InspectionFragment;
 import tarce.myodoo.fragment.MeFragment;
 import tarce.myodoo.fragment.ProduceFragment;
 import tarce.myodoo.fragment.WarehouseFragment;
-import tarce.myodoo.utils.UserManager;
 import tarce.myodoo.view.NoScrollViewPager;
-import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
-import tarce.support.ToastUtils;
 
 public class MainActivity extends AppCompatActivity{
     private final static String TAG = MainActivity.class.getSimpleName();
@@ -90,14 +85,27 @@ public class MainActivity extends AppCompatActivity{
         ButterKnife.inject(this);
         inventoryApi = RetrofitClient.getInstance(MainActivity.this).create(InventoryApi.class);
         initFragment();
+        UpdateKey.API_TOKEN = "d8980dd0017f3e0a7b038aec2c52d737";
+        UpdateKey.APP_ID = "5940d8ca959d6965c30002dc";
+//下载方式:
+//UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;通过Dialog来进行下载
+//UpdateKey.DialogOrNotification=UpdateKey.WITH_NOTIFITION;通过通知栏来进行下载(默认)
+        UpdateFunGO.init(this);
     }
 
     @Override
     protected void onResume() {
+        super.onResume();
         if (res_data == null){
             refreshLoadAction();
         }
-        super.onResume();
+        UpdateFunGO.onResume(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        UpdateFunGO.onStop(this);
     }
 
     @OnClick(R.id.radio_button1)
@@ -239,4 +247,6 @@ public class MainActivity extends AppCompatActivity{
         res_data = null;
         super.onPause();
     }
+
+
 }

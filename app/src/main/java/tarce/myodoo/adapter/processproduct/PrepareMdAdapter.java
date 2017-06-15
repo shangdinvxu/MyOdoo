@@ -1,15 +1,12 @@
 package tarce.myodoo.adapter.processproduct;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseSectionQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
 import tarce.model.inventory.MainMdBean;
-import tarce.model.inventory.MaterialDetailBean;
 import tarce.myodoo.R;
-import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.utils.StringUtils;
 
 /**

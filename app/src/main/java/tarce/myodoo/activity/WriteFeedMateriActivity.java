@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -27,7 +26,6 @@ import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.WriteFeedbackNumAdapter;
 import tarce.myodoo.uiutil.InsertNumDialog;
-import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;

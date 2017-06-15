@@ -8,14 +8,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 import com.mcxtzhang.swipemenulib.SwipeMenuLayout;
 
 import java.util.List;
 
-import tarce.model.inventory.FreeWorkBean;
-import tarce.model.inventory.WorkingWorkerBean;
 import tarce.myodoo.R;
 import tarce.myodoo.bean.WorkingStateBean;
 
@@ -25,6 +21,11 @@ import tarce.myodoo.bean.WorkingStateBean;
 
 public class WorkingPersonAdapter extends RecyclerView.Adapter<WorkingPersonAdapter.WorkingViewHold>{
    private List<WorkingStateBean> list;
+
+    public void setClose(boolean close) {
+        this.close = close;
+    }
+
     private boolean close;
 
     public WorkingPersonAdapter(List<WorkingStateBean> list, Context context, boolean close) {
@@ -49,8 +50,9 @@ public class WorkingPersonAdapter extends RecyclerView.Adapter<WorkingPersonAdap
         ((SwipeMenuLayout)holder.itemView).setSwipeEnable(close);
         if (!close){
             holder.tv_state.setVisibility(View.GONE);
+        }else {
+            holder.tv_state.setText(list.get(position).getState());
         }
-        holder.tv_state.setText(list.get(position).getState());
         holder.mBtn_offline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

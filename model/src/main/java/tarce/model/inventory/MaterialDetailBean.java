@@ -1,6 +1,5 @@
 package tarce.model.inventory;
 
-import com.chad.library.adapter.base.entity.SectionEntity;
 
 import java.util.List;
 

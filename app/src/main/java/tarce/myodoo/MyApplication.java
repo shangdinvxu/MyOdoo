@@ -4,13 +4,11 @@ import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.facebook.stetho.InspectorModulesProvider;
 import com.facebook.stetho.Stetho;
 import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 
 import greendao.DaoMaster;
 import greendao.DaoSession;
-import tarce.myodoo.greendaoUtils.GreenDaoManager;
 import tarce.myodoo.utils.UserManager;
 
 /**

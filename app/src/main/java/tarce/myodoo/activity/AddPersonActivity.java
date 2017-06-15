@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -38,7 +37,6 @@ import tarce.model.inventory.FreeWorkBean;
 import tarce.model.inventory.StartProductBean;
 import tarce.model.inventory.WorkingWorkerBean;
 import tarce.myodoo.R;
-import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.adapter.product.WorkPersonAdapter;
 import tarce.myodoo.adapter.product.WorkingPersonAdapter;
 import tarce.myodoo.bean.WorkingStateBean;
@@ -67,6 +65,8 @@ public class AddPersonActivity extends ToolBarActivity {
     RecyclerView recyclerPersonWork;
     @InjectView(R.id.tv_add_true)
     TextView tvAddTrue;
+    @InjectView(R.id.tv_controll_scan)
+    TextView tvControllScan;
     private InventoryApi inventoryApi;
     private int order_id;
     private WorkPersonAdapter adapter;
@@ -81,18 +81,19 @@ public class AddPersonActivity extends ToolBarActivity {
     private String state_activity;
     private String name_activity;
     private boolean close;
+    private boolean showScan = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_person);
         ButterKnife.inject(this);
-        setTitle("添加员工");
+        setTitle("员工");
 
         setRecyclerview(recyclerPersonWait);
         setRecyclerview(recyclerPersonWork);
 
-        initFragment();
+        //   initFragment();
         showDefultProgressDialog();
         Intent intent = getIntent();
         close = intent.getBooleanExtra("close", true);
@@ -209,10 +210,10 @@ public class AddPersonActivity extends ToolBarActivity {
                     @Override
                     public void onResponse(Call<AutoAddworkBean> call, Response<AutoAddworkBean> response) {
                         if (response.body() == null) return;
-                         if (response.body().getError() !=null){
-                             ToastUtils.showCommonToast(AddPersonActivity.this, "不在员工列表中？");
-                             return;
-                         }
+                        if (response.body().getError() != null) {
+                            ToastUtils.showCommonToast(AddPersonActivity.this, "不在员工列表中？");
+                            return;
+                        }
                         if (response.body().getResult().getRes_code() == 1) {
                             if (res_data_working.contains(response.body().getResult().getRes_data().getName())) {
                                 ToastUtils.showCommonToast(AddPersonActivity.this, "已经添加该员工");
@@ -241,7 +242,7 @@ public class AddPersonActivity extends ToolBarActivity {
 
     /**
      * 点击向右的按钮添加
-     * 只是实现界面效果，并不联系服务器添加
+     * 联系服务器上传数据
      */
     @OnClick(R.id.icon_to_right)
     void addToRight(View view) {
@@ -250,32 +251,24 @@ public class AddPersonActivity extends ToolBarActivity {
             if (!res_data_working.contains(adapter.getSelected().get(i).getName())) {
                 add_name.add(new WorkingStateBean(adapter.getSelected().get(i).getName(), ""));
                 res_data_working.add(adapter.getSelected().get(i).getName());
-            } /*else {
+            } else {
                 ToastUtils.showCommonToast(AddPersonActivity.this, "已经添加该员工");
-            }*/
+            }
         }
-        adapterList.addAll(add_name);
-        personAdapter.notifyDataSetChanged();
         res_data.removeAll(adapter.getSelected());
         adapter.notifyDataSetChanged();
-    }
 
-    /**
-     * 添加完成的点击事件
-     */
-    @OnClick(R.id.tv_add_true)
-    void add(View view) {
         showDefultProgressDialog();
         final HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("is_add", 1);
         hashMap.put("order_id", order_id);
         Integer[] work_id;
-        if (add_name.size() == 0){
+        if (add_name.size() == 0) {
             work_id = new Integer[res_dataTwo.size()];
             for (int i = 0; i < res_dataTwo.size(); i++) {
                 work_id[i] = res_dataTwo.get(i).getWorker().getWorker_id();
             }
-        }else {
+        } else {
             work_id = new Integer[res_data_working.size()];
             for (int i = 0; i < res_data_working.size(); i++) {
                 work_id[i] = map.get(res_data_working.get(i));
@@ -289,35 +282,17 @@ public class AddPersonActivity extends ToolBarActivity {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getResult().getRes_code() == 1) {
-                    AlertAialogUtils.getCommonDialog(AddPersonActivity.this, "").setMessage("员工添加完成，确定开始生产？")
-                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    showDefultProgressDialog();
-                                    HashMap<Object, Object> hashMap1 = new HashMap<Object, Object>();
-                                    hashMap1.put("order_id", order_id);
-                                    Call<StartProductBean> objectCall1 = inventoryApi.startProduct(hashMap1);
-                                    objectCall1.enqueue(new MyCallback<StartProductBean>() {
-                                        @Override
-                                        public void onResponse(Call<StartProductBean> call, Response<StartProductBean> response) {
-                                            dismissDefultProgressDialog();
-                                            if (response.body() == null) return;
-                                            if (response.body().getResult().getRes_code() == 1){
-                                                Intent intent = new Intent(AddPersonActivity.this, ProductLlActivity.class);
-                                                intent.putExtra("name_activity", name_activity);
-                                                intent.putExtra("state_product", state_activity);
-                                                startActivity(intent);
-                                                finish();
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<StartProductBean> call, Throwable t) {
-                                            dismissDefultProgressDialog();
-                                        }
-                                    });
-                                }
-                            }).show();
+                    if (close) {
+                        adapterList.clear();
+                        for (int i = 0; i < response.body().getResult().getRes_data().size(); i++) {
+                            adapterList.add(new WorkingStateBean(response.body().getResult().getRes_data().get(i).getWorker().getName(), response.body().getResult().getRes_data().get(i).getLine_state()));
+                        }
+                        personAdapter.setClose(true);
+                        personAdapter.notifyDataSetChanged();
+                    } else {
+                        adapterList.addAll(add_name);
+                        personAdapter.notifyDataSetChanged();
+                    }
                 }
             }
 
@@ -329,14 +304,49 @@ public class AddPersonActivity extends ToolBarActivity {
     }
 
     /**
+     * 添加完成的点击事件
+     */
+    @OnClick(R.id.tv_add_true)
+    void add(View view) {
+        AlertAialogUtils.getCommonDialog(AddPersonActivity.this, "").setMessage("员工添加完成，确定开始生产？")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        showDefultProgressDialog();
+                        HashMap<Object, Object> hashMap1 = new HashMap<>();
+                        hashMap1.put("order_id", order_id);
+                        Call<StartProductBean> objectCall1 = inventoryApi.startProduct(hashMap1);
+                        objectCall1.enqueue(new MyCallback<StartProductBean>() {
+                            @Override
+                            public void onResponse(Call<StartProductBean> call, Response<StartProductBean> response) {
+                                dismissDefultProgressDialog();
+                                if (response.body() == null) return;
+                                if (response.body().getResult().getRes_code() == 1) {
+                                    Intent intent = new Intent(AddPersonActivity.this, WaitProdListActivity.class);
+                                    intent.putExtra("state_delay", name_activity);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<StartProductBean> call, Throwable t) {
+                                dismissDefultProgressDialog();
+                            }
+                        });
+                    }
+                }).show();
+    }
+
+    /**
      * 改变员工状态
      */
     private void changeState(final int position, final String state) {
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("state", state);
-        if (map.get(res_data_working.get(position)) == null){
+        if (map.get(res_data_working.get(position)) == null) {
             hashMap.put("worker_line_id", res_dataTwo.get(position).getWorker().getWorker_id());
-        }else {
+        } else {
             hashMap.put("worker_line_id", map.get(res_data_working.get(position)));
         }
         Call<ChangeStateBean> objectCall = inventoryApi.changeState(hashMap);
@@ -344,7 +354,7 @@ public class AddPersonActivity extends ToolBarActivity {
             @Override
             public void onResponse(Call<ChangeStateBean> call, Response<ChangeStateBean> response) {
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1){
+                if (response.body().getResult().getRes_code() == 1) {
                     adapterList.set(position, new WorkingStateBean(adapterList.get(position).getName(), state));
                     personAdapter.notifyItemChanged(position);
                 }
@@ -357,6 +367,19 @@ public class AddPersonActivity extends ToolBarActivity {
         });
     }
 
+    @OnClick(R.id.tv_controll_scan)
+    void controllScan(View view){
+        if (showScan){
+            fragmentScan.setVisibility(View.GONE);
+            tvControllScan.setText("打开扫描");
+            showScan = false;
+        }else {
+            initFragment();
+            fragmentScan.setVisibility(View.VISIBLE);
+            tvControllScan.setText("关闭扫描");
+            showScan = true;
+        }
+    }
     /*@Override
     protected void onDestroy() {
         dismissDefultProgressDialog();

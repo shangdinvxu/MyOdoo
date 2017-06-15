@@ -1,18 +1,13 @@
 package tarce.myodoo.adapter.product;
 
-import android.content.Context;
 import android.graphics.BitmapFactory;
-import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
-import java.io.File;
 import java.util.List;
 
 import tarce.myodoo.R;
-import tarce.myodoo.uiutil.ImageUtil;
 
 /**
  * Created by rose.zou on 2017/6/8.

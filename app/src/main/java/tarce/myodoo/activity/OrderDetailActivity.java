@@ -5,17 +5,27 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.newland.me.ConnUtils;
+import com.newland.me.DeviceManager;
+import com.newland.mtype.ConnectionCloseEvent;
+import com.newland.mtype.ModuleType;
+import com.newland.mtype.event.DeviceEventListener;
+import com.newland.mtype.module.common.printer.Printer;
+import com.newland.mtypex.nseries.NSConnV100ConnParams;
 import com.uuzuche.lib_zxing.activity.CaptureFragment;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 import com.uuzuche.lib_zxing.camera.CameraManager;
@@ -24,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -37,11 +48,13 @@ import tarce.model.FindProductByConditionResponse;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.OrderDetailAdapter;
+import tarce.myodoo.device.AbstractDevice;
 import tarce.myodoo.uiutil.DialogForOrder;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
+import tarce.support.MyLog;
 import tarce.support.TimeUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
@@ -52,6 +65,7 @@ import tarce.support.ToolBarActivity;
  */
 
 public class OrderDetailActivity extends ToolBarActivity {
+    private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     private static final String TAG = "OrderDetailActivity";
     @InjectView(R.id.img_up_down)
     ImageView imgUpDown;
@@ -102,6 +116,10 @@ public class OrderDetailActivity extends ToolBarActivity {
     LinearLayout linearThree;
     @InjectView(R.id.tv_show_code)
     TextView tvShowCode;
+    @InjectView(R.id.eidt_mo_note)
+    EditText eidtMoNote;
+    @InjectView(R.id.edit_sale_note)
+    EditText editSaleNote;
     private int click_check;//用于底部的点击事件  根据状态加载不同的点击事件后续
     private InventoryApi inventoryApi;
     private int order_id;
@@ -129,6 +147,9 @@ public class OrderDetailActivity extends ToolBarActivity {
     private String scanResult = "";
     private CaptureFragment captureFragment;
     private long mExitTime;
+    private Printer printer;
+    private DeviceManager deviceManager;
+    private String order_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,7 +159,8 @@ public class OrderDetailActivity extends ToolBarActivity {
 
         Intent intent = getIntent();
         order_id = intent.getIntExtra("order_id", 1);
-        setTitle(intent.getStringExtra("order_name"));
+        order_name = intent.getStringExtra("order_name");
+        setTitle(order_name);
         state = intent.getStringExtra("state");
         limit = intent.getIntExtra("limit", 1);
         delay_state = intent.getStringExtra("delay_state");
@@ -178,8 +200,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                 tvStateOrder.setText("等待备料");
                 tvStartProduce.setText("开始备料");
                 click_check = STATE_WAIT_WATERIAL;
-              //  camera_or_relative = false;
-               // framelayoutProduct.setVisibility(View.GONE);
+                //  camera_or_relative = false;
+                // framelayoutProduct.setVisibility(View.GONE);
                 tvShowCode.setVisibility(View.GONE);
                 showLinThreeCang();
                 break;
@@ -187,8 +209,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                 tvStateOrder.setText("备料中");
                 tvStartProduce.setText("备料完成");
                 click_check = STATE_START_PRODUCT;
-              //  camera_or_relative = true;
-               // framelayoutProduct.setVisibility(View.VISIBLE);
+                //  camera_or_relative = true;
+                // framelayoutProduct.setVisibility(View.VISIBLE);
                 relativeOrderShow.setVisibility(View.GONE);
                 tvCheckState.setText("展开");
                 imgUpDown.setImageResource(R.mipmap.down);
@@ -197,7 +219,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "finish_prepare_material":
                 tvStateOrder.setText("备料完成");
-           //     framelayoutProduct.setVisibility(View.VISIBLE);
+                //     framelayoutProduct.setVisibility(View.VISIBLE);
                 click_check = STATE_REQUSIT_RIGISTER;
                 tvStartProduce.setText("领料登记");
                 tvAreaLook.setVisibility(View.VISIBLE);
@@ -210,7 +232,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             case "already_picking":
                 tvStateOrder.setText("已领料");
                 click_check = STATE_ALREADY_PICKING;
-               // framelayoutProduct.setVisibility(View.GONE);
+                // framelayoutProduct.setVisibility(View.GONE);
                 tvShowCode.setVisibility(View.GONE);
                 relativeOrderShow.setVisibility(View.VISIBLE);
                 tvCheckState.setText("收起");
@@ -224,7 +246,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "progress":
                 tvStateOrder.setText("进行中");
-             //   framelayoutProduct.setVisibility(View.GONE);
+                //   framelayoutProduct.setVisibility(View.GONE);
                 tvShowCode.setVisibility(View.GONE);
                 break;
             case "waiting_inspection_finish":
@@ -238,7 +260,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "waiting_inventory_material":
                 tvStateOrder.setText("等待清点退料");
-       //         framelayoutProduct.setVisibility(View.GONE);
+                //         framelayoutProduct.setVisibility(View.GONE);
                 tvShowCode.setVisibility(View.GONE);
                 tvStartProduce.setText("填写退料");
                 click_check = WRITE_WATERIAL_OUT;
@@ -246,7 +268,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "waiting_warehouse_inspection":
                 tvStateOrder.setText("等待检验退料");
-             //   framelayoutProduct.setVisibility(View.GONE);
+                //   framelayoutProduct.setVisibility(View.GONE);
                 tvShowCode.setVisibility(View.GONE);
                 tvStartProduce.setText("仓库查看退料信息");
                 click_check = LOOK_MESSAGE_FEEDBACK;
@@ -257,7 +279,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "done":
                 tvStateOrder.setText("完成");
-       //         framelayoutProduct.setVisibility(View.GONE);
+                //         framelayoutProduct.setVisibility(View.GONE);
                 tvShowCode.setVisibility(View.GONE);
                 tvStartProduce.setText("清点退料");
                 click_check = CHECK_MATERIAL_RETURN;
@@ -326,6 +348,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         captureFragment.setAnalyzeCallback(new CodeUtils.AnalyzeCallback() {
             @Override
             public void onAnalyzeSuccess(Bitmap mBitmap, String result) {
+                Log.e(TAG, "result = " + result);
                 if (!isShowDialog) return;
                 HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
                 objectObjectHashMap.put("default_code", result);
@@ -522,21 +545,28 @@ public class OrderDetailActivity extends ToolBarActivity {
                         }).show();
                 break;
             case STATE_START_PRODUCT:
-                AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否确定完成备料，下一步确认物料位置")
+                AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否打印MO单信息")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ToastUtils.showCommonToast(OrderDetailActivity.this, "正在跳转。。。");
-                                Intent intent = new Intent(OrderDetailActivity.this, PhotoAreaActivity.class);
-                                intent.putExtra("type", state);
-                                intent.putExtra("order_id", order_id);
-                                intent.putExtra("delay_state", delay_state);
-                                intent.putExtra("limit", limit);
-                                intent.putExtra("process_id", process_id);
-                                intent.putExtra("change", false);
-                                intent.putExtra("bean", resDataBean);
-                                startActivity(intent);
-                                finish();
+                                showDefultProgressDialog();
+                                initDevice();
+                                printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+                                printer.init();
+                                Bitmap mBitmap = CodeUtils.createImage(order_name, 400, 400, null);
+                                printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+                                printer.print("\n\nMO单号："+order_name+"\n\n"+"产品: " + tvNameProduct.getText() + "\n\n" + "时间： " + tvTimeProduct.getText() + "\n\n" +
+                                        "负责人: " + tvReworkProduct.getText() + "\n\n" + "生产数量：" + tvNumProduct.getText() + "\n\n" + "需求数量：" + tvNeedNum.getText()
+                                        + "\n\n" + "规格：" + tvStringGuige.getText() + "\n\n" + "工序：" + tvGongxuProduct.getText() + "\n\n" + "类型：" + tvTypeProduct.getText()
+                                        + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+ "\n\n\n\n\n", 30, TimeUnit.SECONDS);
+                                dismissDefultProgressDialog();
+                                showNext();
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                showNext();
                             }
                         }).show();
                 break;
@@ -617,6 +647,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 intent.putExtra("name_activity", name_activity);
                 intent.putExtra("close", false);
                 startActivity(intent);
+                finish();
                 break;
             case WRITE_WATERIAL_OUT://填写退料
                 Intent intent1 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
@@ -662,15 +693,15 @@ public class OrderDetailActivity extends ToolBarActivity {
 
     /**
      * 显示二维码
-     * */
+     */
     @OnClick(R.id.tv_show_code)
-    void useCode(View view){
-        if (camera_or_relative){
+    void useCode(View view) {
+        if (camera_or_relative) {
             initFragment();
             tvShowCode.setText("关闭扫描");
             camera_or_relative = false;
-        }else{
-          //  captureFragment.onDestroyView();
+        } else {
+            //  captureFragment.onDestroyView();
             CameraManager.get().stopPreview();
             framelayoutProduct.setVisibility(View.GONE);
             tvShowCode.setText("打开扫描");
@@ -701,29 +732,63 @@ public class OrderDetailActivity extends ToolBarActivity {
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         dismissDefultProgressDialog();
         super.onPause();
     }
 
-    /*@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // TODO Auto-generated method stub
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if ((System.currentTimeMillis() - mExitTime) > 2000) {
-                Toast.makeText(OrderDetailActivity.this, "再按一次退出", Toast.LENGTH_SHORT).show();
-                mExitTime = System.currentTimeMillis();
-            } else {
-                finish();
-            }
+    /**
+     * 连接设备打印机
+     */
+    private void initDevice() {
+        deviceManager = ConnUtils.getDeviceManager();
+        try {
+            deviceManager.init(OrderDetailActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
+                @Override
+                public void onEvent(ConnectionCloseEvent connectionCloseEvent, Handler handler) {
+                    if (connectionCloseEvent.isSuccess()) {
+                        ToastUtils.showCommonToast(OrderDetailActivity.this, "设备被客户主动断开！");
+                    }
+                    if (connectionCloseEvent.isFailed()) {
+                        ToastUtils.showCommonToast(OrderDetailActivity.this, "设备链接异常断开！");
+                    }
+                }
 
-            return true;
+                @Override
+                public Handler getUIHandler() {
+                    return null;
+                }
+            });
+            deviceManager.connect();
+            MyLog.e("OrderDetailActivity", "连接成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToastUtils.showCommonToast(OrderDetailActivity.this, "链接异常,请检查设备或重新连接.." + e);
         }
-        if (keyCode == KeyEvent.KEYCODE_MENU) {
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }*/
+    }
+
+    /**
+     * 展示dialog  后续改的  用于等待生产
+     * */
+    private void showNext(){
+        AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否确定完成备料，下一步确认物料位置")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ToastUtils.showCommonToast(OrderDetailActivity.this, "正在跳转。。。");
+                        Intent intent = new Intent(OrderDetailActivity.this, PhotoAreaActivity.class);
+                        intent.putExtra("type", state);
+                        intent.putExtra("order_id", order_id);
+                        intent.putExtra("delay_state", delay_state);
+                        intent.putExtra("limit", limit);
+                        intent.putExtra("process_id", process_id);
+                        intent.putExtra("change", false);
+                        intent.putExtra("bean", resDataBean);
+                        startActivity(intent);
+                        finish();
+                    }
+                }).show();
+    }
     @Override
     protected void onDestroy() {
         if (dialogForOrder != null) {

@@ -2,7 +2,6 @@ package tarce.model.inventory;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.json.JSONObject;
 
 import java.util.List;
 

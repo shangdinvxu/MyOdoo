@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,20 +21,17 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import retrofit2.Call;
 import retrofit2.Response;
-import rx.Observable;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
-import tarce.model.LoadActionBean;
 import tarce.model.inventory.LoadProductBean;
 import tarce.myodoo.IntentFactory;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
-import tarce.myodoo.adapter.SectionAdapter;
+import tarce.myodoo.activity.GetPickNumActivity;
+import tarce.myodoo.activity.ProcessOfPersonActivity;
 import tarce.myodoo.adapter.product.ProduceRednumAdapter;
-import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
-import tarce.support.AlertAialogUtils;
 
 /**\
  * 生产界面
@@ -150,10 +146,14 @@ public class ProduceFragment extends Fragment {
                         IntentFactory.start_ProducLl_Activity(getActivity(), "领料", "finish_prepare_material");
                         break;
                     case "等待生产":
-                        IntentFactory.start_ProducLl_Activity(getActivity(), "等待生产", "already_picking");
+                       // IntentFactory.start_ProducLl_Activity(getActivity(), "等待生产", "already_picking");
+                        Intent intent = new Intent(getActivity(), GetPickNumActivity.class);
+                        startActivity(intent);
                         break;
                     case "生产中":
-                        IntentFactory.start_ProducLl_Activity(getActivity(), "生产中", "progress");
+                        //   IntentFactory.start_ProducLl_Activity(getActivity(), "生产中", "progress");
+                        Intent intent1 = new Intent(getActivity(), ProcessOfPersonActivity.class);
+                        startActivity(intent1);
                         break;
                     case "退料":
                         IntentFactory.start_ProducLl_Activity(getActivity(), "退料", "waiting_inventory_material");

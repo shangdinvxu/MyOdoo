@@ -1,12 +1,10 @@
 package tarce.myodoo.activity;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.Switch;
 
 import tarce.support.MyLog;
 

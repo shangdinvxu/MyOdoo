@@ -78,6 +78,14 @@ public class PickingDetailBean {
         }
 
         public static class ResDataBean {
+            public Object getOrigin() {
+                return origin;
+            }
+
+            public void setOrigin(Object origin) {
+                this.origin = origin;
+            }
+
             /**
              * origin : MO170514126:MO170514126
              * in_charge_name : 陈小娟
@@ -89,7 +97,7 @@ public class PickingDetailBean {
              * date_planned_start : 2017-07-13 19:03:26
              * product_name : [QJ.0JP217.001] 全检制程品-JP217-木板(松鼠)-2-1+2
              */
-            private String origin;
+            private Object origin;
             private String in_charge_name;
             private String state;
             private ProcessIdBean process_id;
@@ -99,13 +107,7 @@ public class PickingDetailBean {
             private String date_planned_start;
             private String product_name;
 
-            public String getOrigin() {
-                return origin;
-            }
 
-            public void setOrigin(String origin) {
-                this.origin = origin;
-            }
 
             public String getIn_charge_name() {
                 return in_charge_name;

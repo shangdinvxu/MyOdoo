@@ -10,7 +10,6 @@ import com.zaihuishou.expandablerecycleradapter.viewholder.AbstractExpandableAda
 
 import java.util.List;
 
-import tarce.model.inventory.BomFramworkBean;
 import tarce.model.inventory.BomSubBean;
 import tarce.myodoo.R;
 

@@ -87,6 +87,12 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.BomFramworkActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".activity.GetPickNumActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.WaitProdListActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.ProcessOfPersonActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 

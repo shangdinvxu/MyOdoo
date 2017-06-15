@@ -16,6 +16,11 @@ public class UserManager {
 
     private LoginResponse userInfoBean;
     private List<LoginResponse.ResultBean.ResDataBean.GroupsBean> groups;
+
+    public void setPermissionList(List<String> permissionList) {
+        this.permissionList = permissionList;
+    }
+
     private List<String> permissionList = new ArrayList<>();
 
     public LoginResponse getUserInfoBean() {

@@ -17,7 +17,6 @@
 package com.uuzuche.lib_zxing.camera;
 
 import android.content.Context;
-import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
@@ -26,12 +25,9 @@ import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.Window;
 
 import java.io.IOException;
 
-import static android.R.attr.top;
-import static android.R.attr.width;
 
 /**
  * This object wraps the Camera service object and expects to be the only one talking to it. The
@@ -253,16 +249,16 @@ public final class CameraManager {
             DisplayMetrics metrics = context.getResources().getDisplayMetrics();
 
             //我们可以通过修改下面width height 里0.8 1.0参数 来改变高和宽
-            //int width = (int) (metrics.widthPixels * 0.8);
-            int width = (int) (metrics.widthPixels * 1.0);
+            int width = (int) (metrics.widthPixels * 0.8);
+          //  int width = (int) (metrics.widthPixels * 1.0);
             int height = (int) (width * 0.65);
 
             int leftOffset = (screenResolution.x - width) / 2;
             int topOffset = (screenResolution.y - height) / 4;
-            /*framingRect = new Rect(leftOffset, topOffset, leftOffset + width,
-                    topOffset + height);*/
-            framingRect = new Rect(leftOffset, 0, leftOffset + width,
-                     height);
+            framingRect = new Rect(leftOffset, topOffset, leftOffset + width,
+                    topOffset + height);
+            /*framingRect = new Rect(leftOffset, 0, leftOffset + width,
+                     height);*/
             Log.d(TAG, "Calculated framing rect: " + framingRect);
         }
         return framingRect;

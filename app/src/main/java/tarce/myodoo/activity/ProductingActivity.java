@@ -2,19 +2,32 @@ package tarce.myodoo.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.newland.me.ConnUtils;
+import com.newland.me.DeviceManager;
+import com.newland.mtype.ConnectionCloseEvent;
+import com.newland.mtype.ModuleType;
+import com.newland.mtype.event.DeviceEventListener;
+import com.newland.mtype.module.common.printer.Printer;
+import com.newland.mtypex.nseries.NSConnV100ConnParams;
+import com.uuzuche.lib_zxing.activity.CodeUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -36,7 +49,9 @@ import tarce.myodoo.uiutil.InsertNumDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
+import tarce.support.MyLog;
 import tarce.support.TimeUtils;
+import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
 /**
@@ -45,6 +60,7 @@ import tarce.support.ToolBarActivity;
  */
 
 public class ProductingActivity extends ToolBarActivity {
+    private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     @InjectView(R.id.tv_state_order)
     TextView tvStateOrder;
     @InjectView(R.id.img_up_down)
@@ -87,6 +103,12 @@ public class ProductingActivity extends ToolBarActivity {
     RelativeLayout relativeOrderShow;
     @InjectView(R.id.linear_three)
     LinearLayout linearThree;
+    @InjectView(R.id.tv_print_string)
+    TextView tvPrintString;
+    @InjectView(R.id.eidt_mo_note)
+    EditText eidtMoNote;
+    @InjectView(R.id.edit_sale_note)
+    EditText editSaleNote;
     private int order_id;
     private String state;
     private int limit;
@@ -110,6 +132,9 @@ public class ProductingActivity extends ToolBarActivity {
     private InsertNumDialog insertNumDialog;
     private boolean product_line = true;
     private boolean up_or_down = true;//判断是收起还是展开,默认展开
+    private DeviceManager deviceManager;
+    private Printer printer;
+    private String order_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +144,8 @@ public class ProductingActivity extends ToolBarActivity {
 
         Intent intent = getIntent();
         order_id = intent.getIntExtra("order_id", 1);
-        setTitle(intent.getStringExtra("order_name"));
+        order_name = intent.getStringExtra("order_name");
+        setTitle(order_name);
         state = intent.getStringExtra("state");
         limit = intent.getIntExtra("limit", 1);
         delay_state = intent.getStringExtra("delay_state");
@@ -184,6 +210,7 @@ public class ProductingActivity extends ToolBarActivity {
                 break;
             case "progress":
                 tvStateOrder.setText("进行中");
+                showLinThreePro();
                 break;
             case "waiting_inspection_finish":
                 tvStateOrder.setText("等待品检完成");
@@ -490,6 +517,7 @@ public class ProductingActivity extends ToolBarActivity {
                                                     Intent intent = new Intent(ProductingActivity.this, ProductLlActivity.class);
                                                     intent.putExtra("name_activity", "生产中");
                                                     intent.putExtra("state_product", state);
+                                                    intent.putExtra("process_id", process_id);
                                                     startActivity(intent);
                                                 }
                                             }).show();
@@ -531,6 +559,54 @@ public class ProductingActivity extends ToolBarActivity {
         Intent intent = new Intent(ProductingActivity.this, BomFramworkActivity.class);
         intent.putExtra("order_id", order_id);
         startActivity(intent);
+    }
+
+    /**
+     * 打印
+     */
+    @OnClick(R.id.tv_print_string)
+    void printString(View view) {
+        showDefultProgressDialog();
+        initDevice();
+        printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+        printer.init();
+        Bitmap mBitmap = CodeUtils.createImage(order_name, 400, 400, null);
+        printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+        printer.print("\n\nMO单号："+order_name+"\n\n"+"产品: " + tvNameProduct.getText() + "\n\n" + "时间： " + tvTimeProduct.getText() + "\n\n" +
+                "负责人: " + tvReworkProduct.getText() + "\n\n" + "生产数量：" + tvNumProduct.getText() + "\n\n" + "需求数量：" + tvNeedNum.getText()
+                + "\n\n" + "规格：" + tvStringGuige.getText() + "\n\n" + "工序：" + tvGongxuProduct.getText() + "\n\n" + "类型：" + tvTypeProduct.getText()
+                + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+"\n\n\n\n\n", 30, TimeUnit.SECONDS);
+        dismissDefultProgressDialog();
+    }
+
+    /**
+     * 连接设备打印机
+     */
+    private void initDevice() {
+        deviceManager = ConnUtils.getDeviceManager();
+        try {
+            deviceManager.init(ProductingActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
+                @Override
+                public void onEvent(ConnectionCloseEvent connectionCloseEvent, Handler handler) {
+                    if (connectionCloseEvent.isSuccess()) {
+                        ToastUtils.showCommonToast(ProductingActivity.this, "设备被客户主动断开！");
+                    }
+                    if (connectionCloseEvent.isFailed()) {
+                        ToastUtils.showCommonToast(ProductingActivity.this, "设备链接异常断开！");
+                    }
+                }
+
+                @Override
+                public Handler getUIHandler() {
+                    return null;
+                }
+            });
+            deviceManager.connect();
+            MyLog.e("ProductingActivity", "连接成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToastUtils.showCommonToast(ProductingActivity.this, "链接异常,请检查设备或重新连接.." + e);
+        }
     }
 
     @Override

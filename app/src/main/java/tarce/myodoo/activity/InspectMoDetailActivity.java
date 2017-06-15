@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -19,10 +18,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,7 +46,6 @@ import tarce.myodoo.uiutil.FullyGridLayoutManager;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
-import tarce.support.BitmapUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 import tarce.support.ViewUtils;

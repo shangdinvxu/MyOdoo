@@ -1,21 +1,14 @@
 package tarce.myodoo.adapter.product;
 
-import android.util.Log;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import tarce.model.inventory.PickingDetailBean;
 import tarce.myodoo.R;
-import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
-import tarce.support.MyLog;
 import tarce.support.TimeUtils;
 
 /**

@@ -1,6 +1,5 @@
 package tarce.myodoo.fragment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -22,12 +21,9 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import tarce.myodoo.IntentFactory;
 import tarce.myodoo.R;
-import tarce.myodoo.activity.MaterialDetailActivity;
-import tarce.myodoo.activity.ShowProcessActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
-import tarce.support.ToolBarActivity;
 
 /**
  * 仓库界面

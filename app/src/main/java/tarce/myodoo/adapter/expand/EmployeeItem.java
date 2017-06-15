@@ -6,7 +6,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zaihuishou.expandablerecycleradapter.model.ExpandableListItem;
-import com.zaihuishou.expandablerecycleradapter.viewholder.AbstractAdapterItem;
 import com.zaihuishou.expandablerecycleradapter.viewholder.AbstractExpandableAdapterItem;
 
 import java.util.List;

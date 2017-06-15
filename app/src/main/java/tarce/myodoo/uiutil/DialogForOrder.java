@@ -3,7 +3,6 @@ package tarce.myodoo.uiutil;
 import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.StyleRes;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -20,7 +19,6 @@ import butterknife.OnClick;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.utils.StringUtils;
-import tarce.support.ViewUtils;
 
 /**
  * Created by rose.zou on 2017/5/24.

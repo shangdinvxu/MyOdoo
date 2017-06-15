@@ -1,6 +1,5 @@
 package tarce.myodoo.adapter.processproduct;
 
-import android.support.v7.widget.RecyclerView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -9,7 +8,6 @@ import java.util.List;
 
 import tarce.model.inventory.ProcessShowBean;
 import tarce.myodoo.R;
-import tarce.myodoo.utils.StringUtils;
 
 /**
  * Created by rose.zou on 2017/5/18.

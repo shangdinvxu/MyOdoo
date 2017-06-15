@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
-import tarce.myodoo.R;
 
 public class BaseActivity extends Activity {
 	private TextView tvOperationMessage;

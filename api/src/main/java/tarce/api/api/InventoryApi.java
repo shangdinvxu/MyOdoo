@@ -21,7 +21,6 @@ import tarce.model.inventory.AreaMessageBean;
 import tarce.model.inventory.AutoAddworkBean;
 import tarce.model.inventory.BomFramworkBean;
 import tarce.model.inventory.CheckOutProductBean;
-import tarce.model.inventory.CheckPickRegisBean;
 import tarce.model.inventory.CommitNumFeedBean;
 import tarce.model.inventory.DoneCommitNumBean;
 import tarce.model.inventory.FinishPrepareMaBean;
@@ -33,6 +32,7 @@ import tarce.model.inventory.MaterialDetailBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.model.inventory.ProcessDeatilBean;
+import tarce.model.inventory.ProductProcessBean;
 import tarce.model.inventory.QcFeedbaskBean;
 import tarce.model.inventory.RejectResultBean;
 import tarce.model.inventory.RukuBean;
@@ -105,14 +105,6 @@ public interface InventoryApi {
     @POST("load_needaction")
     Call<LoadInspectionBean> load_actionInspec(@Body HashMap hashMap);
 
-    /**
-     * 出库信息查询
-     * */
-    @POST("get_outgoing_stock_picking")
-    Observable<OutgoingStockpickingBean> getOutgoingStockpicking(@Body HashMap hashMap);
-
-    @POST("get_outgoing_stock_picking_list")
-    Observable<SalesOutListResponse> getOutgoingStockpickingList(@Body HashMap hashMap);
 
     /**
      *请求生产工序
@@ -307,4 +299,31 @@ public interface InventoryApi {
      * */
     @POST("get_bom_detail")
     Call<BomFramworkBean> getBomDetail(@Body HashMap hashMap);
+
+    /**
+     * 等待生产
+     * */
+    @POST("get_already_picking_orders_count")
+    Call<ProcessDeatilBean> getPickCount(@Body HashMap hashMap);
+
+    @POST("get_recent_alredy_picking_order")
+    Call<PickingDetailBean> getListWait(@Body HashMap hashMap);
+
+    /**
+     * 生产中
+     * */
+    @POST("get_progress_mo_group_by_process")
+    Call<ProductProcessBean> processGroup(@Body HashMap hashMap);
+
+    @POST("get_mrp_production")
+    Call<Object> mrpProduction(@Body HashMap hashMap);
+
+    /**
+     * 出库信息查询
+     * */
+    @POST("get_outgoing_stock_picking")
+    Call<OutgoingStockpickingBean> getOutgoingStockpicking(@Body HashMap hashMap);
+
+    @POST("get_outgoing_stock_picking_list")
+    Call<SalesOutListResponse> getOutgoingStockpickingList(@Body HashMap hashMap);
 }

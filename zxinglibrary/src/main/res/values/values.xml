@@ -43,14 +43,14 @@
     <item name="search_book_contents_succeeded" type="id"/>
     <string name="app_name">Lib-zxing</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <style name="AppBaseTheme" parent="Theme.AppCompat.Light">
-        <!-- API 14 theme customizations can go here. -->
+    <!--<style name="AppBaseTheme" parent="Theme.AppCompat.Light">
+        &lt;!&ndash; API 14 theme customizations can go here. &ndash;&gt;
         <item name="android:actionBarStyle">@style/my_actionbar_style</item>
-    </style>
+    </style>-->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
     </style>
-    <style name="my_actionbar_style" parent="@android:style/Widget.Holo.Light.ActionBar">
+    <!--<style name="my_actionbar_style" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">#FFFFFF</item>
-    </style>
+    </style>-->
 </resources>

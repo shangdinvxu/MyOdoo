@@ -83,10 +83,11 @@ public class MeFragment extends Fragment {
         SharePreferenceUtils.putInt("user_id", -1000, getActivity());
         SharePreferenceUtils.putString("email", "", getActivity());
         SharePreferenceUtils.putString("user_ava", "", getActivity());
+        UserManager.getSingleton().getGrops().clear();
         UserManager.getSingleton().setUserInfoBean(null);
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
-        getActivity().finish();
+      //  getActivity().finish();
     }
 
 }

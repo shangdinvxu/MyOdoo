@@ -25,7 +25,6 @@ import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.LoadInspectionBean;
-import tarce.model.inventory.LoadProductBean;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.InspectionSubActivity;

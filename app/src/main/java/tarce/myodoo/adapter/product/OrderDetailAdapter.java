@@ -7,10 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.util.List;
-import java.util.zip.Inflater;
 
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;

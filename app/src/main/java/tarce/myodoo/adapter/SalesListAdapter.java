@@ -4,9 +4,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
-import java.util.Vector;
 
-import tarce.model.GetSaleListResponse;
 import tarce.model.inventory.SalesOutListResponse;
 import tarce.myodoo.R;
 

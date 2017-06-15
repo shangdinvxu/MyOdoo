@@ -2,24 +2,18 @@ package tarce.myodoo.adapter.product;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.TextView;
 
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import tarce.model.inventory.FreeWorkBean;
 import tarce.myodoo.R;
-import tarce.myodoo.adapter.SectionAdapter;
-import tarce.myodoo.bean.MainItemBean;
 
 /**
  * Created by rose.zou on 2017/5/27.
