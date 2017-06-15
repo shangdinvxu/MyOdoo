@@ -41,6 +41,9 @@ public class SalesListActivity extends ToolBarActivity {
     private SalesListAdapter salesListAdapter;
     private InventoryApi inventoryApi;
     private int count;
+    private String state;
+    private int complete_rate;
+    private List<SalesOutListResponse.TResult.TRes_data> res_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,19 +52,38 @@ public class SalesListActivity extends ToolBarActivity {
         ButterKnife.inject(this);
         inventoryApi = RetrofitClient.getInstance(SalesListActivity.this).create(InventoryApi.class);
         setRecyclerview(recyclerview);
+        showDefultProgressDialog();
         initIntent();
         initListener();
     }
 
     private void initIntent() {
         Intent intent = getIntent();
-        Bundle bundle = intent.getBundleExtra("intent");
-        count = intent.getIntExtra("count", 0);
-        count = intent.getIntExtra("count", 0);
-        count = intent.getIntExtra("count", 0);
-        List<SalesOutListResponse.TResult.TRes_data> bundle1 = (List<SalesOutListResponse.TResult.TRes_data>) bundle.getSerializable("bundle");
-        salesListAdapter = new SalesListAdapter(R.layout.activity_saleslist_adapter_item, bundle1);
-        recyclerview.setAdapter(salesListAdapter);
+        state = intent.getStringExtra("state");
+        complete_rate = intent.getIntExtra("complete_rate", 1000);
+        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put("complete_rate", complete_rate);
+        objectObjectHashMap.put("limit", 40);
+        objectObjectHashMap.put("offset", 0);
+        objectObjectHashMap.put("state", state);
+        Call<SalesOutListResponse> inComingOutgoingList = inventoryApi.getOutgoingStockpickingList(objectObjectHashMap);
+        inComingOutgoingList.enqueue(new MyCallback<SalesOutListResponse>() {
+            @Override
+            public void onResponse(Call<SalesOutListResponse> call, Response<SalesOutListResponse> response) {
+                dismissDefultProgressDialog();
+                if (response.body() == null)return;
+                if (response.body().getResult().getRes_code() == 1){
+                    res_data = response.body().getResult().getRes_data();
+                    salesListAdapter = new SalesListAdapter(R.layout.activity_saleslist_adapter_item, res_data);
+                    recyclerview.setAdapter(salesListAdapter);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<SalesOutListResponse> call, Throwable t) {
+                dismissDefultProgressDialog();
+            }
+        });
     }
 
     private void initListener() {

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.SearchView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.tencent.bugly.crashreport.CrashReport;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -60,6 +61,8 @@ public class SalesOutActivity extends ToolBarActivity {
     private ContactsBeanDao contactsBeanDao;
     private ContactBeanUtils contactBeanUtils;
     private CustomerAdapter customerAdapter;
+    private List<AvailabilityBean> availabilityBeen;
+    private SalesStatesAdapter salesStatesAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,6 +80,14 @@ public class SalesOutActivity extends ToolBarActivity {
     }
 
     private void initData() {
+        availabilityBeen = new ArrayList<>();
+        availabilityBeen.add(new AvailabilityBean("可用率 100%",0,0));
+        availabilityBeen.add(new AvailabilityBean("可用率 1%-99%",0,0));
+        availabilityBeen.add(new AvailabilityBean("可用率 0%",0,0));
+        availabilityBeen.add(new AvailabilityBean("完成",0,0));
+        salesStatesAdapter = new SalesStatesAdapter(R.layout.salesout_adapter, availabilityBeen);
+        recyclerviewStates.setAdapter(salesStatesAdapter);
+
         showDefultProgressDialog();
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("partner_id", 0);
@@ -86,18 +97,23 @@ public class SalesOutActivity extends ToolBarActivity {
             public void onResponse(Call<OutgoingStockpickingBean> call, Response<OutgoingStockpickingBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null)return;
-                /*ArrayList<AvailabilityBean> statesBeanList = new ArrayList<>();
-                List<OutgoingStockpickingBean.ResultBean.ResDataBean.CompleteRateBean> complete_rate = bean.getResult().getRes_data().getComplete_rate();
-                for (OutgoingStockpickingBean.ResultBean.ResDataBean.CompleteRateBean completeRateBean : complete_rate) {
-                    statesBeanList.add(new AvailabilityBean(completeRateBean.getComplete_rate(),
-                            completeRateBean.getComplete_rate_count()));
+                if (response.body().getResult().getRes_code() == 1){
+                    List<OutgoingStockpickingBean.ResultBean.ResDataBean.CompleteRateBean> complete_rate = response.body().getResult().getRes_data().getComplete_rate();
+                    for (int i = 0; i < complete_rate.size(); i++) {
+                        if (complete_rate.get(i).getComplete_rate() == 0){
+                            availabilityBeen.set(2,new AvailabilityBean("可用率 0%", 0, complete_rate.get(i).getComplete_rate_count()));
+                        }else if (complete_rate.get(i).getComplete_rate() == 100){
+                            availabilityBeen.set(0,new AvailabilityBean("可用率 100%", 100, complete_rate.get(i).getComplete_rate_count()));
+                        }else if (complete_rate.get(i).getComplete_rate() == 99){
+                            availabilityBeen.set(1,new AvailabilityBean("可用率 1%-99%", 99, complete_rate.get(i).getComplete_rate_count()));
+                        }
+                    }
+                    if (response.body().getResult().getRes_data().getState()!=null){
+                        availabilityBeen.set(3, new AvailabilityBean("完成", 1000, response.body().getResult().getRes_data().getState().getState_count()));
+                    }
+                    salesStatesAdapter.notifyDataSetChanged();
+                    initSalesStatesListener(salesStatesAdapter);
                 }
-                OutgoingStockpickingBean.ResultBean.ResDataBean.StateBean state = bean.getResult().getRes_data().getState();
-                //完成的给的1000
-                statesBeanList.add(new AvailabilityBean(1000, state.getState_count()));
-                SalesStatesAdapter salesStatesAdapter = new SalesStatesAdapter(R.layout.salesout_adapter, statesBeanList);
-                recyclerviewStates.setAdapter(salesStatesAdapter);
-                initSalesStatesListener(salesStatesAdapter);
             }
 
             @Override
@@ -111,7 +127,6 @@ public class SalesOutActivity extends ToolBarActivity {
         salesStatesAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, final int position) {
-                HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
                 final List<AvailabilityBean> data = salesStatesAdapter.getData();
                 String state = null;
                 int complete_rate = 0 ;
@@ -134,29 +149,10 @@ public class SalesOutActivity extends ToolBarActivity {
                         state = "done";
                         break;
                 }
-                objectObjectHashMap.put("complete_rate", complete_rate);
-                objectObjectHashMap.put("limit", 80);
-                objectObjectHashMap.put("offset", 0);
-                objectObjectHashMap.put("state", state);
-                Call<SalesOutListResponse> inComingOutgoingList = inventoryApi.getOutgoingStockpickingList(objectObjectHashMap);
-                final int finalComplete_rate = complete_rate;
-                final String finalState = state;
-                /*inComingOutgoingList.subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new ProgressSubscriber<>(new SubscriberOnNextListener<SalesOutListResponse>() {
-                            @Override
-                            public void onNext(SalesOutListResponse bean) {
-                                List<SalesOutListResponse.TResult.TRes_data> res_data = bean.getResult().getRes_data();
-                                Intent intent = new Intent(SalesOutActivity.this, SalesListActivity.class);
-                                Bundle bundle = new Bundle();
-                                bundle.putInt("count",data.get(position).getNumber());
-                                bundle.putSerializable("bundle", (Serializable) res_data);
-                                bundle.putString("state",finalState);
-                                bundle.putInt("complete_rate", finalComplete_rate);
-                                intent.putExtra("intent", bundle);
-                                startActivity(intent);
-                            }
-                        },SalesOutActivity.this));*/
+                Intent intent = new Intent(SalesOutActivity.this, SalesListActivity.class);
+                intent.putExtra("complete_rate", complete_rate);
+                intent.putExtra("state", state);
+                startActivity(intent);
             }
         });
 

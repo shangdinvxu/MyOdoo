@@ -324,6 +324,9 @@ public interface InventoryApi {
     @POST("get_outgoing_stock_picking")
     Call<OutgoingStockpickingBean> getOutgoingStockpicking(@Body HashMap hashMap);
 
+    /**
+     * 出库详情
+     * */
     @POST("get_outgoing_stock_picking_list")
     Call<SalesOutListResponse> getOutgoingStockpickingList(@Body HashMap hashMap);
 }

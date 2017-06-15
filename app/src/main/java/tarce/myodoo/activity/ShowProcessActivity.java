@@ -50,6 +50,22 @@ public class ShowProcessActivity extends ToolBarActivity {
         getDetailDelay();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (beanList == null){
+            getDetailDelay();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (beanList != null){
+            beanList = null;
+        }
+    }
+
     /**
      * 连接接口
      */

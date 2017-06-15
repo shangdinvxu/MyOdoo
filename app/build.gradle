@@ -15,6 +15,17 @@ android {
         resValue "string", "updatefun_provider_file_authorities", "tarce.myodoo.fileprovider"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    /**
+     * 签名设置
+     */
+    signingConfigs {
+        release {
+            storeFile file('../efeelink.keystore')
+            keyAlias "efeelink_cer"
+            keyPassword "efeelink@sz"
+            storePassword "efeelink@sz"
+        }
+    }
     sourceSets {
         main {
             assets.srcDirs = ['assets']
@@ -22,6 +33,12 @@ android {
         }
     }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+        }
+        release {
+            signingConfig signingConfigs.release
+        }
         release {
             minifyEnabled false
             zipAlignEnabled true //Zipalign优化

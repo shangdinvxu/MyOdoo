@@ -50,6 +50,7 @@ import tarce.myodoo.IntentFactory;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.greendaoUtils.UserLoginUtils;
+import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.MyLog;
 import tarce.support.SharePreferenceUtils;
@@ -148,6 +149,10 @@ public class LoginActivity extends Activity {
 
     @OnClick(R.id.database)
     void setDatabase(View view) {
+        if (StringUtils.isNullOrEmpty(httpUrl.getText().toString())){
+            ToastUtils.showCommonToast(LoginActivity.this, "请输入url地址");
+            return;
+        }
         String URL = httpUrl.getText().toString();
         RetrofitClient.Url = URL ;
         loginApi = RetrofitClient.getInstance(LoginActivity.this).create(LoginApi.class);

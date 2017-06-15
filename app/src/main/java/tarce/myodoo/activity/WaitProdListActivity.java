@@ -193,7 +193,9 @@ public class WaitProdListActivity extends ToolBarActivity {
 
     @Override
     protected void onPause() {
-        dataBeanList = null;
+        if (dataBeanList != null){
+            dataBeanList = null;
+        }
         super.onPause();
     }
 }

@@ -64,6 +64,21 @@ public class SelectProcedureActivity extends ToolBarActivity {
         getProcessNAme();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (listSubBeen == null){
+            getProcessNAme();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (listSubBeen != null){
+            listSubBeen = null;
+        }
+    }
 
     /**
      * 获取生产工序

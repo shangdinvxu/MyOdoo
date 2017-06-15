@@ -120,6 +120,8 @@ public class OrderDetailActivity extends ToolBarActivity {
     EditText eidtMoNote;
     @InjectView(R.id.edit_sale_note)
     EditText editSaleNote;
+    /*@InjectView(R.id.tv_print)
+    TextView tvPrint;*/
     private int click_check;//用于底部的点击事件  根据状态加载不同的点击事件后续
     private InventoryApi inventoryApi;
     private int order_id;
@@ -545,7 +547,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                         }).show();
                 break;
             case STATE_START_PRODUCT:
-                AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否打印MO单信息")
+                /*AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否打印MO单信息")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -568,7 +570,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 showNext();
                             }
-                        }).show();
+                        }).show();*/
+                showNext();
                 break;
             case STATE_REQUSIT_RIGISTER:
                 /**
@@ -606,6 +609,19 @@ public class OrderDetailActivity extends ToolBarActivity {
                                             dismissDefultProgressDialog();
                                             if (response.body() == null) return;
                                             if (response.body().getResult().getRes_code() == 1) {
+                                                showDefultProgressDialog();
+                                                initDevice();
+                                                printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+                                                printer.init();
+
+                                                printer.print("MO单号："+order_name+"\n\n"+"产品: " + tvNameProduct.getText() + "\n\n" + "时间： " + tvTimeProduct.getText() + "\n\n" +
+                                                        "负责人: " + tvReworkProduct.getText() + "\n\n" + "生产数量：" + tvNumProduct.getText() + "\n\n" + "需求数量：" + tvNeedNum.getText()
+                                                        + "\n\n" + "规格：" + tvStringGuige.getText() + "\n\n" + "工序：" + tvGongxuProduct.getText() + "\n\n" + "类型：" + tvTypeProduct.getText()
+                                                        + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+ "\n\n\n\n\n", 30, TimeUnit.SECONDS);
+                                                Bitmap mBitmap = CodeUtils.createImage(order_name, 300, 300, null);
+                                                printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+                                                dismissDefultProgressDialog();
+
                                                 resDataBean = response.body().getResult().getRes_data();
                                                 initView();
                                                 stateView("already_picking");

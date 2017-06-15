@@ -5,12 +5,23 @@ package tarce.myodoo.bean;
  */
 
 public class AvailabilityBean {
-    public AvailabilityBean(int per, int number) {
+    public AvailabilityBean(String name,int per, int number) {
+        this.name = name;
         this.per = per;
         this.number = number;
     }
 
-    int per ;
+    private int per ;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    private String name;
 
     public int getPer() {
         return per;

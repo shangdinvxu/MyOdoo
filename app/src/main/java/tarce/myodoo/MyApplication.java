@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.facebook.stetho.Stetho;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 
 import greendao.DaoMaster;
@@ -36,6 +37,7 @@ public class MyApplication extends Application {
         Stetho.initializeWithDefaults(this);
         ZXingLibrary.initDisplayOpinion(this);
         UserManager.getSingleton();
+        CrashReport.initCrashReport(getApplicationContext(), "58af561bcf", false);
     }
 
     public static MyApplication getInstances() {

@@ -35,7 +35,7 @@ public class ProcessOfPersonActivity extends ToolBarActivity {
     RecyclerView recycSelectProce;
     private InventoryApi inventoryApi;
     private ProcessListAdapter adapter;
-    private List<ProcessShowBean> beanList = new ArrayList<>();
+    private List<ProcessShowBean> beanList;
     private List<ProductProcessBean.ResultBean.ResDataBean> res_data;
 
     @Override
@@ -45,11 +45,29 @@ public class ProcessOfPersonActivity extends ToolBarActivity {
         ButterKnife.inject(this);
 
         setRecyclerview(recycSelectProce);
+        showDefultProgressDialog();
         getData();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (res_data == null){
+            getData();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        if (res_data != null){
+            res_data = null;
+        }
+        super.onPause();
+    }
+
     private void getData() {
-        showDefultProgressDialog();
+        res_data = new ArrayList<>();
+        beanList = new ArrayList<>();
         inventoryApi = RetrofitClient.getInstance(ProcessOfPersonActivity.this).create(InventoryApi.class);
         HashMap<Object, Object> hashMap = new HashMap<>();
         int partner_id = SharePreferenceUtils.getInt("partner_id", 1000, ProcessOfPersonActivity.this);
