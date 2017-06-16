@@ -21,9 +21,9 @@ android {
     signingConfigs {
         release {
             storeFile file('../efeelink.keystore')
-            keyAlias "efeelink_cer"
-            keyPassword "efeelink@sz"
-            storePassword "efeelink@sz"
+            keyAlias "efeelink"
+            keyPassword "123456"
+            storePassword "123456"
         }
     }
     sourceSets {

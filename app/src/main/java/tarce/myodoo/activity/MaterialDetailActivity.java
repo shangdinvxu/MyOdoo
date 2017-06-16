@@ -161,10 +161,14 @@ public class MaterialDetailActivity extends ToolBarActivity {
      * item点击
      */
     private void initListener() {
+
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
 
+                if (position>(mainMdBeen.size()-1)){
+                    return;
+                }
                 if (mainMdBeen == null || position == 0){
                     return;
                 }

@@ -88,13 +88,13 @@ public class MainActivity extends AppCompatActivity{
         UpdateKey.API_TOKEN = "d8980dd0017f3e0a7b038aec2c52d737";
         UpdateKey.APP_ID = "5940d8ca959d6965c30002dc";
 //下载方式:
-//UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;通过Dialog来进行下载
+  //   UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;//通过Dialog来进行下载
 //UpdateKey.DialogOrNotification=UpdateKey.WITH_NOTIFITION;通过通知栏来进行下载(默认)
         UpdateFunGO.init(this);
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume(){
         super.onResume();
         if (res_data == null){
             refreshLoadAction();

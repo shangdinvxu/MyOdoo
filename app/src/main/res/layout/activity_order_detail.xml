@@ -2,11 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:id="@+id/relative_one"
+        android:layout_below="@+id/id_tool_bar"
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:background="@color/result_view"
@@ -27,10 +29,8 @@
             android:id="@+id/img_up_down"
             android:layout_width="40dp"
             android:layout_height="30dp"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/tv_state_order"
             android:src="@mipmap/up"
-            android:layout_marginLeft="15dp"/>
+            android:layout_centerInParent="true"/>
 
         <TextView
             android:id="@+id/tv_check_state"
@@ -77,7 +77,7 @@
             <RelativeLayout
                 android:id="@+id/relative_order_show"
                 android:layout_width="match_parent"
-                android:layout_height="180dp">
+                android:layout_height="210dp">
 
                 <LinearLayout
                     android:id="@+id/linear_colum"
@@ -286,6 +286,26 @@
                         android:focusable="false"
                         android:background="@drawable/bac_inspect_edit"
                         android:layout_marginLeft="5dp"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_below="@+id/line_beizhu"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="bom备注"
+                        android:textColor="@color/black"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="5dp"/>
+                    <EditText
+                        android:id="@+id/edit_bom_note"
+                        android:layout_width="match_parent"
+                        android:layout_height="28dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/bac_inspect_edit"/>
                 </LinearLayout>
             </RelativeLayout>
 

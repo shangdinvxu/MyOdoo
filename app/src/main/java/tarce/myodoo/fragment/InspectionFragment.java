@@ -122,9 +122,9 @@ public class InspectionFragment extends Fragment {
                     if (response.body() == null)return;
                     if (response.body().getResult().getRes_code() == 1){
                         res_data = response.body().getResult().getRes_data();
-                        Integer needaction_counter0 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_mrp_production_wait_qc_inspection().getNeedaction_counter();
+                        Integer needaction_counter0 = res_data.getLinkloving_mrp_extend_mrp_production_wait_qc_inspection().getNeedaction_counter();
                         list.get(1).t.setNumber(needaction_counter0);
-                        Integer needaction_counter1 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_mrp_production_qc_inspecting().getNeedaction_counter();
+                        Integer needaction_counter1 = res_data.getLinkloving_mrp_extend_mrp_production_qc_inspecting().getNeedaction_counter();
                         list.get(2).t.setNumber(needaction_counter1);
                         sectionAdapter.notifyDataSetChanged();
                     }
@@ -146,7 +146,9 @@ public class InspectionFragment extends Fragment {
 
     @Override
     public void onPause() {
-        res_data = null;
+        if (res_data != null){
+            res_data = null;
+        }
         super.onPause();
     }
 

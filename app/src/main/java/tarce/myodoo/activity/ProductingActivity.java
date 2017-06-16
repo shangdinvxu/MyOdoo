@@ -289,6 +289,8 @@ public class ProductingActivity extends ToolBarActivity {
         tvTimeProduct.setText(TimeUtils.utc2Local(resDataBean.getDate_planned_start()));
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
         tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));
+        eidtMoNote.setText(resDataBean.getRemark());
+        editSaleNote.setText(resDataBean.getSale_remark());
         switch (resDataBean.getProduction_order_type()) {
             case "stockup":
                 tvTypeProduct.setText("备货制");
@@ -316,24 +318,6 @@ public class ProductingActivity extends ToolBarActivity {
         recyclerOrderDetail.setAdapter(adapter);
         recycler2OrderDetail.setAdapter(adapter_two);
         recycler3OrderDetail.setAdapter(adapter_three);
-       /* adapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
-                initDialog(linesBean);
-            }
-        });
-        adapter_two.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
-                initDialog(linesBean);
-            }
-        });
-        adapter_three.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
-                initDialog(linesBean);
-            }
-        });*/
     }
 
     /**
@@ -573,9 +557,10 @@ public class ProductingActivity extends ToolBarActivity {
         printer.print("\n\nMO单号："+order_name+"\n\n"+"产品: " + tvNameProduct.getText() + "\n\n" + "时间： " + tvTimeProduct.getText() + "\n\n" +
                 "负责人: " + tvReworkProduct.getText() + "\n\n" + "生产数量：" + tvNumProduct.getText() + "\n\n" + "需求数量：" + tvNeedNum.getText()
                 + "\n\n" + "规格：" + tvStringGuige.getText() + "\n\n" + "工序：" + tvGongxuProduct.getText() + "\n\n" + "类型：" + tvTypeProduct.getText()
-                + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+"\n\n\n\n\n", 30, TimeUnit.SECONDS);
+                + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+"\n\n", 30, TimeUnit.SECONDS);
         Bitmap mBitmap = CodeUtils.createImage(order_name, 300, 300, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+        printer.print("\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
         dismissDefultProgressDialog();
     }
 

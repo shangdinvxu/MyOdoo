@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -62,6 +63,7 @@ public class ToolBarHelper {
         /*通过inflater获取toolbar的布局文件*/
         View toolbar = mInflater.inflate(R.layout.toolbar, mContentView);
         mToolBar = (Toolbar) toolbar.findViewById(R.id.id_tool_bar);
+ //       mToolBar.inflateMenu(R.menu.menu_main);//设置右上角的填充菜单
     }
 
     @SuppressWarnings("ResourceType")

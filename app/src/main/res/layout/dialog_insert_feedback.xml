@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/edit_feedback_message"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@null"
+        android:hint="请输入产线反馈信息"
+        android:padding="5dp"
+        android:gravity="start"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/cancel_insert_dialog"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="取消"
+            android:gravity="center"
+            android:layout_height="match_parent" />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/black"/>
+        <TextView
+            android:id="@+id/true_inset_dialog"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="确定"
+            android:gravity="center"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/black"/>
+</LinearLayout>

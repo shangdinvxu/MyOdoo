@@ -63,8 +63,6 @@
         <activity android:name=".activity.ProductLlActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"/>
-        <!--<activity android:name=".activity.WaitReworkActivity"
-            android:screenOrientation="portrait"/>-->
         <activity android:name=".activity.OrderDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
@@ -79,7 +77,8 @@
         <activity android:name=".activity.AddPersonActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.ProductingActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
         <activity android:name=".activity.BuGetLiaoActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.InspectionSubActivity"

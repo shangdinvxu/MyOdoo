@@ -37,6 +37,7 @@ public class MyApplication extends Application {
         Stetho.initializeWithDefaults(this);
         ZXingLibrary.initDisplayOpinion(this);
         UserManager.getSingleton();
+        //bugly异常上报
         CrashReport.initCrashReport(getApplicationContext(), "58af561bcf", false);
     }
 

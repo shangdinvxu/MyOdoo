@@ -121,6 +121,16 @@ public class OrderDetailBean {
             }
 
             private String sale_remark;
+
+            public String getBom_remark() {
+                return bom_remark;
+            }
+
+            public void setBom_remark(String bom_remark) {
+                this.bom_remark = bom_remark;
+            }
+
+            private String bom_remark;
             private String origin;
             private PrepareMaterialAreaIdBean prepare_material_area_id;
             private String display_name;

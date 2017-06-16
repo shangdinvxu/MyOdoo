@@ -17,6 +17,12 @@ public class RejectResultBean {
     private String jsonrpc;
     private Object id;
     private ResultBean result;
+    /**
+     * id : null
+     * error : {"message":"Odoo Server Error","code":200,"data":{"debug":"Traceback (most recent call last):\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py\", line 638, in _handle_exception\n    return super(JsonRequest, self)._handle_exception(exception)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py\", line 675, in dispatch\n    result = self._call_function(**self.params)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py\", line 331, in _call_function\n    return checked_call(self.db, *args, **kwargs)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/service/model.py\", line 119, in wrapper\n    return f(dbname, *args, **kwargs)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py\", line 324, in checked_call\n    result = self.endpoint(*a, **kw)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py\", line 933, in __call__\n    return self.method(*args, **kw)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py\", line 504, in response_wrap\n    response = f(*args, **kw)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/linklovingaddons/linkloving_app_api/controllers/controllers.py\", line 1117, in inspection_result\n    if not feedback:\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/linklovingaddons/linkloving_mrp_extend/models/models.py\", line 1365, in action_qc_success\n    if self.production_id.state in ['waiting_rework', 'waiting_inspection_finish']:\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/fields.py\", line 869, in __get__\n    self.determine_value(record)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/fields.py\", line 971, in determine_value\n    record._prefetch_field(self)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/models.py\", line 3054, in _prefetch_field\n    result = self.read([f.name for f in fs], load='_classic_write')\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/models.py\", line 3002, in read\n    values[name] = field.convert_to_read(record[name], record, use_name_get)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/models.py\", line 5177, in __getitem__\n    return self._fields[key].__get__(self, type(self))\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/fields.py\", line 865, in __get__\n    value = record._cache[self]\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/models.py\", line 5526, in __getitem__\n    return value.get() if isinstance(value, SpecialValue) else value\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/fields.py\", line 48, in get\n    raise self.exception\nAccessError: (u'\\u7531\\u4e8e\\u5b89\\u5168\\u9650\\u5236\\uff0c\\u8bf7\\u6c42\\u7684\\u64cd\\u4f5c\\u65e0\\u6cd5\\u5b8c\\u6210\\u3002\\u8bf7\\u8054\\u7cfb\\u4f60\\u7684\\u7cfb\\u7edf\\u7ba1\\u7406\\u5458\\u3002\\n\\n(\\u5355\\u636e\\u7c7b\\u578b: mrp.production, \\u64cd\\u4f5c: read)', None)\n","exception_type":"access_error","message":"由于安全限制，请求的操作无法完成。请联系你的系统管理员。\n\n(单据类型: mrp.production, 操作: read)\nNone","name":"odoo.exceptions.AccessError","arguments":["由于安全限制，请求的操作无法完成。请联系你的系统管理员。\n\n(单据类型: mrp.production, 操作: read)",null]}}
+     */
+
+    private ErrorBean error;
 
     public String getJsonrpc() {
         return jsonrpc;
@@ -40,6 +46,14 @@ public class RejectResultBean {
 
     public void setResult(ResultBean result) {
         this.result = result;
+    }
+
+    public ErrorBean getError() {
+        return error;
+    }
+
+    public void setError(ErrorBean error) {
+        this.error = error;
     }
 
     public static class ResultBean {
@@ -261,6 +275,137 @@ public class RejectResultBean {
                         this.product_name = product_name;
                     }
                 }
+            }
+        }
+    }
+
+    public static class ErrorBean {
+        /**
+         * message : Odoo Server Error
+         * code : 200
+         * data : {"debug":"Traceback (most recent call last):\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py\", line 638, in _handle_exception\n    return super(JsonRequest, self)._handle_exception(exception)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py\", line 675, in dispatch\n    result = self._call_function(**self.params)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py\", line 331, in _call_function\n    return checked_call(self.db, *args, **kwargs)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/service/model.py\", line 119, in wrapper\n    return f(dbname, *args, **kwargs)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py\", line 324, in checked_call\n    result = self.endpoint(*a, **kw)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py\", line 933, in __call__\n    return self.method(*args, **kw)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py\", line 504, in response_wrap\n    response = f(*args, **kw)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/linklovingaddons/linkloving_app_api/controllers/controllers.py\", line 1117, in inspection_result\n    if not feedback:\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/linklovingaddons/linkloving_mrp_extend/models/models.py\", line 1365, in action_qc_success\n    if self.production_id.state in ['waiting_rework', 'waiting_inspection_finish']:\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/fields.py\", line 869, in __get__\n    self.determine_value(record)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/fields.py\", line 971, in determine_value\n    record._prefetch_field(self)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/models.py\", line 3054, in _prefetch_field\n    result = self.read([f.name for f in fs], load='_classic_write')\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/models.py\", line 3002, in read\n    values[name] = field.convert_to_read(record[name], record, use_name_get)\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/models.py\", line 5177, in __getitem__\n    return self._fields[key].__get__(self, type(self))\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/fields.py\", line 865, in __get__\n    value = record._cache[self]\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/models.py\", line 5526, in __getitem__\n    return value.get() if isinstance(value, SpecialValue) else value\n  File \"/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/fields.py\", line 48, in get\n    raise self.exception\nAccessError: (u'\\u7531\\u4e8e\\u5b89\\u5168\\u9650\\u5236\\uff0c\\u8bf7\\u6c42\\u7684\\u64cd\\u4f5c\\u65e0\\u6cd5\\u5b8c\\u6210\\u3002\\u8bf7\\u8054\\u7cfb\\u4f60\\u7684\\u7cfb\\u7edf\\u7ba1\\u7406\\u5458\\u3002\\n\\n(\\u5355\\u636e\\u7c7b\\u578b: mrp.production, \\u64cd\\u4f5c: read)', None)\n","exception_type":"access_error","message":"由于安全限制，请求的操作无法完成。请联系你的系统管理员。\n\n(单据类型: mrp.production, 操作: read)\nNone","name":"odoo.exceptions.AccessError","arguments":["由于安全限制，请求的操作无法完成。请联系你的系统管理员。\n\n(单据类型: mrp.production, 操作: read)",null]}
+         */
+
+        private String message;
+        private int code;
+        private DataBean data;
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public void setCode(int code) {
+            this.code = code;
+        }
+
+        public DataBean getData() {
+            return data;
+        }
+
+        public void setData(DataBean data) {
+            this.data = data;
+        }
+
+        public static class DataBean {
+            /**
+             * debug : Traceback (most recent call last):
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py", line 638, in _handle_exception
+             return super(JsonRequest, self)._handle_exception(exception)
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py", line 675, in dispatch
+             result = self._call_function(**self.params)
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py", line 331, in _call_function
+             return checked_call(self.db, *args, **kwargs)
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/service/model.py", line 119, in wrapper
+             return f(dbname, *args, **kwargs)
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py", line 324, in checked_call
+             result = self.endpoint(*a, **kw)
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py", line 933, in __call__
+             return self.method(*args, **kw)
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/http.py", line 504, in response_wrap
+             response = f(*args, **kw)
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/linklovingaddons/linkloving_app_api/controllers/controllers.py", line 1117, in inspection_result
+             if not feedback:
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/linklovingaddons/linkloving_mrp_extend/models/models.py", line 1365, in action_qc_success
+             if self.production_id.state in ['waiting_rework', 'waiting_inspection_finish']:
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/fields.py", line 869, in __get__
+             self.determine_value(record)
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/fields.py", line 971, in determine_value
+             record._prefetch_field(self)
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/models.py", line 3054, in _prefetch_field
+             result = self.read([f.name for f in fs], load='_classic_write')
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/models.py", line 3002, in read
+             values[name] = field.convert_to_read(record[name], record, use_name_get)
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/models.py", line 5177, in __getitem__
+             return self._fields[key].__get__(self, type(self))
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/fields.py", line 865, in __get__
+             value = record._cache[self]
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/models.py", line 5526, in __getitem__
+             return value.get() if isinstance(value, SpecialValue) else value
+             File "/Users/charynbryant/Desktop/CharlieWorkSpace/Python_Workspace/odoo-10.0/odoo/fields.py", line 48, in get
+             raise self.exception
+             AccessError: (u'\u7531\u4e8e\u5b89\u5168\u9650\u5236\uff0c\u8bf7\u6c42\u7684\u64cd\u4f5c\u65e0\u6cd5\u5b8c\u6210\u3002\u8bf7\u8054\u7cfb\u4f60\u7684\u7cfb\u7edf\u7ba1\u7406\u5458\u3002\n\n(\u5355\u636e\u7c7b\u578b: mrp.production, \u64cd\u4f5c: read)', None)
+
+             * exception_type : access_error
+             * message : 由于安全限制，请求的操作无法完成。请联系你的系统管理员。
+
+             (单据类型: mrp.production, 操作: read)
+             None
+             * name : odoo.exceptions.AccessError
+             * arguments : ["由于安全限制，请求的操作无法完成。请联系你的系统管理员。\n\n(单据类型: mrp.production, 操作: read)",null]
+             */
+
+            private String debug;
+            private String exception_type;
+            private String message;
+            private String name;
+            private List<String> arguments;
+
+            public String getDebug() {
+                return debug;
+            }
+
+            public void setDebug(String debug) {
+                this.debug = debug;
+            }
+
+            public String getException_type() {
+                return exception_type;
+            }
+
+            public void setException_type(String exception_type) {
+                this.exception_type = exception_type;
+            }
+
+            public String getMessage() {
+                return message;
+            }
+
+            public void setMessage(String message) {
+                this.message = message;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public List<String> getArguments() {
+                return arguments;
+            }
+
+            public void setArguments(List<String> arguments) {
+                this.arguments = arguments;
             }
         }
     }

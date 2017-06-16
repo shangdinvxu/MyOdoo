@@ -43,9 +43,11 @@ import tarce.model.inventory.StartReworkBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.ImgRecycAdapter;
 import tarce.myodoo.uiutil.FullyGridLayoutManager;
+import tarce.myodoo.uiutil.ImageUtil;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
+import tarce.support.BitmapUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 import tarce.support.ViewUtils;
@@ -150,8 +152,8 @@ public class InspectMoDetailActivity extends ToolBarActivity {
         inventoryApi = RetrofitClient.getInstance(InspectMoDetailActivity.this).create(InventoryApi.class);
         Intent intent = getIntent();
         dataBean = (QcFeedbaskBean.ResultBean.ResDataBean) intent.getSerializableExtra("data");
-        initView();
         initRecycler();
+        initView();
     }
 
     private void initRecycler() {
@@ -160,8 +162,6 @@ public class InspectMoDetailActivity extends ToolBarActivity {
         imgGridRecycler.setLayoutManager(layoutManager);
         imgGridRecycler.setNestedScrollingEnabled(false);
         imgGridRecycler.setHasFixedSize(true);
-        imgRecycAdapter = new ImgRecycAdapter(R.layout.adapter_img_recyc, imgList);
-        imgGridRecycler.setAdapter(imgRecycAdapter);
     }
 
     private void initView() {
@@ -185,6 +185,8 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                 numRateRejects.setText("");
                 tvRateInspecdetail.setText("");
                 imgTakePhoto.setVisibility(View.VISIBLE);
+                imgRecycAdapter = new ImgRecycAdapter(InspectMoDetailActivity.this, R.layout.adapter_img_recyc, imgList);
+                imgGridRecycler.setAdapter(imgRecycAdapter);
                 showLinThreePin();
                 break;
             case "qc_success":
@@ -197,9 +199,8 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                 numSampleInspecdetail.setText(StringUtils.doubleToString(dataBean.getQc_test_qty()));
                 commentsOfInspecdetail.setFocusable(false);
                 commentsOfInspecdetail.setText(dataBean.getQc_note());
-                if (dataBean.getQc_img().size() > 0) {
-                    imgRecycAdapter = new ImgRecycAdapter(R.layout.adapter_img_recyc, (List<String>) dataBean.getQc_img());
-                }
+                imgRecycAdapter = new ImgRecycAdapter(InspectMoDetailActivity.this, R.layout.adapter_img_recyc, (List<String>) dataBean.getQc_img());
+                imgGridRecycler.setAdapter(imgRecycAdapter);
                 tvClickFinish.setText("入库");
                 showLinThreeCang();
                 break;
@@ -214,7 +215,8 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                 commentsOfInspecdetail.setFocusable(false);
                 commentsOfInspecdetail.setText(dataBean.getQc_note());
                 if (dataBean.getQc_img().size() > 0) {
-                    imgRecycAdapter = new ImgRecycAdapter(R.layout.adapter_img_recyc, (List<String>) dataBean.getQc_img());
+                    imgRecycAdapter = new ImgRecycAdapter(InspectMoDetailActivity.this, R.layout.adapter_img_recyc, (List<String>) dataBean.getQc_img());
+                    imgGridRecycler.setAdapter(imgRecycAdapter);
                 }
                 tvClickFinish.setText("开始返工");
                 showLinThreePro();
@@ -318,6 +320,7 @@ public class InspectMoDetailActivity extends ToolBarActivity {
                     public void onResponse(Call<RukuBean> call, Response<RukuBean> response) {
                         dismissDefultProgressDialog();
                         if (response.body() == null) return;
+                        if (response.body().getResult() == null)return;
                         if (response.body().getResult().getRes_code() == 1) {
                             AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "")
                                     .setMessage("入库成功")
@@ -468,7 +471,7 @@ public class InspectMoDetailActivity extends ToolBarActivity {
         } else {
             String[] img_str = new String[imgList.size()];
             for (int i = 0; i < imgList.size(); i++) {
-                img_str[i] = imgList.get(i);
+                img_str[i] = BitmapUtils.bitmapToBase64(ImageUtil.decodeFile(imgList.get(i)));
             }
                //     String[] img_str = {BitmapUtils.bitmapToBase64(decodeFile(selectedImagePath))};
             resultMap.put("qc_img", img_str);
@@ -479,6 +482,10 @@ public class InspectMoDetailActivity extends ToolBarActivity {
             public void onResponse(Call<RejectResultBean> call, Response<RejectResultBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    ToastUtils.showCommonToast(InspectMoDetailActivity.this, "访问出错,或许有安全限制，请联系管理员");
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1) {
                     if (result == 1) {
                         AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "品检成功，等待入库")
