@@ -152,7 +152,8 @@ public class GetSaleResponse implements Serializable{
             private	Integer	complete_rate;	/*0*/
             private	TPost_area_id	post_area_id;	/*TPost_area_id*/
             private	String	origin;	/*PO2016121401111*/
-            private	Boolean	sale_note;	/*false*/
+
+            private	Object	sale_note;	/*false*/
             private	String	state;	/*done*/
             private	Integer	picking_id;	/*781*/
             private	String	min_date;	/*2016-12-14 06:59:24*/
@@ -185,11 +186,15 @@ public class GetSaleResponse implements Serializable{
                 return this.origin;
             }
 
-            public void setSale_note(Boolean value){
-                this.sale_note = value;
+            public Object getSale_note() {
+                if (sale_note instanceof Boolean){
+                    sale_note = "";
+                }
+                return sale_note;
             }
-            public Boolean getSale_note(){
-                return this.sale_note;
+
+            public void setSale_note(Object sale_note) {
+                this.sale_note = sale_note;
             }
 
             public void setState(String value){

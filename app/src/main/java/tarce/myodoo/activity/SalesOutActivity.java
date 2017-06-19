@@ -244,7 +244,7 @@ public class SalesOutActivity extends ToolBarActivity {
         customerAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
+                searchCustomer.setQuery(contactsBeen.get(position).getName(), true);
             }
         });
     }

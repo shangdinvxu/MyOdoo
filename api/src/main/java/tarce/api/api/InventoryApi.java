@@ -22,10 +22,13 @@ import tarce.model.inventory.AutoAddworkBean;
 import tarce.model.inventory.BomFramworkBean;
 import tarce.model.inventory.CheckOutProductBean;
 import tarce.model.inventory.CommitNumFeedBean;
+import tarce.model.inventory.CommonBean;
+import tarce.model.inventory.DoUnreservBean;
 import tarce.model.inventory.DoneCommitNumBean;
 import tarce.model.inventory.FinishPrepareMaBean;
 import tarce.model.inventory.FinishProductBean;
 import tarce.model.inventory.FreeWorkBean;
+import tarce.model.inventory.GetFactroyRemarkBean;
 import tarce.model.inventory.LoadInspectionBean;
 import tarce.model.inventory.LoadProductBean;
 import tarce.model.inventory.MaterialDetailBean;
@@ -77,13 +80,14 @@ public interface InventoryApi {
     @POST("action_assign_stock_picking")
     Call<GetSaleResponse> checkIsCanUse(@Body HashMap hashMap );
 
+
     /**
      * 取消保留
      * @param hashMap
      * @return
      */
     @POST("do_unreserve_action")
-    Call<GetSaleResponse> doUnreserveAction(@Body HashMap hashMap );
+    Call<DoUnreservBean> doUnreserveAction(@Body HashMap hashMap );
 
     @POST("find_product_by_condition")
     Call<FindProductByConditionResponse> findProductByCondition(@Body HashMap findProductByConditionRequest);
@@ -329,4 +333,13 @@ public interface InventoryApi {
      * */
     @POST("get_outgoing_stock_picking_list")
     Call<SalesOutListResponse> getOutgoingStockpickingList(@Body HashMap hashMap);
+
+    /**
+     * 获取反馈，提交反馈
+     * */
+    @POST("get_factory_remark")
+    Call<GetFactroyRemarkBean> getFactroyRemark(@Body HashMap hashMap);
+
+    @POST("update_factory_remark")
+    Call<CommonBean> updateFactroyRemark(@Body HashMap hashMap);
 }

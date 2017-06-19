@@ -21,6 +21,9 @@ public class SalesOutListResponse implements Serializable {
                     this.area_id = value;
                 }
                 public Object getArea_id(){
+                    if (area_id instanceof Boolean){
+                        area_id = 0;
+                    }
                     return this.area_id;
                 }
 
@@ -28,14 +31,28 @@ public class SalesOutListResponse implements Serializable {
                     this.area_name = value;
                 }
                 public Object getArea_name(){
+                    if (area_name instanceof String){
+                        area_name = "";
+                    }
                     return this.area_name;
                 }
 
             }
             private	Integer	complete_rate;	/*0*/
             private	TPost_area_id	post_area_id;	/*TPost_area_id*/
+
+
+            public String getOrigin() {
+                return origin;
+            }
+
+            public void setOrigin(String origin) {
+                this.origin = origin;
+            }
+
             private	String	origin;	/*SO2017042001881*/
-            private	Boolean	sale_note;	/*false*/
+
+            private	Object	sale_note;	/*false*/
             private	String	state;	/*confirmed*/
             private	Integer	picking_id;	/*5544*/
             private	String	min_date;	/*2017-04-20 07:31:21*/
@@ -62,18 +79,16 @@ public class SalesOutListResponse implements Serializable {
                 return this.post_area_id;
             }
 
-            public void setOrigin(String value){
-                this.origin = value;
-            }
-            public String getOrigin(){
-                return this.origin;
+
+            public Object getSale_note() {
+                if (sale_note instanceof Boolean){
+                    sale_note = "";
+                }
+                return sale_note;
             }
 
-            public void setSale_note(Boolean value){
-                this.sale_note = value;
-            }
-            public Boolean getSale_note(){
-                return this.sale_note;
+            public void setSale_note(Object sale_note) {
+                this.sale_note = sale_note;
             }
 
             public void setState(String value){

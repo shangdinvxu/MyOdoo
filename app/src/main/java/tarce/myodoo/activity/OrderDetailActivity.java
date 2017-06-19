@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
@@ -47,12 +48,15 @@ import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.FindProductByConditionResponse;
+import tarce.model.inventory.CommonBean;
+import tarce.model.inventory.GetFactroyRemarkBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.OrderDetailAdapter;
 import tarce.myodoo.device.AbstractDevice;
 import tarce.myodoo.uiutil.DialogForOrder;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
+import tarce.myodoo.uiutil.InsertFeedbackDial;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
@@ -199,7 +203,41 @@ public class OrderDetailActivity extends ToolBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == tarce.support.R.id.action_settings){
-            ToastUtils.showCommonToast(OrderDetailActivity.this, "?????????");
+            HashMap<Object, Object> hashMap = new HashMap<>();
+            hashMap.put("order_id", order_id);
+            Call<GetFactroyRemarkBean> factroyRemark = inventoryApi.getFactroyRemark(hashMap);
+            factroyRemark.enqueue(new MyCallback<GetFactroyRemarkBean>() {
+                @Override
+                public void onResponse(Call<GetFactroyRemarkBean> call, Response<GetFactroyRemarkBean> response) {
+                    if (response == null)return;
+                    if (response.body().getResult().getRes_code() == 1){
+                        String remark = response.body().getResult().getRes_data().getFactory_mark();
+                        new InsertFeedbackDial(OrderDetailActivity.this, R.style.MyDialogStyle, new InsertFeedbackDial.OnSendCommonClickListener() {
+                            @Override
+                            public void OnSendCommonClick(String num) {
+                                HashMap<Object, Object> hashMap = new HashMap<>();
+                                hashMap.put("factory_remark", num);
+                                hashMap.put("order_id", order_id);
+                                Call<CommonBean> objectCall = inventoryApi.updateFactroyRemark(hashMap);
+                                objectCall.enqueue(new MyCallback<CommonBean>() {
+                                    @Override
+                                    public void onResponse(Call<CommonBean> call, Response<CommonBean> response) {
+                                        if (response == null)return;
+                                        if (response.body().getResult().getRes_code() == 1){
+                                            ToastUtils.showCommonToast(OrderDetailActivity.this, "反馈成功");
+                                        }
+                                    }
+                                });
+                            }
+                        }, remark).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<GetFactroyRemarkBean> call, Throwable t) {
+                    super.onFailure(call, t);
+                }
+            });
         }
         return super.onOptionsItemSelected(item);
     }
@@ -616,6 +654,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                 Bitmap mBitmap = CodeUtils.createImage(order_name, 300, 300, null);
                                                 printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
                                                 printer.print("\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+
                                                 dismissDefultProgressDialog();
 
                                                 resDataBean = response.body().getResult().getRes_data();

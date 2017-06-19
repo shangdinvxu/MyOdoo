@@ -97,11 +97,6 @@ public class ProductLlActivity extends ToolBarActivity {
             @Override
             public void onRefresh() {
                 showDefultProgressDialog();
-                /*try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }*/
                 getPicking(0, 20, Refresh_Move);
                 adapter.notifyDataSetChanged();
                 swipeToLoad.setRefreshing(false);

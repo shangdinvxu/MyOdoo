@@ -33,8 +33,8 @@ public class InspectionSubAdapter extends BaseQuickAdapter<QcFeedbaskBean.Result
 
     @Override
     protected void convert(BaseViewHolder helper, QcFeedbaskBean.ResultBean.ResDataBean item) {
-        helper.setText(R.id.tv_receipts_origin, item.getProduction_id().getDisplay_name());
-        helper.setText(R.id.tv_nameproduct_inspec, item.getProduction_id().getProduct_id().getProduct_name());
+        helper.setText(R.id.tv_receipts_origin, String.valueOf(item.getProduction_id().getDisplay_name()));
+        helper.setText(R.id.tv_nameproduct_inspec, String.valueOf(item.getProduction_id().getProduct_id().getProduct_name()));
         helper.setText(R.id.tv_num_inspection, StringUtils.doubleToString(item.getQty_produced()));
         switch (item.getState()){
             case "draft":

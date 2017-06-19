@@ -199,7 +199,8 @@ public class BomFramworkBean{
                 public String code;
                 public String product_specs;
                 private double qty;
-                private String process_id;
+
+                public Object process_id;
                 private int id;
                 public String name;
                 private boolean is_highlight;
@@ -233,11 +234,14 @@ public class BomFramworkBean{
                     this.qty = qty;
                 }
 
-                public String getProcess_id() {
+                public Object getProcess_id() {
+                    if (process_id instanceof Boolean){
+                        process_id = "";
+                    }
                     return process_id;
                 }
 
-                public void setProcess_id(String process_id) {
+                public void setProcess_id(Object process_id) {
                     this.process_id = process_id;
                 }
 
@@ -339,7 +343,7 @@ public class BomFramworkBean{
 
                     public String code;
                     private double qty;
-                    private boolean process_id;
+                    public Object process_id;
                     private int id;
                     public String product_specs;
                     private boolean is_highlight;
@@ -366,11 +370,14 @@ public class BomFramworkBean{
                         this.qty = qty;
                     }
 
-                    public boolean isProcess_id() {
+                    public Object getProcess_id() {
+                        if (process_id instanceof Boolean){
+                            process_id = "";
+                        }
                         return process_id;
                     }
 
-                    public void setProcess_id(boolean process_id) {
+                    public void setProcess_id(Object process_id) {
                         this.process_id = process_id;
                     }
 

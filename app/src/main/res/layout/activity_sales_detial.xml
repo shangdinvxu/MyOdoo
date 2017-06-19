@@ -4,215 +4,217 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/framelayout"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    </FrameLayout>
-
-    <LinearLayout
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <ImageView
-            android:background="@color/bg_color"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:id="@+id/top_imageview"
-            android:src="@mipmap/down"
-            />
         <LinearLayout
-            android:background="@color/bg_color"
             android:layout_width="match_parent"
-            android:layout_height="30dp">
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="合作伙伴" />
-
-            <TextView
-                android:id="@+id/partner"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:background="@color/bg_color"
-            android:layout_width="match_parent"
-            android:layout_height="30dp">
-
-            <TextView
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="时间" />
-
-            <TextView
-                android:id="@+id/time"
-                android:layout_width="100dp"
-                android:textSize="9sp"
-                android:layout_height="match_parent"
-                android:gravity="center" />
-
-                <TextView
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:text="状态" />
-
-                <TextView
-                    android:id="@+id/states"
-                    android:textColor="@color/viewfinder_laser"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+                <ImageView
+                    android:background="@color/bg_color"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center" />
-        </LinearLayout>
+                    android:layout_height="30dp"
+                    android:id="@+id/top_imageview"
+                    android:src="@mipmap/down"
+                    />
+                <LinearLayout
+                    android:background="@color/bg_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp">
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="合作伙伴" />
+
+                    <TextView
+                        android:id="@+id/partner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:background="@color/bg_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp">
+
+                    <TextView
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="时间" />
+
+                    <TextView
+                        android:id="@+id/time"
+                        android:layout_width="100dp"
+                        android:textSize="11sp"
+                        android:layout_height="match_parent"
+                        android:gravity="center" />
+
+                    <TextView
+                        android:layout_width="50dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="状态" />
+
+                    <TextView
+                        android:id="@+id/states"
+                        android:textColor="@color/viewfinder_laser"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center" />
+                </LinearLayout>
 
 
 
-        <LinearLayout
-            android:background="@color/bg_color"
-            android:layout_width="match_parent"
-            android:layout_height="30dp">
+                <LinearLayout
+                    android:background="@color/bg_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp">
 
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="原单据" />
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="原单据" />
 
-            <TextView
-                android:id="@+id/origin_documents"
+                    <TextView
+                        android:id="@+id/origin_documents"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:background="@color/bg_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="发货规则" />
+
+                    <TextView
+                        android:id="@+id/sales_out"
+                        android:textColor="@color/viewfinder_laser"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:background="@color/bg_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="备注" />
+
+                    <EditText
+                        android:id="@+id/remarks"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bac_inspect_edit"
+                        android:focusable="false"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+            <FrameLayout
+                android:id="@+id/framelayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center" />
-        </LinearLayout>
+                android:layout_height="200dp">
+            </FrameLayout>
+                <!--<ImageView
+                    android:id="@+id/camera_Imageview"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_height="100dp" />-->
+                <LinearLayout
+                    android:id="@+id/camera_buttom_linearlayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/cc">
 
-        <LinearLayout
-            android:background="@color/bg_color"
-            android:layout_width="match_parent"
-            android:layout_height="30dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:text="产品" />
 
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="发货规则" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="待入库" />
 
-            <TextView
-                android:id="@+id/sales_out"
-                android:textColor="@color/viewfinder_laser"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center" />
-        </LinearLayout>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="库存" />
 
-        <LinearLayout
-            android:background="@color/bg_color"
-            android:layout_width="match_parent"
-            android:layout_height="30dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="待出库" />
 
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="备注" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="完成" />
 
-            <TextView
-                android:id="@+id/remarks"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center" />
-        </LinearLayout>
+                </LinearLayout>
 
-        <ImageView
-            android:id="@+id/camera_Imageview"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="200dp" />
-        <LinearLayout
-            android:id="@+id/camera_buttom_linearlayout"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/cc">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:gravity="center"
-                android:text="产品" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="待入库" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="库存" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="待出库" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="完成" />
-
-        </LinearLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:background="@color/bg_color"
-            android:id="@+id/recyclerview"
-            android:layout_width="match_parent"
+                <android.support.v7.widget.RecyclerView
+                    android:background="@color/bg_color"
+                    android:id="@+id/recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="@color/bg_color"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom">
+        <Button
+            android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="0dp">
-
-        </android.support.v7.widget.RecyclerView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:background="@color/bg_color"
-            android:layout_height="40dp">
-            <Button
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:id="@+id/buttom_button1"
-                android:background="@color/ccolor"
-                android:layout_height="match_parent" />
-            <Button
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:id="@+id/buttom_button2"
-                android:background="@color/ccolor"
-                android:layout_height="match_parent" />
-            <Button
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:id="@+id/buttom_button3"
-                android:background="@color/ccolor"
-                android:layout_height="match_parent" />
-            <Button
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:id="@+id/buttom_button4"
-                android:background="@color/ccolor"
-                android:layout_height="match_parent" />
-        </LinearLayout>
+            android:id="@+id/buttom_button1"
+            android:background="@color/ccolor"
+            android:layout_height="match_parent" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:id="@+id/buttom_button2"
+            android:background="@color/ccolor"
+            android:layout_height="match_parent" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:id="@+id/buttom_button3"
+            android:background="@color/ccolor"
+            android:layout_height="match_parent" />
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:id="@+id/buttom_button4"
+            android:background="@color/ccolor"
+            android:layout_height="match_parent" />
     </LinearLayout>
 </FrameLayout>

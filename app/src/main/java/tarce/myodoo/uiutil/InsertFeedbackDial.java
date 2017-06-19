@@ -40,6 +40,7 @@ public class InsertFeedbackDial extends Dialog {
     private Context context;
     private View view;
     private OnSendCommonClickListener sendCommonClickListener;
+    private String remark;
 
     public InsertFeedbackDial(@NonNull Context context) {
         super(context, R.style.MyDialogStyle);
@@ -51,9 +52,11 @@ public class InsertFeedbackDial extends Dialog {
         initView();
     }
 
-    public InsertFeedbackDial(@NonNull Context context, @StyleRes int themeResId, OnSendCommonClickListener sendCommonClickListener) {
+    public InsertFeedbackDial(@NonNull Context context, @StyleRes int themeResId, OnSendCommonClickListener sendCommonClickListener
+                                                , String remark) {
         super(context, R.style.MyDialogStyle);
 
+        this.remark = remark;
         this.sendCommonClickListener = sendCommonClickListener;
         this.context = context;
         inflater = LayoutInflater.from(context);
@@ -76,19 +79,20 @@ public class InsertFeedbackDial extends Dialog {
         setCanceledOnTouchOutside(true);
         setCancelable(true);
 
-        /*eidtOutNum.setFocusable(true);
-        eidtOutNum.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        editFeedbackMessage.setFocusable(true);
+        editFeedbackMessage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
             }
         });
 
-        eidtOutNum.setSelection(eidtOutNum.getText().length());*/
+        editFeedbackMessage.setText(remark);
+        editFeedbackMessage.setSelection(editFeedbackMessage.getText().length());
     }
 
     public interface OnSendCommonClickListener {
-        void OnSendCommonClick(int num);
+        void OnSendCommonClick(String num);
     }
 
 
@@ -97,14 +101,14 @@ public class InsertFeedbackDial extends Dialog {
         dismiss();
     }
 
-    /*@OnClick(R.id.true_inset_dialog)
+    @OnClick(R.id.true_inset_dialog)
     void trueAction(View view) {
-        if (StringUtils.isNullOrEmpty(eidtOutNum.getText().toString())) {
-            Toast.makeText(context, "请确认数量？", Toast.LENGTH_SHORT).show();
+        if (StringUtils.isNullOrEmpty(editFeedbackMessage.getText().toString())) {
+            Toast.makeText(context, "填写反馈？", Toast.LENGTH_SHORT).show();
             return;
         }
-        sendCommonClickListener.OnSendCommonClick(Integer.parseInt(eidtOutNum.getText().toString()));
-        eidtOutNum.setText(null);
+        sendCommonClickListener.OnSendCommonClick(editFeedbackMessage.getText().toString());
+        editFeedbackMessage.setText(null);
         dismiss();
-    }*/
+    }
 }

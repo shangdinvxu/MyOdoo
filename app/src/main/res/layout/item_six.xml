@@ -1,23 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:orientation="horizontal"
-    android:paddingLeft="25dp">
-    <ImageView
-        android:id="@+id/iv_arrow"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="5dp"
-        android:src="@mipmap/arrow_down" />
+    android:layout_marginLeft="100dp">
+
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="0dp"
         android:layout_weight="3"
         android:layout_height="match_parent"
         android:layout_marginLeft="10dp"
-        android:textSize="12sp"
+        android:textSize="11sp"
         android:gravity="center_vertical|left"/>
     <TextView
         android:id="@+id/tv_gongxu"
@@ -25,14 +18,14 @@
         android:layout_weight="3"
         android:layout_height="match_parent"
         android:layout_marginLeft="10dp"
-        android:textSize="11sp"
+        android:textSize="10sp"
         android:gravity="center_vertical|left"/>
     <TextView
         android:id="@+id/tv_process_id"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_marginLeft="10dp"
         android:layout_height="match_parent"
-        android:textSize="11sp"
-        android:gravity="center"/>
+        android:layout_marginLeft="10dp"
+        android:gravity="center"
+        android:textSize="10sp"/>
 </LinearLayout>

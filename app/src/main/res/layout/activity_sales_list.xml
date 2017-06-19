@@ -23,7 +23,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
-            android:layout_weight="5"
+            android:layout_weight="2"
             android:gravity="center"
             android:text="客户"
             android:textSize="12sp" />
@@ -33,7 +33,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
-            android:layout_weight="5"
+            android:layout_weight="2"
             android:gravity="center"
             android:text="库存可用性"
             android:textSize="12sp" />
@@ -43,7 +43,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
-            android:layout_weight="5"
+            android:layout_weight="1"
             android:gravity="center"
             android:textSize="12sp" />
 
@@ -52,13 +52,33 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
-            android:layout_weight="5"
+            android:layout_weight="1"
             android:gravity="center"
             android:text="预留"
             android:textSize="12sp" />
     </LinearLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipeToLoad">
+        <tarce.myodoo.uiutil.RecyclerHeaderView
+            android:id="@+id/swipe_refresh_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </tarce.myodoo.uiutil.RecyclerHeaderView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/swipe_target"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
+        <tarce.myodoo.uiutil.RecyclerFooterView
+            android:id="@+id/swipe_load_more_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </tarce.myodoo.uiutil.RecyclerFooterView>
+    </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
+    <!--<android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -70,7 +90,7 @@
             android:layout_height="match_parent">
         </android.support.v7.widget.RecyclerView>
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>-->
 
 
 </LinearLayout>

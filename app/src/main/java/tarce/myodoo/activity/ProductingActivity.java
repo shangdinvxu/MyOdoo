@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -38,13 +40,16 @@ import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.CheckOutProductBean;
+import tarce.model.inventory.CommonBean;
 import tarce.model.inventory.FinishProductBean;
+import tarce.model.inventory.GetFactroyRemarkBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.StopProductlineBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.OrderDetailAdapter;
 import tarce.myodoo.uiutil.DialogForOrder;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
+import tarce.myodoo.uiutil.InsertFeedbackDial;
 import tarce.myodoo.uiutil.InsertNumDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
@@ -594,6 +599,54 @@ public class ProductingActivity extends ToolBarActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == tarce.support.R.id.action_settings){
+            HashMap<Object, Object> hashMap = new HashMap<>();
+            hashMap.put("order_id", order_id);
+            Call<GetFactroyRemarkBean> factroyRemark = inventoryApi.getFactroyRemark(hashMap);
+            factroyRemark.enqueue(new MyCallback<GetFactroyRemarkBean>() {
+                @Override
+                public void onResponse(Call<GetFactroyRemarkBean> call, Response<GetFactroyRemarkBean> response) {
+                    if (response == null)return;
+                    if (response.body().getResult().getRes_code() == 1){
+                        String remark = response.body().getResult().getRes_data().getFactory_mark();
+                        new InsertFeedbackDial(ProductingActivity.this, R.style.MyDialogStyle, new InsertFeedbackDial.OnSendCommonClickListener() {
+                            @Override
+                            public void OnSendCommonClick(String num) {
+                                HashMap<Object, Object> hashMap = new HashMap<>();
+                                hashMap.put("factory_remark", num);
+                                hashMap.put("order_id", order_id);
+                                Call<CommonBean> objectCall = inventoryApi.updateFactroyRemark(hashMap);
+                                objectCall.enqueue(new MyCallback<CommonBean>() {
+                                    @Override
+                                    public void onResponse(Call<CommonBean> call, Response<CommonBean> response){
+                                        if (response == null)return;
+                                        if (response.body().getResult().getRes_code() == 1){
+                                            ToastUtils.showCommonToast(ProductingActivity.this, "反馈成功");
+                                        }
+                                    }
+                                });
+                            }
+                        }, remark).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<GetFactroyRemarkBean> call, Throwable t) {
+                    super.onFailure(call, t);
+                }
+            });
+        }
+        return super.onOptionsItemSelected(item);
+    }
     @Override
     protected void onPause() {
         resDataBean = null;

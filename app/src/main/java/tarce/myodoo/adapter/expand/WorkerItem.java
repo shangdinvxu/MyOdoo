@@ -24,6 +24,7 @@ public class WorkerItem extends AbstractExpandableAdapterItem {
     private TextView mName;
     private ImageView mArrow;
     private TextView mExpand;
+    private TextView mProcess_id;
 
     @Override
     public void onExpansionToggled(boolean expanded){
@@ -50,6 +51,7 @@ public class WorkerItem extends AbstractExpandableAdapterItem {
         mName = (TextView) root.findViewById(R.id.tv_name);
         mArrow = (ImageView) root.findViewById(R.id.iv_arrow);
         mExpand = (TextView) root.findViewById(R.id.tv_gongxu);
+        mProcess_id = (TextView) root.findViewById(R.id.tv_process_id);
         root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
@@ -76,6 +78,7 @@ public class WorkerItem extends AbstractExpandableAdapterItem {
         BomSubBean employee = (BomSubBean) model;
         mName.setText("["+employee.code+"]"+employee.name);
         mExpand.setText(employee.product_specs);
+        mProcess_id.setText(String.valueOf(employee.process_id));
         ExpandableListItem parentListItem = (ExpandableListItem) model;
         List<?> childItemList = parentListItem.getChildItemList();
         if (childItemList != null && !childItemList.isEmpty()){

@@ -4,8 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.View;
 
+import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
+import com.aspsine.swipetoloadlayout.OnRefreshListener;
+import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.util.HashMap;
@@ -27,6 +31,10 @@ import tarce.model.GetSaleResponse;
 import tarce.model.inventory.SalesOutListResponse;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.SalesListAdapter;
+import tarce.myodoo.adapter.product.PickingDetailAdapter;
+import tarce.myodoo.uiutil.RecyclerFooterView;
+import tarce.myodoo.uiutil.RecyclerHeaderView;
+import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
 /**
@@ -34,16 +42,25 @@ import tarce.support.ToolBarActivity;
  */
 
 public class SalesListActivity extends ToolBarActivity {
-    @InjectView(R.id.recyclerview)
-    RecyclerView recyclerview;
-    @InjectView(R.id.swipeLayout)
-    SwipeRefreshLayout swipeLayout;
+    private static final int Refresh_Move = 1;//下拉动作
+    private static final int Load_Move = 2;//上拉动作
+
+    @InjectView(R.id.swipe_refresh_header)
+    RecyclerHeaderView swipeRefreshHeader;
+    @InjectView(R.id.swipe_target)
+    RecyclerView swipeTarget;
+    @InjectView(R.id.swipe_load_more_footer)
+    RecyclerFooterView swipeLoadMoreFooter;
+    @InjectView(R.id.swipeToLoad)
+    SwipeToLoadLayout swipeToLoad;
     private SalesListAdapter salesListAdapter;
     private InventoryApi inventoryApi;
     private int count;
     private String state;
     private int complete_rate;
     private List<SalesOutListResponse.TResult.TRes_data> res_data;
+    private List<SalesOutListResponse.TResult.TRes_data> dataBeanList;
+    private int loadTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,31 +68,72 @@ public class SalesListActivity extends ToolBarActivity {
         setContentView(R.layout.activity_sales_list);
         ButterKnife.inject(this);
         inventoryApi = RetrofitClient.getInstance(SalesListActivity.this).create(InventoryApi.class);
-        setRecyclerview(recyclerview);
+        setRecyclerview(swipeTarget);
         showDefultProgressDialog();
-        initIntent();
-        initListener();
-    }
-
-    private void initIntent() {
         Intent intent = getIntent();
         state = intent.getStringExtra("state");
         complete_rate = intent.getIntExtra("complete_rate", 1000);
+        initIntent(0,40, Refresh_Move);
+        initrecycler();
+    }
+
+    private void initrecycler() {
+        swipeRefreshHeader.setGravity(Gravity.CENTER);
+        swipeLoadMoreFooter.setGravity(Gravity.CENTER);
+        swipeToLoad.setRefreshHeaderView(swipeRefreshHeader);
+        swipeToLoad.setLoadMoreFooterView(swipeLoadMoreFooter);
+        swipeToLoad.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initIntent(0,40, Refresh_Move);
+                salesListAdapter.notifyDataSetChanged();
+                swipeToLoad.setRefreshing(false);
+            }
+        });
+        swipeToLoad.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore() {
+                swipeToLoad.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadTime++;
+                        initIntent(40*loadTime, 40, Load_Move);
+                        salesListAdapter.notifyDataSetChanged();
+                        swipeToLoad.setLoadingMore(false);
+                    }
+                }, 1000);
+            }
+        });
+    }
+
+    private void initIntent(int offset, int limit, final int move) {
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("complete_rate", complete_rate);
-        objectObjectHashMap.put("limit", 40);
-        objectObjectHashMap.put("offset", 0);
+        objectObjectHashMap.put("limit", limit);
+        objectObjectHashMap.put("offset", offset);
         objectObjectHashMap.put("state", state);
         Call<SalesOutListResponse> inComingOutgoingList = inventoryApi.getOutgoingStockpickingList(objectObjectHashMap);
         inComingOutgoingList.enqueue(new MyCallback<SalesOutListResponse>() {
             @Override
             public void onResponse(Call<SalesOutListResponse> call, Response<SalesOutListResponse> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null)return;
-                if (response.body().getResult().getRes_code() == 1){
+                if (response.body() == null) return;
+                if (response.body().getResult().getRes_code() == 1) {
                     res_data = response.body().getResult().getRes_data();
-                    salesListAdapter = new SalesListAdapter(R.layout.activity_saleslist_adapter_item, res_data);
-                    recyclerview.setAdapter(salesListAdapter);
+                    if (move == Refresh_Move){
+                        dataBeanList = res_data;
+                        salesListAdapter = new SalesListAdapter(R.layout.activity_saleslist_adapter_item, res_data);
+                        swipeTarget.setAdapter(salesListAdapter);
+                    }else {
+                        if (res_data == null){
+                            ToastUtils.showCommonToast(SalesListActivity.this, "没有更多数据...");
+                            return;
+                        }
+                        dataBeanList = salesListAdapter.getData();
+                        dataBeanList.addAll(res_data);
+                        salesListAdapter.setData(dataBeanList);
+                    }
+                    initListener();
                 }
             }
 
@@ -114,35 +172,5 @@ public class SalesListActivity extends ToolBarActivity {
                 });
             }
         });
-
-        swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Observable.timer(1000, TimeUnit.MILLISECONDS)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Action1<Long>() {
-                            @Override
-                            public void call(Long aLong) {
-                                swipeLayout.setRefreshing(false);
-                            }
-                        });
-            }
-        });
-
-        salesListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
-            @Override
-            public void onLoadMoreRequested() {
-                if (salesListAdapter.getData().size()>=count){
-                    salesListAdapter.loadMoreEnd();
-                }else {
-
-
-                }
-            }
-        },recyclerview);
-
-
-
     }
 }

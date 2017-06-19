@@ -165,7 +165,7 @@ public class InspectMoDetailActivity extends ToolBarActivity {
     }
 
     private void initView() {
-        setTitle(dataBean.getProduction_id().getDisplay_name());
+        setTitle(String.valueOf(dataBean.getProduction_id().getDisplay_name()));
         switch (dataBean.getState()) {
             case "draft":
                 stateInspectDetail.setText("等待品检");
@@ -401,7 +401,7 @@ public class InspectMoDetailActivity extends ToolBarActivity {
     @OnClick(R.id.tv_look_bom)
     void lookBom(View view) {
         Intent intent = new Intent(InspectMoDetailActivity.this, BomFramworkActivity.class);
-        intent.putExtra("order_id", dataBean.getProduction_id().getOrder_id());
+        intent.putExtra("order_id", (int)dataBean.getProduction_id().getOrder_id());
         startActivity(intent);
     }
 

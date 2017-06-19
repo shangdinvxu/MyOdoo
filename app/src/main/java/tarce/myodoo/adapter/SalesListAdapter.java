@@ -13,8 +13,19 @@ import tarce.myodoo.R;
  */
 
 public class SalesListAdapter extends BaseQuickAdapter<SalesOutListResponse.TResult.TRes_data,BaseViewHolder> {
+    @Override
+    public List<SalesOutListResponse.TResult.TRes_data> getData() {
+        return data;
+    }
+
+    public void setData(List<SalesOutListResponse.TResult.TRes_data> data) {
+        this.data = data;
+    }
+
+    private List<SalesOutListResponse.TResult.TRes_data> data;
     public SalesListAdapter(int layoutResId, List<SalesOutListResponse.TResult.TRes_data> data) {
         super(layoutResId, data);
+        this.data = data;
     }
 
     @Override

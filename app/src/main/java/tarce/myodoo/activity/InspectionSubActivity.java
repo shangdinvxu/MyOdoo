@@ -54,7 +54,6 @@ public class InspectionSubActivity extends ToolBarActivity {
     private List<QcFeedbaskBean.ResultBean.ResDataBean> res_data = new ArrayList<>();
     private List<QcFeedbaskBean.ResultBean.ResDataBean> for_transform = new ArrayList<>();
     private int loadTime = 0;
-    private int autoRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +71,9 @@ public class InspectionSubActivity extends ToolBarActivity {
 
     @Override
     protected void onResume(){
-        swipeToLoad.setRefreshing(true);
+        if (res_data == null){
+            swipeToLoad.setRefreshing(true);
+        }
         super.onResume();
     }
 

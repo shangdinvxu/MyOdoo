@@ -25,6 +25,7 @@ import tarce.myodoo.adapter.expand.CompanyItem;
 import tarce.myodoo.adapter.expand.DepartmentItem;
 import tarce.myodoo.adapter.expand.EmployeeItem;
 import tarce.myodoo.adapter.expand.LastItem;
+import tarce.myodoo.adapter.expand.SixItem;
 import tarce.myodoo.adapter.expand.WorkerItem;
 import tarce.support.ToolBarActivity;
 
@@ -44,6 +45,7 @@ public class BomFramworkActivity extends ToolBarActivity {
     private final int ITEM_TYPE_EMPLOYEE = 3;
     private final int ITEM_TYPE_WORKER = 4;
     private final int ITEM_TYPE_LAST = 5;
+    private final int ITEM_TYPE_SIX = 6;
     private List<Object> mCompanylist;
 
     @Override
@@ -53,7 +55,7 @@ public class BomFramworkActivity extends ToolBarActivity {
         ButterKnife.inject(this);
 
         setRecyclerview(recyclerRomFramwork);
-        setTitle("查看BOM结构");
+        setTitle("BOM结构");
 
         Intent intent = getIntent();
         order_id = intent.getIntExtra("order_id", 1);
@@ -92,6 +94,8 @@ public class BomFramworkActivity extends ToolBarActivity {
                                     return new WorkerItem();
                                 case ITEM_TYPE_LAST:
                                     return new LastItem();
+                                case ITEM_TYPE_SIX:
+                                    return new SixItem();
                             }
                             return null;
                         }
@@ -108,6 +112,8 @@ public class BomFramworkActivity extends ToolBarActivity {
                                 return ITEM_TYPE_WORKER;
                             else if (t instanceof BomSubBean.BomBottomBean)
                                 return ITEM_TYPE_LAST;
+                            else if (t instanceof BomSubBean.BomBottomBean.SixBomBottomBean)
+                                return ITEM_TYPE_SIX;
                             return -1;
                         }
                     };
@@ -130,33 +136,55 @@ public class BomFramworkActivity extends ToolBarActivity {
         List<BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX> departments = new ArrayList<>();
         for (int i = 0; i < resDataBean.getBom_ids().size(); i++){
             BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX department = new BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX();
-            department.name = resDataBean.getBom_ids().get(i).getName();
-            department.code = resDataBean.getBom_ids().get(i).getCode();
-            department.product_specs = resDataBean.getBom_ids().get(i).getProduct_specs();
-            if (resDataBean.getBom_ids().get(i).getBom_ids().size()>0) {
+            BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX bomIdsBeanX = resDataBean.getBom_ids().get(i);
+            department.name = bomIdsBeanX.getName();
+            department.code = bomIdsBeanX.getCode();
+            department.product_specs = bomIdsBeanX.getProduct_specs();
+            department.process_id = bomIdsBeanX.getProcess_id();
+            if (bomIdsBeanX.getBom_ids().size()>0) {
                 department.setExpanded(false);
                 List<BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean> employeeList = new ArrayList<>();
-                for (int j = 0; j < resDataBean.getBom_ids().get(i).getBom_ids().size(); j++) {
+                for (int j = 0; j < bomIdsBeanX.getBom_ids().size(); j++) {
                     BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean employee = new BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean();
-                    employee.name = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getName();
-                    employee.code = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getCode();
-                    employee.product_specs = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getProduct_specs();
-                    if (resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().size()>0){
+                    BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean bomIdsBean = bomIdsBeanX.getBom_ids().get(j);
+                    employee.name = bomIdsBean.getName();
+                    employee.code = bomIdsBean.getCode();
+                    employee.product_specs = bomIdsBean.getProduct_specs();
+                    employee.process_id = bomIdsBean.getProcess_id();
+                    if (bomIdsBean.getBom_ids().size()>0){
                         employee.setExpanded(false);
                         List<BomSubBean> lastList = new ArrayList<>();
-                        for (int k = 0; k < resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().size(); k++){
+                        for (int k = 0; k < bomIdsBean.getBom_ids().size(); k++){
                             BomSubBean last = new BomSubBean();
-                            last.name = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().get(k).getName();
-                            last.code = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().get(k).getCode();
-                            last.product_specs = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().get(k).getProduct_specs();
-                            if (resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().get(k).getBom_ids().size()>0){
+                            BomSubBean bomSubBean = bomIdsBean.getBom_ids().get(k);
+                            last.name = bomSubBean.getName();
+                            last.code = bomSubBean.getCode();
+                            last.product_specs = bomSubBean.getProduct_specs();
+                            last.process_id = bomSubBean.getProcess_id();
+                            if (bomSubBean.getBom_ids().size()>0){
                                 last.setExpanded(false);
                                 List<BomSubBean.BomBottomBean> bottomBeanList = new ArrayList<>();
-                                for (int l = 0; l < resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().get(k).getBom_ids().size(); l++) {
+                                for (int l = 0; l < bomSubBean.getBom_ids().size(); l++) {
                                     BomSubBean.BomBottomBean bottomBean = new BomSubBean.BomBottomBean();
-                                    bottomBean.name = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().get(k).getBom_ids().get(l).getName();
-                                    bottomBean.code = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().get(k).getBom_ids().get(l).getCode();
-                                    bottomBean.product_specs = resDataBean.getBom_ids().get(i).getBom_ids().get(j).getBom_ids().get(k).getBom_ids().get(l).getProduct_specs();
+                                    BomSubBean.BomBottomBean bottomBean1 = bomSubBean.getBom_ids().get(l);
+                                    bottomBean.name = bottomBean1.getName();
+                                    bottomBean.code = bottomBean1.getCode();
+                                    bottomBean.product_specs = bottomBean1.getProduct_specs();
+                                    bottomBean.process_id = bottomBean1.getProcess_id();
+                                    if (bottomBean1.getBom_ids().size()>0){
+                                        bottomBean.setExpanded(false);
+                                        List<BomSubBean.BomBottomBean.SixBomBottomBean> sixBomBottomBeen = new ArrayList<>();
+                                        for (int m = 0; m < bottomBean1.getBom_ids().size(); m++) {
+                                            BomSubBean.BomBottomBean.SixBomBottomBean bean = new BomSubBean.BomBottomBean.SixBomBottomBean();
+                                            BomSubBean.BomBottomBean.SixBomBottomBean bean1 = bottomBean1.getBom_ids().get(m);
+                                            bean.name = bean1.getName();
+                                            bean.code = bean1.getCode();
+                                            bean.product_specs = bean1.getProduct_specs();
+                                            bean.process_id = bean1.getProcess_id();
+                                            sixBomBottomBeen.add(bean);
+                                        }
+                                        bottomBean.bom_ids = sixBomBottomBeen;
+                                    }
                                     bottomBeanList.add(bottomBean);
                                 }
                                 last.bom_ids = bottomBeanList;

@@ -1,5 +1,7 @@
 package tarce.model.inventory;
 
+import com.google.zxing.common.StringUtils;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -194,31 +196,41 @@ public class QcFeedbaskBean {
             }
 
             public static class ProductionIdBean implements Serializable{
+                public Object getOrder_id() {
+                    if (order_id instanceof Boolean){
+                        order_id = 0;
+                    }else if (order_id instanceof Double){
+                        order_id = new Double((Double) order_id).intValue();
+                    }
+                    return order_id;
+                }
+
+                public void setOrder_id(Object order_id) {
+                    this.order_id = order_id;
+                }
+
+                public Object getDisplay_name() {
+                    if (display_name instanceof Boolean){
+                        display_name = "";
+                    }
+                    return display_name;
+                }
+
+                public void setDisplay_name(Object display_name) {
+                    this.display_name = display_name;
+                }
+
                 /**
                  * order_id : 43156
                  * display_name : MO170507258
                  * product_id : {"product_id":49921,"product_name":"W150成品(RT通用+中文3C贴纸)-RT-CN"}
                  */
 
-                private int order_id;
-                private String display_name;
+                private Object order_id;
+                private Object display_name;
                 private ProductIdBean product_id;
 
-                public int getOrder_id() {
-                    return order_id;
-                }
 
-                public void setOrder_id(int order_id) {
-                    this.order_id = order_id;
-                }
-
-                public String getDisplay_name() {
-                    return display_name;
-                }
-
-                public void setDisplay_name(String display_name) {
-                    this.display_name = display_name;
-                }
 
                 public ProductIdBean getProduct_id() {
                     return product_id;
@@ -229,29 +241,37 @@ public class QcFeedbaskBean {
                 }
 
                 public static class ProductIdBean implements Serializable{
+                    public Object getProduct_id() {
+                        if (product_id instanceof Boolean){
+                            product_id = 0;
+                        }
+                        return product_id;
+                    }
+
+                    public void setProduct_id(Object product_id) {
+                        this.product_id = product_id;
+                    }
+
+                    public Object getProduct_name() {
+                        if (product_name instanceof Boolean){
+                            product_name = "";
+                        }
+                        return product_name;
+                    }
+
+                    public void setProduct_name(Object product_name) {
+                        this.product_name = product_name;
+                    }
+
                     /**
                      * product_id : 49921
                      * product_name : W150成品(RT通用+中文3C贴纸)-RT-CN
                      */
 
-                    private int product_id;
-                    private String product_name;
+                    private Object product_id;
+                    private Object product_name;
 
-                    public int getProduct_id() {
-                        return product_id;
-                    }
 
-                    public void setProduct_id(int product_id) {
-                        this.product_id = product_id;
-                    }
-
-                    public String getProduct_name() {
-                        return product_name;
-                    }
-
-                    public void setProduct_name(String product_name) {
-                        this.product_name = product_name;
-                    }
                 }
             }
         }
