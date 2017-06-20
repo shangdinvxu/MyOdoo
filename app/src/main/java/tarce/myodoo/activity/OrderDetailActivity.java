@@ -194,13 +194,6 @@ public class OrderDetailActivity extends ToolBarActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == tarce.support.R.id.action_settings){
             HashMap<Object, Object> hashMap = new HashMap<>();
@@ -238,6 +231,24 @@ public class OrderDetailActivity extends ToolBarActivity {
                     super.onFailure(call, t);
                 }
             });
+        }else if (item.getItemId() == tarce.support.R.id.action_print){
+            AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否确认打印？\n(请尽量避免订单重复打印)")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            initDevice();
+                            printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+                            printer.init();
+                            printer.print("\n\nMO单号："+order_name+"\n\n"+"产品: " + tvNameProduct.getText() + "\n\n" + "时间： " + tvTimeProduct.getText() + "\n\n" +
+                                    "负责人: " + tvReworkProduct.getText() + "\n\n" + "生产数量：" + tvNumProduct.getText() + "\n\n" + "需求数量：" + tvNeedNum.getText()
+                                    + "\n\n" + "规格：" + tvStringGuige.getText() + "\n\n" + "工序：" + tvGongxuProduct.getText() + "\n\n" + "类型：" + tvTypeProduct.getText()
+                                    + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+"\n\n", 30, TimeUnit.SECONDS);
+                            Bitmap mBitmap = CodeUtils.createImage(order_name, 300, 300, null);
+                            printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+                            printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+                        }
+                    })
+                    .show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -642,21 +653,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                                             dismissDefultProgressDialog();
                                             if (response.body() == null) return;
                                             if (response.body().getResult().getRes_code() == 1) {
-                                                showDefultProgressDialog();
-                                                initDevice();
-                                                printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
-                                                printer.init();
-
-                                                printer.print("MO单号："+order_name+"\n\n"+"产品: " + tvNameProduct.getText() + "\n\n" + "时间： " + tvTimeProduct.getText() + "\n\n" +
-                                                        "负责人: " + tvReworkProduct.getText() + "\n\n" + "生产数量：" + tvNumProduct.getText() + "\n\n" + "需求数量：" + tvNeedNum.getText()
-                                                        + "\n\n" + "规格：" + tvStringGuige.getText() + "\n\n" + "工序：" + tvGongxuProduct.getText() + "\n\n" + "类型：" + tvTypeProduct.getText()
-                                                        + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+ "\n\n", 30, TimeUnit.SECONDS);
-                                                Bitmap mBitmap = CodeUtils.createImage(order_name, 300, 300, null);
-                                                printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
-                                                printer.print("\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
-
-                                                dismissDefultProgressDialog();
-
                                                 resDataBean = response.body().getResult().getRes_data();
                                                 initView();
                                                 stateView("already_picking");

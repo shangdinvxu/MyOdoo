@@ -1,14 +1,16 @@
 package tarce.myodoo.activity;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.util.TimeUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
@@ -24,12 +26,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.uuzuche.lib_zxing.activity.CaptureFragment;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,13 +51,15 @@ import tarce.model.GetSaleResponse;
 import tarce.model.inventory.DoUnreservBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.SalesDetailAdapter;
+import tarce.myodoo.uiutil.DialogIsSave;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
+import tarce.myodoo.uiutil.ImageUtil;
 import tarce.myodoo.utils.StringUtils;
-import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
 import tarce.support.AvatarHelper;
 import tarce.support.BitmapUtils;
 import tarce.support.MyLog;
+import tarce.support.TimeUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 import tarce.support.ViewUtils;
@@ -94,32 +100,28 @@ public class SalesDetailActivity extends ToolBarActivity {
     Button buttomButton3;
     @InjectView(R.id.buttom_button4)
     Button buttomButton4;
+    @InjectView(R.id.print_tv)
+    TextView C;
     private SalesDetailAdapter salesDetailAdapter;
     private boolean isShowCamera = true;
     private InventoryApi inventoryApi;
     private GetSaleResponse.TResult.TRes_data bundle1;
-    // 修改头像的临时文件存放路径（头像修改成功后，会自动删除之）
-    private String __tempImageFileLocation = null;
+    private String imgPath;//图片拍照照片的本地路径
+    private String imgName;//后缀名
+    private String selectedImagePath = "";
     /**
      * 回调常量之：拍照
      */
-    private static final int TAKE_BIG_PICTURE = 991;
-    /**
-     * 回调常量之：拍照后裁剪
-     */
-    private static final int CROP_BIG_PICTURE = 993;
-//	/** 回调常量之：从相册中选取 */
-//	private static final int CHOOSE_BIG_PICTURE = 995;
-    /**
-     * 回调常量之：从相册中选取2
-     */
-    private static final int CHOOSE_BIG_PICTURE2 = 996;
+    private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;//拍照
+    private String saleName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sales_detial);
         ButterKnife.inject(this);
+        topImageview.setFocusableInTouchMode(true);
+        topImageview.requestFocus();
         inventoryApi = RetrofitClient.getInstance(SalesDetailActivity.this).create(InventoryApi.class);
         recyclerview.setLayoutManager(new FullyLinearLayoutManager(SalesDetailActivity.this));
         recyclerview.addItemDecoration(new DividerItemDecoration(SalesDetailActivity.this,
@@ -131,12 +133,14 @@ public class SalesDetailActivity extends ToolBarActivity {
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("intent");
         bundle1 = (GetSaleResponse.TResult.TRes_data) bundle.getSerializable("bundle");
+        saleName = bundle1.getName();
+        setTitle(saleName);
         refreshView(bundle1);
     }
 
     private void refreshView(GetSaleResponse.TResult.TRes_data bundle1) {
         partner.setText(bundle1.getParnter_id());
-        time.setText(tarce.support.TimeUtils.utc2Local(bundle1.getMin_date()));
+        time.setText(TimeUtils.utc2Local(bundle1.getMin_date()));
         states.setText(StringUtils.switchString(bundle1.getState()));
         originDocuments.setText(bundle1.getOrigin());
         salesOut.setText(StringUtils.switchString(bundle1.getDelivery_rule()));
@@ -158,15 +162,17 @@ public class SalesDetailActivity extends ToolBarActivity {
     }
 
     private void dismissCamera() {
-   //     cameraImageview.setVisibility(View.GONE);
+        //     cameraImageview.setVisibility(View.GONE);
         isShowCamera = true;
+        framelayout.setVisibility(View.GONE);
         ViewUtils.ViewRotate(topImageview, 0);
     }
 
     private void showCamera() {
         isShowCamera = false;
         initFragment();
-    //    cameraImageview.setVisibility(View.VISIBLE);
+        framelayout.setVisibility(View.VISIBLE);
+        //    cameraImageview.setVisibility(View.VISIBLE);
         ViewUtils.ViewRotate(topImageview, 180);
     }
 
@@ -183,6 +189,7 @@ public class SalesDetailActivity extends ToolBarActivity {
                 Integer qty = qty_available >= product_qty ? product_qty : qty_available;
                 editText.setText(qty + "");
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                editText.setSelection(editText.getText().length());
                 AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(SalesDetailActivity.this, "输入" + obj.getProduct_id().getName() + "完成数量");
                 dialog.setView(editText)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -308,7 +315,7 @@ public class SalesDetailActivity extends ToolBarActivity {
                                         //开始备货
                                         refreshButtom("备货完成");
                                         initListener();
-                                        showCamera();
+                                       // showCamera();
                                     }
                                 }).show();
                     }
@@ -334,9 +341,10 @@ public class SalesDetailActivity extends ToolBarActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         //进入拍照
-                                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);//action is capture
-                                        intent.putExtra(MediaStore.EXTRA_OUTPUT, getTempImageFileUri());
-                                        startActivityForResult(intent, TAKE_BIG_PICTURE);
+                                        imgName = "photo.jpg";
+                                        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                        intent.putExtra(MediaStore.EXTRA_OUTPUT, setImageUri());
+                                        startActivityForResult(intent, REQUEST_CODE_IMAGE_CAPTURE);
                                     }
                                 }).show();
                     }
@@ -364,22 +372,42 @@ public class SalesDetailActivity extends ToolBarActivity {
                                         List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> data = salesDetailAdapter.getData();
                                         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
                                         bundle1.setPack_operation_product_ids(data);
-                                        objectObjectHashMap.put("state", "process");
-                                        objectObjectHashMap.put("picking_id", bundle1.getPicking_id());
-                                        objectObjectHashMap.put("pack_operation_product_ids", data);
-                                        objectObjectHashMap.put("qc_img", bundle1.getQc_img());
-                                        objectObjectHashMap.put("qc_note", "yes");
+                                        boolean threeOrFive = false;
+                                        for (int i = 0; i < data.size(); i++) {
+                                            if (data.get(i).getQty_done() > 0) {
+                                                threeOrFive = false;
+                                            } else {
+                                                threeOrFive = true;
+                                                break;
+                                            }
+                                        }
+                                        if (threeOrFive) {
+                                            objectObjectHashMap.put("state", "process");
+                                            objectObjectHashMap.put("picking_id", bundle1.getPicking_id());
+                                            objectObjectHashMap.put("pack_operation_product_ids", data);
+                                        } else {
+                                            objectObjectHashMap.put("state", "process");
+                                            objectObjectHashMap.put("picking_id", bundle1.getPicking_id());
+                                            objectObjectHashMap.put("pack_operation_product_ids", data);
+                                            objectObjectHashMap.put("qc_img", bundle1.getQc_img());
+                                            objectObjectHashMap.put("qc_note", "yes");
+                                        }
                                         Call<GetSaleResponse> getSaleResponseCall = inventoryApi.changeStockPicking(objectObjectHashMap);
                                         showDefultProgressDialog();
                                         getSaleResponseCall.enqueue(new Callback<GetSaleResponse>() {
                                             @Override
                                             public void onResponse(Call<GetSaleResponse> call, Response<GetSaleResponse> response) {
                                                 dismissDefultProgressDialog();
+                                                if (response.body() == null)return;
+                                                if (response.body().getError() != null){
+                                                    ToastUtils.showCommonToast(SalesDetailActivity.this, response.body().getError().getMessage());
+                                                    return;
+                                                }
                                                 if (response.body().getResult().getRes_code() == 1) {
                                                     bundle1 = response.body().getResult().getRes_data();
                                                     refreshView(bundle1);
                                                     refreshButtom("补拍物流信息");
-                                                } else {
+                                                } else if (response.body().getResult().getRes_code() == -1) {
                                                     ToastUtils.showCommonToast(SalesDetailActivity.this, response.body().getResult().getRes_data().getError() + "");
                                                 }
                                             }
@@ -409,9 +437,10 @@ public class SalesDetailActivity extends ToolBarActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //进入拍照
-                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);//action is capture
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT, getTempImageFileUri());
-                                startActivityForResult(intent, TAKE_BIG_PICTURE);
+                                imgName = "photo.jpg";
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, setImageUri());
+                                startActivityForResult(intent, REQUEST_CODE_IMAGE_CAPTURE);
                             }
                         }).show();
 
@@ -423,100 +452,73 @@ public class SalesDetailActivity extends ToolBarActivity {
                 break;
         }
     }
+    public Uri setImageUri() {
+        // Store image in dcim
+        File file = new File(Environment.getExternalStorageDirectory() + "/DCIM/", "image" + new Date().getTime() + ".png");
+        Uri imgUri = Uri.fromFile(file);
+        this.imgPath = file.getAbsolutePath();
+        return imgUri;
+    }
 
+    public String getImagePath() {
+        return imgPath;
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        final Uri imagePhotoUri = getTempImageFileUri();
-        switch (requestCode) {
-            case TAKE_BIG_PICTURE:// 拍照完成则新拍的文件将会存放于指定的位置（即uri、tempImaheLocation所表示的地方）
-            {
-                if (resultCode == RESULT_OK) {
-                    //从相机拍摄保存的Uri中取出图片，调用系统剪裁工具
-                    if (imagePhotoUri != null) {
-                        String bitmapString = null;
-                        try {
-                            Bitmap bitmapFormUri = BitmapUtils.getBitmapFormUri(SalesDetailActivity.this, imagePhotoUri);
-                            bitmapString = BitmapUtils.bitmapToBase64(bitmapFormUri);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        if (bitmapString != null) {
-                            HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-                            objectObjectHashMap.put("state", "process");
-                            objectObjectHashMap.put("picking_id", bundle1.getPicking_id());
-                            objectObjectHashMap.put("pack_operation_product_ids", bundle1.getPack_operation_product_ids());
-                            objectObjectHashMap.put("qc_note", bundle1.getQc_note());
-                            objectObjectHashMap.put("qc_img", bitmapString);
-                            Call<GetSaleResponse> getSaleResponseCall = inventoryApi.changeStockPicking(objectObjectHashMap);
-                            showDefultProgressDialog();
-                            getSaleResponseCall.enqueue(new Callback<GetSaleResponse>() {
-                                @Override
-                                public void onResponse(Call<GetSaleResponse> call, Response<GetSaleResponse> response) {
-                                    dismissDefultProgressDialog();
-
-                                }
-
-                                @Override
-                                public void onFailure(Call<GetSaleResponse> call, Throwable t) {
-                                    dismissDefultProgressDialog();
-
-                                }
-                            });
+        if (resultCode != Activity.RESULT_CANCELED) {
+            if (requestCode == REQUEST_CODE_IMAGE_CAPTURE) {
+                selectedImagePath = getImagePath();
+                if (!StringUtils.isNullOrEmpty(selectedImagePath)) {
+                    HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+                    objectObjectHashMap.put("state", "upload_img");
+                    objectObjectHashMap.put("picking_id", bundle1.getPicking_id());
+                    objectObjectHashMap.put("pack_operation_product_ids", bundle1.getPack_operation_product_ids());
+                    objectObjectHashMap.put("qc_note", bundle1.getQc_note());
+                    objectObjectHashMap.put("qc_img", BitmapUtils.bitmapToBase64(ImageUtil.decodeFile(selectedImagePath)));
+                    Call<GetSaleResponse> getSaleResponseCall = inventoryApi.changeStockPicking(objectObjectHashMap);
+                    showDefultProgressDialog();
+                    getSaleResponseCall.enqueue(new Callback<GetSaleResponse>() {
+                        @Override
+                        public void onResponse(Call<GetSaleResponse> call, Response<GetSaleResponse> response) {
+                            dismissDefultProgressDialog();
+                            if (response.body() == null)return;
+                            if (response.body().getResult().getRes_code() == 1){
+                                ToastUtils.showCommonToast(SalesDetailActivity.this, "物流信息上传成功");
+                                finish();
+                            }
                         }
 
-                    }
+                        @Override
+                        public void onFailure(Call<GetSaleResponse> call, Throwable t) {
+                            dismissDefultProgressDialog();
+
+                        }
+                    });
                 }
-                break;
+            } else {
+                super.onActivityResult(requestCode, resultCode, data);
             }
         }
-    }
-
-    /**
-     * 获得临时文件存放地址的Uri(此地址存在与否并不代表该文件一定存在哦).
-     *
-     * @return 正常获得uri则返回，否则返回null
-     */
-    private Uri getTempImageFileUri() {
-        String tempImageFileLocation = getTempImageFileLocation();
-        if (tempImageFileLocation != null) {
-            return Uri.parse("file://" + tempImageFileLocation);
-        }
-        return null;
-    }
-
-    /**
-     * 获得临时文件存放地址(此地址存在与否并不代表该文件一定存在哦).
-     *
-     * @return 正常获得则返回，否则返回null
-     */
-    private String getTempImageFileLocation() {
-        try {
-            if (__tempImageFileLocation == null) {
-                String avatarTempDirStr = AvatarHelper.getUserAvatarSavedDir(SalesDetailActivity.this);
-                File avatarTempDir = new File(avatarTempDirStr);
-                if (avatarTempDir != null) {
-                    // 目录不存在则新建之
-                    if (!avatarTempDir.exists())
-                        avatarTempDir.mkdirs();
-                    // 临时文件名
-                    __tempImageFileLocation = avatarTempDir.getAbsolutePath() + "/" + "local_avatar_temp.jpg";
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, "【ChangeAvatar】读取本地用户的头像临时存储路径时出错了，" + e.getMessage(), e);
-        }
-
-        Log.d(TAG, "【ChangeAvatar】正在获取本地用户的头像临时存储路径：" + __tempImageFileLocation);
-
-        return __tempImageFileLocation;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // TODO Auto-generated method stub
         if (item.getItemId() == android.R.id.home) {
+            new DialogIsSave(SalesDetailActivity.this)
+                    .setSave(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    }).setNotSave(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                }
+            }).setCancel().show();
             cacelReserver();
             return true;
         }

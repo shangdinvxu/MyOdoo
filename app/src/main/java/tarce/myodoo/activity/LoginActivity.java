@@ -97,8 +97,10 @@ public class LoginActivity extends Activity {
         checkOutoLogin();
         initEmailAdapter();
         initListener();
+        httpUrl.setSelection(httpUrl.getText().length());
     }
 
+    //取出用户名检索
     private void initEmailAdapter() {
         email.setThreshold(1);
         userLogins = new UserLoginUtils().searchAll();
@@ -157,7 +159,13 @@ public class LoginActivity extends Activity {
             ToastUtils.showCommonToast(LoginActivity.this, "请输入url地址");
             return;
         }
-        String URL = httpUrl.getText().toString();
+        String URL;
+        if (!httpUrl.getText().toString().contains("http://")){
+            URL = "http://"+httpUrl.getText().toString();
+            httpUrl.setText(URL);
+        }else {
+            URL = httpUrl.getText().toString();
+        }
         RetrofitClient.Url = URL ;
         loginApi = RetrofitClient.getInstance(LoginActivity.this).create(LoginApi.class);
         final AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
@@ -177,9 +185,7 @@ public class LoginActivity extends Activity {
                                 if (progressDialog!=null&&progressDialog.isShowing()){
                                     progressDialog.dismiss();
                                 }
-
                             }
-
                             @Override
                             public void onError(Throwable e) {
                                 MyLog.e(TAG, e.toString());
@@ -236,7 +242,6 @@ public class LoginActivity extends Activity {
                 }
                 if (response.body().getResult().getRes_code() == 1){
                     UserManager.getSingleton().setUserInfoBean(response.body());//单例存储
-                   // UserManager.getSingleton().reFreshUserInfo(response.body());//单例存储
                     final int user_id = response.body().getResult().getRes_data().getUser_id();
                     MyApplication.userID = user_id ;
                     SharePreferenceUtils.putInt("user_id", user_id, LoginActivity.this);

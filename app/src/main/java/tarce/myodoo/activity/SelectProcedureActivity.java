@@ -165,7 +165,6 @@ public class SelectProcedureActivity extends ToolBarActivity {
 
                 }
             }
-
             @Override
             public void onFailure(Call<GetProcessBean> call, Throwable t) {
                 AlertAialogUtils.dismissDefultProgressDialog();

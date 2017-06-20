@@ -270,8 +270,6 @@ public class QcFeedbaskBean {
 
                     private Object product_id;
                     private Object product_name;
-
-
                 }
             }
         }

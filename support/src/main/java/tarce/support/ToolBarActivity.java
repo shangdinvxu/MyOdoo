@@ -7,7 +7,9 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
+
 
 /**
  * Created by Daniel.Xu on 2017/4/20.
@@ -25,7 +27,12 @@ public abstract class ToolBarActivity extends AppCompatActivity {
 
     }
 
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
     public void setRecyclerview(RecyclerView recyclerview){
         recyclerview.setLayoutManager(new LinearLayoutManager(ToolBarActivity.this));
@@ -72,5 +79,11 @@ public abstract class ToolBarActivity extends AppCompatActivity {
             return true ;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dismissDefultProgressDialog();
     }
 }

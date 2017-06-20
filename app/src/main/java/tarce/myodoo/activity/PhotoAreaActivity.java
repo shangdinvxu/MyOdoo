@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,6 +25,14 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.newland.me.ConnUtils;
+import com.newland.me.DeviceManager;
+import com.newland.mtype.ConnectionCloseEvent;
+import com.newland.mtype.ModuleType;
+import com.newland.mtype.event.DeviceEventListener;
+import com.newland.mtype.module.common.printer.Printer;
+import com.newland.mtypex.nseries.NSConnV100ConnParams;
+import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,6 +40,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -48,6 +59,8 @@ import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.uiutil.ImageUtil;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
+import tarce.support.MyLog;
+import tarce.support.TimeUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 import tarce.support.ViewUtils;
@@ -59,7 +72,7 @@ import tarce.support.BitmapUtils;
  */
 
 public class PhotoAreaActivity extends ToolBarActivity {
-
+    private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     @InjectView(R.id.tv_one)
     TextView tvOne;
     @InjectView(R.id.tv_take_photo)
@@ -76,7 +89,8 @@ public class PhotoAreaActivity extends ToolBarActivity {
     TextView tvFinishOrder;
     private InventoryApi inventoryApi;
     private AreaMessageAdapter adapter;
-    private List<AreaMessageBean.ResultBean.ResDataBean> res_data = new ArrayList<>();;
+    private List<AreaMessageBean.ResultBean.ResDataBean> res_data = new ArrayList<>();
+    ;
     private String selectedImagePath = "";
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;//拍照
 
@@ -90,6 +104,9 @@ public class PhotoAreaActivity extends ToolBarActivity {
     private int process_id;
     private boolean change;
     private OrderDetailBean.ResultBean.ResDataBean resDataBean;
+    private Printer printer;
+    private DeviceManager deviceManager;
+    private String typeString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,10 +122,18 @@ public class PhotoAreaActivity extends ToolBarActivity {
         process_id = intent.getIntExtra("process_id", 1);
         change = intent.getBooleanExtra("change", true);
         resDataBean = (OrderDetailBean.ResultBean.ResDataBean) intent.getSerializableExtra("bean");
-        if (change){
+        if (change) {
             tvFinishOrder.setText("提交产品位置信息");
         }
         setTitle("物料位置信息");
+        switch (resDataBean.getProduction_order_type()) {
+            case "stockup":
+                typeString = "备货制";
+                break;
+            case "ordering":
+                typeString = "订单制";
+                break;
+        }
         // setRecyclerview(recyclerArea);
         recyclerArea.setLayoutManager(new LinearLayoutManager(PhotoAreaActivity.this));
         recyclerArea.addItemDecoration(new DividerItemDecoration(PhotoAreaActivity.this,
@@ -133,11 +158,11 @@ public class PhotoAreaActivity extends ToolBarActivity {
                         @Override
                         public void onResponse(Call<AreaMessageBean> call, Response<AreaMessageBean> response) {
                             if (response.body() == null) return;
-                            if (response.body().getResult().getRes_code() == 1){
+                            if (response.body().getResult().getRes_code() == 1) {
                                 res_data = response.body().getResult().getRes_data();
                                 adapter = new AreaMessageAdapter(R.layout.adapter_area_message, res_data);
                                 recyclerArea.setAdapter(adapter);
-                                if (res_data == null)return;
+                                if (res_data == null) return;
                                 adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -177,38 +202,38 @@ public class PhotoAreaActivity extends ToolBarActivity {
 
     /**
      * 提交物料信息
-     * */
+     */
     @OnClick(R.id.tv_finish_order)
-    void commitMessage(View view){
-        if (StringUtils.isNullOrEmpty(editAreaMessage.getText().toString())){
-            ToastUtils.showCommonToast(PhotoAreaActivity.this,"请填写位置信息");
+    void commitMessage(View view) {
+        if (StringUtils.isNullOrEmpty(editAreaMessage.getText().toString())) {
+            ToastUtils.showCommonToast(PhotoAreaActivity.this, "请填写位置信息");
             return;
         }
-        if (StringUtils.isNullOrEmpty(selectedImagePath)){
-            ToastUtils.showCommonToast(PhotoAreaActivity.this,"请拍照");
+        if (StringUtils.isNullOrEmpty(selectedImagePath)) {
+            ToastUtils.showCommonToast(PhotoAreaActivity.this, "请拍照");
             return;
         }
-        if (change){
+        if (change) {
             AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "")
                     .setMessage("是否确定提交产品位置信息")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             showDefultProgressDialog();
-                            HashMap<Object,Object> hashMap = new HashMap<>();
-                            hashMap.put("order_id",order_id);
-                            hashMap.put("area_name",editAreaMessage.getText().toString());
+                            HashMap<Object, Object> hashMap = new HashMap<>();
+                            hashMap.put("order_id", order_id);
+                            hashMap.put("area_name", editAreaMessage.getText().toString());
                             hashMap.put("procure_img", BitmapUtils.bitmapToBase64(ImageUtil.decodeFile(selectedImagePath)));
                             Call<UpdateMessageBean> objectCall = inventoryApi.uploadProductArea(hashMap);
                             objectCall.enqueue(new MyCallback<UpdateMessageBean>() {
                                 @Override
                                 public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
                                     dismissDefultProgressDialog();
-                                    if (response.body() == null)return;
-                                    if (response.body().getResult().getRes_code() == 1){
+                                    if (response.body() == null) return;
+                                    if (response.body().getResult().getRes_code() == 1) {
                                         Intent intent = new Intent(PhotoAreaActivity.this, ProductLlActivity.class);
-                                        intent.putExtra("name_activity","生产中");
-                                        intent.putExtra("state_product","progress");
+                                        intent.putExtra("name_activity", "生产中");
+                                        intent.putExtra("state_product", "progress");
                                         startActivity(intent);
                                         finish();
                                     }
@@ -216,13 +241,13 @@ public class PhotoAreaActivity extends ToolBarActivity {
 
                                 @Override
                                 public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
-                                    Log.e("zouwansheng", "t = "+t.toString());
+                                    Log.e("zouwansheng", "t = " + t.toString());
                                     dismissDefultProgressDialog();
                                 }
                             });
                         }
                     }).show();
-        }else {
+        } else {
             showDefultProgressDialog();
             HashMap<Object, Object> hashMap = new HashMap<>();
             hashMap.put("type", type);
@@ -233,9 +258,9 @@ public class PhotoAreaActivity extends ToolBarActivity {
             objectCall.enqueue(new MyCallback<UpdateMessageBean>() {
                 @Override
                 public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
-                    if (response.body() == null)return;
+                    if (response.body() == null) return;
 
-                    if (response.body().getResult().getRes_code() == 1){
+                    if (response.body().getResult().getRes_code() == 1) {
                         //提交备料
                         commitBeiliao();
                     }
@@ -249,8 +274,37 @@ public class PhotoAreaActivity extends ToolBarActivity {
         }
     }
 
-    private void commitBeiliao() {
+    /**
+     * 连接设备打印机
+     */
+    private void initDevice() {
+        deviceManager = ConnUtils.getDeviceManager();
+        try {
+            deviceManager.init(PhotoAreaActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
+                @Override
+                public void onEvent(ConnectionCloseEvent connectionCloseEvent, Handler handler) {
+                    if (connectionCloseEvent.isSuccess()) {
+                        ToastUtils.showCommonToast(PhotoAreaActivity.this, "设备被客户主动断开！");
+                    }
+                    if (connectionCloseEvent.isFailed()) {
+                        ToastUtils.showCommonToast(PhotoAreaActivity.this, "设备链接异常断开！");
+                    }
+                }
 
+                @Override
+                public Handler getUIHandler() {
+                    return null;
+                }
+            });
+            deviceManager.connect();
+            MyLog.e("OrderDetailActivity", "连接成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToastUtils.showCommonToast(PhotoAreaActivity.this, "链接异常,请检查设备或重新连接.." + e);
+        }
+    }
+
+    private void commitBeiliao() {
         HashMap<Object, Object> hashMap = new HashMap();
         hashMap.put("order_id", order_id);
         Map[] maps = new Map[resDataBean.getStock_move_lines().size()];
@@ -263,20 +317,32 @@ public class PhotoAreaActivity extends ToolBarActivity {
         }
         hashMap.put("stock_moves", maps);
         Call<FinishPrepareMaBean> objectCall = inventoryApi.finishPrepareMa(hashMap);
-        objectCall.enqueue(new MyCallback<FinishPrepareMaBean>(){
+        objectCall.enqueue(new MyCallback<FinishPrepareMaBean>() {
             @Override
             public void onResponse(Call<FinishPrepareMaBean> call, Response<FinishPrepareMaBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null)return;
-                if (response.body().getResult().getRes_code() == 1){
-                  AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "提交位置信息成功")
+                if (response.body() == null) return;
+                if (response.body().getResult().getRes_code() == 1) {
+                    AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "提交位置信息成功")
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    initDevice();
+                                    printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+                                    printer.init();
+
+                                    printer.print("MO单号：" + resDataBean.getDisplay_name() + "\n\n" + "产品: " + resDataBean.getProduct_name() + "\n\n" + "时间： " + TimeUtils.utc2Local(resDataBean.getDate_planned_start()) + "\n\n" +
+                                            "负责人: " + resDataBean.getIn_charge_name() + "\n\n" + "生产数量：" + resDataBean.getQty_produced() + "\n\n" + "需求数量：" + resDataBean.getProduct_qty()
+                                            + "\n\n" + "规格：" + resDataBean.getProduct_id().getProduct_specs() + "\n\n" + "工序：" + resDataBean.getProcess_id().getName() + "\n\n" + "类型：" + typeString
+                                            + "\n\n" + "MO单备注：" + resDataBean.getRemark() + "\n\n" + "销售单备注：" + resDataBean.getSale_remark() + "\n\n", 30, TimeUnit.SECONDS);
+                                    Bitmap mBitmap = CodeUtils.createImage(resDataBean.getDisplay_name(), 300, 300, null);
+                                    printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+                                    printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+
                                     Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
-                                    intent.putExtra("limit",limit);
+                                    intent.putExtra("limit", limit);
                                     intent.putExtra("process_id", process_id);
-                                    intent.putExtra("state",delay_state);
+                                    intent.putExtra("state", delay_state);
                                     startActivity(intent);
                                     finish();
                                 }
@@ -324,7 +390,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
     }
 
     public String getAbsolutePath(Uri uri) {
-        String[] projection = { MediaStore.MediaColumns.DATA };
+        String[] projection = {MediaStore.MediaColumns.DATA};
         @SuppressWarnings("deprecation")
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         if (cursor != null) {

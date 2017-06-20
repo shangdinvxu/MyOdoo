@@ -98,7 +98,9 @@ public class ProductLlActivity extends ToolBarActivity {
             public void onRefresh() {
                 showDefultProgressDialog();
                 getPicking(0, 20, Refresh_Move);
+                if (adapter!=null){
                 adapter.notifyDataSetChanged();
+                }
                 swipeToLoad.setRefreshing(false);
             }
         });
@@ -183,6 +185,7 @@ public class ProductLlActivity extends ToolBarActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (dataBeanList == null)return;
                 int order_id = dataBeanList.get(position).getOrder_id();
                 if (dataBeanList.get(position).getState().equals("progress")) {
                     Intent intent = new Intent(ProductLlActivity.this, ProductingActivity.class);

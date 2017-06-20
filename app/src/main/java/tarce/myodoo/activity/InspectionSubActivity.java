@@ -73,6 +73,7 @@ public class InspectionSubActivity extends ToolBarActivity {
     protected void onResume(){
         if (res_data == null){
             swipeToLoad.setRefreshing(true);
+            loadTime = 0;
         }
         super.onResume();
     }
@@ -149,6 +150,7 @@ public class InspectionSubActivity extends ToolBarActivity {
             @Override
             public void onFailure(Call<QcFeedbaskBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(InspectionSubActivity.this, t.toString());
             }
         });
     }

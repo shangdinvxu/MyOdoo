@@ -77,6 +77,15 @@ public class SalesListActivity extends ToolBarActivity {
         initrecycler();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (dataBeanList == null){
+            swipeToLoad.setRefreshing(true);
+            loadTime = 0;
+        }
+    }
+
     private void initrecycler() {
         swipeRefreshHeader.setGravity(Gravity.CENTER);
         swipeLoadMoreFooter.setGravity(Gravity.CENTER);
@@ -86,7 +95,9 @@ public class SalesListActivity extends ToolBarActivity {
             @Override
             public void onRefresh() {
                 initIntent(0,40, Refresh_Move);
-                salesListAdapter.notifyDataSetChanged();
+                if (salesListAdapter != null){
+                    salesListAdapter.notifyDataSetChanged();
+                }
                 swipeToLoad.setRefreshing(false);
             }
         });
@@ -172,5 +183,13 @@ public class SalesListActivity extends ToolBarActivity {
                 });
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        if (dataBeanList != null){
+            dataBeanList = null;
+        }
+        super.onPause();
     }
 }
