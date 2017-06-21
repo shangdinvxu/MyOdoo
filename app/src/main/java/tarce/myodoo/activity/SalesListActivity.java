@@ -27,6 +27,7 @@ import rx.schedulers.Schedulers;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
+import tarce.model.GetSaleListResponse;
 import tarce.model.GetSaleResponse;
 import tarce.model.inventory.SalesOutListResponse;
 import tarce.myodoo.R;
@@ -41,7 +42,7 @@ import tarce.support.ToolBarActivity;
  * Created by Daniel.Xu on 2017/4/20.
  */
 
-public class SalesListActivity extends ToolBarActivity {
+public class SalesListActivity extends BaseActivity {
     private static final int Refresh_Move = 1;//下拉动作
     private static final int Load_Move = 2;//上拉动作
 
@@ -61,6 +62,7 @@ public class SalesListActivity extends ToolBarActivity {
     private List<SalesOutListResponse.TResult.TRes_data> res_data;
     private List<SalesOutListResponse.TResult.TRes_data> dataBeanList;
     private int loadTime = 0;
+    private String deliver = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,18 +71,30 @@ public class SalesListActivity extends ToolBarActivity {
         ButterKnife.inject(this);
         inventoryApi = RetrofitClient.getInstance(SalesListActivity.this).create(InventoryApi.class);
         setRecyclerview(swipeTarget);
-        showDefultProgressDialog();
+        dealIntent();
+    }
+
+    private void dealIntent() {
         Intent intent = getIntent();
-        state = intent.getStringExtra("state");
-        complete_rate = intent.getIntExtra("complete_rate", 1000);
-        initIntent(0,40, Refresh_Move);
-        initrecycler();
+        deliver = intent.getStringExtra("deliver");
+        if ("yes".equals(deliver)){
+            res_data = (List<SalesOutListResponse.TResult.TRes_data>) intent.getSerializableExtra("intent");
+            salesListAdapter = new SalesListAdapter(R.layout.activity_saleslist_adapter_item, res_data);
+            swipeTarget.setAdapter(salesListAdapter);
+            initListener();
+        }else {
+            state = intent.getStringExtra("state");
+            complete_rate = intent.getIntExtra("complete_rate", 1000);
+            showDefultProgressDialog();
+            initIntent(0,40, Refresh_Move);
+            initrecycler();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (dataBeanList == null){
+        if (dataBeanList == null && "no".equals(deliver)){
             swipeToLoad.setRefreshing(true);
             loadTime = 0;
         }
@@ -189,6 +203,7 @@ public class SalesListActivity extends ToolBarActivity {
     protected void onPause() {
         if (dataBeanList != null){
             dataBeanList = null;
+            deliver = "";
         }
         super.onPause();
     }

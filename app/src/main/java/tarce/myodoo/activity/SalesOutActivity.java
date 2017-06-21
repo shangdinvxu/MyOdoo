@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import greendao.ContactsBeanDao;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,13 +43,14 @@ import tarce.myodoo.adapter.SalesStatesAdapter;
 import tarce.myodoo.bean.AvailabilityBean;
 import tarce.myodoo.greendaoUtils.ContactBeanUtils;
 import tarce.support.MyLog;
+import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
 /**
  * Created by Daniel.Xu on 2017/4/20.
  */
 
-public class SalesOutActivity extends ToolBarActivity {
+public class SalesOutActivity extends BaseActivity {
     private final static String TAG = SalesOutActivity.class.getSimpleName();
     @InjectView(R.id.search_customer)
     SearchView searchCustomer;
@@ -57,6 +60,8 @@ public class SalesOutActivity extends ToolBarActivity {
     RecyclerView recyclerview;
     @InjectView(R.id.recyclerviewStates)
     RecyclerView recyclerviewStates;
+    @InjectView(R.id.tv_get_last)
+    TextView tvGetLast;
     private InventoryApi inventoryApi;
     private ContactsBeanDao contactsBeanDao;
     private ContactBeanUtils contactBeanUtils;
@@ -119,6 +124,7 @@ public class SalesOutActivity extends ToolBarActivity {
             @Override
             public void onFailure(Call<OutgoingStockpickingBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(SalesOutActivity.this, t.toString());
             }
         });
     }
@@ -152,12 +158,16 @@ public class SalesOutActivity extends ToolBarActivity {
                 Intent intent = new Intent(SalesOutActivity.this, SalesListActivity.class);
                 intent.putExtra("complete_rate", complete_rate);
                 intent.putExtra("state", state);
+                intent.putExtra("deliver","no");
                 startActivity(intent);
             }
         });
 
     }
 
+    /**
+     * 根据客户简称进行搜索
+     * */
     private void initListener() {
         /**客户简称*/
         searchCustomer.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -173,9 +183,9 @@ public class SalesOutActivity extends ToolBarActivity {
                     if (customerAdapter != null) {
                         customerAdapter.getData().clear();
                         recyclerview.setVisibility(View.GONE);
+                        tvGetLast.setVisibility(View.GONE);
                     }
                 }
-
                 return false;
             }
         });
@@ -194,6 +204,9 @@ public class SalesOutActivity extends ToolBarActivity {
         });
     }
 
+    /**
+     * 如果数据库没有  就搜索服务器
+     * */
     private void initSearchFormDB(String s){
 
         List<ContactsBean> contactsBeen = contactBeanUtils.searchByName(s);
@@ -201,66 +214,76 @@ public class SalesOutActivity extends ToolBarActivity {
             showInRecyclerView(contactsBeen);
         } else {
             recyclerview.setVisibility(View.GONE);
-            initSearchCustomerFromNet(s);
+            tvGetLast.setVisibility(View.GONE);
         }
     }
 
+    /**
+     * 根据输入的订单号搜索订单
+     * */
     private void initSearchSalesListFromNet(final String name) {
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("order_name", name);
-//        objectObjectHashMap.put("type", "supplier");
-        Call<GetSaleListResponse> getSaleListByNumberResponseCall = inventoryApi.searchBySalesNumber(objectObjectHashMap);
+        objectObjectHashMap.put("type", "outgoing");
+        Call<SalesOutListResponse> getSaleListByNumberResponseCall = inventoryApi.searchBySalesNumber(objectObjectHashMap);
         showDefultProgressDialog();
-        getSaleListByNumberResponseCall.enqueue(new Callback<GetSaleListResponse>() {
+        getSaleListByNumberResponseCall.enqueue(new Callback<SalesOutListResponse>() {
             @Override
-            public void onResponse(Call<GetSaleListResponse> call, Response<GetSaleListResponse> response) {
+            public void onResponse(Call<SalesOutListResponse> call, Response<SalesOutListResponse> response) {
                 dismissDefultProgressDialog();
-                List<GetSaleListResponse.TResult.TRes_data> res_data = response.body().getResult().getRes_data();
+                if (response.body() == null)return;
+                List<SalesOutListResponse.TResult.TRes_data> res_data = response.body().getResult().getRes_data();
                 if (res_data != null && res_data.size() > 0) {
                     Intent intent = new Intent(SalesOutActivity.this, SalesListActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("bundle", (Serializable) res_data);
-                    intent.putExtra("intent", bundle);
+                    intent.putExtra("intent", (Serializable) res_data);
+                    intent.putExtra("deliver","yes");
                     startActivity(intent);
                 }
             }
 
             @Override
-            public void onFailure(Call<GetSaleListResponse> call, Throwable t) {
+            public void onFailure(Call<SalesOutListResponse> call, Throwable t) {
                 dismissDefultProgressDialog();
                 MyLog.e(TAG, t.toString());
             }
         });
-
-
     }
 
-
+    /**
+     * 显示客户全称  点击事件
+     * */
     private void showInRecyclerView(final List<ContactsBean> contactsBeen) {
-        recyclerview.setVisibility(View.VISIBLE);
+        tvGetLast.setVisibility(View.VISIBLE);
         customerAdapter = new CustomerAdapter(R.layout.customername_textview, contactsBeen);
         recyclerview.setVisibility(View.VISIBLE);
         recyclerview.setAdapter(customerAdapter);
         customerAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (availabilityBeen != null){
+                    availabilityBeen.set(2,new AvailabilityBean("可用率 0%", 0, 0));
+                    availabilityBeen.set(0,new AvailabilityBean("可用率 100%", 100, 0));
+                    availabilityBeen.set(1,new AvailabilityBean("可用率 1%-99%", 99, 0));
+                    availabilityBeen.set(3, new AvailabilityBean("完成", 1000, 0));
+                }
+                salesStatesAdapter.notifyDataSetChanged();
                 searchCustomer.setQuery(contactsBeen.get(position).getName(), true);
+                initSearchCustomerFromNet(contactsBeen.get(position).getPartner_id());
             }
         });
     }
 
-
-    private void initSearchCustomerFromNet(final String name) {
+    @OnClick(R.id.tv_get_last)
+    void getlastCustom(View view){
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-        objectObjectHashMap.put("name", name);
+        objectObjectHashMap.put("name", null);
         // type: ‘supplier’ or ‘customer’
         objectObjectHashMap.put("type", "supplier");
         Call<SearchSupplierResponse> stringCall = inventoryApi.searchSupplier(objectObjectHashMap);
-        showDefultProgressDialog();
         stringCall.enqueue(new Callback<SearchSupplierResponse>() {
             @Override
             public void onResponse(Call<SearchSupplierResponse> call, Response<SearchSupplierResponse> response) {
-                dismissDefultProgressDialog();
+                if (response.body() == null)return;
                 if (response.body().getResult() != null) {
                     List<SearchSupplierResponse.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
                     if (res_data != null && res_data.size() > 0) {
@@ -268,14 +291,55 @@ public class SalesOutActivity extends ToolBarActivity {
                             contactsBeanDao.insertOrReplace(new ContactsBean(resDataBean.getComment(), resDataBean.getPhone()
                                     , resDataBean.getPartner_id(), resDataBean.getName(), resDataBean.getX_qq()));
                         }
-                        showInRecyclerView(contactBeanUtils.searchByName(name));
                     }
+                }
+                long count = contactsBeanDao.count();
+                MyLog.e(TAG,"contactsBeanDao里面的数量是"+count);
+            }
+            @Override
+            public void onFailure(Call<SearchSupplierResponse> call, Throwable t) {
+            }
+        });
+    }
+
+    /**
+     * 当点击某一个item的时候  根据客户全称搜索更新数据
+     * */
+    private void initSearchCustomerFromNet(final long id) {
+        showDefultProgressDialog();
+        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put("partner_id", id);
+        Call<OutgoingStockpickingBean> stringCall = inventoryApi.searchByCustomName(objectObjectHashMap);
+        stringCall.enqueue(new Callback<OutgoingStockpickingBean>() {
+            @Override
+            public void onResponse(Call<OutgoingStockpickingBean> call, Response<OutgoingStockpickingBean> response) {
+                dismissDefultProgressDialog();
+                if (response.body() == null)return;
+                if (response.body().getResult().getRes_code() == 1){
+                    List<OutgoingStockpickingBean.ResultBean.ResDataBean.CompleteRateBean> complete_rate = response.body().getResult().getRes_data().getComplete_rate();
+                    for (int i = 0; i < complete_rate.size(); i++) {
+                        if (complete_rate.get(i).getComplete_rate() == 0){
+                            availabilityBeen.set(2,new AvailabilityBean("可用率 0%", 0, complete_rate.get(i).getComplete_rate_count()));
+                        }else if (complete_rate.get(i).getComplete_rate() == 100){
+                            availabilityBeen.set(0,new AvailabilityBean("可用率 100%", 100, complete_rate.get(i).getComplete_rate_count()));
+                        }else if (complete_rate.get(i).getComplete_rate() == 99){
+                            availabilityBeen.set(1,new AvailabilityBean("可用率 1%-99%", 99, complete_rate.get(i).getComplete_rate_count()));
+                        }
+                    }
+                    if (response.body().getResult().getRes_data().getState()!=null){
+                        availabilityBeen.set(3, new AvailabilityBean("完成", 1000, response.body().getResult().getRes_data().getState().getState_count()));
+                    }
+                    recyclerview.setVisibility(View.GONE);
+                    tvGetLast.setVisibility(View.GONE);
+                    salesStatesAdapter.notifyDataSetChanged();
+                    initSalesStatesListener(salesStatesAdapter);
                 }
             }
 
             @Override
-            public void onFailure(Call<SearchSupplierResponse> call, Throwable t) {
+            public void onFailure(Call<OutgoingStockpickingBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(SalesOutActivity.this, t.toString());
             }
         });
     }

@@ -1,5 +1,6 @@
 package tarce.myodoo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import tarce.myodoo.IntentFactory;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.TakeDeliverActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
@@ -88,6 +90,10 @@ public class WarehouseFragment extends Fragment {
                 }
                 String name = list.get(position).t.getName();
                 switch (name){
+                    case "收货":
+                        Intent intent = new Intent(getActivity(), TakeDeliverActivity.class);
+                        startActivity(intent);
+                        break;
                     case "销售出库":
                         IntentFactory.start_SalesOut_Activity(getActivity());
                         break;

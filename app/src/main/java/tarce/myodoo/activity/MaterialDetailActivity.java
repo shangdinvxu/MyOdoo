@@ -36,7 +36,7 @@ import tarce.support.ToolBarActivity;
  * 生产备料-》延误-》详细子页面
  */
 
-public class MaterialDetailActivity extends ToolBarActivity {
+public class MaterialDetailActivity extends BaseActivity {
 
 
     @InjectView(R.id.swipe_target)

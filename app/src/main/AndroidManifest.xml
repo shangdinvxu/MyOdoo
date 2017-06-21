@@ -97,6 +97,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.ProcessOfPersonActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".activity.TakeDeliverActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 

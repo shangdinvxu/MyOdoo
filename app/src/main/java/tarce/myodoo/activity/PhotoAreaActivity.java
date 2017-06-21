@@ -353,6 +353,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
             @Override
             public void onFailure(Call<FinishPrepareMaBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(PhotoAreaActivity.this, t.toString());
             }
         });
     }
@@ -381,7 +382,6 @@ public class PhotoAreaActivity extends ToolBarActivity {
             if (requestCode == REQUEST_CODE_IMAGE_CAPTURE) {
                 selectedImagePath = getImagePath();
                 Glide.with(PhotoAreaActivity.this).load(new File(selectedImagePath)).into(imageShowPhoto);
-                //imgUser.setImageBitmap(decodeFile(selectedImagePath));
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
             }

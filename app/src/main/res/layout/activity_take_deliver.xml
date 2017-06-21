@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/edit_search_custom"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:hint="请输入供应商名称用于搜索"
+        android:imeOptions="actionSearch"
+        android:singleLine="true" />
+
+    <EditText
+        android:id="@+id/edit_search_order"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:hint="根据采购单搜索"
+        android:imeOptions="actionSearch"
+        android:singleLine="true" />
+</LinearLayout>

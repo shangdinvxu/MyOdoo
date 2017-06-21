@@ -16,7 +16,7 @@ import tarce.support.ToolBarActivity;
  * Created by rose.zou on 2017/5/26.
  */
 
-public class AreaMessageActivity extends ToolBarActivity {
+public class AreaMessageActivity extends BaseActivity {
 
     @InjectView(R.id.image_show_area)
     ImageView imageShowArea;

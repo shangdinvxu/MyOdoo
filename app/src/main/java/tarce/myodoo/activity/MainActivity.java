@@ -17,18 +17,23 @@ import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import cn.hugeterry.updatefun.UpdateFunGO;
 import cn.hugeterry.updatefun.config.UpdateKey;
+import greendao.ContactsBeanDao;
+import greendao.DaoSession;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.LoadActionBean;
+import tarce.model.SearchSupplierResponse;
+import tarce.model.greendaoBean.ContactsBean;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.fragment.InspectionFragment;
@@ -74,6 +79,9 @@ public class MainActivity extends AppCompatActivity{
     private View mCurrentTab;
     private final static int REQUEST_CODE = 5 ;
     private LoadActionBean.ResultBean.ResDataBean res_data;
+    private ContactsBeanDao contactsBeanDao;
+    private DaoSession daoSession;
+
 
     /*private List<TestBean.TestRSubBean.ListSubBean> listSubBeen  = new ArrayList<TestBean.TestRSubBean.ListSubBean>();
     private List<Integer> listInterge = new ArrayList<>();*/
@@ -84,6 +92,8 @@ public class MainActivity extends AppCompatActivity{
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         inventoryApi = RetrofitClient.getInstance(MainActivity.this).create(InventoryApi.class);
+        /*daoSession = MyApplication.getInstances().getDaoSession();
+        contactsBeanDao =  daoSession.getContactsBeanDao();*/
         initFragment();
         UpdateKey.API_TOKEN = "d8980dd0017f3e0a7b038aec2c52d737";
         UpdateKey.APP_ID = "5940d8ca959d6965c30002dc";
@@ -91,6 +101,7 @@ public class MainActivity extends AppCompatActivity{
   //   UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;//通过Dialog来进行下载
 //UpdateKey.DialogOrNotification=UpdateKey.WITH_NOTIFITION;通过通知栏来进行下载(默认)
         UpdateFunGO.init(this);
+     //   getSupplier();
     }
 
     @Override
@@ -248,5 +259,35 @@ public class MainActivity extends AppCompatActivity{
         super.onPause();
     }
 
+    /**
+     * 存储供应商信息
+     * */
+    private void getSupplier(){
+        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put("name", null);
+        // type: ‘supplier’ or ‘customer’
+        objectObjectHashMap.put("type", "supplier");
+        Call<SearchSupplierResponse> stringCall = inventoryApi.searchSupplier(objectObjectHashMap);
+        stringCall.enqueue(new Callback<SearchSupplierResponse>() {
+            @Override
+            public void onResponse(Call<SearchSupplierResponse> call, Response<SearchSupplierResponse> response) {
+                if (response.body() == null)return;
+                /*if (response.body().getResult() != null) {
+                    List<SearchSupplierResponse.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
+                    if (res_data != null && res_data.size() > 0) {
+                        for (SearchSupplierResponse.ResultBean.ResDataBean resDataBean : res_data) {
+                            contactsBeanDao.insertOrReplace(new ContactsBean(resDataBean.getComment(), resDataBean.getPhone()
+                                    , resDataBean.getPartner_id(), resDataBean.getName(), resDataBean.getX_qq()));
+                        }
+                    }
+                }
+                long count = contactsBeanDao.count();
+                MyLog.e(TAG,"contactsBeanDao里面的数量是"+count);*/
+            }
+            @Override
+            public void onFailure(Call<SearchSupplierResponse> call, Throwable t) {
+            }
+        });
+    }
 
 }

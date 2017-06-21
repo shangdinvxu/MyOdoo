@@ -1,4 +1,4 @@
-package tarce.support;
+package tarce.myodoo.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -10,13 +10,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import tarce.support.ToolBarActivity;
+import tarce.support.ToolBarHelper;
 
 /**
- * Created by Daniel.Xu on 2017/4/20.
+ * Created by rose.zou on 2017/6/21.
+ * 替换ToolbarActivity
  */
 
-public abstract class ToolBarActivity extends AppCompatActivity {
-
+public class BaseActivity extends AppCompatActivity {
     private ToolBarHelper mToolBarHelper ;
     public Toolbar toolbar ;
     private ProgressDialog progressDialog;
@@ -27,22 +29,15 @@ public abstract class ToolBarActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
     public void setRecyclerview(RecyclerView recyclerview){
-        recyclerview.setLayoutManager(new LinearLayoutManager(ToolBarActivity.this));
-        recyclerview.addItemDecoration(new DividerItemDecoration(ToolBarActivity.this,
+        recyclerview.setLayoutManager(new LinearLayoutManager(BaseActivity.this));
+        recyclerview.addItemDecoration(new DividerItemDecoration(BaseActivity.this,
                 DividerItemDecoration.VERTICAL));
     }
 
 
     public void showDefultProgressDialog(){
-        progressDialog = new ProgressDialog(ToolBarActivity.this);
+        progressDialog = new ProgressDialog(BaseActivity.this);
         progressDialog.setMessage("Loading...");
         progressDialog.setCancelable(false);
         progressDialog.show();
@@ -51,9 +46,13 @@ public abstract class ToolBarActivity extends AppCompatActivity {
     public  void dismissDefultProgressDialog(){
         if (progressDialog!=null&&progressDialog.isShowing()){
             progressDialog.dismiss();
+            progressDialog = null;
+        }
+        if (progressDialog != null){
+            progressDialog.dismiss();
+            progressDialog = null;
         }
     }
-
 
     @Override
     public void setContentView(int layoutResID) {

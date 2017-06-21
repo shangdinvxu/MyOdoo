@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
 
     <TextView
         android:layout_width="wrap_content"
@@ -16,28 +17,28 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginTop="5dp"
         android:background="@color/status_view" />
 
     <TextView
         android:id="@+id/tv_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"
         android:text="保存库存"
+        android:gravity="center"
         android:textColor="@color/cc" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginTop="5dp"
         android:background="@color/status_view" />
 
     <TextView
         android:id="@+id/tv_not_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"
         android:text="不保留"
@@ -46,15 +47,15 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
-        android:layout_marginTop="5dp"
         android:background="@color/status_view" />
 
     <TextView
         android:id="@+id/tv_cancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
         android:text="取消"
         android:layout_gravity="center_horizontal"
         android:textColor="@color/cc"
+        android:gravity="center"
         android:layout_marginTop="10dp"/>
 </LinearLayout>

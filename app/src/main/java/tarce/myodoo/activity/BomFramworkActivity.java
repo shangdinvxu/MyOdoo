@@ -34,7 +34,7 @@ import tarce.support.ToolBarActivity;
  * Bom结构表
  */
 
-public class BomFramworkActivity extends ToolBarActivity {
+public class BomFramworkActivity extends BaseActivity {
     @InjectView(R.id.recycler_rom_framwork)
     RecyclerView recyclerRomFramwork;
     private InventoryApi inventoryApi;

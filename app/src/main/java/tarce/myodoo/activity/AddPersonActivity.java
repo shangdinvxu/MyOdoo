@@ -49,7 +49,7 @@ import tarce.support.ToolBarActivity;
  * 添加员工生产页面
  */
 
-public class AddPersonActivity extends ToolBarActivity {
+public class AddPersonActivity extends BaseActivity {
     private static final String TAG = "AddPersonActivity";
     @InjectView(R.id.fragment_scan)
     FrameLayout fragmentScan;

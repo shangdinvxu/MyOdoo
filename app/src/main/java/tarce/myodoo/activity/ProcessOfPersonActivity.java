@@ -30,7 +30,7 @@ import tarce.support.ToolBarActivity;
  * 生产中  后续改为  进入这个生产工序界面 按工序分类了就是
  */
 
-public class ProcessOfPersonActivity extends ToolBarActivity {
+public class ProcessOfPersonActivity extends BaseActivity {
     @InjectView(R.id.recyc_select_proce)
     RecyclerView recycSelectProce;
     private InventoryApi inventoryApi;

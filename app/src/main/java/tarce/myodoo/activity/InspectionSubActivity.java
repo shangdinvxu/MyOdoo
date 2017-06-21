@@ -35,7 +35,7 @@ import tarce.support.ToolBarActivity;
  * 品检的子页面 列表
  */
 
-public class InspectionSubActivity extends ToolBarActivity {
+public class InspectionSubActivity extends BaseActivity {
 
     private static final int Refresh_Move = 1;//下拉动作
     private static final int Load_Move = 2;//上拉动作

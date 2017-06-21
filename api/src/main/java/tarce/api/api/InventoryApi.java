@@ -69,8 +69,17 @@ public interface InventoryApi {
     @POST("search_supplier")
     Call<SearchSupplierResponse> searchSupplier(@Body HashMap hashMap);
 
+    /**
+     * 根据订单号搜索
+     * */
     @POST("get_stock_picking_by_origin")
-    Call<GetSaleListResponse> searchBySalesNumber(@Body HashMap hashMap);
+    Call<SalesOutListResponse> searchBySalesNumber(@Body HashMap hashMap);
+
+    /**
+     * 根据客户全称搜索
+     * */
+    @POST("get_outgoing_stock_picking")
+    Call<OutgoingStockpickingBean> searchByCustomName(@Body HashMap hashMap);
 
     /**
      * 检查可用性

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,7 @@ public class MeFragment extends Fragment {
         address.setText(url);
         version.setText(Toolkits.getVersionCode(getActivity()) + "");
         String user_ava = SharePreferenceUtils.getString("user_ava", "null", getActivity());
+        Log.i("user_ava", user_ava);
         Glide.with(getActivity()).load(user_ava).into(heard);
     }
 

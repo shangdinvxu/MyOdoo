@@ -29,7 +29,7 @@ import tarce.support.ToolBarActivity;
  * 点击某个工序的详细页面
  */
 
-public class ShowProcessActivity extends ToolBarActivity {
+public class ShowProcessActivity extends BaseActivity {
 
     private final static String TAG = ShowProcessActivity.class.getSimpleName();
     @InjectView(R.id.recycler_detail_process)

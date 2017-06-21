@@ -50,7 +50,7 @@ public class DialogIsSave extends Dialog {
         Window window = getWindow();
         WindowManager.LayoutParams wl = window.getAttributes();
         wl.gravity = Gravity.CENTER;
-        wl.width = (int) (display.getWidth() * 0.8);
+        wl.width = (int) (display.getWidth() * 0.6);
         wl.height = WindowManager.LayoutParams.WRAP_CONTENT;
         wl.alpha = 1.0f;
         window.setAttributes(wl);
@@ -59,7 +59,12 @@ public class DialogIsSave extends Dialog {
     }
 
     public DialogIsSave setCancel(){
-        dismiss();
+        tvCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
+            }
+        });
         return this;
     }
 

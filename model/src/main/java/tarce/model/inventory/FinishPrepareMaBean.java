@@ -383,7 +383,16 @@ public class FinishPrepareMaBean {
 
                 private String product_ll_type;
                 private AreaIdBean area_id;
-                private boolean product_specs;
+
+                public Object getProduct_specs() {
+                    return product_specs;
+                }
+
+                public void setProduct_specs(Object product_specs) {
+                    this.product_specs = product_specs;
+                }
+
+                private Object product_specs;
                 private int product_id;
                 private String product_name;
 
@@ -403,13 +412,7 @@ public class FinishPrepareMaBean {
                     this.area_id = area_id;
                 }
 
-                public boolean isProduct_specs() {
-                    return product_specs;
-                }
 
-                public void setProduct_specs(boolean product_specs) {
-                    this.product_specs = product_specs;
-                }
 
                 public int getProduct_id() {
                     return product_id;
@@ -463,21 +466,25 @@ public class FinishPrepareMaBean {
             }
 
             public static class FeedbackOnReworkBean {
+                public Object getFeedback_id() {
+                    if (feedback_id instanceof Boolean){
+                        feedback_id = 0;
+                    }
+                    return feedback_id;
+                }
+
+                public void setFeedback_id(Object feedback_id) {
+                    this.feedback_id = feedback_id;
+                }
+
                 /**
                  * feedback_id : false
                  * name : null
                  */
 
-                private boolean feedback_id;
+                private Object feedback_id;
                 private Object name;
 
-                public boolean isFeedback_id() {
-                    return feedback_id;
-                }
-
-                public void setFeedback_id(boolean feedback_id) {
-                    this.feedback_id = feedback_id;
-                }
 
                 public Object getName() {
                     return name;

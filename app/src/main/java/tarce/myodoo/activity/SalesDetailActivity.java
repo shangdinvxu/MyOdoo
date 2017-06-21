@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -28,6 +29,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.newland.me.ConnUtils;
+import com.newland.me.DeviceManager;
+import com.newland.mtype.ConnectionCloseEvent;
+import com.newland.mtype.ModuleType;
+import com.newland.mtype.event.DeviceEventListener;
+import com.newland.mtype.module.common.printer.Printer;
+import com.newland.mtypex.nseries.NSConnV100ConnParams;
 import com.uuzuche.lib_zxing.activity.CaptureFragment;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
@@ -36,6 +44,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -55,6 +64,7 @@ import tarce.myodoo.uiutil.DialogIsSave;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.ImageUtil;
 import tarce.myodoo.utils.StringUtils;
+import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
 import tarce.support.AvatarHelper;
 import tarce.support.BitmapUtils;
@@ -69,6 +79,7 @@ import tarce.support.ViewUtils;
  */
 
 public class SalesDetailActivity extends ToolBarActivity {
+    private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     private static String TAG = SalesDetailActivity.class.getSimpleName();
     @InjectView(R.id.partner)
     TextView partner;
@@ -101,7 +112,7 @@ public class SalesDetailActivity extends ToolBarActivity {
     @InjectView(R.id.buttom_button4)
     Button buttomButton4;
     @InjectView(R.id.print_tv)
-    TextView C;
+    TextView printTv;
     private SalesDetailAdapter salesDetailAdapter;
     private boolean isShowCamera = true;
     private InventoryApi inventoryApi;
@@ -114,6 +125,9 @@ public class SalesDetailActivity extends ToolBarActivity {
      */
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;//拍照
     private String saleName;
+    private String model_state = "";
+    private DeviceManager deviceManager;
+    private Printer printer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +162,7 @@ public class SalesDetailActivity extends ToolBarActivity {
         List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> pack_operation_product_ids = bundle1.getPack_operation_product_ids();
         salesDetailAdapter = new SalesDetailAdapter(R.layout.salesout_detail_adapter_item, pack_operation_product_ids);
         recyclerview.setAdapter(salesDetailAdapter);
+        showLinThreeCang();//根据权限判断
         refreshButtom(bundle1.getState());
     }
 
@@ -294,12 +309,15 @@ public class SalesDetailActivity extends ToolBarActivity {
 
     /**
      * 是否显示底部(仓库)
-     *//*
+     */
     public void showLinThreeCang() {
         if (!UserManager.getSingleton().getGrops().contains("group_charge_warehouse")) {
-            linearThree.setVisibility(View.GONE);
+            buttomButton1.setVisibility(View.GONE);
+            buttomButton2.setVisibility(View.GONE);
+            buttomButton3.setVisibility(View.GONE);
+            buttomButton4.setVisibility(View.GONE);
         }
-    }*/
+    }
     private void refreshButtom(String s) {
         switch (s) {
             case "assigned":
@@ -314,6 +332,7 @@ public class SalesDetailActivity extends ToolBarActivity {
                                     public void onClick(DialogInterface dialog, int which) {
                                         //开始备货
                                         refreshButtom("备货完成");
+                                        model_state = "change";
                                         initListener();
                                        // showCamera();
                                     }
@@ -507,19 +526,32 @@ public class SalesDetailActivity extends ToolBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // TODO Auto-generated method stub
         if (item.getItemId() == android.R.id.home) {
-            new DialogIsSave(SalesDetailActivity.this)
-                    .setSave(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                        }
-                    }).setNotSave(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
+            boolean isSave = false;
+            for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
+                if (bundle1.getPack_operation_product_ids().get(i).getQty_done() > 0){
+                    isSave = true;
+                    break;
+                }else {
+                    isSave = false;
                 }
-            }).setCancel().show();
-            cacelReserver();
+            }
+            if ("change".equals(model_state) || ((bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))
+                    && isSave)){
+                new DialogIsSave(SalesDetailActivity.this)
+                        .setSave(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                saveState();
+                            }
+                        }).setNotSave(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        cacelReserver();
+                    }
+                }).setCancel().show();
+            }else {
+                finish();
+            }
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -529,17 +561,105 @@ public class SalesDetailActivity extends ToolBarActivity {
      * 点击返回按钮时  取消保留
      */
     private void cacelReserver() {
+        showDefultProgressDialog();
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("picking_id", bundle1.getPicking_id());
         Call<DoUnreservBean> getSaleResponseCall = inventoryApi.doUnreserveAction(hashMap);
         getSaleResponseCall.enqueue(new MyCallback<DoUnreservBean>() {
             @Override
             public void onResponse(Call<DoUnreservBean> call, Response<DoUnreservBean> response) {
+                dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getResult().getRes_code() == 1) {
                     finish();
                 }
             }
+
+            @Override
+            public void onFailure(Call<DoUnreservBean> call, Throwable t) {
+                dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(SalesDetailActivity.this, t.toString());
+            }
         });
+    }
+
+    /**
+     * 保存
+     * */
+    private void saveState(){
+        showDefultProgressDialog();
+        HashMap<Object, Object> hashMap = new HashMap<>();
+        hashMap.put("pack_operation_product_ids",bundle1.getPack_operation_product_ids());
+        hashMap.put("picking_id",bundle1.getPicking_id());
+        hashMap.put("state","prepare");
+        Call<GetSaleResponse> getSaleResponseCall = inventoryApi.changeStockPicking(hashMap);
+        getSaleResponseCall.enqueue(new MyCallback<GetSaleResponse>() {
+            @Override
+            public void onResponse(Call<GetSaleResponse> call, Response<GetSaleResponse> response) {
+                dismissDefultProgressDialog();
+                if (response.body() == null)return;
+                if (response.body().getError() != null){
+                    ToastUtils.showCommonToast(SalesDetailActivity.this, response.body().getError().getMessage());
+                    return;
+                }
+                if (response.body().getResult().getRes_code() == 1){
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetSaleResponse> call, Throwable t) {
+                dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(SalesDetailActivity.this, t.toString());
+            }
+        });
+    }
+
+    @OnClick(R.id.print_tv)
+    void printSale(View view){
+        initDevice();
+        printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+        printer.init();
+        printer.print("\n\n出货单号："+bundle1.getName()+"\n\n"+"源单据: " + bundle1.getOrigin() + "\n\n" + "合作伙伴： " + bundle1.getParnter_id() + "\n\n" +
+                "-------------" +"\n\n" , 30, TimeUnit.SECONDS);
+        for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
+            printer.print("产品名称："+bundle1.getPack_operation_product_ids().get(i).getProduct_id().getName()+"\n完成数量："+
+                    bundle1.getPack_operation_product_ids().get(i).getQty_done()
+            +"\n\n", 30, TimeUnit.SECONDS);
+        }
+        printer.print("\n\n", 30, TimeUnit.SECONDS);
+        Bitmap mBitmap = CodeUtils.createImage(bundle1.getName(), 300, 300, null);
+        printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+        printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 连接设备打印机
+     */
+    private void initDevice() {
+        deviceManager = ConnUtils.getDeviceManager();
+        try {
+            deviceManager.init(SalesDetailActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
+                @Override
+                public void onEvent(ConnectionCloseEvent connectionCloseEvent, Handler handler) {
+                    if (connectionCloseEvent.isSuccess()) {
+                        ToastUtils.showCommonToast(SalesDetailActivity.this, "设备被客户主动断开！");
+                    }
+                    if (connectionCloseEvent.isFailed()) {
+                        ToastUtils.showCommonToast(SalesDetailActivity.this, "设备链接异常断开！");
+                    }
+                }
+
+                @Override
+                public Handler getUIHandler() {
+                    return null;
+                }
+            });
+            deviceManager.connect();
+            MyLog.e("ProductingActivity", "连接成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToastUtils.showCommonToast(SalesDetailActivity.this, "链接异常,请检查设备或重新连接.." + e);
+        }
     }
 }

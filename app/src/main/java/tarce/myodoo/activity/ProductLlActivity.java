@@ -36,7 +36,7 @@ import tarce.support.ToolBarActivity;
  * 用于生产页面的跳转子页面
  */
 
-public class ProductLlActivity extends ToolBarActivity {
+public class ProductLlActivity extends BaseActivity {
     private static final int Refresh_Move = 1;//下拉动作
     private static final int Load_Move = 2;//上拉动作
 
@@ -152,6 +152,10 @@ public class ProductLlActivity extends ToolBarActivity {
             public void onResponse(Call<PickingDetailBean> call, Response<PickingDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
+                if (response.body().getError() != null){
+                    ToastUtils.showCommonToast(ProductLlActivity.this, response.body().getError().getMessage());
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1){
                     beanList = response.body().getResult().getRes_data();
                     if (move == Refresh_Move){

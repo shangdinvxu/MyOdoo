@@ -39,7 +39,7 @@ import tarce.support.ToolBarActivity;
  * 生产工序页面
  */
 
-public class SelectProcedureActivity extends ToolBarActivity {
+public class SelectProcedureActivity extends BaseActivity {
 
     private final static String TAG = SelectProcedureActivity.class.getSimpleName();
 

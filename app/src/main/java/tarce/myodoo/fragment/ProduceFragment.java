@@ -146,12 +146,10 @@ public class ProduceFragment extends Fragment {
                         IntentFactory.start_ProducLl_Activity(getActivity(), "领料", "finish_prepare_material");
                         break;
                     case "等待生产":
-                       // IntentFactory.start_ProducLl_Activity(getActivity(), "等待生产", "already_picking");
                         Intent intent = new Intent(getActivity(), GetPickNumActivity.class);
                         startActivity(intent);
                         break;
                     case "生产中":
-                        //   IntentFactory.start_ProducLl_Activity(getActivity(), "生产中", "progress");
                         Intent intent1 = new Intent(getActivity(), ProcessOfPersonActivity.class);
                         startActivity(intent1);
                         break;

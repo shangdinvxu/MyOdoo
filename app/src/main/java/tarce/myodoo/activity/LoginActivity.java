@@ -317,17 +317,18 @@ public class LoginActivity extends Activity {
                 }
                 toMainActivity();
 //                getSalesList();
-
             }
         });
     }
-
+    /**
+     * 存储客户信息
+     * */
     private void getSalesList() {
         inventoryApi = RetrofitClient.getInstance(LoginActivity.this).create(InventoryApi.class);
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("name", null);
         // type: ‘supplier’ or ‘customer’
-        objectObjectHashMap.put("type", "supplier");
+        objectObjectHashMap.put("type", "customer");
         Call<SearchSupplierResponse> stringCall = inventoryApi.searchSupplier(objectObjectHashMap);
         stringCall.enqueue(new Callback<SearchSupplierResponse>() {
             @Override
@@ -341,17 +342,15 @@ public class LoginActivity extends Activity {
                         }
                     }
                 }
+
                 long count = contactsBeanDao.count();
                 MyLog.e(TAG,"contactsBeanDao里面的数量是"+count);
-                toMainActivity();
             }
             @Override
             public void onFailure(Call<SearchSupplierResponse> call, Throwable t) {
             }
         });
-
     }
-
     private void toMainActivity(){
         if (progressDialog.isShowing()) {
             progressDialog.dismiss();

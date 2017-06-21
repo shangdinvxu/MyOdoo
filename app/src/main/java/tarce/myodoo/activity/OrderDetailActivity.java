@@ -586,24 +586,30 @@ public class OrderDetailActivity extends ToolBarActivity {
                                     public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                         dismissDefultProgressDialog();
                                         if (response.body() == null) return;
-                                        resDataBean = response.body().getResult().getRes_data();
-                                        initView();
-                                        state = "prepare_material_ing";
-                                        stateView("prepare_material_ing");
-                                        adapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
-                                            @Override
-                                            public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
-                                                isShowDialog = true;
-                                                initDialog(linesBean);
-                                            }
-                                        });
-                                        adapter_two.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
-                                            @Override
-                                            public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
-                                                isShowDialog = true;
-                                                initDialog(linesBean);
-                                            }
-                                        });
+                                        if (response.body().getError() != null){
+                                            ToastUtils.showCommonToast(OrderDetailActivity.this, response.body().getError().getMessage());
+                                            return;
+                                        }
+                                        if (response.body().getResult().getRes_code() == 1){
+                                            resDataBean = response.body().getResult().getRes_data();
+                                            initView();
+                                            state = "prepare_material_ing";
+                                            stateView("prepare_material_ing");
+                                            adapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
+                                                @Override
+                                                public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
+                                                    isShowDialog = true;
+                                                    initDialog(linesBean);
+                                                }
+                                            });
+                                            adapter_two.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
+                                                @Override
+                                                public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
+                                                    isShowDialog = true;
+                                                    initDialog(linesBean);
+                                                }
+                                            });
+                                        }
                                     }
 
                                     @Override
