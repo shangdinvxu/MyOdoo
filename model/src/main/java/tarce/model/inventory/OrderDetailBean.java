@@ -144,7 +144,19 @@ public class OrderDetailBean {
             private PrepareMaterialAreaIdBean prepare_material_area_id;
             private String display_name;
             private ProductIdBean product_id;
-            private String production_order_type;
+
+            public Object getProduction_order_type() {
+                if (production_order_type instanceof String){
+                    production_order_type = (String)production_order_type;
+                }
+                return production_order_type;
+            }
+
+            public void setProduction_order_type(Object production_order_type) {
+                this.production_order_type = production_order_type;
+            }
+
+            private Object production_order_type;
             private int order_id;
             private double qty_produced;
             private Object cur_location;
@@ -192,13 +204,6 @@ public class OrderDetailBean {
                 this.product_id = product_id;
             }
 
-            public String getProduction_order_type() {
-                return production_order_type;
-            }
-
-            public void setProduction_order_type(String production_order_type) {
-                this.production_order_type = production_order_type;
-            }
 
             public int getOrder_id() {
                 return order_id;

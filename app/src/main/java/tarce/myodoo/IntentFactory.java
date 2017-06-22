@@ -3,12 +3,12 @@ package tarce.myodoo;
 import android.content.Context;
 import android.content.Intent;
 
-import tarce.myodoo.activity.InspectionSubActivity;
 import tarce.myodoo.activity.MainActivity;
 import tarce.myodoo.activity.ProductLlActivity;
 import tarce.myodoo.activity.SalesInActivity;
-import tarce.myodoo.activity.SalesOutActivity;
 import tarce.myodoo.activity.SelectProcedureActivity;
+import tarce.myodoo.activity.inspect.InspectionSubActivity;
+import tarce.myodoo.activity.salesout.SalesOutActivity;
 
 
 /**

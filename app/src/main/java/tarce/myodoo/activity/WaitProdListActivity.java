@@ -138,6 +138,9 @@ public class WaitProdListActivity extends ToolBarActivity {
             public void onResponse(Call<PickingDetailBean> call, Response<PickingDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null)return;
+                if (response.body().getError() != null){
+                    ToastUtils.showCommonToast(WaitProdListActivity.this, response.body().getError().getMessage());
+                }
                 if (response.body().getResult().getRes_code() == 1){
                     beanList = response.body().getResult().getRes_data();
                     if (move == Refresh_Move){
@@ -160,6 +163,7 @@ public class WaitProdListActivity extends ToolBarActivity {
             @Override
             public void onFailure(Call<PickingDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(WaitProdListActivity.this, t.toString());
             }
         });
     }

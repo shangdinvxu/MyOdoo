@@ -29,6 +29,7 @@ import tarce.model.inventory.FinishPrepareMaBean;
 import tarce.model.inventory.FinishProductBean;
 import tarce.model.inventory.FreeWorkBean;
 import tarce.model.inventory.GetFactroyRemarkBean;
+import tarce.model.inventory.GetFeedbackBean;
 import tarce.model.inventory.LoadInspectionBean;
 import tarce.model.inventory.LoadProductBean;
 import tarce.model.inventory.MaterialDetailBean;
@@ -53,11 +54,34 @@ import tarce.model.inventory.WorkingWorkerBean;
  */
 
 public interface InventoryApi {
+    /**
+     * 获取反馈原因接口
+     * */
+    @POST("get_material_remark")
+    Call<GetFeedbackBean> getRemark(@Body HashMap hashMap);
+
+    /**
+     *添加新的反馈原因
+     * */
+    @POST("create_material_remark")
+    Call<GetFeedbackBean> addNewRemark(@Body HashMap hashMap);
+
+    /**
+     * 选择某个原因
+     * */
+    @POST("add_material_remark")
+    Call<CommonBean> selectRemark(@Body HashMap hashMap);
+
+    /**
+     * 收货页面初始化数据
+     * */
     @POST("get_group_by_list")
     Call<GetGroupByListresponse> getGroupsByList(@Body HashMap hashMap);
 
 
-
+    /**
+     * 收货列表
+     * */
     @POST("get_incoming_outgoing_stock_picking")
     Call<GetSaleListResponse> getInComingOutgoingList(@Body HashMap hashMap);
 
@@ -215,7 +239,7 @@ public interface InventoryApi {
      * 产出确认（符合条件）
      * */
     @POST("do_produce")
-    Call<CheckOutProductBean> checkOut(@Body HashMap hashMap);
+    Call<OrderDetailBean> checkOut(@Body HashMap hashMap);
 
     /**
      *确认开始生产
@@ -245,7 +269,7 @@ public interface InventoryApi {
      * 生产完成
      * */
     @POST("produce_finish")
-    Call<FinishProductBean> finishProduct(@Body HashMap hashMap);
+    Call<OrderDetailBean> finishProduct(@Body HashMap hashMap);
 
     /**
      * 提交产品位置信息

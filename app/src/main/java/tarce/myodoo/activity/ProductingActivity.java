@@ -296,7 +296,7 @@ public class ProductingActivity extends ToolBarActivity {
         tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));
         eidtMoNote.setText(resDataBean.getRemark());
         editSaleNote.setText(resDataBean.getSale_remark());
-        switch (resDataBean.getProduction_order_type()) {
+        switch (String.valueOf(resDataBean.getProduction_order_type())){
             case "stockup":
                 tvTypeProduct.setText("备货制");
                 break;
@@ -356,13 +356,14 @@ public class ProductingActivity extends ToolBarActivity {
                             HashMap<Object, Object> hashMap = new HashMap<>();
                             hashMap.put("order_id", order_id);
                             hashMap.put("produce_qty", num);
-                            Call<CheckOutProductBean> objectCall = inventoryApi.checkOut(hashMap);
-                            objectCall.enqueue(new MyCallback<CheckOutProductBean>() {
+                            Call<OrderDetailBean> objectCall = inventoryApi.checkOut(hashMap);
+                            objectCall.enqueue(new MyCallback<OrderDetailBean>() {
                                 @Override
-                                public void onResponse(Call<CheckOutProductBean> call, Response<CheckOutProductBean> response) {
+                                public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                     dismissDefultProgressDialog();
                                     if (response.body() == null) return;
                                     if (response.body().getResult().getRes_code() == 1) {
+                                        resDataBean = response.body().getResult().getRes_data();
                                         tvStartProduce.setVisibility(View.VISIBLE);
                                         tvNumProduct.setText(StringUtils.doubleToString(response.body().getResult().getRes_data()
                                                 .getQty_produced()));
@@ -370,7 +371,7 @@ public class ProductingActivity extends ToolBarActivity {
                                 }
 
                                 @Override
-                                public void onFailure(Call<CheckOutProductBean> call, Throwable t) {
+                                public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                                     dismissDefultProgressDialog();
                                 }
                             });
@@ -478,15 +479,14 @@ public class ProductingActivity extends ToolBarActivity {
                         showDefultProgressDialog();
                         HashMap<Object, Object> hashMap = new HashMap<>();
                         hashMap.put("order_id", order_id);
-                        Call<FinishProductBean> objectCall = inventoryApi.finishProduct(hashMap);
-                        objectCall.enqueue(new MyCallback<FinishProductBean>() {
+                        Call<OrderDetailBean> objectCall = inventoryApi.finishProduct(hashMap);
+                        objectCall.enqueue(new MyCallback<OrderDetailBean>() {
                             @Override
-                            public void onResponse(Call<FinishProductBean> call, final Response<FinishProductBean> response) {
+                            public void onResponse(Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
                                 dismissDefultProgressDialog();
                                 if (response.body() == null) return;
                                 if (response.body().getResult().getRes_code() == 1) {
-                                    AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
-                                            .setMessage("生产完成，是否拍摄产品位置信息")
+                                    AlertAialogUtils.getCommonDialog(ProductingActivity.this, "生产完成，是否拍摄产品位置信息")
                                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
@@ -497,6 +497,7 @@ public class ProductingActivity extends ToolBarActivity {
                                                     intent.putExtra("limit", limit);
                                                     intent.putExtra("process_id", process_id);
                                                     intent.putExtra("change", true);
+                                                    intent.putExtra("bean", response.body().getResult().getRes_data());
                                                     startActivity(intent);
                                                 }
                                             })
@@ -514,7 +515,7 @@ public class ProductingActivity extends ToolBarActivity {
                             }
 
                             @Override
-                            public void onFailure(Call<FinishProductBean> call, Throwable t) {
+                            public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                                 dismissDefultProgressDialog();
                             }
                         });
@@ -636,6 +637,8 @@ public class ProductingActivity extends ToolBarActivity {
                         }
                     })
                     .show();
+        }else if (item.getItemId() == R.id.action_feedback){
+            ToastUtils.showCommonToast(ProductingActivity.this, "此功能仅适用于备料阶段");
         }
         return super.onOptionsItemSelected(item);
     }

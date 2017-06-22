@@ -27,7 +27,7 @@ import tarce.api.api.InventoryApi;
 import tarce.model.inventory.LoadInspectionBean;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
-import tarce.myodoo.activity.InspectionSubActivity;
+import tarce.myodoo.activity.inspect.InspectionSubActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;

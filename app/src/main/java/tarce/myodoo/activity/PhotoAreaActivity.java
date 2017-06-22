@@ -1,6 +1,7 @@
 package tarce.myodoo.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -9,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -107,6 +110,25 @@ public class PhotoAreaActivity extends ToolBarActivity {
     private Printer printer;
     private DeviceManager deviceManager;
     private String typeString;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    printer.print("MO单号：" + resDataBean.getDisplay_name() + "\n\n" + "产品: " + resDataBean.getProduct_name() + "\n\n" + "时间： " + TimeUtils.utc2Local(resDataBean.getDate_planned_start()) + "\n\n" +
+                            "负责人: " + resDataBean.getIn_charge_name() + "\n\n" + "生产数量：" + resDataBean.getQty_produced() + "\n\n" + "需求数量：" + resDataBean.getProduct_qty()
+                            + "\n\n" + "规格：" + resDataBean.getProduct_id().getProduct_specs() + "\n\n" + "工序：" + resDataBean.getProcess_id().getName() + "\n\n" + "类型：" + typeString
+                            + "\n\n" + "MO单备注：" + resDataBean.getRemark() + "\n\n" + "销售单备注：" + resDataBean.getSale_remark() + "\n\n", 30, TimeUnit.SECONDS);
+                    Bitmap mBitmap = CodeUtils.createImage(resDataBean.getDisplay_name(), 300, 300, null);
+                    printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+                    printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+                    break;
+                default:
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +148,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
             tvFinishOrder.setText("提交产品位置信息");
         }
         setTitle("物料位置信息");
-        switch (resDataBean.getProduction_order_type()) {
+        switch (String.valueOf(resDataBean.getProduction_order_type())) {
             case "stockup":
                 typeString = "备货制";
                 break;
@@ -141,6 +163,9 @@ public class PhotoAreaActivity extends ToolBarActivity {
         inventoryApi = RetrofitClient.getInstance(PhotoAreaActivity.this).create(InventoryApi.class);
         editListener();
 
+        initDevice();
+        printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+        printer.init();
     }
 
     /**
@@ -241,7 +266,6 @@ public class PhotoAreaActivity extends ToolBarActivity {
 
                                 @Override
                                 public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
-                                    Log.e("zouwansheng", "t = " + t.toString());
                                     dismissDefultProgressDialog();
                                 }
                             });
@@ -323,21 +347,15 @@ public class PhotoAreaActivity extends ToolBarActivity {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getResult().getRes_code() == 1) {
-                    AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "提交位置信息成功")
+                    AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "提交位置信息成功,点击确定将打印MO单，请等待")
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    initDevice();
-                                    printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
-                                    printer.init();
-
-                                    printer.print("MO单号：" + resDataBean.getDisplay_name() + "\n\n" + "产品: " + resDataBean.getProduct_name() + "\n\n" + "时间： " + TimeUtils.utc2Local(resDataBean.getDate_planned_start()) + "\n\n" +
-                                            "负责人: " + resDataBean.getIn_charge_name() + "\n\n" + "生产数量：" + resDataBean.getQty_produced() + "\n\n" + "需求数量：" + resDataBean.getProduct_qty()
-                                            + "\n\n" + "规格：" + resDataBean.getProduct_id().getProduct_specs() + "\n\n" + "工序：" + resDataBean.getProcess_id().getName() + "\n\n" + "类型：" + typeString
-                                            + "\n\n" + "MO单备注：" + resDataBean.getRemark() + "\n\n" + "销售单备注：" + resDataBean.getSale_remark() + "\n\n", 30, TimeUnit.SECONDS);
-                                    Bitmap mBitmap = CodeUtils.createImage(resDataBean.getDisplay_name(), 300, 300, null);
-                                    printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
-                                    printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+                                    dialog.dismiss();
+                                  //  Toast.makeText(PhotoAreaActivity.this, "正在打印中...",Toast.LENGTH_SHORT).show();
+                                    Message message = new Message();
+                                    message.what = 1;
+                                    handler.sendMessage(message);
 
                                     Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
                                     intent.putExtra("limit", limit);

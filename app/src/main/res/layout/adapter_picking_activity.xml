@@ -24,15 +24,14 @@
         android:id="@+id/tv_product_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="[Qsdfwef]wefufhwiugfss"
-        android:textSize="13sp"
-        android:maxEms="6"
-        android:lines="2"
+        android:textSize="10sp"
+        android:maxEms="10"
+        android:lines="3"
         android:textColor="@color/cc"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/id_colum"
         android:layout_marginLeft="10dp"
-        android:layout_marginBottom="5dp"/>
+        android:layout_marginBottom="5dp" />
     <TextView
         android:id="@+id/tv_all_name"
         android:layout_width="wrap_content"

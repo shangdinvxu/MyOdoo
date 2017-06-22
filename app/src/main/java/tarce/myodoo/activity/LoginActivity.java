@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
@@ -81,6 +83,19 @@ public class LoginActivity extends Activity {
     private InventoryApi inventoryApi;
     private ContactsBeanDao contactsBeanDao;
     private ArrayList<String> userStrings;
+    public Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    getSalesList();
+                    break;
+                default:
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +165,11 @@ public class LoginActivity extends Activity {
             String password = SharePreferenceUtils.getString("password", "error", LoginActivity.this);
             LoginActivity.this.password.setText(password);
             toLogin(new View(LoginActivity.this));
-        }
+        }/*else {
+            Message message = new Message();
+            message.what = 1;
+            handler.sendMessage(message);
+        }*/
     }
 
     @OnClick(R.id.database)
@@ -316,7 +335,6 @@ public class LoginActivity extends Activity {
                     MyLog.e(TAG,"menuListBeanDao里面的数量是"+count);
                 }
                 toMainActivity();
-//                getSalesList();
             }
         });
     }
@@ -324,6 +342,7 @@ public class LoginActivity extends Activity {
      * 存储客户信息
      * */
     private void getSalesList() {
+        RetrofitClient.Url = "http://erp.robotime.com";
         inventoryApi = RetrofitClient.getInstance(LoginActivity.this).create(InventoryApi.class);
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("name", null);

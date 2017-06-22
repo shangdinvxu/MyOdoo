@@ -95,6 +95,10 @@ public class InsertFeedbackDial extends Dialog {
         void OnSendCommonClick(String num);
     }
 
+    public InsertFeedbackDial changeHint(String hint){
+        editFeedbackMessage.setHint(hint);
+        return this;
+    }
 
     @OnClick(R.id.cancel_insert_dialog)
     void cancelAction(View view) {

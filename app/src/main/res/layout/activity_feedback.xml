@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/tv_add_feedb">
+    </android.support.v7.widget.RecyclerView>
+    <TextView
+        android:id="@+id/tv_add_feedb"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/cc"
+        android:text="添加缺料原因"
+        android:gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>

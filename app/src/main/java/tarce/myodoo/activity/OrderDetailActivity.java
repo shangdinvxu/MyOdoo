@@ -249,6 +249,10 @@ public class OrderDetailActivity extends ToolBarActivity {
                         }
                     })
                     .show();
+        }else if (item.getItemId() == R.id.action_feedback){
+            Intent intent = new Intent(OrderDetailActivity.this, FeedbackActivity.class);
+            intent.putExtra("order_id", order_id);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -512,7 +516,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         tvTimeProduct.setText(TimeUtils.utc2Local(resDataBean.getDate_planned_start()));
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
         tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));
-        switch (resDataBean.getProduction_order_type()) {
+        switch (String.valueOf(resDataBean.getProduction_order_type())) {
             case "stockup":
                 tvTypeProduct.setText("备货制");
                 break;

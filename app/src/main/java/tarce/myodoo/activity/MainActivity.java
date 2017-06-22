@@ -43,7 +43,7 @@ import tarce.myodoo.fragment.WarehouseFragment;
 import tarce.myodoo.view.NoScrollViewPager;
 import tarce.support.MyLog;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getSimpleName();
     @InjectView(R.id.viewpager)
     NoScrollViewPager mViewPager;
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity{
 
     private Fragment mContent;
     private View mCurrentTab;
-    private final static int REQUEST_CODE = 5 ;
+    private final static int REQUEST_CODE = 5;
     private LoadActionBean.ResultBean.ResDataBean res_data;
     private ContactsBeanDao contactsBeanDao;
     private DaoSession daoSession;
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity{
     private List<Integer> listInterge = new ArrayList<>();*/
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
@@ -97,17 +97,17 @@ public class MainActivity extends AppCompatActivity{
         initFragment();
         UpdateKey.API_TOKEN = "d8980dd0017f3e0a7b038aec2c52d737";
         UpdateKey.APP_ID = "5940d8ca959d6965c30002dc";
-//下载方式:
-  //   UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;//通过Dialog来进行下载
-//UpdateKey.DialogOrNotification=UpdateKey.WITH_NOTIFITION;通过通知栏来进行下载(默认)
+        //下载方式:
+        //   UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;//通过Dialog来进行下载
+        //UpdateKey.DialogOrNotification=UpdateKey.WITH_NOTIFITION;通过通知栏来进行下载(默认)
         UpdateFunGO.init(this);
-     //   getSupplier();
+        //   getSupplier();
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
-        if (res_data == null){
+        if (res_data == null) {
             refreshLoadAction();
         }
         UpdateFunGO.onResume(this);
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity{
 
     /***点击二维码扫描*/
     @OnClick(R.id.scan_button)
-    void clickScanButton(View view){
+    void clickScanButton(View view) {
         Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
         startActivityForResult(intent, REQUEST_CODE);
 
@@ -138,30 +138,30 @@ public class MainActivity extends AppCompatActivity{
 
     /*****点击搜索界面*/
     @OnClick(R.id.search_button)
-    void clickSearchButton(View view){
+    void clickSearchButton(View view) {
     }
 
 
     private void refreshLoadAction() {
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-        String[] names = {"linkloving_mrp_extend.menu_mrp_prepare_material_ing","linkloving_mrp_extend.menu_mrp_waiting_material",
+        String[] names = {"linkloving_mrp_extend.menu_mrp_prepare_material_ing", "linkloving_mrp_extend.menu_mrp_waiting_material",
                 "linkloving_mrp_extend.menu_mrp_waiting_warehouse_inspection",
                 "linkloving_mrp_extend.mrp_production_action_qc_success"};
         objectObjectHashMap.put("xml_names", names);
         objectObjectHashMap.put("user_id", MyApplication.userID);
-     //   AlertAialogUtils.showDefultProgressDialog(MainActivity.this);
+        //   AlertAialogUtils.showDefultProgressDialog(MainActivity.this);
         Call<LoadActionBean> objectCall = inventoryApi.load_actionCall(objectObjectHashMap);
         objectCall.enqueue(new Callback<LoadActionBean>() {
             @Override
             public void onResponse(Call<LoadActionBean> call, Response<LoadActionBean> response) {
-              //  AlertAialogUtils.dismissDefultProgressDialog();
+                //  AlertAialogUtils.dismissDefultProgressDialog();
                 if (response.body() != null && response.body().getResult().getRes_code() == 1) {
                     res_data = response.body().getResult().getRes_data();
                     Integer needaction_counter = res_data.getLinkloving_mrp_extend_menu_mrp_prepare_material_ing().getNeedaction_counter();
                     Integer needaction_counter1 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection().getNeedaction_counter();
                     Integer needaction_counter2 = res_data.getLinkloving_mrp_extend_mrp_production_action_qc_success().getNeedaction_counter();
                     Integer needaction_counter3 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_material().getNeedaction_counter();
-                    warehouseFragment.list.get(5).t.setNumber(needaction_counter+needaction_counter3);
+                    warehouseFragment.list.get(5).t.setNumber(needaction_counter + needaction_counter3);
                     warehouseFragment.list.get(6).t.setNumber(needaction_counter1);
                     warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
 //                    //               warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity{
 
             @Override
             public void onFailure(Call<LoadActionBean> call, Throwable t) {
-          //      AlertAialogUtils.dismissDefultProgressDialog();
+                //      AlertAialogUtils.dismissDefultProgressDialog();
                 MyLog.e(TAG, t.toString());
             }
         });
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity{
     }
 
 
-    private void initFragment(){
+    private void initFragment() {
         myfragment = new Fragment[4];
         warehouseFragment = new WarehouseFragment();
         myfragment[0] = warehouseFragment;
@@ -261,8 +261,8 @@ public class MainActivity extends AppCompatActivity{
 
     /**
      * 存储供应商信息
-     * */
-    private void getSupplier(){
+     */
+    private void getSupplier() {
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("name", null);
         // type: ‘supplier’ or ‘customer’
@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity{
         stringCall.enqueue(new Callback<SearchSupplierResponse>() {
             @Override
             public void onResponse(Call<SearchSupplierResponse> call, Response<SearchSupplierResponse> response) {
-                if (response.body() == null)return;
+                if (response.body() == null) return;
                 /*if (response.body().getResult() != null) {
                     List<SearchSupplierResponse.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
                     if (res_data != null && res_data.size() > 0) {
@@ -284,6 +284,7 @@ public class MainActivity extends AppCompatActivity{
                 long count = contactsBeanDao.count();
                 MyLog.e(TAG,"contactsBeanDao里面的数量是"+count);*/
             }
+
             @Override
             public void onFailure(Call<SearchSupplierResponse> call, Throwable t) {
             }

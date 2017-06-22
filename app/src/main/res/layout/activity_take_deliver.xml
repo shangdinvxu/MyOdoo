@@ -19,4 +19,23 @@
         android:hint="根据采购单搜索"
         android:imeOptions="actionSearch"
         android:singleLine="true" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_show_supplier"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:visibility="gone">
+    </android.support.v7.widget.RecyclerView>
+    <TextView
+        android:id="@+id/tv_get_last"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="获取最新"
+        android:gravity="center"
+        android:background="@color/cc"
+        android:visibility="gone"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_take_deliver"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </android.support.v7.widget.RecyclerView>
 </LinearLayout>

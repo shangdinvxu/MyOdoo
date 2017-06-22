@@ -172,7 +172,19 @@ public class GetSaleResponse implements Serializable{
             private	String	state;	/*done*/
             private	Integer	picking_id;	/*781*/
             private	String	min_date;	/*2016-12-14 06:59:24*/
-            private	String	delivery_rule;	/*Object*/
+
+            public Object getDelivery_rule() {
+                if (delivery_rule instanceof String){
+                    delivery_rule = String.valueOf(delivery_rule);
+                }
+                return delivery_rule;
+            }
+
+            public void setDelivery_rule(Object delivery_rule) {
+                this.delivery_rule = delivery_rule;
+            }
+
+            private	Object	delivery_rule;	/*Object*/
             private	String	name;	/*WHIN2016121500693*/
             private	Boolean	qc_note;	/*false*/
             private	String	parnter_id;	/*海盐宏胜包装材料厂*/
@@ -234,12 +246,6 @@ public class GetSaleResponse implements Serializable{
                 return this.min_date;
             }
 
-            public void setDelivery_rule(String value){
-                this.delivery_rule = value;
-            }
-            public String getDelivery_rule(){
-                return this.delivery_rule;
-            }
 
             public void setName(String value){
                 this.name = value;

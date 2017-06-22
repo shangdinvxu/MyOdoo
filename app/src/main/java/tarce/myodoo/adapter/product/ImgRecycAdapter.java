@@ -5,14 +5,12 @@ import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.model.GlideUrl;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
 import tarce.myodoo.R;
-import tarce.support.ToastUtils;
 
 /**
  * Created by rose.zou on 2017/6/8.
