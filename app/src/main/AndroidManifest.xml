@@ -109,6 +109,9 @@
         <activity android:name=".activity.TakeDeAreaActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".activity.WriteCheckMessaActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
     </application>
 
 

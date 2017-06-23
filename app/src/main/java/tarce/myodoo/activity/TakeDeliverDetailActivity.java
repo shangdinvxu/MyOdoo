@@ -173,17 +173,22 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 buttomButton1.setText("查看入库信息");
                 buttomButton2.setText("填写品检信息");
                 buttomButton2.setVisibility(View.VISIBLE);
-                showLinThreeGou();
+                showLinThreePin();
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        Intent intent = new Intent(TakeDeliverDetailActivity.this, AreaMessageActivity.class);
+                        intent.putExtra("img_area", resDataBean.getQc_img());
+                        intent.putExtra("string_area", (String) resDataBean.getPost_area_id().getArea_name());
+                        startActivity(intent);
                     }
                 });
                 buttomButton2.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        Intent intent = new Intent(TakeDeliverDetailActivity.this, WriteCheckMessaActivity.class);
+                        intent.putExtra("bean", resDataBean);
+                        startActivity(intent);
                     }
                 });
                 break;

@@ -68,6 +68,7 @@ public interface InventoryApi {
      * */
     @POST("change_stock_picking_state")
     Call<TakeDelListBean> ruKu(@Body HashMap hashMap);
+
     /**
      * 获取反馈原因接口
      * */

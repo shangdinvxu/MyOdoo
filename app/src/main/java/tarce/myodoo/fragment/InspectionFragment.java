@@ -106,10 +106,11 @@ public class InspectionFragment extends Fragment {
                         startActivity(intent1);
                         break;
                     case "入库品检":
-                       /* Intent intent2 = new Intent(getActivity(), TakeDeliveListActivity.class);
-                        intent2.putExtra("type_code", picking_type_code);
+                        Intent intent2 = new Intent(getActivity(), TakeDeliveListActivity.class);
+                        intent2.putExtra("from", "yes");
+                        intent2.putExtra("type_code", "");
                         intent2.putExtra("state","done");
-                        startActivity(intent2);*/
+                        startActivity(intent2);
                         break;
                 }
             }

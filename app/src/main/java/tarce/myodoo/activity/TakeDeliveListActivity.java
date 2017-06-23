@@ -61,6 +61,7 @@ public class TakeDeliveListActivity extends BaseActivity {
     private TakeDelListAdapter listAdapter;
     private List<TakeDelListBean.ResultBean.ResDataBean> res_data = new ArrayList<>();
     private List<TakeDelListBean.ResultBean.ResDataBean> dataBeanList = new ArrayList<>();
+    private String from;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +72,7 @@ public class TakeDeliveListActivity extends BaseActivity {
 
         setRecyclerview(swipeTarget);
         Intent intent = getIntent();
+        from = intent.getStringExtra("from");
         type_code = intent.getStringExtra("type_code");
         state = intent.getStringExtra("state");
         showDefultProgressDialog();
@@ -121,8 +123,14 @@ public class TakeDeliveListActivity extends BaseActivity {
     private void initData(final int offset, final int limit, final int move){
         inventoryApi = RetrofitClient.getInstance(TakeDeliveListActivity.this).create(InventoryApi.class);
         HashMap<Object, Object> hashMap = new HashMap<>();
-        hashMap.put("picking_type_code", type_code);
-        hashMap.put("state", state);
+        if ("no".equals(from)){
+            hashMap.put("picking_type_code", type_code);
+            hashMap.put("state", state);
+        }else if ("yes".equals(from)){
+            hashMap.put("partner_id", 0);
+            hashMap.put("picking_type_id", 1);
+            hashMap.put("state", "qc_check");
+        }
         hashMap.put("limit", limit);
         hashMap.put("offset", offset);
         Call<TakeDelListBean> inComingOutgoingList = inventoryApi.getInComingOutgoingList(hashMap);

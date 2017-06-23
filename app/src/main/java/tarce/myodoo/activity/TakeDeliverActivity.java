@@ -176,6 +176,7 @@ public class TakeDeliverActivity extends BaseActivity {
                     return;
                 }
                 Intent intent = new Intent(TakeDeliverActivity.this, TakeDeliveListActivity.class);
+                intent.putExtra("from", "no");
                 intent.putExtra("type_code", picking_type_code);
                 switch (position){
                     case 0:
