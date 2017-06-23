@@ -78,7 +78,7 @@ public class ProcessOfPersonActivity extends BaseActivity {
             public void onResponse(Call<ProductProcessBean> call, Response<ProductProcessBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null)return;
-                if (response.body().getResult().getRes_code() == 1){
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null){
                     res_data = response.body().getResult().getRes_data();
                     for (int i = 0; i < res_data.size(); i++) {
                         ProcessShowBean bean = new ProcessShowBean(res_data.get(i).getName(), res_data.get(i).getProcess_count());

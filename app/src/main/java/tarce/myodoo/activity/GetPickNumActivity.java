@@ -70,10 +70,7 @@ public class GetPickNumActivity extends ToolBarActivity {
             public void onResponse(Call<ProcessDeatilBean> call, Response<ProcessDeatilBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
-                    if (response.body().getResult().getRes_data() == null) {
-                        return;
-                    }
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null) {
                     for (int i = 0; i < response.body().getResult().getRes_data().size(); i++) {
                         if (response.body().getResult().getRes_data().get(i).getState().equals("delay")) {
                             beanList.set(0, new ProcessShowBean("延误", response.body().getResult().getRes_data().get(i).getCount()));

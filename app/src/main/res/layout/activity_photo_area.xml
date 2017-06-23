@@ -70,6 +70,6 @@
         android:layout_alignParentBottom="true"
         android:background="@color/cc"
         android:textColor="@color/white"
-        android:text="提交物料信息"
+        android:text="提交入库"
         android:gravity="center" />
 </RelativeLayout>

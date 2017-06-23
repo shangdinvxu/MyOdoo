@@ -58,10 +58,10 @@ public class WarehouseFragment extends Fragment {
         list.add(new MainItemBean(new MenuBean("生产入库", 0)));
         list.add(new MainItemBean(new MenuBean("生产补料", 0)));
         list.add(new MainItemBean(true, ""));
-        list.add(new MainItemBean(new MenuBean("销售出库", 0)));
+        list.add(new MainItemBean(new MenuBean("销售出货", 0)));
         list.add(new MainItemBean(new MenuBean("销售退货", 0)));
         list.add(new MainItemBean(true, ""));
-        list.add(new MainItemBean(new MenuBean("零售出库", 0)));
+        list.add(new MainItemBean(new MenuBean("零售出货", 0)));
         list.add(new MainItemBean(new MenuBean("零售退货", 0)));
         list.add(new MainItemBean(true, ""));
         list.add(new MainItemBean(new MenuBean("盘点", 0)));
@@ -94,7 +94,7 @@ public class WarehouseFragment extends Fragment {
                         Intent intent = new Intent(getActivity(), TakeDeliverActivity.class);
                         startActivity(intent);
                         break;
-                    case "销售出库":
+                    case "销售出货":
                         IntentFactory.start_SalesOut_Activity(getActivity());
                         break;
                     case "生产备料":

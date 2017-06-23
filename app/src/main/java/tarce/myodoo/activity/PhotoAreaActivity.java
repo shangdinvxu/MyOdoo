@@ -321,7 +321,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
                 }
             });
             deviceManager.connect();
-            MyLog.e("OrderDetailActivity", "连接成功");
+            MyLog.e("PhotoAreaActivity", "连接成功");
         } catch (Exception e) {
             e.printStackTrace();
             ToastUtils.showCommonToast(PhotoAreaActivity.this, "链接异常,请检查设备或重新连接.." + e);

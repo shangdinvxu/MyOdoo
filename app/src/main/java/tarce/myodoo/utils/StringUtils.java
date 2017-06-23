@@ -18,9 +18,16 @@ public class StringUtils {
 
         }else  if (string.equals("delivery_once")){
             transtring = "一次性发齐货";
+        }else if (string.equals("create_backorder")){
+            transtring = "允许分批,并产生欠单";
+        }else if (string.equals("cancel_backorder")){
+            transtring = "允许分批,不产生欠单";
+        }else if (string.equals("waiting_in")){
+            transtring = "待入库";
+        }else if (string.equals("qc_check")){
+            transtring = "品检";
         }
         return transtring;
-
     }
     /**
      * 判断是否为空string

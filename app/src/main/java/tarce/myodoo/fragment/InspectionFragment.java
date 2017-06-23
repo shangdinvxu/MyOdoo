@@ -27,6 +27,7 @@ import tarce.api.api.InventoryApi;
 import tarce.model.inventory.LoadInspectionBean;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.TakeDeliveListActivity;
 import tarce.myodoo.activity.inspect.InspectionSubActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
@@ -103,6 +104,12 @@ public class InspectionFragment extends Fragment {
                         Intent intent1 = new Intent(getActivity(), InspectionSubActivity.class);
                         intent1.putExtra("state", "qc_ing");
                         startActivity(intent1);
+                        break;
+                    case "入库品检":
+                       /* Intent intent2 = new Intent(getActivity(), TakeDeliveListActivity.class);
+                        intent2.putExtra("type_code", picking_type_code);
+                        intent2.putExtra("state","done");
+                        startActivity(intent2);*/
                         break;
                 }
             }

@@ -17,12 +17,17 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import greendao.ContactsBeanDao;
+import greendao.DaoSession;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.GetGroupByListresponse;
+import tarce.model.SearchSupplierResponse;
+import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.TakeDelievAdapter;
 import tarce.myodoo.bean.MenuBean;
@@ -48,6 +53,9 @@ public class TakeDeliverActivity extends BaseActivity {
     private TakeDelievAdapter adapter;
     private List<GetGroupByListresponse.ResultBean.ResDataBean.StatesBean> states;
     private String picking_type_code;
+    private ContactsBeanDao contactsBeanDao;
+    private DaoSession daoSession;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +63,28 @@ public class TakeDeliverActivity extends BaseActivity {
         setContentView(R.layout.activity_take_deliver);
         ButterKnife.inject(this);
 
+        daoSession = MyApplication.getInstances().getDaoSession();
+        contactsBeanDao =  daoSession.getContactsBeanDao();
         setRecyclerview(recyclerTakeDeliver);
         editCustomListener();
         editOrderListener();
         initData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (menuBeanList == null){
+            initData();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (menuBeanList != null){
+            menuBeanList = null;
+        }
     }
 
     private void initData() {
@@ -96,7 +122,7 @@ public class TakeDeliverActivity extends BaseActivity {
     }
 
     /**
-     *
+     *初始化数据
      * */
     private void initDeliever(){
         showDefultProgressDialog();
@@ -163,6 +189,38 @@ public class TakeDeliverActivity extends BaseActivity {
                         break;
                 }
                 startActivity(intent);
+            }
+        });
+    }
+
+    /**
+     * 存储供应商信息
+     */
+    private void getSupplier() {
+        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put("name", null);
+        // type: ‘supplier’ or ‘customer’
+        objectObjectHashMap.put("type", "supplier");
+        Call<SearchSupplierResponse> stringCall = inventoryApi.searchSupplier(objectObjectHashMap);
+        stringCall.enqueue(new Callback<SearchSupplierResponse>() {
+            @Override
+            public void onResponse(Call<SearchSupplierResponse> call, Response<SearchSupplierResponse> response) {
+                if (response.body() == null) return;
+                /*if (response.body().getResult() != null) {
+                    List<SearchSupplierResponse.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
+                    if (res_data != null && res_data.size() > 0) {
+                        for (SearchSupplierResponse.ResultBean.ResDataBean resDataBean : res_data) {
+                            contactsBeanDao.insertOrReplace(new ContactsBean(resDataBean.getComment(), resDataBean.getPhone()
+                                    , resDataBean.getPartner_id(), resDataBean.getName(), resDataBean.getX_qq()));
+                        }
+                    }
+                }
+                long count = contactsBeanDao.count();
+                MyLog.e(TAG,"contactsBeanDao里面的数量是"+count);*/
+            }
+
+            @Override
+            public void onFailure(Call<SearchSupplierResponse> call, Throwable t) {
             }
         });
     }

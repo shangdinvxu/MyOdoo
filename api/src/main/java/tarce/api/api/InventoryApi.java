@@ -46,7 +46,10 @@ import tarce.model.inventory.StartInspectBean;
 import tarce.model.inventory.StartProductBean;
 import tarce.model.inventory.StartReworkBean;
 import tarce.model.inventory.StopProductlineBean;
+import tarce.model.inventory.TakeDeAreaBean;
+import tarce.model.inventory.TakeDelListBean;
 import tarce.model.inventory.UpdateMessageBean;
+import tarce.model.inventory.WaitingInBean;
 import tarce.model.inventory.WorkingWorkerBean;
 
 /**
@@ -54,6 +57,17 @@ import tarce.model.inventory.WorkingWorkerBean;
  */
 
 public interface InventoryApi {
+    /**
+     * 提交入库（位置信息）
+     * */
+    @POST("change_stock_picking_state")
+    Call<TakeDeAreaBean> commitRuku(@Body HashMap hashMap);
+
+    /**
+     * 入库
+     * */
+    @POST("change_stock_picking_state")
+    Call<TakeDelListBean> ruKu(@Body HashMap hashMap);
     /**
      * 获取反馈原因接口
      * */
@@ -83,7 +97,7 @@ public interface InventoryApi {
      * 收货列表
      * */
     @POST("get_incoming_outgoing_stock_picking")
-    Call<GetSaleListResponse> getInComingOutgoingList(@Body HashMap hashMap);
+    Call<TakeDelListBean> getInComingOutgoingList(@Body HashMap hashMap);
 
     /**
      * 搜索供应商或者客户。

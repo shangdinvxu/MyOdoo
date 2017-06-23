@@ -91,7 +91,7 @@ public class FeedbackActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, final int position) {
                 final List<GetFeedbackBean.ResultBean.ResDataBean> data = adapter.getData();
-                AlertAialogUtils.getCommonDialog(FeedbackActivity.this, "是否提交："+data.get(position).getContent())
+                AlertAialogUtils.getCommonDialog(FeedbackActivity.this, "是否确认选择这条原因提交："+data.get(position).getContent())
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

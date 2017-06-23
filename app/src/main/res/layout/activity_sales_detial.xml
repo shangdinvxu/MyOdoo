@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:fitsSystemWindows="true">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/linear_bottom">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -24,15 +24,6 @@
                     android:layout_gravity="center_horizontal"
                     android:src="@mipmap/down"
                     android:layout_marginLeft="120dp"/>
-                <TextView
-                    android:id="@+id/print_tv"
-                    android:layout_width="60dp"
-                    android:layout_height="match_parent"
-                    android:text="打印"
-                    android:gravity="center"
-                    android:layout_marginLeft="60dp"
-                    android:background="@color/height_yellow"
-                    android:layout_gravity="right"/>
             </LinearLayout>
                 <LinearLayout
                     android:background="@color/bg_color"
@@ -171,14 +162,14 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="待入库" />
+                        android:text="位置" />
 
-                    <TextView
+                    <!--<TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="库存" />
+                        android:text="库存" />-->
 
                     <TextView
                         android:layout_width="0dp"
@@ -201,38 +192,41 @@
                     android:id="@+id/recyclerview"
                     android:focusable="false"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content">
                 </android.support.v7.widget.RecyclerView>
             </LinearLayout>
     </ScrollView>
     <LinearLayout
+        android:id="@+id/linear_bottom"
         android:layout_width="match_parent"
-        android:background="@color/bg_color"
         android:layout_height="40dp"
-        android:layout_gravity="bottom">
+        android:layout_alignParentBottom="true">
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:id="@+id/buttom_button1"
-            android:background="@color/ccolor"
+            android:background="@color/cc"
             android:layout_height="match_parent" />
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:id="@+id/buttom_button2"
-            android:background="@color/ccolor"
-            android:layout_height="match_parent" />
+            android:background="@color/cc"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:id="@+id/buttom_button3"
             android:background="@color/ccolor"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:id="@+id/buttom_button4"
             android:background="@color/ccolor"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
     </LinearLayout>
-</FrameLayout>
+</RelativeLayout>
