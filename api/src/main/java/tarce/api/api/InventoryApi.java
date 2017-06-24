@@ -5,14 +5,12 @@ import java.util.HashMap;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
-import rx.Observable;
 import tarce.model.AddworkBean;
 import tarce.model.BuLlBean;
 import tarce.model.ChangeStateBean;
 import tarce.model.FindProductByConditionResponse;
 import tarce.model.GetGroupByListresponse;
 import tarce.model.GetProcessBean;
-import tarce.model.GetSaleListResponse;
 import tarce.model.GetSaleResponse;
 import tarce.model.LoadActionBean;
 import tarce.model.OutgoingStockpickingBean;
@@ -20,13 +18,9 @@ import tarce.model.SearchSupplierResponse;
 import tarce.model.inventory.AreaMessageBean;
 import tarce.model.inventory.AutoAddworkBean;
 import tarce.model.inventory.BomFramworkBean;
-import tarce.model.inventory.CheckOutProductBean;
-import tarce.model.inventory.CommitNumFeedBean;
 import tarce.model.inventory.CommonBean;
 import tarce.model.inventory.DoUnreservBean;
-import tarce.model.inventory.DoneCommitNumBean;
 import tarce.model.inventory.FinishPrepareMaBean;
-import tarce.model.inventory.FinishProductBean;
 import tarce.model.inventory.FreeWorkBean;
 import tarce.model.inventory.GetFactroyRemarkBean;
 import tarce.model.inventory.GetFeedbackBean;
@@ -45,11 +39,9 @@ import tarce.model.inventory.GetNumProcess;
 import tarce.model.inventory.StartInspectBean;
 import tarce.model.inventory.StartProductBean;
 import tarce.model.inventory.StartReworkBean;
-import tarce.model.inventory.StopProductlineBean;
 import tarce.model.inventory.TakeDeAreaBean;
 import tarce.model.inventory.TakeDelListBean;
 import tarce.model.inventory.UpdateMessageBean;
-import tarce.model.inventory.WaitingInBean;
 import tarce.model.inventory.WorkingWorkerBean;
 
 /**
@@ -68,6 +60,12 @@ public interface InventoryApi {
      * */
     @POST("change_stock_picking_state")
     Call<TakeDelListBean> ruKu(@Body HashMap hashMap);
+
+    /**
+     * 退回
+     * */
+    @POST("change_stock_picking_state")
+    Call<TakeDeAreaBean> reject(@Body HashMap hashMap);
 
     /**
      * 获取反馈原因接口
@@ -278,7 +276,7 @@ public interface InventoryApi {
      * 产线的暂停与恢复
      * */
     @POST("change_worker_state")
-    Call<StopProductlineBean> stopProductLine(@Body HashMap hashMap);
+    Call<OrderDetailBean> stopProductLine(@Body HashMap hashMap);
 
     /**
      * 生产完成
@@ -326,13 +324,13 @@ public interface InventoryApi {
      * 提交退料数量
      * */
     @POST("return_material")
-    Call<CommitNumFeedBean> commitFeedNum(@Body HashMap hashMap);
+    Call<OrderDetailBean> commitFeedNum(@Body HashMap hashMap);
 
     /**
      * 清点退料/提交退料数量
      * */
     @POST("semi_finished_return_material")
-    Call<DoneCommitNumBean> semiCommitReturn(@Body HashMap hashMap);
+    Call<OrderDetailBean> semiCommitReturn(@Body HashMap hashMap);
 
     /**
      * 开始返工

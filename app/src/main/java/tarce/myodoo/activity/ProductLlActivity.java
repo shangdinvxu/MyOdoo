@@ -156,7 +156,7 @@ public class ProductLlActivity extends BaseActivity {
                     ToastUtils.showCommonToast(ProductLlActivity.this, response.body().getError().getMessage());
                     return;
                 }
-                if (response.body().getResult().getRes_code() == 1){
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                     beanList = response.body().getResult().getRes_data();
                     if (move == Refresh_Move){
                         dataBeanList = beanList;

@@ -178,12 +178,15 @@ public class AddPersonActivity extends BaseActivity {
                     }
                     adapter = new WorkPersonAdapter(res_data, AddPersonActivity.this);
                     recyclerPersonWait.setAdapter(adapter);
+                }else {
+                    ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
                 }
             }
 
             @Override
             public void onFailure(Call<FreeWorkBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(AddPersonActivity.this, t.toString());
             }
         });
     }
@@ -214,13 +217,15 @@ public class AddPersonActivity extends BaseActivity {
                             ToastUtils.showCommonToast(AddPersonActivity.this, "不在员工列表中？");
                             return;
                         }
-                        if (response.body().getResult().getRes_code() == 1) {
+                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                             if (res_data_working.contains(response.body().getResult().getRes_data().getName())) {
                                 ToastUtils.showCommonToast(AddPersonActivity.this, "已经添加该员工");
                             } else {
                                 res_data_working.add(response.body().getResult().getRes_data().getName());
                                 personAdapter.notifyDataSetChanged();
                             }
+                        }else {
+                            ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
                         }
                     }
 
@@ -281,7 +286,7 @@ public class AddPersonActivity extends BaseActivity {
             public void onResponse(Call<AddworkBean> call, Response<AddworkBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     if (close) {
                         adapterList.clear();
                         for (int i = 0; i < response.body().getResult().getRes_data().size(); i++) {
@@ -293,12 +298,14 @@ public class AddPersonActivity extends BaseActivity {
                         adapterList.addAll(add_name);
                         personAdapter.notifyDataSetChanged();
                     }
+                }else {
+                    ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
                 }
             }
 
             @Override
             public void onFailure(Call<AddworkBean> call, Throwable t) {
-                super.onFailure(call, t);
+                ToastUtils.showCommonToast(AddPersonActivity.this, t.toString());
             }
         });
     }
@@ -321,17 +328,20 @@ public class AddPersonActivity extends BaseActivity {
                             public void onResponse(Call<StartProductBean> call, Response<StartProductBean> response) {
                                 dismissDefultProgressDialog();
                                 if (response.body() == null) return;
-                                if (response.body().getResult().getRes_code() == 1) {
+                                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                                     Intent intent = new Intent(AddPersonActivity.this, WaitProdListActivity.class);
                                     intent.putExtra("state_delay", name_activity);
                                     startActivity(intent);
                                     finish();
+                                }else {
+                                    ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<StartProductBean> call, Throwable t) {
                                 dismissDefultProgressDialog();
+                                ToastUtils.showCommonToast(AddPersonActivity.this, t.toString());
                             }
                         });
                     }
@@ -354,15 +364,17 @@ public class AddPersonActivity extends BaseActivity {
             @Override
             public void onResponse(Call<ChangeStateBean> call, Response<ChangeStateBean> response) {
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() !=null) {
                     adapterList.set(position, new WorkingStateBean(adapterList.get(position).getName(), state));
                     personAdapter.notifyItemChanged(position);
+                }else {
+                    ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
                 }
             }
 
             @Override
             public void onFailure(Call<ChangeStateBean> call, Throwable t) {
-                super.onFailure(call, t);
+                ToastUtils.showCommonToast(AddPersonActivity.this, t.toString());
             }
         });
     }
@@ -380,9 +392,4 @@ public class AddPersonActivity extends BaseActivity {
             showScan = true;
         }
     }
-    /*@Override
-    protected void onDestroy() {
-        dismissDefultProgressDialog();
-        super.onDestroy();
-    }*/
 }

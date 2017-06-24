@@ -60,6 +60,7 @@ import tarce.model.inventory.UpdateMessageBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.uiutil.ImageUtil;
+import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
@@ -118,10 +119,11 @@ public class PhotoAreaActivity extends ToolBarActivity {
                     printer.print("MO单号：" + resDataBean.getDisplay_name() + "\n\n" + "产品: " + resDataBean.getProduct_name() + "\n\n" + "时间： " + TimeUtils.utc2Local(resDataBean.getDate_planned_start()) + "\n\n" +
                             "负责人: " + resDataBean.getIn_charge_name() + "\n\n" + "生产数量：" + resDataBean.getQty_produced() + "\n\n" + "需求数量：" + resDataBean.getProduct_qty()
                             + "\n\n" + "规格：" + resDataBean.getProduct_id().getProduct_specs() + "\n\n" + "工序：" + resDataBean.getProcess_id().getName() + "\n\n" + "类型：" + typeString
-                            + "\n\n" + "MO单备注：" + resDataBean.getRemark() + "\n\n" + "销售单备注：" + resDataBean.getSale_remark() + "\n\n", 30, TimeUnit.SECONDS);
+                            + "\n\n" + "MO单备注：" + resDataBean.getRemark() + "\n\n" + "销售单备注：" + resDataBean.getSale_remark() + "\n\n"+"仓库备注：\n\n\n\n"+"品检备注：\n\n\n\n", 30, TimeUnit.SECONDS);
                     Bitmap mBitmap = CodeUtils.createImage(resDataBean.getDisplay_name(), 300, 300, null);
                     printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
-                    printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+                    printer.print("\n\n"+"打印时间："+ DateTool.getDateTime(), 30, TimeUnit.SECONDS);
+                    printer.print("\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
                     break;
                 default:
                     break;
@@ -183,7 +185,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
                         @Override
                         public void onResponse(Call<AreaMessageBean> call, Response<AreaMessageBean> response) {
                             if (response.body() == null) return;
-                            if (response.body().getResult().getRes_code() == 1) {
+                            if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null) {
                                 res_data = response.body().getResult().getRes_data();
                                 adapter = new AreaMessageAdapter(R.layout.adapter_area_message, res_data);
                                 recyclerArea.setAdapter(adapter);
@@ -267,6 +269,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
                                 @Override
                                 public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
                                     dismissDefultProgressDialog();
+                                    ToastUtils.showCommonToast(PhotoAreaActivity.this, t.toString());
                                 }
                             });
                         }
@@ -346,7 +349,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
             public void onResponse(Call<FinishPrepareMaBean> call, Response<FinishPrepareMaBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                     AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "提交位置信息成功,点击确定将打印MO单，请等待")
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override

@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -39,12 +38,9 @@ import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
-import tarce.model.inventory.CheckOutProductBean;
 import tarce.model.inventory.CommonBean;
-import tarce.model.inventory.FinishProductBean;
 import tarce.model.inventory.GetFactroyRemarkBean;
 import tarce.model.inventory.OrderDetailBean;
-import tarce.model.inventory.StopProductlineBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.OrderDetailAdapter;
 import tarce.myodoo.uiutil.DialogForOrder;
@@ -254,18 +250,21 @@ public class ProductingActivity extends ToolBarActivity {
             public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                     result = response.body().getResult();
                     resDataBean = response.body().getResult().getRes_data();
                     prepare_material_area_id = response.body().getResult().getRes_data().getPrepare_material_area_id();
                     prepare_material_img = response.body().getResult().getRes_data().getPrepare_material_img();
                     initView();
+                }else {
+                    ToastUtils.showCommonToast(ProductingActivity.this, "出现错误,请联系开发人员调试");
                 }
             }
 
             @Override
             public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(ProductingActivity.this, t.toString());
             }
         });
     }
@@ -362,7 +361,7 @@ public class ProductingActivity extends ToolBarActivity {
                                 public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                     dismissDefultProgressDialog();
                                     if (response.body() == null) return;
-                                    if (response.body().getResult().getRes_code() == 1) {
+                                    if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                                         resDataBean = response.body().getResult().getRes_data();
                                         tvStartProduce.setVisibility(View.VISIBLE);
                                         tvNumProduct.setText(StringUtils.doubleToString(response.body().getResult().getRes_data()
@@ -442,13 +441,13 @@ public class ProductingActivity extends ToolBarActivity {
         hashMap.put("order_id", order_id);
         hashMap.put("state", state);
         hashMap.put("is_all_pending", is_all_pending);
-        Call<StopProductlineBean> objectCall = inventoryApi.stopProductLine(hashMap);
-        objectCall.enqueue(new MyCallback<StopProductlineBean>() {
+        Call<OrderDetailBean> objectCall = inventoryApi.stopProductLine(hashMap);
+        objectCall.enqueue(new MyCallback<OrderDetailBean>() {
             @Override
-            public void onResponse(Call<StopProductlineBean> call, Response<StopProductlineBean> response) {
+            public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                     if (product_line) {
                         tvLineStop.setText("恢复产线");
                         product_line = false;
@@ -456,12 +455,15 @@ public class ProductingActivity extends ToolBarActivity {
                         tvLineStop.setText("产线暂停");
                         product_line = true;
                     }
+                }else {
+                    ToastUtils.showCommonToast(ProductingActivity.this, "出现错误，请联系开发人员调试");
                 }
             }
 
             @Override
-            public void onFailure(Call<StopProductlineBean> call, Throwable t) {
+            public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(ProductingActivity.this, t.toString());
             }
         });
     }
@@ -485,7 +487,7 @@ public class ProductingActivity extends ToolBarActivity {
                             public void onResponse(Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
                                 dismissDefultProgressDialog();
                                 if (response.body() == null) return;
-                                if (response.body().getResult().getRes_code() == 1) {
+                                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                                     AlertAialogUtils.getCommonDialog(ProductingActivity.this, "生产完成，是否拍摄产品位置信息")
                                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                                 @Override
@@ -511,12 +513,15 @@ public class ProductingActivity extends ToolBarActivity {
                                                     startActivity(intent);
                                                 }
                                             }).show();
+                                }else {
+                                    ToastUtils.showCommonToast(ProductingActivity.this, "出现错误，请联系开发人员调试");
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                                 dismissDefultProgressDialog();
+                                ToastUtils.showCommonToast(ProductingActivity.this, t.toString());
                             }
                         });
                     }
@@ -591,7 +596,7 @@ public class ProductingActivity extends ToolBarActivity {
                 @Override
                 public void onResponse(Call<GetFactroyRemarkBean> call, Response<GetFactroyRemarkBean> response) {
                     if (response == null)return;
-                    if (response.body().getResult().getRes_code() == 1){
+                    if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                         String remark = response.body().getResult().getRes_data().getFactory_mark();
                         new InsertFeedbackDial(ProductingActivity.this, R.style.MyDialogStyle, new InsertFeedbackDial.OnSendCommonClickListener() {
                             @Override
@@ -611,12 +616,14 @@ public class ProductingActivity extends ToolBarActivity {
                                 });
                             }
                         }, remark).show();
+                    }else {
+                        ToastUtils.showCommonToast(ProductingActivity.this, "出现错误，请联系开发人员调试");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<GetFactroyRemarkBean> call, Throwable t) {
-                    super.onFailure(call, t);
+                    ToastUtils.showCommonToast(ProductingActivity.this, t.toString());
                 }
             });
         }else if (item.getItemId() == tarce.support.R.id.action_print){

@@ -23,6 +23,7 @@ import tarce.model.inventory.ProductProcessBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.ProcessListAdapter;
 import tarce.support.SharePreferenceUtils;
+import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
 /**
@@ -93,6 +94,7 @@ public class ProcessOfPersonActivity extends BaseActivity {
             @Override
             public void onFailure(Call<ProductProcessBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(ProcessOfPersonActivity.this, t.toString());
             }
         });
     }

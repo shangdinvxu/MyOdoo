@@ -15,7 +15,6 @@ public class StringUtils {
             transtring = "完成";
         }else  if (string.equals("partially_available")){
             transtring = "部分可用";
-
         }else  if (string.equals("delivery_once")){
             transtring = "一次性发齐货";
         }else if (string.equals("create_backorder")){
@@ -26,6 +25,8 @@ public class StringUtils {
             transtring = "待入库";
         }else if (string.equals("qc_check")){
             transtring = "品检";
+        }else if (string.equals("validate")){
+            transtring = "等待采购检验";
         }
         return transtring;
     }

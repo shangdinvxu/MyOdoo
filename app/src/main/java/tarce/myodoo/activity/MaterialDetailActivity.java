@@ -29,6 +29,7 @@ import tarce.myodoo.adapter.processproduct.PrepareMdAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
 import tarce.myodoo.utils.DateTool;
+import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
 /**
@@ -134,7 +135,7 @@ public class MaterialDetailActivity extends BaseActivity {
             public void onResponse(Call<MaterialDetailBean> call, Response<MaterialDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                     dataBeanList = response.body().getResult().getRes_data();
                     mainMdBeen.add(new MainMdBean(true, ""));
                     if (dataBeanList != null) {
@@ -153,6 +154,7 @@ public class MaterialDetailActivity extends BaseActivity {
             @Override
             public void onFailure(Call<MaterialDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(MaterialDetailActivity.this, t.toString());
             }
         });
     }

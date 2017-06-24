@@ -2,7 +2,9 @@ package tarce.myodoo.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +19,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.newland.me.ConnUtils;
+import com.newland.me.DeviceManager;
+import com.newland.mtype.ConnectionCloseEvent;
+import com.newland.mtype.ModuleType;
+import com.newland.mtype.event.DeviceEventListener;
+import com.newland.mtype.module.common.printer.Printer;
+import com.newland.mtypex.nseries.NSConnV100ConnParams;
+import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -33,6 +44,7 @@ import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.GetSaleResponse;
+import tarce.model.LoginResponse;
 import tarce.model.inventory.TakeDelListBean;
 import tarce.model.inventory.WaitingInBean;
 import tarce.myodoo.R;
@@ -41,9 +53,11 @@ import tarce.myodoo.adapter.SalesDetailAdapter;
 import tarce.myodoo.adapter.takedeliver.DetailTakedAdapter;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.InsertNumDialog;
+import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
+import tarce.support.MyLog;
 import tarce.support.TimeUtils;
 import tarce.support.ToastUtils;
 
@@ -53,6 +67,7 @@ import tarce.support.ToastUtils;
  */
 
 public class TakeDeliverDetailActivity extends BaseActivity {
+    private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     @InjectView(R.id.top_imageview)
     ImageView topImageview;
     @InjectView(R.id.partner)
@@ -88,6 +103,9 @@ public class TakeDeliverDetailActivity extends BaseActivity {
     private DetailTakedAdapter  takedAdapter;
     private String type_code;
     private String state;
+    private DeviceManager deviceManager;
+    private Printer printer;
+    private LoginResponse userInfoBean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +117,8 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         type_code = intent.getStringExtra("type_code");
         state = intent.getStringExtra("state");
         resDataBean = (TakeDelListBean.ResultBean.ResDataBean) intent.getSerializableExtra("dataBean");
+        if (resDataBean!=null)
+        setTitle(resDataBean.getName());
         topImageview.setFocusableInTouchMode(true);
         topImageview.requestFocus();
         inventoryApi = RetrofitClient.getInstance(TakeDeliverDetailActivity.this).create(InventoryApi.class);
@@ -107,6 +127,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 DividerItemDecoration.VERTICAL));
         recyclerview.setNestedScrollingEnabled(false);
         showView(resDataBean);
+        userInfoBean = UserManager.getSingleton().getUserInfoBean();
     }
 
 
@@ -136,7 +157,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this ,"是否确定提交")
+                        AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this ,"是否确定提交,如果确定将打印单据请等待！")
                                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -155,6 +176,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                             }
                                         }
                                         if (isIntent){
+                                            printTra();//打印
                                             Intent intent = new Intent(TakeDeliverDetailActivity.this, TakeDeAreaActivity.class);
                                             intent.putExtra("bean", resDataBean);
                                             intent.putIntegerArrayListExtra("intArr", doneNum);
@@ -187,18 +209,33 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(TakeDeliverDetailActivity.this, WriteCheckMessaActivity.class);
+                        intent.putExtra("confirm", "notConfirm");
                         intent.putExtra("bean", resDataBean);
+                        intent.putExtra("type_code", type_code);
+                        intent.putExtra("state",state);
                         startActivity(intent);
+                        finish();
                     }
                 });
                 break;
             case "validate":
-                buttomButton1.setText("查看品检信息");
+                buttomButton1.setText("查看品检结果");
                 showLinThreePin();
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        Intent intent = new Intent(TakeDeliverDetailActivity.this, WriteCheckMessaActivity.class);
+                        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> data = takedAdapter.getData();
+                        intent.putExtra("confirm", "confirm");
+                        intent.putExtra("bean", resDataBean);
+                        intent.putExtra("type_code", type_code);
+                        intent.putExtra("state",state);
+                        ArrayList<Integer> doneNum = new ArrayList<>();
+                        for (int i = 0; i < data.size(); i++) {
+                            doneNum.add(StringUtils.doubleToInt(data.get(i).getQty_done()));
+                        }
+                        intent.putIntegerArrayListExtra("intArr", doneNum);
+                        startActivity(intent);
                     }
                 });
                 break;
@@ -234,6 +271,8 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1){
                                                     ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "入库完成");
                                                     finish();
+                                                }else {
+                                                    ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "出现错误，请联系开发人员调试");
                                                 }
                                             }
 
@@ -261,10 +300,10 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 final TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean bean
                         = takedAdapter.getData().get(position);
                 final EditText editText = new EditText(TakeDeliverDetailActivity.this);
-                final int qty_available = StringUtils.doubleToInt(bean.getProduct_id().getQty_available());
-                int product_qty = StringUtils.doubleToInt(bean.getProduct_qty());
-                final int qty = qty_available >= product_qty ? qty_available:product_qty;
-                editText.setText(qty + "");
+               // final int qty_available = StringUtils.doubleToInt(bean.getProduct_id().getQty_available());
+                final int product_qty = StringUtils.doubleToInt(bean.getProduct_qty());
+                //final int qty = qty_available >= product_qty ? qty_available:product_qty;
+                editText.setText(product_qty + "");
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText.setSelection(editText.getText().length());
                 AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "请输入 " + bean.getProduct_id().getName() + " 完成数量");
@@ -273,7 +312,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 int anInt = Integer.parseInt(editText.getText().toString());
-                                if (anInt > qty) {
+                                if (anInt > product_qty) {
                                     Toast.makeText(TakeDeliverDetailActivity.this, "库存不足", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
@@ -307,6 +346,60 @@ public class TakeDeliverDetailActivity extends BaseActivity {
     public void showLinThreeGou() {
         if (!UserManager.getSingleton().getGrops().contains("group_purchase_manager") && !UserManager.getSingleton().getGrops().contains("group_purchase_user")) {
             linearBottom.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 打印操作
+     */
+    private void printTra() {
+        initDevice();
+        printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+        printer.init();
+        printer.print("仓库备注:\n\n\n\n"+"品检备注:\n\n\n\n"+"入库单号：" + resDataBean.getName() + "\n\n" + "源单据: " + resDataBean.getOrigin() + "\n\n" + "合作伙伴： " + resDataBean.getParnter_id() , 30, TimeUnit.SECONDS);
+        if (userInfoBean !=null){
+            printer.print("\n\n"+"入库人："+ userInfoBean.getResult().getRes_data().getName()+"\n\n"+
+                    "-------------" + "\n", 30, TimeUnit.SECONDS);
+        }
+        for (int i = 0; i < resDataBean.getPack_operation_product_ids().size(); i++) {
+            printer.print("产品名称：" + resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getName() + "\n完成数量：" +
+                    takedAdapter.getData().get(i).getQty_done()
+                    + "\n\n", 30, TimeUnit.SECONDS);
+        }
+        printer.print("\n\n", 30, TimeUnit.SECONDS);
+        Bitmap mBitmap = CodeUtils.createImage(resDataBean.getName(), 300, 300, null);
+        printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+        printer.print("\n\n"+"打印时间："+ DateTool.getDateTime(), 30, TimeUnit.SECONDS);
+        printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 连接设备打印机
+     */
+    private void initDevice() {
+        deviceManager = ConnUtils.getDeviceManager();
+        try {
+            deviceManager.init(TakeDeliverDetailActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
+                @Override
+                public void onEvent(ConnectionCloseEvent connectionCloseEvent, Handler handler) {
+                    if (connectionCloseEvent.isSuccess()) {
+                        ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "设备被客户主动断开！");
+                    }
+                    if (connectionCloseEvent.isFailed()) {
+                        ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "设备链接异常断开！");
+                    }
+                }
+
+                @Override
+                public Handler getUIHandler() {
+                    return null;
+                }
+            });
+            deviceManager.connect();
+            MyLog.e("ProductingActivity", "连接成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "链接异常,请检查设备或重新连接.." + e);
         }
     }
 }

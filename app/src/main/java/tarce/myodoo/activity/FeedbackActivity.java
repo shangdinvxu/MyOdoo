@@ -70,11 +70,13 @@ public class FeedbackActivity extends BaseActivity {
             public void onResponse(Call<GetFeedbackBean> call, Response<GetFeedbackBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null)return;
-                if (response.body().getResult().getRes_code() == 1){
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                     dataBeanList = response.body().getResult().getRes_data();
                     adapter = new FeedbackAdapter(R.layout.adapter_feedback, dataBeanList);
                     recyclerFeedback.setAdapter(adapter);
                     initClick();
+                }else {
+                    ToastUtils.showCommonToast(FeedbackActivity.this, "出现错误，请联系开发人员调试");
                 }
             }
             @Override
@@ -105,8 +107,10 @@ public class FeedbackActivity extends BaseActivity {
                                     public void onResponse(Call<CommonBean> call, Response<CommonBean> response) {
                                         dismissDefultProgressDialog();
                                         if (response.body() == null)return;
-                                        if (response.body().getResult().getRes_code() == 1){
+                                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult()!=null){
                                             finish();
+                                        }else {
+                                            ToastUtils.showCommonToast(FeedbackActivity.this, "出现错误，请联系开发人员调试");
                                         }
                                     }
 
@@ -135,16 +139,19 @@ public class FeedbackActivity extends BaseActivity {
                     public void onResponse(Call<GetFeedbackBean> call, Response<GetFeedbackBean> response) {
                         dismissDefultProgressDialog();
                         if (response.body() == null)return;
-                        if (response.body().getResult().getRes_code() == 1){
+                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                             adapter.getData().add(response.body().getResult().getRes_data().get(response.body().getResult().getRes_data().size()-1));
                             adapter.notifyDataSetChanged();
                             initClick();
+                        }else {
+                            ToastUtils.showCommonToast(FeedbackActivity.this, "出现错误，请联系开发人员调试");
                         }
                     }
 
                     @Override
                     public void onFailure(Call<GetFeedbackBean> call, Throwable t) {
                         dismissDefultProgressDialog();
+                        ToastUtils.showCommonToast(FeedbackActivity.this, t.toString());
                     }
                 });
             }

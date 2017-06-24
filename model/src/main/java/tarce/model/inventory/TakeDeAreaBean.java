@@ -78,6 +78,17 @@ public class TakeDeAreaBean {
         }
 
         public static class ResDataBean {
+            public Object getOrigin() {
+                if (origin instanceof Boolean){
+                    origin = "";
+                }
+                return origin;
+            }
+
+            public void setOrigin(Object origin) {
+                this.origin = origin;
+            }
+
             /**
              * origin : PO2017050405186
              * sale_note : false
@@ -97,7 +108,7 @@ public class TakeDeAreaBean {
              * picking_id : 6101
              */
 
-            private String origin;
+            private Object origin;
             private boolean sale_note;
             private String qc_img;
             private int complete_rate;
@@ -114,13 +125,6 @@ public class TakeDeAreaBean {
             private int picking_id;
             private List<PackOperationProductIdsBean> pack_operation_product_ids;
 
-            public String getOrigin() {
-                return origin;
-            }
-
-            public void setOrigin(String origin) {
-                this.origin = origin;
-            }
 
             public boolean isSale_note() {
                 return sale_note;
@@ -243,29 +247,37 @@ public class TakeDeAreaBean {
             }
 
             public static class PostAreaIdBean {
+                public Object getArea_id() {
+                    if (area_id instanceof Boolean){
+                        area_id = 0;
+                    }
+                    return area_id;
+                }
+
+                public void setArea_id(Object area_id) {
+                    this.area_id = area_id;
+                }
+
+                public Object getArea_name() {
+                    if (area_id instanceof Boolean){
+                        area_name = "";
+                    }
+                    return area_name;
+                }
+
+                public void setArea_name(Object area_name) {
+                    this.area_name = area_name;
+                }
+
                 /**
                  * area_id : 84
                  * area_name : A1A3
                  */
 
-                private int area_id;
-                private String area_name;
+                private Object area_id;
+                private Object area_name;
 
-                public int getArea_id() {
-                    return area_id;
-                }
 
-                public void setArea_id(int area_id) {
-                    this.area_id = area_id;
-                }
-
-                public String getArea_name() {
-                    return area_name;
-                }
-
-                public void setArea_name(String area_name) {
-                    this.area_name = area_name;
-                }
             }
 
             public static class PackOperationProductIdsBean {
@@ -374,22 +386,28 @@ public class TakeDeAreaBean {
                          * area_name : A3L2
                          */
 
-                        private int area_id;
-                        private String area_name;
+                        private Object area_id;
+                        private Object area_name;
 
-                        public int getArea_id() {
+                        public Object getArea_id() {
+                            if (area_id instanceof Boolean){
+                                area_id = 0;
+                            }
                             return area_id;
                         }
 
-                        public void setArea_id(int area_id) {
+                        public void setArea_id(Object area_id) {
                             this.area_id = area_id;
                         }
 
-                        public String getArea_name() {
+                        public Object getArea_name() {
+                            if (area_id instanceof Boolean){
+                                area_name = "";
+                            }
                             return area_name;
                         }
 
-                        public void setArea_name(String area_name) {
+                        public void setArea_name(Object area_name) {
                             this.area_name = area_name;
                         }
                     }

@@ -137,7 +137,7 @@ public class TakeDeliverActivity extends BaseActivity {
             public void onResponse(Call<GetGroupByListresponse> call, Response<GetGroupByListresponse> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null)return;
-                if (response.body().getResult().getRes_code() == 1){
+                if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                     List<GetGroupByListresponse.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
                     states = new ArrayList<>();
                     for (int i = 0; i < res_data.size(); i++) {

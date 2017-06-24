@@ -24,14 +24,17 @@ import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
+import tarce.model.GetGroupByListresponse;
 import tarce.model.inventory.LoadInspectionBean;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.TakeDeliveListActivity;
+import tarce.myodoo.activity.TakeDeliverActivity;
 import tarce.myodoo.activity.inspect.InspectionSubActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
+import tarce.support.ToastUtils;
 
 /**
  * 品检界面
@@ -65,6 +68,7 @@ public class InspectionFragment extends Fragment {
     public void onResume() {
         if (res_data == null){
             initRedNum();
+            initDeliever();
         }
         super.onResume();
     }
@@ -74,6 +78,7 @@ public class InspectionFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_3, null);
         ButterKnife.inject(this, view);
+        inventoryApi = RetrofitClient.getInstance(getActivity()).create(InventoryApi.class);
         sectionAdapter = new SectionAdapter(R.layout.mian_list_item, R.layout.adapter_head, list);
         setRecyclerview(recyclerview);
         recyclerview.setAdapter(sectionAdapter);
@@ -109,7 +114,7 @@ public class InspectionFragment extends Fragment {
                         Intent intent2 = new Intent(getActivity(), TakeDeliveListActivity.class);
                         intent2.putExtra("from", "yes");
                         intent2.putExtra("type_code", "");
-                        intent2.putExtra("state","done");
+                        intent2.putExtra("state","qc_check");
                         startActivity(intent2);
                         break;
                 }
@@ -117,8 +122,47 @@ public class InspectionFragment extends Fragment {
         });
     }
 
+    /**
+     *初始化数据
+     * */
+    private void initDeliever(){
+        HashMap<Object, Object> hashMap = new HashMap<>();
+        hashMap.put("partner_id", 0);
+        hashMap.put("groupby", "picking_type_id");
+        hashMap.put("model", "stock.picking");
+        Call<GetGroupByListresponse> groupsByList = inventoryApi.getGroupsByList(hashMap);
+        groupsByList.enqueue(new MyCallback<GetGroupByListresponse>() {
+            @Override
+            public void onResponse(Call<GetGroupByListresponse> call, Response<GetGroupByListresponse> response) {
+                if (response.body() == null) return;
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null) {
+                    int size = response.body().getResult().getRes_data().size();
+                    GetGroupByListresponse.ResultBean.ResDataBean resDataBean = null;
+                    for (int i = 0; i < size; i++) {
+                        if (response.body().getResult().getRes_data().get(i).getPicking_type_code().equals("incoming")){
+                            resDataBean = response.body().getResult().getRes_data().get(i);
+                            break;
+                        }
+                    }
+                    for (int i = 0; i < resDataBean.getStates().size(); i++) {
+                        if (resDataBean.getStates().get(i).getState().equals("qc_check")){
+                            list.get(4).t.setNumber(resDataBean.getStates().get(i).getState_count());
+                            sectionAdapter.notifyDataSetChanged();
+                            break;
+                        }
+                    }
+                }else {
+                    ToastUtils.showCommonToast(getActivity(), "数据出现错误，请联系开发人员调试");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetGroupByListresponse> call, Throwable t) {
+                ToastUtils.showCommonToast(getActivity(), t.toString());
+            }
+        });
+    }
     private void initRedNum(){
-        inventoryApi = RetrofitClient.getInstance(getActivity()).create(InventoryApi.class);
         String[] menus = {"linkloving_mrp_extend.mrp_production_wait_qc_inspection","linkloving_mrp_extend.mrp_production_qc_inspecting"};
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("xml_names", menus);

@@ -27,6 +27,7 @@ import tarce.myodoo.adapter.expand.EmployeeItem;
 import tarce.myodoo.adapter.expand.LastItem;
 import tarce.myodoo.adapter.expand.SixItem;
 import tarce.myodoo.adapter.expand.WorkerItem;
+import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
 /**
@@ -74,7 +75,7 @@ public class BomFramworkActivity extends BaseActivity {
             public void onResponse(Call<BomFramworkBean> call, Response<BomFramworkBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null)return;
-                if (response.body().getResult().getRes_code() == 1){
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                     final BomFramworkBean.ResultBean.ResDataBean res_data = response.body().getResult().getRes_data();
                     mCompanylist = new ArrayList<>();
                     mCompanylist.add(createCompany(res_data, false));
@@ -118,12 +119,15 @@ public class BomFramworkActivity extends BaseActivity {
                         }
                     };
                     recyclerRomFramwork.setAdapter(adapter);
+                }else {
+                    ToastUtils.showCommonToast(BomFramworkActivity.this, "出现错误，请联系开发人员调试");
                 }
             }
 
             @Override
             public void onFailure(Call<BomFramworkBean> call, Throwable t){
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(BomFramworkActivity.this, t.toString());
             }
         });
     }

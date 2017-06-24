@@ -20,8 +20,6 @@ import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
-import tarce.model.inventory.CommitNumFeedBean;
-import tarce.model.inventory.DoneCommitNumBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.WriteFeedbackNumAdapter;
@@ -120,25 +118,32 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                 maps[i] = smallMap;
             }
             hashMap.put("stock_moves",maps);
-            Call<DoneCommitNumBean> objectCall = inventoryApi.semiCommitReturn(hashMap);
-            objectCall.enqueue(new MyCallback<DoneCommitNumBean>() {
+            Call<OrderDetailBean> objectCall = inventoryApi.semiCommitReturn(hashMap);
+            objectCall.enqueue(new MyCallback<OrderDetailBean>() {
                 @Override
-                public void onResponse(Call<DoneCommitNumBean> call, Response<DoneCommitNumBean> response) {
+                public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                     dismissDefultProgressDialog();
                     if (response.body() == null)return;
-                    if (response.body().getResult().getRes_code() == 1){
+                    if (response.body().getError()!=null){
+                        ToastUtils.showCommonToast(WriteFeedMateriActivity.this, response.body().getError().getMessage());
+                        return;
+                    }
+                    if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1){
                         ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "提交退料成功");
                         Intent intent = new Intent(WriteFeedMateriActivity.this, ProductLlActivity.class);
                         intent.putExtra("name_activity","生产退料");
                         intent.putExtra("state_product","done");
                         startActivity(intent);
                         finish();
+                    }else {
+                        ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "数据错误");
                     }
                 }
 
                 @Override
-                public void onFailure(Call<DoneCommitNumBean> call, Throwable t) {
+                public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                     dismissDefultProgressDialog();
+                    ToastUtils.showCommonToast(WriteFeedMateriActivity.this, t.toString());
                 }
             });
         }else {
@@ -163,13 +168,17 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                 maps[i] = smallMap;
                             }
                             hashMap.put("stock_moves",maps);
-                            Call<CommitNumFeedBean> objectCall = inventoryApi.commitFeedNum(hashMap);
-                            objectCall.enqueue(new MyCallback<CommitNumFeedBean>() {
+                            Call<OrderDetailBean> objectCall = inventoryApi.commitFeedNum(hashMap);
+                            objectCall.enqueue(new MyCallback<OrderDetailBean>() {
                                 @Override
-                                public void onResponse(Call<CommitNumFeedBean> call, Response<CommitNumFeedBean> response) {
+                                public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                     dismissDefultProgressDialog();
                                     if (response.body() == null)return;
-                                    if (response.body().getResult().getRes_code() == 1){
+                                    if (response.body().getError()!=null){
+                                        ToastUtils.showCommonToast(WriteFeedMateriActivity.this, response.body().getError().getMessage());
+                                        return;
+                                    }
+                                    if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null){
                                         Intent intent = new Intent(WriteFeedMateriActivity.this, ProductLlActivity.class);
                                         if (from.equals("look")){
                                             ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料完成");
@@ -182,12 +191,15 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                         }
                                         startActivity(intent);
                                         finish();
+                                    }else {
+                                        ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "数据错误");
                                     }
                                 }
 
                                 @Override
-                                public void onFailure(Call<CommitNumFeedBean> call, Throwable t) {
+                                public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                                     dismissDefultProgressDialog();
+                                    ToastUtils.showCommonToast(WriteFeedMateriActivity.this, t.toString());
                                 }
                             });
                         }

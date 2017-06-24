@@ -22,6 +22,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import tarce.myodoo.IntentFactory;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.ConfirmPurchaseActivity;
 import tarce.myodoo.activity.TakeDeliverActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
@@ -50,7 +51,7 @@ public class WarehouseFragment extends Fragment {
         list = new ArrayList<>();
         list.add(new MainItemBean(true, ""));
         list.add(new MainItemBean(new MenuBean("收货", 0)));
-        list.add(new MainItemBean(new MenuBean("入库", 0)));
+        list.add(new MainItemBean(new MenuBean("采购确认", 0)));
         list.add(new MainItemBean(new MenuBean("采购退货", 0)));
         list.add(new MainItemBean(true, ""));
         list.add(new MainItemBean(new MenuBean("生产备料", 0)));
@@ -93,6 +94,10 @@ public class WarehouseFragment extends Fragment {
                     case "收货":
                         Intent intent = new Intent(getActivity(), TakeDeliverActivity.class);
                         startActivity(intent);
+                        break;
+                    case "采购确认":
+                        Intent intent1 = new Intent(getActivity(), ConfirmPurchaseActivity.class);
+                        startActivity(intent1);
                         break;
                     case "销售出货":
                         IntentFactory.start_SalesOut_Activity(getActivity());

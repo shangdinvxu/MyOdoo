@@ -78,6 +78,14 @@ public class RukuBean {
         }
 
         public static class ResDataBean {
+            public String getError() {
+                return error;
+            }
+
+            public void setError(String error) {
+                this.error = error;
+            }
+
             /**
              * qc_test_qty : 10.0
              * qc_img : ["http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=16&model=qc.feedback.img&field=qc_img"]
@@ -92,6 +100,7 @@ public class RukuBean {
              * production_id : {"order_id":47839,"display_name":"MO170524062","product_id":{"product_id":71771,"product_name":"W120-成品-秘鲁minimudo"}}
              */
 
+            private String error;
             private double qc_test_qty;
             private double qc_fail_rate;
             private double qty_produced;

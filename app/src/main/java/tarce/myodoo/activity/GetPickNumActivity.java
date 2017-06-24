@@ -23,6 +23,7 @@ import tarce.model.inventory.ProcessShowBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.ProcessDetailAdapter;
 import tarce.support.SharePreferenceUtils;
+import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
 /**
@@ -89,6 +90,7 @@ public class GetPickNumActivity extends ToolBarActivity {
             @Override
             public void onFailure(Call<ProcessDeatilBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(GetPickNumActivity.this, t.toString());
             }
         });
     }

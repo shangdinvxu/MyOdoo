@@ -3,7 +3,6 @@ package tarce.myodoo.uiutil;
 import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.StyleRes;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,6 +26,8 @@ public class DialogIsSave extends Dialog {
     TextView tvNotSave;
     @InjectView(R.id.tv_cancel)
     TextView tvCancel;
+    @InjectView(R.id.tv_title)
+    TextView tvTitle;
     private LayoutInflater inflater;
     private Display display;
     private Context context;
@@ -58,7 +59,22 @@ public class DialogIsSave extends Dialog {
         setCancelable(true);
     }
 
-    public DialogIsSave setCancel(){
+    public DialogIsSave changeTitle() {
+        tvSave.setText("选择生产单类型");
+        return this;
+    }
+
+    public DialogIsSave changeOne() {
+        tvSave.setText("创建欠单");
+        return this;
+    }
+
+    public DialogIsSave changeTwo() {
+        tvNotSave.setText("没有欠单");
+        return this;
+    }
+
+    public DialogIsSave setCancel() {
         tvCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,7 +84,7 @@ public class DialogIsSave extends Dialog {
         return this;
     }
 
-    public DialogIsSave setSave(final View.OnClickListener listener){
+    public DialogIsSave setSave(final View.OnClickListener listener) {
         tvSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,7 +95,7 @@ public class DialogIsSave extends Dialog {
         return this;
     }
 
-    public DialogIsSave setNotSave(final View.OnClickListener listener){
+    public DialogIsSave setNotSave(final View.OnClickListener listener) {
         tvNotSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

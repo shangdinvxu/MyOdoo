@@ -203,7 +203,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 @Override
                 public void onResponse(Call<GetFactroyRemarkBean> call, Response<GetFactroyRemarkBean> response) {
                     if (response == null)return;
-                    if (response.body().getResult().getRes_code() == 1){
+                    if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                         String remark = response.body().getResult().getRes_data().getFactory_mark();
                         new InsertFeedbackDial(OrderDetailActivity.this, R.style.MyDialogStyle, new InsertFeedbackDial.OnSendCommonClickListener() {
                             @Override
@@ -228,7 +228,7 @@ public class OrderDetailActivity extends ToolBarActivity {
 
                 @Override
                 public void onFailure(Call<GetFactroyRemarkBean> call, Throwable t) {
-                    super.onFailure(call, t);
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, t.toString());
                 }
             });
         }else if (item.getItemId() == tarce.support.R.id.action_print){
@@ -391,7 +391,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                     result = response.body().getResult();
                     resDataBean = response.body().getResult().getRes_data();
                     prepare_material_area_id = response.body().getResult().getRes_data().getPrepare_material_area_id();
@@ -403,6 +403,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             @Override
             public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(OrderDetailActivity.this, t.toString());
             }
         });
     }
@@ -460,7 +461,7 @@ public class OrderDetailActivity extends ToolBarActivity {
 
                     @Override
                     public void onFailure(Call<FindProductByConditionResponse> call, Throwable t) {
-                        super.onFailure(call, t);
+                        ToastUtils.showCommonToast(OrderDetailActivity.this, t.toString());
                     }
                 });
             }
@@ -594,7 +595,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                             ToastUtils.showCommonToast(OrderDetailActivity.this, response.body().getError().getMessage());
                                             return;
                                         }
-                                        if (response.body().getResult().getRes_code() == 1){
+                                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                                             resDataBean = response.body().getResult().getRes_data();
                                             initView();
                                             state = "prepare_material_ing";
@@ -618,7 +619,8 @@ public class OrderDetailActivity extends ToolBarActivity {
 
                                     @Override
                                     public void onFailure(Call<OrderDetailBean> call, Throwable t) {
-                                        super.onFailure(call, t);
+                                        dismissDefultProgressDialog();
+                                        ToastUtils.showCommonToast(OrderDetailActivity.this, t.toString());
                                     }
                                 });
                             }
@@ -662,7 +664,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                         public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                             dismissDefultProgressDialog();
                                             if (response.body() == null) return;
-                                            if (response.body().getResult().getRes_code() == 1) {
+                                            if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                                                 resDataBean = response.body().getResult().getRes_data();
                                                 initView();
                                                 stateView("already_picking");
@@ -683,6 +685,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                         @Override
                                         public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                                             dismissDefultProgressDialog();
+                                            ToastUtils.showCommonToast(OrderDetailActivity.this, t.toString());
                                         }
                                     });
                                 }

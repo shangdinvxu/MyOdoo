@@ -34,7 +34,7 @@ import tarce.support.ToolBarActivity;
  * 补领料页面
  */
 
-public class BuGetLiaoActivity extends ToolBarActivity {
+public class BuGetLiaoActivity extends BaseActivity {
     @InjectView(R.id.recycler_bu_getliao)
     RecyclerView recyclerBuGetliao;
     @InjectView(R.id.tv_bottom_bu)
@@ -105,7 +105,7 @@ public class BuGetLiaoActivity extends ToolBarActivity {
                             public void onResponse(Call<BuLlBean> call, Response<BuLlBean> response) {
                                 dismissDefultProgressDialog();
                                 if (response.body() == null)return;
-                                if (response.body().getResult().getRes_code() == 1){
+                                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                                     finish();
                                 }
                             }
@@ -113,6 +113,7 @@ public class BuGetLiaoActivity extends ToolBarActivity {
                             @Override
                             public void onFailure(Call<BuLlBean> call, Throwable t) {
                                 dismissDefultProgressDialog();
+                                ToastUtils.showCommonToast(BuGetLiaoActivity.this, t.toString());
                             }
                         });
                     }

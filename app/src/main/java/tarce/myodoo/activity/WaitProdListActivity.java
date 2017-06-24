@@ -38,7 +38,7 @@ import tarce.support.ToolBarActivity;
  * 等待生产延误的列表
  */
 
-public class WaitProdListActivity extends ToolBarActivity {
+public class WaitProdListActivity extends BaseActivity {
     private static final int Refresh_Move = 1;//下拉动作
     private static final int Load_Move = 2;//上拉动作
     @InjectView(R.id.swipe_refresh_header)
@@ -140,8 +140,9 @@ public class WaitProdListActivity extends ToolBarActivity {
                 if (response.body() == null)return;
                 if (response.body().getError() != null){
                     ToastUtils.showCommonToast(WaitProdListActivity.this, response.body().getError().getMessage());
+                    return;
                 }
-                if (response.body().getResult().getRes_code() == 1){
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                     beanList = response.body().getResult().getRes_data();
                     if (move == Refresh_Move){
                         dataBeanList = beanList;
@@ -157,6 +158,8 @@ public class WaitProdListActivity extends ToolBarActivity {
                         adapter.setData(dataBeanList);
                     }
                     clickAdapterItem();
+                }else {
+                    ToastUtils.showCommonToast(WaitProdListActivity.this, "出现错误。请联系开发人员调试");
                 }
             }
 

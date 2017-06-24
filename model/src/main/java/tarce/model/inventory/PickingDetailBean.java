@@ -188,29 +188,37 @@ public class PickingDetailBean {
             }
 
             public static class ProcessIdBean {
+                public Object getProcess_id() {
+                    if (process_id instanceof Boolean){
+                        process_id = 0;
+                    }
+                    return process_id;
+                }
+
+                public void setProcess_id(Object process_id) {
+                    this.process_id = process_id;
+                }
+
+                public Object getName() {
+                    if (name instanceof Boolean){
+                        name = "";
+                    }
+                    return name;
+                }
+
+                public void setName(Object name) {
+                    this.name = name;
+                }
+
                 /**
                  * process_id : 8
                  * name : 全检
                  */
 
-                private int process_id;
-                private String name;
+                private Object process_id;
+                private Object name;
 
-                public int getProcess_id() {
-                    return process_id;
-                }
 
-                public void setProcess_id(int process_id) {
-                    this.process_id = process_id;
-                }
-
-                public String getName() {
-                    return name;
-                }
-
-                public void setName(String name) {
-                    this.name = name;
-                }
             }
         }
     }
