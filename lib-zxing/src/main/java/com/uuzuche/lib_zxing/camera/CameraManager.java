@@ -17,17 +17,20 @@
 package com.uuzuche.lib_zxing.camera;
 
 import android.content.Context;
+import android.graphics.PixelFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Handler;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.view.Window;
 
 import java.io.IOException;
 
+import static android.R.attr.top;
+import static android.R.attr.width;
 
 /**
  * This object wraps the Camera service object and expects to be the only one talking to it. The
@@ -218,7 +221,7 @@ public final class CameraManager {
      * @return The rectangle to draw on screen in window coordinates.
      */
     public Rect getFramingRect() {
-        /*Point screenResolution = configManager.getScreenResolution();
+        Point screenResolution = configManager.getScreenResolution();
         // if (framingRect == null) {
             if (camera == null) {
                 return null;
@@ -234,33 +237,6 @@ public final class CameraManager {
             }
             framingRect = new Rect(leftOffset, topOffset, leftOffset + FRAME_WIDTH, topOffset + FRAME_HEIGHT);
         // }
-        return framingRect;*/
-        if (framingRect == null) {
-            if (camera == null) {
-                return null;
-            }
-            Point screenResolution = configManager.getScreenResolution();
-            if (screenResolution == null) {
-                // Called early, before init even finished
-                return null;
-            }
-
-        /* 扫描框修改 */
-            DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-
-            //我们可以通过修改下面width height 里0.8 1.0参数 来改变高和宽
-            int width = (int) (metrics.widthPixels * 0.8);
-          //  int width = (int) (metrics.widthPixels * 1.0);
-            int height = (int) (width * 0.65);
-
-            int leftOffset = (screenResolution.x - width) / 2;
-            int topOffset = (screenResolution.y - height) / 4;
-            framingRect = new Rect(leftOffset, topOffset, leftOffset + width,
-                    topOffset + height);
-            /*framingRect = new Rect(leftOffset, 0, leftOffset + width,
-                     height);*/
-            Log.d(TAG, "Calculated framing rect: " + framingRect);
-        }
         return framingRect;
     }
 
@@ -318,10 +294,6 @@ public final class CameraManager {
      * @return A PlanarYUVLuminanceSource instance.
      */
     public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height) {
-        // 直接返回整幅图像的数据，而不计算聚焦框大小。
-        return new PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height);
-    }
-    /*public PlanarYUVLuminanceSource buildLuminanceSource(byte[] data, int width, int height) {
         Rect rect = getFramingRectInPreview();
         int previewFormat = configManager.getPreviewFormat();
         String previewFormatString = configManager.getPreviewFormatString();
@@ -344,7 +316,7 @@ public final class CameraManager {
         }
         throw new IllegalArgumentException("Unsupported picture format: " +
                 previewFormat + '/' + previewFormatString);
-    }*/
+    }
 
     public Context getContext() {
         return context;

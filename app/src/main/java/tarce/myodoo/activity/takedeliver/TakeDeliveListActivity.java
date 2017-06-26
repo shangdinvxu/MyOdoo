@@ -1,4 +1,4 @@
-package tarce.myodoo.activity;
+package tarce.myodoo.activity.takedeliver;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,10 +23,9 @@ import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
-import tarce.model.GetSaleListResponse;
 import tarce.model.inventory.TakeDelListBean;
 import tarce.myodoo.R;
-import tarce.myodoo.adapter.product.PickingDetailAdapter;
+import tarce.myodoo.activity.BaseActivity;
 import tarce.myodoo.adapter.takedeliver.TakeDelListAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
@@ -60,8 +59,12 @@ public class TakeDeliveListActivity extends BaseActivity {
     private String state;
     private TakeDelListAdapter listAdapter;
     private List<TakeDelListBean.ResultBean.ResDataBean> res_data = new ArrayList<>();
+    private List<TakeDelListBean.ResultBean.ResDataBean> not_need = new ArrayList<>();
     private List<TakeDelListBean.ResultBean.ResDataBean> dataBeanList = new ArrayList<>();
     private String from;
+    private String notneed;
+    private long partner_id;
+    private int picking_type_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,11 +76,30 @@ public class TakeDeliveListActivity extends BaseActivity {
         setRecyclerview(swipeTarget);
         Intent intent = getIntent();
         from = intent.getStringExtra("from");
-        type_code = intent.getStringExtra("type_code");
-        state = intent.getStringExtra("state");
-        showDefultProgressDialog();
-        initData(0,40, Refresh_Move);
-        initRecycler();
+        partner_id = intent.getLongExtra("partner_id", 0);
+
+        if (from.equals("no")){
+            notneed = intent.getStringExtra("notneed");
+            if (notneed.equals("yes")){
+                not_need = (List<TakeDelListBean.ResultBean.ResDataBean>) intent.getSerializableExtra("intent");
+                listAdapter = new TakeDelListAdapter(R.layout.adapter_takedel_list, not_need);
+                swipeTarget.setAdapter(listAdapter);
+                initListener();
+            }else {
+                type_code = intent.getStringExtra("type_code");
+                state = intent.getStringExtra("state");
+                showDefultProgressDialog();
+                initData(0,40, Refresh_Move);
+                initRecycler();
+            }
+        }else {
+            picking_type_id = intent.getIntExtra("picking_type_id", 1);
+            type_code = intent.getStringExtra("type_code");
+            state = intent.getStringExtra("state");
+            showDefultProgressDialog();
+            initData(0,40, Refresh_Move);
+            initRecycler();
+        }
     }
 
     @Override
@@ -123,17 +145,18 @@ public class TakeDeliveListActivity extends BaseActivity {
     private void initData(final int offset, final int limit, final int move){
         inventoryApi = RetrofitClient.getInstance(TakeDeliveListActivity.this).create(InventoryApi.class);
         HashMap<Object, Object> hashMap = new HashMap<>();
-        if ("no".equals(from)){
-            hashMap.put("picking_type_code", type_code);
-            hashMap.put("state", state);
-        }else if ("yes".equals(from)){
-            hashMap.put("partner_id", 0);
-            hashMap.put("picking_type_id", 1);
-            hashMap.put("state", "qc_check");
-        }
+        Call<TakeDelListBean> inComingOutgoingList = null;
+        hashMap.put("state", state);
         hashMap.put("limit", limit);
         hashMap.put("offset", offset);
-        Call<TakeDelListBean> inComingOutgoingList = inventoryApi.getInComingOutgoingList(hashMap);
+        if ("no".equals(from)){
+            hashMap.put("picking_type_code", type_code);
+            inComingOutgoingList = inventoryApi.getInComingOutgoingList(hashMap);
+        }else if ("yes".equals(from)){
+            hashMap.put("partner_id", partner_id);
+            hashMap.put("picking_type_id", picking_type_id);
+            inComingOutgoingList = inventoryApi.getstockList(hashMap);
+        }
         inComingOutgoingList.enqueue(new MyCallback<TakeDelListBean>() {
             @Override
             public void onResponse(Call<TakeDelListBean> call, Response<TakeDelListBean> response) {
@@ -175,8 +198,8 @@ public class TakeDeliveListActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 Intent intent = new Intent(TakeDeliveListActivity.this, TakeDeliverDetailActivity.class);
                 intent.putExtra("dataBean", listAdapter.getData().get(position));
-                intent.putExtra("type_code", type_code);
-                intent.putExtra("state",state);
+                intent.putExtra("type_code", listAdapter.getData().get(position).getPicking_type_code());
+                intent.putExtra("state",listAdapter.getData().get(position).getState());
                 startActivity(intent);
             }
         });

@@ -219,6 +219,7 @@ public class LoginActivity extends Activity {
                                 if (progressDialog!=null&&progressDialog.isShowing()){
                                     progressDialog.dismiss();
                                 }
+                                if (loginDatabase == null)return;
                                 final List<String> res_data = loginDatabase.getRes_data();
                                 final String[] databaseArr = res_data.toArray(new String[res_data.size()]);
                                 builder.setSingleChoiceItems(databaseArr, databaseArr.length, new DialogInterface.OnClickListener() {

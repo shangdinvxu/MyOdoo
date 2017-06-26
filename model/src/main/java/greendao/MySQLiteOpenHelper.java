@@ -16,6 +16,6 @@ public class MySQLiteOpenHelper extends DaoMaster.OpenHelper {
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        MigrationHelper.migrate(db, ContactsBeanDao.class,LoginResponseBeanDao.class,MenuListBeanDao.class);
+        MigrationHelper.migrate(db, ContactsBeanDao.class,LoginResponseBeanDao.class,MenuListBeanDao.class,SupplierBeanDao.class);
     }
 }

@@ -206,25 +206,25 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:id="@+id/buttom_button1"
-            android:background="@color/ccolor"
+            android:background="@color/cc"
             android:layout_height="match_parent" />
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:id="@+id/buttom_button2"
-            android:background="@color/ccolor"
+            android:background="@color/cc"
             android:layout_height="match_parent" />
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:id="@+id/buttom_button3"
-            android:background="@color/ccolor"
+            android:background="@color/cc"
             android:layout_height="match_parent" />
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:id="@+id/buttom_button4"
-            android:background="@color/ccolor"
+            android:background="@color/cc"
             android:layout_height="match_parent" />
     </LinearLayout>
 </RelativeLayout>

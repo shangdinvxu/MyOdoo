@@ -176,6 +176,9 @@ public class WaitProdListActivity extends BaseActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (dataBeanList.get(position) == null){
+                    return;
+                }
                 int order_id = dataBeanList.get(position).getOrder_id();
                 if (dataBeanList.get(position).getState().equals("progress")) {
                     Intent intent = new Intent(WaitProdListActivity.this, ProductingActivity.class);

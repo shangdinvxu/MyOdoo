@@ -89,6 +89,14 @@ public class TakeDeAreaBean {
                 this.origin = origin;
             }
 
+            public String getPhone() {
+                return phone;
+            }
+
+            public void setPhone(String phone) {
+                this.phone = phone;
+            }
+
             /**
              * origin : PO2017050405186
              * sale_note : false
@@ -108,6 +116,7 @@ public class TakeDeAreaBean {
              * picking_id : 6101
              */
 
+            private String phone;
             private Object origin;
             private boolean sale_note;
             private String qc_img;

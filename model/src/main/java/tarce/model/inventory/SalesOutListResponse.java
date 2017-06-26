@@ -52,6 +52,15 @@ public class SalesOutListResponse implements Serializable {
 
             private	String	origin;	/*SO2017042001881*/
 
+            public String getPhone() {
+                return phone;
+            }
+
+            public void setPhone(String phone) {
+                this.phone = phone;
+            }
+
+            private String phone;
             private	Object	sale_note;	/*false*/
             private	String	state;	/*confirmed*/
             private	Integer	picking_id;	/*5544*/

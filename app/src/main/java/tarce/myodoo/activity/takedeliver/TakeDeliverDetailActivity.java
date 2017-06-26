@@ -1,4 +1,4 @@
-package tarce.myodoo.activity;
+package tarce.myodoo.activity.takedeliver;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,31 +28,29 @@ import com.newland.mtype.module.common.printer.Printer;
 import com.newland.mtypex.nseries.NSConnV100ConnParams;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
-import tarce.model.GetSaleResponse;
 import tarce.model.LoginResponse;
+import tarce.model.inventory.TakeDeAreaBean;
 import tarce.model.inventory.TakeDelListBean;
-import tarce.model.inventory.WaitingInBean;
 import tarce.myodoo.R;
-import tarce.myodoo.activity.salesout.SalesDetailActivity;
-import tarce.myodoo.adapter.SalesDetailAdapter;
+import tarce.myodoo.activity.AreaMessageActivity;
+import tarce.myodoo.activity.BaseActivity;
+import tarce.myodoo.activity.WriteCheckMessaActivity;
 import tarce.myodoo.adapter.takedeliver.DetailTakedAdapter;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
-import tarce.myodoo.uiutil.InsertNumDialog;
 import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
@@ -98,9 +96,11 @@ public class TakeDeliverDetailActivity extends BaseActivity {
     Button buttomButton4;
     @InjectView(R.id.linear_bottom)
     LinearLayout linearBottom;
+    @InjectView(R.id.tv_print)
+    TextView tvPrint;
     private TakeDelListBean.ResultBean.ResDataBean resDataBean;
     private InventoryApi inventoryApi;
-    private DetailTakedAdapter  takedAdapter;
+    private DetailTakedAdapter takedAdapter;
     private String type_code;
     private String state;
     private DeviceManager deviceManager;
@@ -117,8 +117,8 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         type_code = intent.getStringExtra("type_code");
         state = intent.getStringExtra("state");
         resDataBean = (TakeDelListBean.ResultBean.ResDataBean) intent.getSerializableExtra("dataBean");
-        if (resDataBean!=null)
-        setTitle(resDataBean.getName());
+        if (resDataBean != null)
+            setTitle(resDataBean.getName());
         topImageview.setFocusableInTouchMode(true);
         topImageview.requestFocus();
         inventoryApi = RetrofitClient.getInstance(TakeDeliverDetailActivity.this).create(InventoryApi.class);
@@ -148,8 +148,8 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         refreshButtom(resDataBean.getState());
     }
 
-    private void refreshButtom(final String state){
-        switch (state){
+    private void refreshButtom(final String state) {
+        switch (state) {
             case "assigned":
                 buttomButton1.setText("提交入库");
                 showLinThreeCang();//根据权限判断
@@ -157,7 +157,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this ,"是否确定提交,如果确定将打印单据请等待！")
+                        AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "是否确定提交,如果确定将打印单据请等待！")
                                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -168,22 +168,22 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                         }
                                         boolean isIntent = false;
                                         for (int i = 0; i < data.size(); i++) {
-                                            if (data.get(i).getQty_done()>0){
+                                            if (data.get(i).getQty_done() > 0) {
                                                 isIntent = true;
                                                 break;
-                                            }else {
+                                            } else {
                                                 isIntent = false;
                                             }
                                         }
-                                        if (isIntent){
+                                        if (isIntent) {
                                             printTra();//打印
                                             Intent intent = new Intent(TakeDeliverDetailActivity.this, TakeDeAreaActivity.class);
                                             intent.putExtra("bean", resDataBean);
                                             intent.putIntegerArrayListExtra("intArr", doneNum);
                                             intent.putExtra("type_code", type_code);
-                                            intent.putExtra("state",state);
+                                            intent.putExtra("state", state);
                                             startActivity(intent);
-                                        }else {
+                                        } else {
                                             ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "请检查完成数量");
                                         }
                                     }
@@ -212,7 +212,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                         intent.putExtra("confirm", "notConfirm");
                         intent.putExtra("bean", resDataBean);
                         intent.putExtra("type_code", type_code);
-                        intent.putExtra("state",state);
+                        intent.putExtra("state", state);
                         startActivity(intent);
                         finish();
                     }
@@ -229,7 +229,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                         intent.putExtra("confirm", "confirm");
                         intent.putExtra("bean", resDataBean);
                         intent.putExtra("type_code", type_code);
-                        intent.putExtra("state",state);
+                        intent.putExtra("state", state);
                         ArrayList<Integer> doneNum = new ArrayList<>();
                         for (int i = 0; i < data.size(); i++) {
                             doneNum.add(StringUtils.doubleToInt(data.get(i).getQty_done()));
@@ -251,33 +251,33 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                     public void onClick(DialogInterface dialog, int which) {
                                         showDefultProgressDialog();
                                         HashMap<Object, Object> hashMap = new HashMap<>();
-                                        hashMap.put("state","transfer");
-                                        hashMap.put("picking_id",resDataBean.getPicking_id());
+                                        hashMap.put("state", "transfer");
+                                        hashMap.put("picking_id", resDataBean.getPicking_id());
                                         int size = resDataBean.getPack_operation_product_ids().size();
                                         Map[] maps = new Map[size];
                                         for (int i = 0; i < size; i++) {
                                             Map<Object, Object> map = new HashMap<>();
-                                            map.put("pack_id",resDataBean.getPack_operation_product_ids().get(i).getPack_id());
+                                            map.put("pack_id", resDataBean.getPack_operation_product_ids().get(i).getPack_id());
                                             map.put("qty_done", StringUtils.doubleToInt(resDataBean.getPack_operation_product_ids().get(i).getQty_done()));
                                             maps[i] = map;
                                         }
-                                        hashMap.put("pack_operation_product_ids",maps);
-                                        Call<TakeDelListBean> objectCall = inventoryApi.ruKu(hashMap);
-                                        objectCall.enqueue(new MyCallback<TakeDelListBean>() {
+                                        hashMap.put("pack_operation_product_ids", maps);
+                                        Call<TakeDeAreaBean> objectCall = inventoryApi.ruKu(hashMap);
+                                        objectCall.enqueue(new MyCallback<TakeDeAreaBean>() {
                                             @Override
-                                            public void onResponse(Call<TakeDelListBean> call, Response<TakeDelListBean> response) {
+                                            public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                                                 dismissDefultProgressDialog();
-                                                if (response.body() == null)return;
-                                                if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1){
+                                                if (response.body() == null) return;
+                                                if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                                                     ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "入库完成");
                                                     finish();
-                                                }else {
+                                                } else {
                                                     ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "出现错误，请联系开发人员调试");
                                                 }
                                             }
 
                                             @Override
-                                            public void onFailure(Call<TakeDelListBean> call, Throwable t) {
+                                            public void onFailure(Call<TakeDeAreaBean> call, Throwable t) {
                                                 dismissDefultProgressDialog();
                                                 ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, t.toString());
                                             }
@@ -300,7 +300,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 final TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean bean
                         = takedAdapter.getData().get(position);
                 final EditText editText = new EditText(TakeDeliverDetailActivity.this);
-               // final int qty_available = StringUtils.doubleToInt(bean.getProduct_id().getQty_available());
+                // final int qty_available = StringUtils.doubleToInt(bean.getProduct_id().getQty_available());
                 final int product_qty = StringUtils.doubleToInt(bean.getProduct_qty());
                 //final int qty = qty_available >= product_qty ? qty_available:product_qty;
                 editText.setText(product_qty + "");
@@ -325,6 +325,20 @@ public class TakeDeliverDetailActivity extends BaseActivity {
     }
 
     /**
+     * 打印操作
+     * */
+    @OnClick(R.id.tv_print)
+    void printDan(View view){
+        AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "确定打印？(请尽量避免重复打印)")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                            printTra();
+                    }
+                }).show();
+    }
+
+    /**
      * 是否显示底部(仓库)
      */
     public void showLinThreeCang() {
@@ -332,6 +346,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
             linearBottom.setVisibility(View.GONE);
         }
     }
+
     /**
      * 是否显示底部（品检）
      */
@@ -340,6 +355,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
             linearBottom.setVisibility(View.GONE);
         }
     }
+
     /**
      * 是否显示底部（采购）
      */
@@ -356,9 +372,9 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         initDevice();
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
-        printer.print("仓库备注:\n\n\n\n"+"品检备注:\n\n\n\n"+"入库单号：" + resDataBean.getName() + "\n\n" + "源单据: " + resDataBean.getOrigin() + "\n\n" + "合作伙伴： " + resDataBean.getParnter_id() , 30, TimeUnit.SECONDS);
-        if (userInfoBean !=null){
-            printer.print("\n\n"+"入库人："+ userInfoBean.getResult().getRes_data().getName()+"\n\n"+
+        printer.print("仓库备注:\n\n\n\n" + "品检备注:\n\n\n\n" + "入库单号：" + resDataBean.getName() + "\n\n" + "源单据: " + resDataBean.getOrigin() + "\n\n" + "合作伙伴： " + resDataBean.getParnter_id(), 30, TimeUnit.SECONDS);
+        if (userInfoBean != null) {
+            printer.print("\n\n" + "入库人：" + userInfoBean.getResult().getRes_data().getName() + "\n\n" +
                     "-------------" + "\n", 30, TimeUnit.SECONDS);
         }
         for (int i = 0; i < resDataBean.getPack_operation_product_ids().size(); i++) {
@@ -369,7 +385,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         printer.print("\n\n", 30, TimeUnit.SECONDS);
         Bitmap mBitmap = CodeUtils.createImage(resDataBean.getName(), 300, 300, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
-        printer.print("\n\n"+"打印时间："+ DateTool.getDateTime(), 30, TimeUnit.SECONDS);
+        printer.print("\n\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
         printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
     }
 

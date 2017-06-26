@@ -28,9 +28,8 @@ import tarce.model.GetGroupByListresponse;
 import tarce.model.inventory.LoadInspectionBean;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
-import tarce.myodoo.activity.TakeDeliveListActivity;
-import tarce.myodoo.activity.TakeDeliverActivity;
 import tarce.myodoo.activity.inspect.InspectionSubActivity;
+import tarce.myodoo.activity.takedeliver.TakeDeliveListActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
@@ -115,6 +114,8 @@ public class InspectionFragment extends Fragment {
                         intent2.putExtra("from", "yes");
                         intent2.putExtra("type_code", "");
                         intent2.putExtra("state","qc_check");
+                        intent2.putExtra("partner_id", 0);
+                        intent2.putExtra("picking_type_id", 1);
                         startActivity(intent2);
                         break;
                 }

@@ -119,6 +119,16 @@ public class TakeDelListBean {
             private String post_img;
             private String min_date;
 
+            public String getPhone() {
+                return phone;
+            }
+
+            public void setPhone(String phone) {
+                this.phone = phone;
+            }
+
+            private String phone;
+
             public Object getQc_note() {
                 if (qc_note instanceof Boolean){
                     qc_note = "";
@@ -265,6 +275,9 @@ public class TakeDelListBean {
                 private Object area_name;
 
                 public Object getArea_id() {
+                    if (area_id instanceof Boolean){
+                        area_id = 0;
+                    }
                     return area_id;
                 }
 
@@ -273,6 +286,9 @@ public class TakeDelListBean {
                 }
 
                 public Object getArea_name() {
+                    if (area_name instanceof Boolean){
+                        area_name = "";
+                    }
                     return area_name;
                 }
 

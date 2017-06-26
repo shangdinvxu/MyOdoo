@@ -2,6 +2,7 @@ package com.uuzuche.lib_zxing.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.uuzuche.lib_zxing.camera.CameraManager;
 import com.uuzuche.lib_zxing.decoding.DecodeFormatManager;
 
 import java.util.Hashtable;
+import java.util.Objects;
 import java.util.Vector;
 
 /**
@@ -64,11 +66,11 @@ public class CodeUtils {
         MultiFormatReader multiFormatReader = new MultiFormatReader();
 
         // 解码的参数
-        Hashtable<DecodeHintType, Object> hints = new Hashtable<>(2);
+        Hashtable<DecodeHintType, Object> hints = new Hashtable<DecodeHintType, Object>(2);
         // 可以解析的编码类型
-        Vector<BarcodeFormat> decodeFormats = new Vector<>();
+        Vector<BarcodeFormat> decodeFormats = new Vector<BarcodeFormat>();
         if (decodeFormats == null || decodeFormats.isEmpty()) {
-            decodeFormats = new Vector<>();
+            decodeFormats = new Vector<BarcodeFormat>();
 
             // 这里设置可扫描的类型，我这里选择了都支持
             decodeFormats.addAll(DecodeFormatManager.ONE_D_FORMATS);
@@ -126,7 +128,7 @@ public class CodeUtils {
                 offsetX = (w - scaleWidth) / 2;
                 offsetY = (h - scaleHeight) / 2;
             }
-            Hashtable<EncodeHintType, Object> hints = new Hashtable<>();
+            Hashtable<EncodeHintType, Object> hints = new Hashtable<EncodeHintType, Object>();
             hints.put(EncodeHintType.CHARACTER_SET, "utf-8");
             //容错级别
             hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);

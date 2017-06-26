@@ -23,7 +23,7 @@ import butterknife.OnClick;
 import tarce.myodoo.IntentFactory;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.ConfirmPurchaseActivity;
-import tarce.myodoo.activity.TakeDeliverActivity;
+import tarce.myodoo.activity.takedeliver.TakeDeliverActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;

@@ -4,21 +4,18 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
+    <SearchView
         android:id="@+id/edit_search_custom"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:hint="请输入供应商名称用于搜索"
-        android:imeOptions="actionSearch"
-        android:singleLine="true" />
-
-    <EditText
+        android:queryHint="请输入供应商名称用于搜索"
+        android:iconifiedByDefault="false"
+        android:layout_height="40dp"/>
+    <SearchView
         android:id="@+id/edit_search_order"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:hint="根据采购单搜索"
-        android:imeOptions="actionSearch"
-        android:singleLine="true" />
+        android:queryHint="根据采购单号搜索"
+        android:iconifiedByDefault="false"
+        android:layout_height="40dp"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_show_supplier"
         android:layout_width="match_parent"

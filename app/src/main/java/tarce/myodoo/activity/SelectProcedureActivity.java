@@ -32,6 +32,7 @@ import tarce.model.inventory.ProcessShowBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.ProcessListAdapter;
 import tarce.support.AlertAialogUtils;
+import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
 /**
@@ -94,7 +95,7 @@ public class SelectProcedureActivity extends BaseActivity {
             @Override
             public void onResponse(Call<GetProcessBean> call, Response<GetProcessBean> response) {
                 if (response.body() == null)return;
-                if (response.body().getResult().getRes_code() == 1){
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                     listSubBeen = response.body().getResult().getRes_data();
                     for (int i = 0; i < listSubBeen.size(); i++) {
                         process_name.add(listSubBeen.get(i).getName());
@@ -110,7 +111,7 @@ public class SelectProcedureActivity extends BaseActivity {
                             dismissDefultProgressDialog();
                             if (response.body() == null)return;
                             Log.i(TAG, response.body().getJsonrpc()+"  "+response.body().getId());
-                            if (response.body().getResult().getRes_code() == 1){
+                            if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                                 delay_num = new ArrayList<>();
                                 try {
                                     GetNumProcess.ResultBean.ResDataBean res_data = response.body().getResult().getRes_data();
@@ -158,8 +159,8 @@ public class SelectProcedureActivity extends BaseActivity {
 
                         @Override
                         public void onFailure(Call<GetNumProcess> call, Throwable t) {
-                            super.onFailure(call, t);
-                            AlertAialogUtils.dismissDefultProgressDialog();
+                            dismissDefultProgressDialog();
+                            ToastUtils.showCommonToast(SelectProcedureActivity.this, t.toString());
                         }
                     });
 
@@ -167,7 +168,8 @@ public class SelectProcedureActivity extends BaseActivity {
             }
             @Override
             public void onFailure(Call<GetProcessBean> call, Throwable t) {
-                AlertAialogUtils.dismissDefultProgressDialog();
+                dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(SelectProcedureActivity.this, t.toString());
                 Log.i(TAG,t.toString());
             }
         });

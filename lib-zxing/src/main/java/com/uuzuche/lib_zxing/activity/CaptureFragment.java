@@ -6,6 +6,7 @@ import android.hardware.Camera;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -46,7 +47,6 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
     private SurfaceHolder surfaceHolder;
     private CodeUtils.AnalyzeCallback analyzeCallback;
     private Camera camera;
-    private View view;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,7 +64,7 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         Bundle bundle = getArguments();
-        view = null;
+        View view = null;
         if (bundle != null) {
             int layoutId = bundle.getInt(CodeUtils.LAYOUT_ID);
             if (layoutId != -1) {
@@ -135,36 +135,15 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
         if (result == null || TextUtils.isEmpty(result.getText())) {
             if (analyzeCallback != null) {
                 analyzeCallback.onAnalyzeFailed();
-                try {
-                    Thread.sleep(500);
-                    continuePreview();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
         } else {
             if (analyzeCallback != null) {
                 analyzeCallback.onAnalyzeSuccess(barcode, result.getText());
-                try {
-                    Thread.sleep(1000);
-                    continuePreview();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
         }
     }
 
-    private void continuePreview(){
-        SurfaceView surfaceView = (SurfaceView) view.findViewById(R.id.preview_view);
-        SurfaceHolder surfaceHolder = surfaceView.getHolder();
-        initCamera(surfaceHolder);
-        if (handler != null){
-            handler.restartPreviewAndDecode();
-        }
-    }
-
-    public void initCamera(SurfaceHolder surfaceHolder) {
+    private void initCamera(SurfaceHolder surfaceHolder) {
         try {
             CameraManager.get().openDriver(surfaceHolder);
             camera = CameraManager.get().getCamera();
@@ -209,7 +188,7 @@ public class CaptureFragment extends Fragment implements SurfaceHolder.Callback 
         }
     }
 
-    public CaptureActivityHandler getHandler() {
+    public Handler getHandler() {
         return handler;
     }
 

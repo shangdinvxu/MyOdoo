@@ -23,7 +23,6 @@ public class ContactBeanUtils {
         Query<ContactsBean> build = contactsBeanDao.queryBuilder().where(ContactsBeanDao.Properties.Name.like("%" + name + "%")).build();
         List<ContactsBean> list = build.list();
         return list;
-
     }
 
 }

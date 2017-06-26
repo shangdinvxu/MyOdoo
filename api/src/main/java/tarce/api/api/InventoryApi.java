@@ -59,7 +59,7 @@ public interface InventoryApi {
      * 入库
      * */
     @POST("change_stock_picking_state")
-    Call<TakeDelListBean> ruKu(@Body HashMap hashMap);
+    Call<TakeDeAreaBean> ruKu(@Body HashMap hashMap);
 
     /**
      * 退回
@@ -91,6 +91,11 @@ public interface InventoryApi {
     @POST("get_group_by_list")
     Call<GetGroupByListresponse> getGroupsByList(@Body HashMap hashMap);
 
+    /**
+     * 入库品检列表
+     * */
+    @POST("get_stock_picking_list")
+    Call<TakeDelListBean> getstockList(@Body HashMap hashMap);
 
     /**
      * 收货列表
@@ -111,6 +116,12 @@ public interface InventoryApi {
      * */
     @POST("get_stock_picking_by_origin")
     Call<SalesOutListResponse> searchBySalesNumber(@Body HashMap hashMap);
+
+    /**
+     * 根据订单号搜索
+     * */
+    @POST("get_stock_picking_by_origin")
+    Call<TakeDelListBean> searchByTakeNumber(@Body HashMap hashMap);
 
     /**
      * 根据客户全称搜索

@@ -184,6 +184,15 @@ public class GetSaleResponse implements Serializable{
                 this.delivery_rule = delivery_rule;
             }
 
+            public String getPhone() {
+                return phone;
+            }
+
+            public void setPhone(String phone) {
+                this.phone = phone;
+            }
+
+            private String phone;
             private	Object	delivery_rule;	/*Object*/
             private	String	name;	/*WHIN2016121500693*/
             private	Boolean	qc_note;	/*false*/

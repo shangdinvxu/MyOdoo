@@ -104,6 +104,9 @@ public class ProcessOfPersonActivity extends BaseActivity {
             adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                    if (res_data == null || position>=res_data.size()){
+                        return;
+                    }
                     Intent intent = new Intent(ProcessOfPersonActivity.this, ProductLlActivity.class);
                     intent.putExtra("name_activity","生产中");
                     intent.putExtra("state_product","progress");

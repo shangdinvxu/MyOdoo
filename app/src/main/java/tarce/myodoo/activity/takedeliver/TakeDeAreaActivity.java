@@ -1,4 +1,4 @@
-package tarce.myodoo.activity;
+package tarce.myodoo.activity.takedeliver;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -41,6 +41,7 @@ import tarce.model.inventory.AreaMessageBean;
 import tarce.model.inventory.TakeDeAreaBean;
 import tarce.model.inventory.TakeDelListBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.BaseActivity;
 import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.uiutil.ImageUtil;
 import tarce.myodoo.utils.StringUtils;

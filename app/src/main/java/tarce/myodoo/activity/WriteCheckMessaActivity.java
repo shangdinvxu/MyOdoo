@@ -32,6 +32,7 @@ import tarce.api.api.InventoryApi;
 import tarce.model.inventory.TakeDeAreaBean;
 import tarce.model.inventory.TakeDelListBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.takedeliver.TakeDeliveListActivity;
 import tarce.myodoo.uiutil.DialogIsSave;
 import tarce.myodoo.uiutil.ImageUtil;
 import tarce.myodoo.utils.StringUtils;
