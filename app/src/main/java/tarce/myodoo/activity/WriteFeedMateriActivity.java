@@ -20,6 +20,7 @@ import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
+import tarce.model.inventory.GetReturnMaterBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.WriteFeedbackNumAdapter;
@@ -60,7 +61,34 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
             tvCommitFeednum.setText("确认退料数量");
         }
         inventoryApi = RetrofitClient.getInstance(WriteFeedMateriActivity.this).create(InventoryApi.class);
-        initRecyc();
+        initData();
+    }
+
+    /**
+     * 初始化数据
+     * */
+    private void initData() {
+        showDefultProgressDialog();
+        HashMap<Object, Object> hashMap = new HashMap();
+        hashMap.put("order_id", order_id);
+        Call<GetReturnMaterBean> returnMater = inventoryApi.getReturnMater(hashMap);
+        returnMater.enqueue(new MyCallback<GetReturnMaterBean>() {
+            @Override
+            public void onResponse(Call<GetReturnMaterBean> call, Response<GetReturnMaterBean> response) {
+                dismissDefultProgressDialog();
+                if (response.body() == null)return;
+                if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
+                    adapter = new WriteFeedbackNumAdapter(R.layout.adapter_write_feednum, response.body().getResult().getRes_data());
+                    recyclerFeedMaterial.setAdapter(adapter);
+                    initRecyc();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GetReturnMaterBean> call, Throwable t) {
+                dismissDefultProgressDialog();
+            }
+        });
     }
 
     /**
@@ -68,8 +96,6 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
      * */
     private void initRecyc(){
 
-        adapter = new WriteFeedbackNumAdapter(R.layout.adapter_write_feednum, resDataBean.getStock_move_lines());
-        recyclerFeedMaterial.setAdapter(adapter);
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
@@ -114,7 +140,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                 Map<Object,Object> smallMap = new HashMap<>();
                 smallMap.put("order_id",resDataBean.getStock_move_lines().get(i).getOrder_id());
                 smallMap.put("product_tmpl_id",resDataBean.getStock_move_lines().get(i).getProduct_tmpl_id());
-                smallMap.put("return_qty",resDataBean.getStock_move_lines().get(i).getReturn_qty());
+                smallMap.put("return_qty",adapter.getData().get(i).getReturn_qty());
                 maps[i] = smallMap;
             }
             hashMap.put("stock_moves",maps);
@@ -164,7 +190,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                 Map<Object,Object> smallMap = new HashMap<>();
                                 smallMap.put("order_id",resDataBean.getStock_move_lines().get(i).getOrder_id());
                                 smallMap.put("product_tmpl_id",resDataBean.getStock_move_lines().get(i).getProduct_tmpl_id());
-                                smallMap.put("return_qty",resDataBean.getStock_move_lines().get(i).getReturn_qty());
+                                smallMap.put("return_qty",adapter.getData().get(i).getReturn_qty());
                                 maps[i] = smallMap;
                             }
                             hashMap.put("stock_moves",maps);

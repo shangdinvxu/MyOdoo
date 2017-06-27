@@ -24,6 +24,7 @@ import tarce.model.inventory.FinishPrepareMaBean;
 import tarce.model.inventory.FreeWorkBean;
 import tarce.model.inventory.GetFactroyRemarkBean;
 import tarce.model.inventory.GetFeedbackBean;
+import tarce.model.inventory.GetReturnMaterBean;
 import tarce.model.inventory.LoadInspectionBean;
 import tarce.model.inventory.LoadProductBean;
 import tarce.model.inventory.MaterialDetailBean;
@@ -337,6 +338,11 @@ public interface InventoryApi {
     @POST("return_material")
     Call<OrderDetailBean> commitFeedNum(@Body HashMap hashMap);
 
+    /**
+     * 获取退料数量
+     * */
+    @POST("get_return_detail")
+    Call<GetReturnMaterBean> getReturnMater(@Body HashMap hashMap);
     /**
      * 清点退料/提交退料数量
      * */

@@ -24,6 +24,8 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import cn.hugeterry.updatefun.UpdateFunGO;
+import cn.hugeterry.updatefun.config.UpdateKey;
 import greendao.ContactsBeanDao;
 import greendao.DaoSession;
 import greendao.MenuListBeanDao;
@@ -83,19 +85,6 @@ public class LoginActivity extends Activity {
     private InventoryApi inventoryApi;
     private ContactsBeanDao contactsBeanDao;
     private ArrayList<String> userStrings;
-    public Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case 1:
-                    getSalesList();
-                    break;
-                default:
-                    break;
-            }
-            super.handleMessage(msg);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +102,18 @@ public class LoginActivity extends Activity {
         initEmailAdapter();
         initListener();
         httpUrl.setSelection(httpUrl.getText().length());
+    }
+
+    @Override
+    protected void onResume() {
+        UpdateFunGO.onResume(this);
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        UpdateFunGO.onStop(this);
+        super.onStop();
     }
 
     //取出用户名检索
@@ -165,11 +166,14 @@ public class LoginActivity extends Activity {
             String password = SharePreferenceUtils.getString("password", "error", LoginActivity.this);
             LoginActivity.this.password.setText(password);
             toLogin(new View(LoginActivity.this));
-        }/*else {
-            Message message = new Message();
-            message.what = 1;
-            handler.sendMessage(message);
-        }*/
+        }else {
+            UpdateKey.API_TOKEN = "d8980dd0017f3e0a7b038aec2c52d737";
+            UpdateKey.APP_ID = "5940d8ca959d6965c30002dc";
+            //下载方式:
+            //   UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;//通过Dialog来进行下载
+            //UpdateKey.DialogOrNotification=UpdateKey.WITH_NOTIFITION;通过通知栏来进行下载(默认)
+            UpdateFunGO.init(this);
+        }
     }
 
     @OnClick(R.id.database)
@@ -281,7 +285,8 @@ public class LoginActivity extends Activity {
                                             .insertOrReplace(new LoginResponseBean(user_id, name, groupsBean.getName(), groupsBean.getId()));
                                 }
                             });
-                    getMenuList();
+                   // getMenuList();
+                    toMainActivity();
                 }else {
                     if (progressDialog.isShowing()){
                         progressDialog.dismiss();
@@ -339,38 +344,7 @@ public class LoginActivity extends Activity {
             }
         });
     }
-    /**
-     * 存储客户信息
-     * */
-    private void getSalesList() {
-        RetrofitClient.Url = "http://erp.robotime.com";
-        inventoryApi = RetrofitClient.getInstance(LoginActivity.this).create(InventoryApi.class);
-        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-        objectObjectHashMap.put("name", null);
-        // type: ‘supplier’ or ‘customer’
-        objectObjectHashMap.put("type", "customer");
-        Call<SearchSupplierResponse> stringCall = inventoryApi.searchSupplier(objectObjectHashMap);
-        stringCall.enqueue(new Callback<SearchSupplierResponse>() {
-            @Override
-            public void onResponse(Call<SearchSupplierResponse> call, Response<SearchSupplierResponse> response) {
-                if (response.body().getResult() != null) {
-                    List<SearchSupplierResponse.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
-                    if (res_data != null && res_data.size() > 0) {
-                        for (SearchSupplierResponse.ResultBean.ResDataBean resDataBean : res_data) {
-                            contactsBeanDao.insertOrReplace(new ContactsBean(resDataBean.getComment(), resDataBean.getPhone()
-                                    , resDataBean.getPartner_id(), resDataBean.getName(), resDataBean.getX_qq()));
-                        }
-                    }
-                }
 
-                long count = contactsBeanDao.count();
-                MyLog.e(TAG,"contactsBeanDao里面的数量是"+count);
-            }
-            @Override
-            public void onFailure(Call<SearchSupplierResponse> call, Throwable t) {
-            }
-        });
-    }
     private void toMainActivity(){
         if (progressDialog.isShowing()) {
             progressDialog.dismiss();

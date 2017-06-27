@@ -65,6 +65,7 @@ public class TakeDeliveListActivity extends BaseActivity {
     private String notneed;
     private long partner_id;
     private int picking_type_id;
+    private boolean isNull = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +85,7 @@ public class TakeDeliveListActivity extends BaseActivity {
                 not_need = (List<TakeDelListBean.ResultBean.ResDataBean>) intent.getSerializableExtra("intent");
                 listAdapter = new TakeDelListAdapter(R.layout.adapter_takedel_list, not_need);
                 swipeTarget.setAdapter(listAdapter);
+                isNull = false;//为了区分其他三种情况，这种情况下返回本页面时候不清空list
                 initListener();
             }else {
                 type_code = intent.getStringExtra("type_code");
@@ -208,7 +210,7 @@ public class TakeDeliveListActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (dataBeanList != null && res_data != null){
+        if (dataBeanList != null && res_data != null && isNull){
             dataBeanList = null;
             res_data = null;
         }

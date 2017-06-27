@@ -36,6 +36,7 @@ import tarce.model.SearchSupplierResponse;
 import tarce.model.greendaoBean.ContactsBean;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.scancode.ScanCodeActivity;
 import tarce.myodoo.fragment.InspectionFragment;
 import tarce.myodoo.fragment.MeFragment;
 import tarce.myodoo.fragment.ProduceFragment;
@@ -94,16 +95,12 @@ public class MainActivity extends AppCompatActivity {
         //   UpdateKey.DialogOrNotification=UpdateKey.WITH_DIALOG;//通过Dialog来进行下载
         //UpdateKey.DialogOrNotification=UpdateKey.WITH_NOTIFITION;通过通知栏来进行下载(默认)
         UpdateFunGO.init(this);
-        //   getSupplier();
     }
 
     @Override
     protected void onResume() {
-        super.onResume();
-        if (res_data == null) {
-            refreshLoadAction();
-        }
         UpdateFunGO.onResume(this);
+        super.onResume();
     }
 
     @Override
@@ -116,15 +113,16 @@ public class MainActivity extends AppCompatActivity {
     void clickRadio_Button1(View view) {
         mViewPager.setCurrentItem(0, false);
         titleText.setText("仓库");
-        refreshLoadAction();
     }
 
 
     /***点击二维码扫描*/
     @OnClick(R.id.scan_button)
     void clickScanButton(View view) {
-        Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
-        startActivityForResult(intent, REQUEST_CODE);
+        /*Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
+        startActivityForResult(intent, REQUEST_CODE);*/
+        Intent intent = new Intent(MainActivity.this, ScanCodeActivity.class);
+        startActivity(intent);
     }
 
 
@@ -133,42 +131,6 @@ public class MainActivity extends AppCompatActivity {
     void clickSearchButton(View view) {
     }
 
-
-    private void refreshLoadAction() {
-        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-        String[] names = {"linkloving_mrp_extend.menu_mrp_prepare_material_ing", "linkloving_mrp_extend.menu_mrp_waiting_material",
-                "linkloving_mrp_extend.menu_mrp_waiting_warehouse_inspection",
-                "linkloving_mrp_extend.mrp_production_action_qc_success"};
-        objectObjectHashMap.put("xml_names", names);
-        objectObjectHashMap.put("user_id", MyApplication.userID);
-        //   AlertAialogUtils.showDefultProgressDialog(MainActivity.this);
-        Call<LoadActionBean> objectCall = inventoryApi.load_actionCall(objectObjectHashMap);
-        objectCall.enqueue(new Callback<LoadActionBean>() {
-            @Override
-            public void onResponse(Call<LoadActionBean> call, Response<LoadActionBean> response) {
-                //  AlertAialogUtils.dismissDefultProgressDialog();
-                if (response.body() != null && response.body().getResult().getRes_code() == 1) {
-                    res_data = response.body().getResult().getRes_data();
-                    Integer needaction_counter = res_data.getLinkloving_mrp_extend_menu_mrp_prepare_material_ing().getNeedaction_counter();
-                    Integer needaction_counter1 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection().getNeedaction_counter();
-                    Integer needaction_counter2 = res_data.getLinkloving_mrp_extend_mrp_production_action_qc_success().getNeedaction_counter();
-                    Integer needaction_counter3 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_material().getNeedaction_counter();
-                    warehouseFragment.list.get(5).t.setNumber(needaction_counter + needaction_counter3);
-                    warehouseFragment.list.get(6).t.setNumber(needaction_counter1);
-                    warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
-//                    //               warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
-                    warehouseFragment.sectionAdapter.notifyDataSetChanged();
-                }
-
-            }
-
-            @Override
-            public void onFailure(Call<LoadActionBean> call, Throwable t) {
-                //      AlertAialogUtils.dismissDefultProgressDialog();
-                MyLog.e(TAG, t.toString());
-            }
-        });
-    }
 
     @OnClick(R.id.radio_button2)
     void clickRadio_Button2(View view) {
@@ -204,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setAdapter(myViewPagerAdapter);
         mViewPager.setCurrentItem(0);
         radioButton1.setClickable(true);
-        refreshLoadAction();
     }
 
 
@@ -247,7 +208,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        res_data = null;
         super.onPause();
     }
 }

@@ -18,7 +18,6 @@
                 android:orientation="horizontal"
                 android:background="@color/result_view">
                 <ImageView
-                    android:background="@color/bg_color"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:id="@+id/top_imageview"
@@ -174,14 +173,15 @@
                         android:gravity="center"
                         android:text="位置" />
 
-                    <!--<TextView
+                    <TextView
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="库存" />-->
+                        android:text="库存" />
 
                     <TextView
+                        android:id="@+id/textView"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"

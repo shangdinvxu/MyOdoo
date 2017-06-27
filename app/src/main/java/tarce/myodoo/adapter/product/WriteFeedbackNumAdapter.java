@@ -5,6 +5,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.List;
 
+import tarce.model.inventory.GetReturnMaterBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.utils.StringUtils;
@@ -14,14 +15,14 @@ import tarce.myodoo.utils.StringUtils;
  * 填写退料数量
  */
 
-public class WriteFeedbackNumAdapter extends BaseQuickAdapter<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean, BaseViewHolder>{
+public class WriteFeedbackNumAdapter extends BaseQuickAdapter<GetReturnMaterBean.ResultBean.ResDataBean, BaseViewHolder>{
 
-    public WriteFeedbackNumAdapter(int layoutResId, List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> data) {
+    public WriteFeedbackNumAdapter(int layoutResId, List<GetReturnMaterBean.ResultBean.ResDataBean> data) {
         super(layoutResId, data);
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean item) {
+    protected void convert(BaseViewHolder helper, GetReturnMaterBean.ResultBean.ResDataBean item) {
         helper.setText(R.id.name_product_feedback, item.getProduct_id());
         helper.setText(R.id.num_feedback_write, StringUtils.doubleToString(item.getReturn_qty()));
     }

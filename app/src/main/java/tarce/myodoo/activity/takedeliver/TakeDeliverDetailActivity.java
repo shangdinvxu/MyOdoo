@@ -110,7 +110,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sales_detial);
+        setContentView(R.layout.activity_takedelie_detail);
         ButterKnife.inject(this);
 
         Intent intent = getIntent();

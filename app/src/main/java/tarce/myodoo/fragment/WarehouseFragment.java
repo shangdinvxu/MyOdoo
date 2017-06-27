@@ -15,18 +15,28 @@ import android.widget.Button;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import tarce.api.RetrofitClient;
+import tarce.api.api.InventoryApi;
+import tarce.model.LoadActionBean;
 import tarce.myodoo.IntentFactory;
+import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.ConfirmPurchaseActivity;
+import tarce.myodoo.activity.MainActivity;
 import tarce.myodoo.activity.takedeliver.TakeDeliverActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
+import tarce.support.MyLog;
 
 /**
  * 仓库界面
@@ -40,6 +50,8 @@ public class WarehouseFragment extends Fragment {
     RecyclerView recyclerview;
     public  List<MainItemBean> list;
     public SectionAdapter sectionAdapter;
+    private InventoryApi inventoryApi;
+    private LoadActionBean.ResultBean.ResDataBean res_data;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,11 +87,65 @@ public class WarehouseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_1, null);
         ButterKnife.inject(this, view);
-        sectionAdapter = new SectionAdapter(R.layout.mian_list_item, R.layout.adapter_head, list);
+        inventoryApi = RetrofitClient.getInstance(getActivity()).create(InventoryApi.class);
         setRecyclerview(recyclerview);
+        sectionAdapter = new SectionAdapter(R.layout.mian_list_item, R.layout.adapter_head, list);
         recyclerview.setAdapter(sectionAdapter);
         initListener();
+        refreshLoadAction();
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (res_data ==null){
+            refreshLoadAction();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (res_data!=null){
+            res_data = null;
+        }
+    }
+
+    private void refreshLoadAction() {
+        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        String[] names = {"linkloving_mrp_extend.menu_mrp_prepare_material_ing", "linkloving_mrp_extend.menu_mrp_waiting_material",
+                "linkloving_mrp_extend.menu_mrp_waiting_warehouse_inspection",
+                "linkloving_mrp_extend.mrp_production_action_qc_success"};
+        objectObjectHashMap.put("xml_names", names);
+        objectObjectHashMap.put("user_id", MyApplication.userID);
+        //   AlertAialogUtils.showDefultProgressDialog(MainActivity.this);
+        Call<LoadActionBean> objectCall = inventoryApi.load_actionCall(objectObjectHashMap);
+        objectCall.enqueue(new Callback<LoadActionBean>() {
+            @Override
+            public void onResponse(Call<LoadActionBean> call, Response<LoadActionBean> response) {
+                //  AlertAialogUtils.dismissDefultProgressDialog();
+                if (response.body() != null && response.body().getResult().getRes_code() == 1) {
+                    res_data = response.body().getResult().getRes_data();
+                    Integer needaction_counter = res_data.getLinkloving_mrp_extend_menu_mrp_prepare_material_ing().getNeedaction_counter();
+                    Integer needaction_counter1 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection().getNeedaction_counter();
+                    Integer needaction_counter2 = res_data.getLinkloving_mrp_extend_mrp_production_action_qc_success().getNeedaction_counter();
+                    Integer needaction_counter3 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_material().getNeedaction_counter();
+                    list.get(5).t.setNumber(needaction_counter + needaction_counter3);
+                    list.get(6).t.setNumber(needaction_counter1);
+                    list.get(7).t.setNumber(needaction_counter2);
+//                    //               warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
+                    sectionAdapter.notifyDataSetChanged();
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<LoadActionBean> call, Throwable t) {
+                //      AlertAialogUtils.dismissDefultProgressDialog();
+                MyLog.e("WarehouseFragment", t.toString());
+            }
+        });
     }
 
     private void initListener() {
