@@ -91,7 +91,9 @@ public class WaitProdListActivity extends BaseActivity {
             public void onRefresh() {
                 showDefultProgressDialog();
                 getData(20, 0, Refresh_Move);
-                adapter.notifyDataSetChanged();
+                if (adapter!=null){
+                    adapter.notifyDataSetChanged();
+                }
                 swipeToLoad.setRefreshing(false);
             }
         });

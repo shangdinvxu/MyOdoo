@@ -89,6 +89,14 @@ public class OrderDetailBean {
         }
 
         public static class ResDataBean implements Serializable{
+            public String getError() {
+                return error;
+            }
+
+            public void setError(String error) {
+                this.error = error;
+            }
+
             /**
              * origin : MO170514126:MO170514126
              * prepare_material_area_id : {"area_id":false,"area_name":false}
@@ -111,6 +119,7 @@ public class OrderDetailBean {
              * prepare_material_img : http://192.168.88.128:8069/linkloving_app_api/get_worker_image?worker_id=44420&model=mrp.production&field=prepare_material_img
              */
 
+            private String error;
             private String remark;
 
             public String getRemark() {

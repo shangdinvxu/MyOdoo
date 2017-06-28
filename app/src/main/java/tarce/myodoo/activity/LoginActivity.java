@@ -285,7 +285,6 @@ public class LoginActivity extends Activity {
                                             .insertOrReplace(new LoginResponseBean(user_id, name, groupsBean.getName(), groupsBean.getId()));
                                 }
                             });
-                   // getMenuList();
                     toMainActivity();
                 }else {
                     if (progressDialog.isShowing()){
@@ -299,48 +298,6 @@ public class LoginActivity extends Activity {
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 super.onFailure(call, t);
                 Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    public void getMenuList() {
-        loginApi.getMenuList().enqueue(new MyCallback<GetMenuListResponse>() {
-            @Override
-            public void onResponse(Call<GetMenuListResponse> call, Response<GetMenuListResponse> response) {
-                List<GetMenuListResponse.ResDataBean> res_data = response.body().getRes_data();
-                if (res_data.size() > 0) {
-                    int user_id = res_data.get(0).getUser_id();
-                    for (GetMenuListResponse.ResDataBean resDataBean : res_data) {
-                        menuListBeanDao.insertOrReplace(new MenuListBean(resDataBean.getId(), resDataBean.getAction()
-                                , resDataBean.getSequence(), resDataBean.getWeb_icon(), resDataBean.getName()
-                                , user_id, resDataBean.isParent_id() ? -1 : 0));
-                        if (resDataBean.getChildren().size() > 0) {
-                            List<GetMenuListResponse.ChildBean> children = resDataBean.getChildren();
-                            for (GetMenuListResponse.ChildBean children1 : children) {
-                                String[] parent_id = children1.getParent_id();
-                                String parentID = parent_id[0];
-                                menuListBeanDao.insertOrReplace(
-                                        new MenuListBean(children1.getId(), children1.getAction(),
-                                                children1.getSequence(), children1.getWeb_icon()
-                                                , children1.getName(), user_id, Integer.parseInt(parentID)));
-                                if (children1.getChildren().size() > 0) {
-                                    List<GetMenuListResponse.ChildBean> children3 = children1.getChildren();
-                                    for (GetMenuListResponse.ChildBean childrenMinUnit : children3) {
-                                        String[] parent_idMinUnit = childrenMinUnit.getParent_id();
-                                        String parentMinUnitID = parent_idMinUnit[0];
-                                        menuListBeanDao.insertOrReplace(
-                                                new MenuListBean(childrenMinUnit.getId(), childrenMinUnit.getAction(),
-                                                        childrenMinUnit.getSequence(), childrenMinUnit.getWeb_icon()
-                                                        , childrenMinUnit.getName(), user_id, Integer.parseInt(parentMinUnitID)));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    long count = menuListBeanDao.count();
-                    MyLog.e(TAG,"menuListBeanDao里面的数量是"+count);
-                }
-                toMainActivity();
             }
         });
     }

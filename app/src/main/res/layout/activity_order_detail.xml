@@ -305,6 +305,7 @@
                         android:layout_height="28dp"
                         android:layout_marginLeft="10dp"
                         android:layout_gravity="center_vertical"
+                        android:focusable="false"
                         android:background="@drawable/bac_inspect_edit"/>
                 </LinearLayout>
             </RelativeLayout>
