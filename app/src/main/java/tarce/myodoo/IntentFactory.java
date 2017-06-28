@@ -63,6 +63,9 @@ public class IntentFactory {
         intent.putExtra("name_activity",name);
         intent.putExtra("state_product",state);
         context.startActivity(intent);
+
+
+
     }
 
     /**
