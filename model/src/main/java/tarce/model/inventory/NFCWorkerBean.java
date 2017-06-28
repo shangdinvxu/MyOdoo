@@ -53,7 +53,7 @@ public class NFCWorkerBean {
 
         private String res_msg;
         private int res_code;
-        private List<ResDataBean> res_data;
+        public List<ResDataBean> res_data;
 
         public String getRes_msg() {
             return res_msg;
@@ -109,10 +109,10 @@ public class NFCWorkerBean {
              * name : 董事长
              * department_id : 18
              */
-            private int parent_id;
-            private String name;
-            private int department_id;
-            private List<EmployeesBean> employees;
+            public int parent_id;
+            public String name;
+            public int department_id;
+            public List<EmployeesBean> employees;
 
             public String getName() {
                 return name;
@@ -161,9 +161,9 @@ public class NFCWorkerBean {
                  * name : 郭华根
                  */
 
-                private int employee_id;
-                private String work_email;
-                private String name;
+                public int employee_id;
+                public String work_email;
+                public String name;
 
                 public int getEmployee_id() {
                     return employee_id;

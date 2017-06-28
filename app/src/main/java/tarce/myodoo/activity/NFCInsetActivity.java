@@ -131,7 +131,76 @@ public class NFCInsetActivity extends BaseActivity {
 
     }
     private NFCWorkerBean.ResultBean createCompany(NFCWorkerBean.ResultBean result, boolean isExpandDefault) {
-
-        return result;
+        NFCWorkerBean.ResultBean firstCompany = new NFCWorkerBean.ResultBean();
+        firstCompany.res_data = result.getRes_data();
+        List<NFCWorkerBean.ResultBean.ResDataBean> departments = new ArrayList<>();
+        for (int i = 0; i < result.getRes_data().size(); i++){
+            NFCWorkerBean.ResultBean.ResDataBean department = new NFCWorkerBean.ResultBean.ResDataBean();
+            NFCWorkerBean.ResultBean.ResDataBean bomIdsBeanX = result.getRes_data().get(i);
+            department.employees = bomIdsBeanX.getEmployees();
+            department.name = bomIdsBeanX.getName();
+            department.department_id = bomIdsBeanX.getDepartment_id();
+            department.parent_id = bomIdsBeanX.getParent_id();
+            if (bomIdsBeanX.getBom_ids().size()>0) {
+                department.setExpanded(false);
+                List<BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean> employeeList = new ArrayList<>();
+                for (int j = 0; j < bomIdsBeanX.getBom_ids().size(); j++) {
+                    BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean employee = new BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean();
+                    BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean bomIdsBean = bomIdsBeanX.getBom_ids().get(j);
+                    employee.name = bomIdsBean.getName();
+                    employee.code = bomIdsBean.getCode();
+                    employee.product_specs = bomIdsBean.getProduct_specs();
+                    employee.process_id = bomIdsBean.getProcess_id();
+                    if (bomIdsBean.getBom_ids().size()>0){
+                        employee.setExpanded(false);
+                        List<BomSubBean> lastList = new ArrayList<>();
+                        for (int k = 0; k < bomIdsBean.getBom_ids().size(); k++){
+                            BomSubBean last = new BomSubBean();
+                            BomSubBean bomSubBean = bomIdsBean.getBom_ids().get(k);
+                            last.name = bomSubBean.getName();
+                            last.code = bomSubBean.getCode();
+                            last.product_specs = bomSubBean.getProduct_specs();
+                            last.process_id = bomSubBean.getProcess_id();
+                            if (bomSubBean.getBom_ids().size()>0){
+                                last.setExpanded(false);
+                                List<BomSubBean.BomBottomBean> bottomBeanList = new ArrayList<>();
+                                for (int l = 0; l < bomSubBean.getBom_ids().size(); l++) {
+                                    BomSubBean.BomBottomBean bottomBean = new BomSubBean.BomBottomBean();
+                                    BomSubBean.BomBottomBean bottomBean1 = bomSubBean.getBom_ids().get(l);
+                                    bottomBean.name = bottomBean1.getName();
+                                    bottomBean.code = bottomBean1.getCode();
+                                    bottomBean.product_specs = bottomBean1.getProduct_specs();
+                                    bottomBean.process_id = bottomBean1.getProcess_id();
+                                    if (bottomBean1.getBom_ids().size()>0){
+                                        bottomBean.setExpanded(false);
+                                        List<BomSubBean.BomBottomBean.SixBomBottomBean> sixBomBottomBeen = new ArrayList<>();
+                                        for (int m = 0; m < bottomBean1.getBom_ids().size(); m++) {
+                                            BomSubBean.BomBottomBean.SixBomBottomBean bean = new BomSubBean.BomBottomBean.SixBomBottomBean();
+                                            BomSubBean.BomBottomBean.SixBomBottomBean bean1 = bottomBean1.getBom_ids().get(m);
+                                            bean.name = bean1.getName();
+                                            bean.code = bean1.getCode();
+                                            bean.product_specs = bean1.getProduct_specs();
+                                            bean.process_id = bean1.getProcess_id();
+                                            sixBomBottomBeen.add(bean);
+                                        }
+                                        bottomBean.bom_ids = sixBomBottomBeen;
+                                    }
+                                    bottomBeanList.add(bottomBean);
+                                }
+                                last.bom_ids = bottomBeanList;
+                            }
+                            lastList.add(last);
+                        }
+                        employee.bom_ids = lastList;
+                    }
+                    employeeList.add(employee);
+                }
+                department.bom_ids = employeeList;
+            }
+            departments.add(department);
+        }
+        firstCompany.bom_ids = departments;
+        firstCompany.mExpanded = isExpandDefault;
+        return firstCompany;
     }
 }
