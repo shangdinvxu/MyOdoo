@@ -104,6 +104,9 @@ public class LoginActivity extends Activity {
         httpUrl.setSelection(httpUrl.getText().length());
     }
 
+
+
+
     @Override
     protected void onResume() {
         UpdateFunGO.onResume(this);
@@ -308,5 +311,10 @@ public class LoginActivity extends Activity {
         }
         finish();
         IntentFactory.start_MainActivity(LoginActivity.this);
+    }
+
+    @OnClick(R.id.RFCardButton)
+    void toReadRFCard(View view){
+
     }
 }
