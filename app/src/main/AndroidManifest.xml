@@ -118,6 +118,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.scancode.ScanCodeActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".activity.NFCInsetActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 

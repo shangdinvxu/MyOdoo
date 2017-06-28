@@ -27,6 +27,7 @@ import tarce.myodoo.adapter.expand.EmployeeItem;
 import tarce.myodoo.adapter.expand.LastItem;
 import tarce.myodoo.adapter.expand.SixItem;
 import tarce.myodoo.adapter.expand.WorkerItem;
+import tarce.support.MyLog;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
 
@@ -122,6 +123,7 @@ public class BomFramworkActivity extends BaseActivity {
                 }else {
                     ToastUtils.showCommonToast(BomFramworkActivity.this, "出现错误，请联系开发人员调试");
                 }
+
             }
 
             @Override
