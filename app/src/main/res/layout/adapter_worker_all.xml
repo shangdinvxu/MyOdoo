@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="45dp">
+
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="董事长"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"/>
+    <TextView
+        android:id="@+id/tv_zhiwei"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="郭达根"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"/>
+    <TextView
+        android:id="@+id/tv_email"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:text="email"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"/>
+</LinearLayout>

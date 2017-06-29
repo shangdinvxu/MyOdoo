@@ -28,6 +28,7 @@ import tarce.model.inventory.GetReturnMaterBean;
 import tarce.model.inventory.LoadInspectionBean;
 import tarce.model.inventory.LoadProductBean;
 import tarce.model.inventory.MaterialDetailBean;
+import tarce.model.inventory.NFCWorkerBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.model.inventory.ProcessDeatilBean;
@@ -50,6 +51,11 @@ import tarce.model.inventory.WorkingWorkerBean;
  */
 
 public interface InventoryApi {
+    /**
+     * 请求员工数据
+     * */
+    @POST("get_department_by_parent")
+    Call<NFCWorkerBean> getDepart(@Body HashMap hashMap);
     /**
      * 提交入库（位置信息）
      * */
