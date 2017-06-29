@@ -79,7 +79,7 @@ public class NFCWorkerBean {
             this.res_data = res_data;
         }
 
-        private boolean mExpanded = false;
+        public boolean mExpanded = false;
         @Override
         public List<?> getChildItemList() {
             return res_data;
@@ -92,7 +92,7 @@ public class NFCWorkerBean {
 
         @Override
         public void setExpanded(boolean isExpanded) {
-            mExpanded = isExpanded();
+            mExpanded = isExpanded;
         }
 
         public static class ResDataBean implements ExpandableListItem{
@@ -138,7 +138,7 @@ public class NFCWorkerBean {
                 this.employees = employees;
             }
 
-            private boolean mExpanded = false;
+            public boolean mExpanded = false;
             @Override
             public List<?> getChildItemList() {
                 return employees;
@@ -151,7 +151,7 @@ public class NFCWorkerBean {
 
             @Override
             public void setExpanded(boolean isExpanded) {
-                mExpanded = isExpanded();
+                mExpanded = isExpanded;
             }
 
             public static class EmployeesBean {
@@ -164,6 +164,16 @@ public class NFCWorkerBean {
                 public int employee_id;
                 public String work_email;
                 public String name;
+
+                public List<ResDataBean> getDataBeanList() {
+                    return dataBeanList;
+                }
+
+                public void setDataBeanList(List<ResDataBean> dataBeanList) {
+                    this.dataBeanList = dataBeanList;
+                }
+
+                public List<NFCWorkerBean.ResultBean.ResDataBean> dataBeanList;
 
                 public int getEmployee_id() {
                     return employee_id;

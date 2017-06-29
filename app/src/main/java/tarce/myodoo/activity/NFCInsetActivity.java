@@ -3,6 +3,7 @@ package tarce.myodoo.activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
@@ -12,6 +13,7 @@ import com.zaihuishou.expandablerecycleradapter.viewholder.AbstractAdapterItem;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -28,6 +30,9 @@ import tarce.model.inventory.BomFramworkBean;
 import tarce.model.inventory.BomSubBean;
 import tarce.model.inventory.NFCWorkerBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.ComponyOne.BottomThree;
+import tarce.myodoo.activity.ComponyOne.ComponyOne;
+import tarce.myodoo.activity.ComponyOne.EmployeeTwo;
 import tarce.myodoo.adapter.expand.CompanyItem;
 import tarce.myodoo.adapter.expand.DepartmentItem;
 import tarce.myodoo.adapter.expand.EmployeeItem;
@@ -35,6 +40,8 @@ import tarce.myodoo.adapter.expand.LastItem;
 import tarce.myodoo.adapter.expand.SixItem;
 import tarce.myodoo.adapter.expand.WorkerItem;
 import tarce.myodoo.adapter.takedeliver.WorkerAllAdapter;
+import tarce.support.MyLog;
+import tarce.support.ToastUtils;
 
 /**
  * Created by zouzou on 2017/6/28.
@@ -49,8 +56,11 @@ public class NFCInsetActivity extends BaseActivity {
     private List<NFCWorkerBean.ResultBean.ResDataBean> res_data;
     private List<Object> mCompanylist;
     private final int ITEM_TYPE_COMPANY = 1;
-    private final int ITEM_TYPE_SIX = 6;
+    private final int ITEM_TYPE_DEPARTMENT = 2;
+    private final int ITEM_TYPE_SIX = 3;
     private BaseExpandableAdapter adapter;
+    private NFCWorkerBean.ResultBean company;
+    private boolean isHaveHeader = false;
 
 
     @Override
@@ -89,9 +99,10 @@ public class NFCInsetActivity extends BaseActivity {
             public void onResponse(Call<NFCWorkerBean> call, Response<NFCWorkerBean> response) {
                 if (response.body() == null) return;
                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1){
-                    NFCWorkerBean.ResultBean result = response.body().getResult();
+                    final NFCWorkerBean.ResultBean result = response.body().getResult();
                     mCompanylist = new ArrayList<>();
-                    mCompanylist.add(createCompany(result, false));
+                    company = createCompany(result, false);
+                    mCompanylist.add(company);
                     adapter = new BaseExpandableAdapter(mCompanylist){
 
                         @Override
@@ -99,107 +110,108 @@ public class NFCInsetActivity extends BaseActivity {
                             int itemType = (int) type;
                             switch (itemType) {
                                 case ITEM_TYPE_COMPANY:
-                                    return new CompanyItem();
+                                    return new ComponyOne(isHaveHeader);
+                                case ITEM_TYPE_DEPARTMENT:
+                                    return new EmployeeTwo();
                                 case ITEM_TYPE_SIX:
-                                    return new SixItem();
+                                    return new BottomThree();
                             }
                             return null;
                         }
 
                         @Override
                         public Object getItemViewType(Object t){
-                            if (t instanceof NFCWorkerBean.ResultBean) {
+                            if (t instanceof NFCWorkerBean.ResultBean)
                                 return ITEM_TYPE_COMPANY;
-                            } else if (t instanceof NFCWorkerBean.ResultBean.ResDataBean) {
+                             else if (t instanceof NFCWorkerBean.ResultBean.ResDataBean)
+                                return ITEM_TYPE_DEPARTMENT;
+                             else if (t instanceof NFCWorkerBean.ResultBean.ResDataBean.EmployeesBean)
                                 return ITEM_TYPE_SIX;
-                            }
                             return -1;
                         }
                     };
                     recyclerInsertNfc.setAdapter(adapter);
+                    initListener(result);
                 }
             }
             @Override
             public void onFailure(Call<NFCWorkerBean> call, Throwable t) {
-                super.onFailure(call, t);
+                dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(NFCInsetActivity.this, t.toString());
             }
         });
     }
 
     //item点击事件
-    private void initListener() {
+    private void initListener(final NFCWorkerBean.ResultBean resultBean){
+        adapter.setExpandCollapseListener(new BaseExpandableAdapter.ExpandCollapseListener() {
+            @Override
+            public void onListItemExpanded(final int position) {
+                    ToastUtils.showCommonToast(NFCInsetActivity.this, "position = "+position);
+                    if (position == 0)return;
+                    HashMap<Object, Object> hashMap = new HashMap<>();
+                    hashMap.put("parent_id", resultBean.getRes_data().get(position-1).getDepartment_id());
+                    Log.i("zouwansheng",resultBean.getRes_data().get(position-1).getDepartment_id()+""+resultBean.getRes_data().get(position-1));
+                    Call<NFCWorkerBean> depart1 = inventoryApi.getDepart(hashMap);
+                    MyLog.e("TEST",adapter.getDataList()+"");
+                    depart1.enqueue(new MyCallback<NFCWorkerBean>() {
+                        @Override
+                        public void onResponse(Call<NFCWorkerBean> call, Response<NFCWorkerBean> response) {
+                            if (response.body()==null)return;
+                            if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==1){
+                                // mCompanylist.set(0,response.body().getResult());
+//                                mCompanylist.set(position, createCompany(response.body().getResult(), true));
+                                isHaveHeader = true;
+                                company.setRes_data(response.body().getResult().getRes_data());
+                            //    company.getRes_data().add(position,response.body().getResult().getRes_data().get(position));
+                                mCompanylist.add(1,company);
+                                adapter.updateData(mCompanylist);
+                                initListener(response.body().getResult());
+                            }
+                        }
 
+                        @Override
+                        public void onFailure(Call<NFCWorkerBean> call, Throwable t) {
+                            super.onFailure(call, t);
+                        }
+                    });
+            }
+
+            @Override
+            public void onListItemCollapsed(int position) {
+                /*if (position == 0){
+                    adapter.collapseAllParents();
+                };*/
+            }
+        });
     }
     private NFCWorkerBean.ResultBean createCompany(NFCWorkerBean.ResultBean result, boolean isExpandDefault) {
         NFCWorkerBean.ResultBean firstCompany = new NFCWorkerBean.ResultBean();
-        firstCompany.res_data = result.getRes_data();
+       // firstCompany.res_data = result.getRes_data();
         List<NFCWorkerBean.ResultBean.ResDataBean> departments = new ArrayList<>();
-        for (int i = 0; i < result.getRes_data().size(); i++){
+        for (int i = 0; i < result.getRes_data().size(); i++) {
             NFCWorkerBean.ResultBean.ResDataBean department = new NFCWorkerBean.ResultBean.ResDataBean();
             NFCWorkerBean.ResultBean.ResDataBean bomIdsBeanX = result.getRes_data().get(i);
             department.employees = bomIdsBeanX.getEmployees();
             department.name = bomIdsBeanX.getName();
             department.department_id = bomIdsBeanX.getDepartment_id();
             department.parent_id = bomIdsBeanX.getParent_id();
-            if (bomIdsBeanX.getBom_ids().size()>0) {
+            if (bomIdsBeanX.getEmployees().size() > 0) {
                 department.setExpanded(false);
-                List<BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean> employeeList = new ArrayList<>();
-                for (int j = 0; j < bomIdsBeanX.getBom_ids().size(); j++) {
-                    BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean employee = new BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean();
-                    BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean bomIdsBean = bomIdsBeanX.getBom_ids().get(j);
+                List<NFCWorkerBean.ResultBean.ResDataBean.EmployeesBean> employeeList = new ArrayList<>();
+                for (int j = 0; j < bomIdsBeanX.getEmployees().size(); j++) {
+                    NFCWorkerBean.ResultBean.ResDataBean.EmployeesBean employee = new NFCWorkerBean.ResultBean.ResDataBean.EmployeesBean();
+                    NFCWorkerBean.ResultBean.ResDataBean.EmployeesBean bomIdsBean = bomIdsBeanX.getEmployees().get(j);
                     employee.name = bomIdsBean.getName();
-                    employee.code = bomIdsBean.getCode();
-                    employee.product_specs = bomIdsBean.getProduct_specs();
-                    employee.process_id = bomIdsBean.getProcess_id();
-                    if (bomIdsBean.getBom_ids().size()>0){
-                        employee.setExpanded(false);
-                        List<BomSubBean> lastList = new ArrayList<>();
-                        for (int k = 0; k < bomIdsBean.getBom_ids().size(); k++){
-                            BomSubBean last = new BomSubBean();
-                            BomSubBean bomSubBean = bomIdsBean.getBom_ids().get(k);
-                            last.name = bomSubBean.getName();
-                            last.code = bomSubBean.getCode();
-                            last.product_specs = bomSubBean.getProduct_specs();
-                            last.process_id = bomSubBean.getProcess_id();
-                            if (bomSubBean.getBom_ids().size()>0){
-                                last.setExpanded(false);
-                                List<BomSubBean.BomBottomBean> bottomBeanList = new ArrayList<>();
-                                for (int l = 0; l < bomSubBean.getBom_ids().size(); l++) {
-                                    BomSubBean.BomBottomBean bottomBean = new BomSubBean.BomBottomBean();
-                                    BomSubBean.BomBottomBean bottomBean1 = bomSubBean.getBom_ids().get(l);
-                                    bottomBean.name = bottomBean1.getName();
-                                    bottomBean.code = bottomBean1.getCode();
-                                    bottomBean.product_specs = bottomBean1.getProduct_specs();
-                                    bottomBean.process_id = bottomBean1.getProcess_id();
-                                    if (bottomBean1.getBom_ids().size()>0){
-                                        bottomBean.setExpanded(false);
-                                        List<BomSubBean.BomBottomBean.SixBomBottomBean> sixBomBottomBeen = new ArrayList<>();
-                                        for (int m = 0; m < bottomBean1.getBom_ids().size(); m++) {
-                                            BomSubBean.BomBottomBean.SixBomBottomBean bean = new BomSubBean.BomBottomBean.SixBomBottomBean();
-                                            BomSubBean.BomBottomBean.SixBomBottomBean bean1 = bottomBean1.getBom_ids().get(m);
-                                            bean.name = bean1.getName();
-                                            bean.code = bean1.getCode();
-                                            bean.product_specs = bean1.getProduct_specs();
-                                            bean.process_id = bean1.getProcess_id();
-                                            sixBomBottomBeen.add(bean);
-                                        }
-                                        bottomBean.bom_ids = sixBomBottomBeen;
-                                    }
-                                    bottomBeanList.add(bottomBean);
-                                }
-                                last.bom_ids = bottomBeanList;
-                            }
-                            lastList.add(last);
-                        }
-                        employee.bom_ids = lastList;
-                    }
+                    employee.employee_id = bomIdsBean.getEmployee_id();
+                    employee.work_email = employee.getWork_email();
                     employeeList.add(employee);
                 }
-                department.bom_ids = employeeList;
+                department.employees = employeeList;
             }
             departments.add(department);
         }
-        firstCompany.bom_ids = departments;
+        firstCompany.res_data = departments;
         firstCompany.mExpanded = isExpandDefault;
         return firstCompany;
     }

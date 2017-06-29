@@ -1,4 +1,4 @@
-package tarce.myodoo.adapter.expand;
+package tarce.myodoo.activity.ComponyOne;
 
 import android.animation.ObjectAnimator;
 import android.view.View;
@@ -8,19 +8,25 @@ import android.widget.TextView;
 import com.zaihuishou.expandablerecycleradapter.viewholder.AbstractExpandableAdapterItem;
 
 import tarce.model.inventory.BomFramworkBean;
+import tarce.model.inventory.NFCWorkerBean;
 import tarce.myodoo.R;
 
+/**
+ * Created by zouzou on 2017/6/29.
+ */
 
-public class CompanyItem extends AbstractExpandableAdapterItem {
-
-    private TextView mName;
-    private TextView mProcess;
+public class ComponyOne extends AbstractExpandableAdapterItem {
     private ImageView mArrow;
-    private BomFramworkBean.ResultBean.ResDataBean mCompany;
+    private NFCWorkerBean.ResultBean mCompany;
+    private boolean isHaveHeader;
+
+    public ComponyOne(boolean isHaveHeader) {
+        this.isHaveHeader = isHaveHeader;
+    }
 
     @Override
     public int getLayoutResId() {
-        return R.layout.item_company;
+        return R.layout.componyone;
     }
 
     @Override
@@ -32,12 +38,13 @@ public class CompanyItem extends AbstractExpandableAdapterItem {
             @Override
             public void onClick(View view) {
                 doExpandOrUnexpand();
-           //     Toast.makeText(root.getContext(), "click company：" +mCompany.name, Toast.LENGTH_SHORT).show();
+                //     Toast.makeText(root.getContext(), "click company：" +mCompany.name, Toast.LENGTH_SHORT).show();
             }
         });
-        mName = (TextView) root.findViewById(R.id.tv_name);
-        mProcess = (TextView) root.findViewById(R.id.tv_process_id);
         mArrow = (ImageView) root.findViewById(R.id.iv_arrow);
+        if (isHaveHeader){
+            root.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -66,8 +73,5 @@ public class CompanyItem extends AbstractExpandableAdapterItem {
         super.onUpdateViews(model, position);
         onSetViews();
         onExpansionToggled(getExpandableListItem().isExpanded());
-        mCompany = (BomFramworkBean.ResultBean.ResDataBean) model;
-        mName.setText("["+mCompany.code+"]"+mCompany.name);
-        mProcess.setText(mCompany.process_id);
     }
 }
