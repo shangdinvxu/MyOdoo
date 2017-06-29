@@ -165,7 +165,7 @@ public class NFCWorkerBean {
                 public String work_email;
                 public String name;
 
-                public List<ResDataBean> getDataBeanList() {
+                public List<ResDataBean> getDataBeanList(){
                     return dataBeanList;
                 }
 

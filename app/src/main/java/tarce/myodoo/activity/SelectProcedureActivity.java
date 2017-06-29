@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -53,7 +54,7 @@ public class SelectProcedureActivity extends BaseActivity {
     private List<Integer> process_num;//生产工序的id数组
     private List<Integer> delay_num;//存放取出的工序数组，做key使用
     private ArrayList<ProcessShowBean> showBeanList;
-    private HashMap<Object, Object> map;//存放生产工序id（value）和数目name（key）
+    private Map<Object, Integer> map;//存放生产工序id（value）和数目name（key）
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -144,7 +145,10 @@ public class SelectProcedureActivity extends BaseActivity {
                                         }
                                     }
                                     for (int i = 0; i < delay_num.size(); i++) {
-                                    ProcessShowBean showBean = new ProcessShowBean(process_name.get(i), (Integer) map.get(process_num.get(i)));
+                                    if (i>=map.size()-1){
+                                        break;
+                                    }
+                                    ProcessShowBean showBean = new ProcessShowBean(process_name.get(i), map.get(process_num.get(i)));
                                     showBeanList.add(showBean);
                                     }
                                 } catch (JSONException e) {
