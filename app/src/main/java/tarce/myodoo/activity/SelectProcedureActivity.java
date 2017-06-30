@@ -111,7 +111,7 @@ public class SelectProcedureActivity extends BaseActivity {
                         public void onResponse(Call<GetNumProcess> call, Response<GetNumProcess> response) {
                             dismissDefultProgressDialog();
                             if (response.body() == null)return;
-                            Log.i(TAG, response.body().getJsonrpc()+"  "+response.body().getId());
+                          //  Log.i(TAG, response.body().getJsonrpc()+"  "+response.body().getId());
                             if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                                 delay_num = new ArrayList<>();
                                 try {
@@ -144,12 +144,15 @@ public class SelectProcedureActivity extends BaseActivity {
                                             map.put(delay_num.get(i),0);
                                         }
                                     }
+                                    Log.i(TAG,"size:  "+delay_num.size()+"   " +delay_num.toString() +"map:size  "+map.size()+map.toString());
                                     for (int i = 0; i < delay_num.size(); i++) {
-                                    if (i>=map.size()-1){
-                                        break;
+                                    if (map.get(process_num.get(i))==null){
+                                        ProcessShowBean showBean = new ProcessShowBean(process_name.get(i), 0);
+                                        showBeanList.add(showBean);
+                                    } else {
+                                        ProcessShowBean showBean = new ProcessShowBean(process_name.get(i), map.get(process_num.get(i)));
+                                        showBeanList.add(showBean);
                                     }
-                                    ProcessShowBean showBean = new ProcessShowBean(process_name.get(i), map.get(process_num.get(i)));
-                                    showBeanList.add(showBean);
                                     }
                                 } catch (JSONException e) {
                                     e.printStackTrace();

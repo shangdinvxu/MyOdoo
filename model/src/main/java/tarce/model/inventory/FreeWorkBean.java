@@ -78,6 +78,14 @@ public class FreeWorkBean {
         }
 
         public static class ResDataBean {
+            public String getCard_num() {
+                return card_num;
+            }
+
+            public void setCard_num(String card_num) {
+                this.card_num = card_num;
+            }
+
             /**
              * image : http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=556&model=hr.employee&field=image
              * worker_id : 556
@@ -86,6 +94,7 @@ public class FreeWorkBean {
              * job_name : 工厂电子
              */
 
+            private String card_num;
             private String image;
             private int worker_id;
             private String name;

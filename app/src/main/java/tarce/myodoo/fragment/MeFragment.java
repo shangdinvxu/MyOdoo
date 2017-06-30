@@ -19,6 +19,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.LoginActivity;
+import tarce.myodoo.activity.NFCReadingActivity;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.Toolkits;
@@ -41,6 +42,8 @@ public class MeFragment extends Fragment {
     TextView version;
     @InjectView(R.id.button_exit)
     Button buttonExit;
+    @InjectView(R.id.insert_nfc)
+    TextView insertNfc;
 
     @Nullable
     @Override
@@ -79,9 +82,9 @@ public class MeFragment extends Fragment {
 
     /**
      * 退出登录  需要删除一些本地数据，缓存的数据
-     * */
+     */
     @OnClick(R.id.button_exit)
-    void clickExit(View view){
+    void clickExit(View view) {
         SharePreferenceUtils.putInt("user_id", -1000, getActivity());
         SharePreferenceUtils.putString("email", "", getActivity());
         SharePreferenceUtils.putString("user_ava", "", getActivity());
@@ -89,7 +92,12 @@ public class MeFragment extends Fragment {
         UserManager.getSingleton().setUserInfoBean(null);
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
-      //  getActivity().finish();
+        //  getActivity().finish();
     }
 
+    @OnClick(R.id.insert_nfc)
+    void insertNFC(View view){
+        Intent intent3 = new Intent(getActivity(), NFCReadingActivity.class);
+        startActivity(intent3);
+    }
 }

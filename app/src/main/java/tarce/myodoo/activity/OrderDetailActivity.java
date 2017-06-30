@@ -363,8 +363,12 @@ public class OrderDetailActivity extends ToolBarActivity {
      * 是否显示底部（生产）
      */
     public void showLinThreePro() {
-        if (!UserManager.getSingleton().getGrops().contains("group_charge_produce")) {
-            linearThree.setVisibility(View.GONE);
+        try {
+            if (!UserManager.getSingleton().getGrops().contains("group_charge_produce")) {
+                linearThree.setVisibility(View.GONE);
+            }
+        }catch (Exception e){
+            ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
         }
     }
 
@@ -372,8 +376,12 @@ public class OrderDetailActivity extends ToolBarActivity {
      * 是否显示底部(仓库)
      */
     public void showLinThreeCang() {
-        if (!UserManager.getSingleton().getGrops().contains("group_charge_warehouse")) {
-            linearThree.setVisibility(View.GONE);
+        try {
+            if (!UserManager.getSingleton().getGrops().contains("group_charge_warehouse")) {
+                linearThree.setVisibility(View.GONE);
+            }
+        }catch (Exception e){
+            ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
         }
     }
 
@@ -635,11 +643,15 @@ public class OrderDetailActivity extends ToolBarActivity {
                  * */
                 boolean next = true;
                 int index = -1;
-                for (int i = 0; i < list_three.size(); i++) {
-                    if (StringUtils.doubleToInt(list_three.get(i).getQuantity_ready()) < 1) {
-                        next = false;
-                        index = i;
+                try {
+                    for (int i = 0; i < list_three.size(); i++) {
+                        if (StringUtils.doubleToInt(list_three.get(i).getQuantity_ready()) < 1) {
+                            next = false;
+                            index = i;
+                        }
                     }
+                }catch (Exception e){
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
                 }
                 if (next) {
                     AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否确定领料登记")
@@ -701,34 +713,50 @@ public class OrderDetailActivity extends ToolBarActivity {
                 }
                 break;
             case STATE_ALREADY_PICKING:
-                Intent intent = new Intent(OrderDetailActivity.this, AddPersonActivity.class);
-                intent.putExtra("order_id", order_id);
-                intent.putExtra("state_activity", state_activity);
-                intent.putExtra("name_activity", name_activity);
-                intent.putExtra("close", false);
-                startActivity(intent);
-                finish();
+                try {
+                    Intent intent = new Intent(OrderDetailActivity.this, AddPersonActivity.class);
+                    intent.putExtra("order_id", order_id);
+                    intent.putExtra("state_activity", state_activity);
+                    intent.putExtra("name_activity", name_activity);
+                    intent.putExtra("close", false);
+                    startActivity(intent);
+                    finish();
+                }catch (Exception e){
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
+            }
                 break;
             case WRITE_WATERIAL_OUT://填写退料
-                Intent intent1 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
-                intent1.putExtra("recycler_data", resDataBean);
-                intent1.putExtra("order_id", order_id);
-                intent1.putExtra("from", "write");
-                startActivity(intent1);
+                try {
+                    Intent intent1 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
+                    intent1.putExtra("recycler_data", resDataBean);
+                    intent1.putExtra("order_id", order_id);
+                    intent1.putExtra("from", "write");
+                    startActivity(intent1);
+                }catch (Exception e){
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
+                }
                 break;
             case LOOK_MESSAGE_FEEDBACK:
-                Intent intent2 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
-                intent2.putExtra("recycler_data", resDataBean);
-                intent2.putExtra("order_id", order_id);
-                intent2.putExtra("from", "look");
-                startActivity(intent2);
+                try {
+                    Intent intent2 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
+                    intent2.putExtra("recycler_data", resDataBean);
+                    intent2.putExtra("order_id", order_id);
+                    intent2.putExtra("from", "look");
+                    startActivity(intent2);
+                }catch (Exception e){
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
+                }
                 break;
             case CHECK_MATERIAL_RETURN:
-                Intent intent3 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
-                intent3.putExtra("recycler_data", resDataBean);
-                intent3.putExtra("order_id", order_id);
-                intent3.putExtra("from", "check");
-                startActivity(intent3);
+                try {
+                    Intent intent3 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
+                    intent3.putExtra("recycler_data", resDataBean);
+                    intent3.putExtra("order_id", order_id);
+                    intent3.putExtra("from", "check");
+                    startActivity(intent3);
+                }catch (Exception e){
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
+                }
                 break;
         }
     }
@@ -835,17 +863,21 @@ public class OrderDetailActivity extends ToolBarActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ToastUtils.showCommonToast(OrderDetailActivity.this, "正在跳转。。。");
-                        Intent intent = new Intent(OrderDetailActivity.this, PhotoAreaActivity.class);
-                        intent.putExtra("type", state);
-                        intent.putExtra("order_id", order_id);
-                        intent.putExtra("delay_state", delay_state);
-                        intent.putExtra("limit", limit);
-                        intent.putExtra("process_id", process_id);
-                        intent.putExtra("change", false);
-                        intent.putExtra("bean", resDataBean);
-                        startActivity(intent);
-                        finish();
+                        try {
+                            ToastUtils.showCommonToast(OrderDetailActivity.this, "正在跳转。。。");
+                            Intent intent = new Intent(OrderDetailActivity.this, PhotoAreaActivity.class);
+                            intent.putExtra("type", state);
+                            intent.putExtra("order_id", order_id);
+                            intent.putExtra("delay_state", delay_state);
+                            intent.putExtra("limit", limit);
+                            intent.putExtra("process_id", process_id);
+                            intent.putExtra("change", false);
+                            intent.putExtra("bean", resDataBean);
+                            startActivity(intent);
+                            finish();
+                        }catch (Exception e){
+                            ToastUtils.showCommonToast(OrderDetailActivity.this, "It is exception for this activity,please connect manager");
+                        }
                     }
                 }).show();
     }

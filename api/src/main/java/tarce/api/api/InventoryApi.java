@@ -31,6 +31,7 @@ import tarce.model.inventory.LoadProductBean;
 import tarce.model.inventory.MaterialDetailBean;
 import tarce.model.inventory.NFCUserBean;
 import tarce.model.inventory.NFCWorkerBean;
+import tarce.model.inventory.NFcLoginBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.model.inventory.ProcessDeatilBean;
@@ -54,6 +55,11 @@ import tarce.model.inventory.WorkingWorkerBean;
 
 public interface InventoryApi {
 
+    /**
+     * nfc登录
+     * */
+    @POST("get_email_by_card_num")
+    Call<NFcLoginBean> getByCardnum(@Body HashMap hashMap);
     /**
      * 请求绑定员工
      */

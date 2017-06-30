@@ -1,19 +1,36 @@
 package tarce.myodoo.activity;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.os.Handler;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.newland.me.ConnUtils;
+import com.newland.me.DeviceManager;
+import com.newland.mtype.ConnectionCloseEvent;
+import com.newland.mtype.ModuleType;
+import com.newland.mtype.event.DeviceEventListener;
+import com.newland.mtype.module.common.rfcard.RFCardModule;
+import com.newland.mtype.module.common.rfcard.RFResult;
+import com.newland.mtype.util.ISOUtils;
+import com.newland.mtypex.nseries.NSConnV100ConnParams;
 import com.uuzuche.lib_zxing.activity.CaptureFragment;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
@@ -21,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -40,9 +58,10 @@ import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.WorkPersonAdapter;
 import tarce.myodoo.adapter.product.WorkingPersonAdapter;
 import tarce.myodoo.bean.WorkingStateBean;
+import tarce.myodoo.device.Const;
 import tarce.support.AlertAialogUtils;
+import tarce.support.MyLog;
 import tarce.support.ToastUtils;
-import tarce.support.ToolBarActivity;
 
 /**
  * Created by rose.zou on 2017/5/27.
@@ -50,6 +69,7 @@ import tarce.support.ToolBarActivity;
  */
 
 public class AddPersonActivity extends BaseActivity {
+    private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     private static final String TAG = "AddPersonActivity";
     @InjectView(R.id.fragment_scan)
     FrameLayout fragmentScan;
@@ -67,6 +87,12 @@ public class AddPersonActivity extends BaseActivity {
     TextView tvAddTrue;
     @InjectView(R.id.tv_controll_scan)
     TextView tvControllScan;
+    @InjectView(R.id.tv_nfc_open)
+    TextView tvNfcOpen;
+    @InjectView(R.id.time_tv)
+    TextView timeTv;
+    @InjectView(R.id.linear_seven)
+    RelativeLayout linearSeven;
     private InventoryApi inventoryApi;
     private int order_id;
     private WorkPersonAdapter adapter;
@@ -74,14 +100,18 @@ public class AddPersonActivity extends BaseActivity {
     private WorkingPersonAdapter personAdapter;
     private List<String> res_data_working;
     private List<WorkingStateBean> add_name = new ArrayList<>();
-    ;
     private List<WorkingWorkerBean.ResultBean.ResDataBean> res_dataTwo;
     private List<WorkingStateBean> adapterList = new ArrayList<>();
     private Map<String, Integer> map;//存放work的name和id
+    private Map<String, String> map_nfc;//存放work的name和id
     private String state_activity;
     private String name_activity;
     private boolean close;
     private boolean showScan = false;
+    private DeviceManager deviceManager;
+    private RFCardModule rfCardModule;
+    private Dialog alertDialog;
+    private TimeCount time;//时间计时类
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +133,94 @@ public class AddPersonActivity extends BaseActivity {
         inventoryApi = RetrofitClient.getInstance(AddPersonActivity.this).create(InventoryApi.class);
         getFreeWork();
         getWorking();
+        time = new TimeCount(10000,1000);
         if (close) {
             tvAddTrue.setVisibility(View.GONE);
         }
+        initDevice();
+    }
+
+    @OnClick(R.id.linear_seven)
+    void openNFC(View view) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                time.start();
+                try {
+                    processingLock();
+                    final RFResult qPResult = rfCardModule.powerOn(null, 10, TimeUnit.SECONDS);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (qPResult.getCardSerialNo() == null) {
+                                ToastUtils.showCommonToast(AddPersonActivity.this, "非接卡序列号null: " + "" + Const.MessageTag.DATA);
+                            } else {
+                                String NFC_Number = ISOUtils.hexString(qPResult.getCardSerialNo());
+                                boolean isHaveWork = false;
+                                int index = -1;
+                                for (int i = 0; i < res_data.size(); i++) {
+                                    if (NFC_Number.equals(res_data.get(i).getCard_num())) {
+                                        isHaveWork = true;
+                                        index = i;
+                                        break;
+                                    } else {
+                                        isHaveWork = false;
+                                    }
+                                }
+                                if (isHaveWork) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(AddPersonActivity.this);
+                                    View inflate = LayoutInflater.from(AddPersonActivity.this).inflate(R.layout.dialog_nfc_addwork, null);
+                                    TextView textviewName = (TextView) inflate.findViewById(R.id.nfc_work_name);
+                                    textviewName.setText(res_data.get(index).getName());
+                                    TextView textNfcNum = (TextView) inflate.findViewById(R.id.tv_nfc_num);
+                                    textNfcNum.setText(NFC_Number);
+                                    ImageView imageHeader = (ImageView) inflate.findViewById(R.id.image_nfc_addwork);
+                                    Glide.with(AddPersonActivity.this).load(res_data.get(index).getImage()).into(imageHeader);
+                                    TextView textCancel = (TextView) inflate.findViewById(R.id.tv_cancel_addnfc);
+                                    TextView textTrue = (TextView) inflate.findViewById(R.id.tv_true_addnfc);
+                                    builder.setView(inflate);
+                                    alertDialog = builder.create();
+                                    alertDialog.show();
+                                    textCancel.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            alertDialog.dismiss();
+                                            time.onFinish();
+                                        }
+                                    });
+                                    final int finalIndex = index;
+                                    textTrue.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            time.onFinish();
+                                            rfCardModule.powerOff(2);
+                                            alertDialog.dismiss();
+                                            adapter.notifyItemRemoved(finalIndex);
+                                            Integer[] workId = {res_data.get(finalIndex).getWorker_id()};
+                                            addWorkToClient(workId);
+                                        }
+                                    });
+                                } else {
+                                    ToastUtils.showCommonToast(AddPersonActivity.this, "没有匹配到该序列号所属员工信息");
+                                    time.onFinish();
+                                }
+                            }
+                            processingUnLock();
+                        }
+                    });
+
+                } catch (final Exception e) {
+                    e.fillInStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ToastUtils.showCommonToast(AddPersonActivity.this, "非接卡序列号null: " + "" + Const.MessageTag.DATA);
+                        }
+                    });
+                    processingUnLock();
+                }
+            }
+        }).start();
     }
 
     /**
@@ -178,7 +293,7 @@ public class AddPersonActivity extends BaseActivity {
                     }
                     adapter = new WorkPersonAdapter(res_data, AddPersonActivity.this);
                     recyclerPersonWait.setAdapter(adapter);
-                }else {
+                } else {
                     ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
                 }
             }
@@ -217,14 +332,14 @@ public class AddPersonActivity extends BaseActivity {
                             ToastUtils.showCommonToast(AddPersonActivity.this, "不在员工列表中？");
                             return;
                         }
-                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
+                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                             if (res_data_working.contains(response.body().getResult().getRes_data().getName())) {
                                 ToastUtils.showCommonToast(AddPersonActivity.this, "已经添加该员工");
                             } else {
                                 res_data_working.add(response.body().getResult().getRes_data().getName());
                                 personAdapter.notifyDataSetChanged();
                             }
-                        }else {
+                        } else {
                             ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
                         }
                     }
@@ -263,10 +378,6 @@ public class AddPersonActivity extends BaseActivity {
         res_data.removeAll(adapter.getSelected());
         adapter.notifyDataSetChanged();
 
-        showDefultProgressDialog();
-        final HashMap<Object, Object> hashMap = new HashMap<>();
-        hashMap.put("is_add", 1);
-        hashMap.put("order_id", order_id);
         Integer[] work_id;
         if (add_name.size() == 0) {
             work_id = new Integer[res_dataTwo.size()];
@@ -279,6 +390,17 @@ public class AddPersonActivity extends BaseActivity {
                 work_id[i] = map.get(res_data_working.get(i));
             }
         }
+        addWorkToClient(work_id);
+    }
+
+    /**
+     * 向服务器添加员工
+     */
+    private void addWorkToClient(Integer[] work_id) {
+        showDefultProgressDialog();
+        final HashMap<Object, Object> hashMap = new HashMap<>();
+        hashMap.put("is_add", 1);
+        hashMap.put("order_id", order_id);
         hashMap.put("worker_ids", work_id);
         Call<AddworkBean> objectCall = inventoryApi.addWork_id(hashMap);
         objectCall.enqueue(new MyCallback<AddworkBean>() {
@@ -298,7 +420,7 @@ public class AddPersonActivity extends BaseActivity {
                         adapterList.addAll(add_name);
                         personAdapter.notifyDataSetChanged();
                     }
-                }else {
+                } else {
                     ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
                 }
             }
@@ -328,12 +450,12 @@ public class AddPersonActivity extends BaseActivity {
                             public void onResponse(Call<StartProductBean> call, Response<StartProductBean> response) {
                                 dismissDefultProgressDialog();
                                 if (response.body() == null) return;
-                                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
+                                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                                     Intent intent = new Intent(AddPersonActivity.this, WaitProdListActivity.class);
                                     intent.putExtra("state_delay", name_activity);
                                     startActivity(intent);
                                     finish();
-                                }else {
+                                } else {
                                     ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
                                 }
                             }
@@ -364,10 +486,10 @@ public class AddPersonActivity extends BaseActivity {
             @Override
             public void onResponse(Call<ChangeStateBean> call, Response<ChangeStateBean> response) {
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() !=null) {
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     adapterList.set(position, new WorkingStateBean(adapterList.get(position).getName(), state));
                     personAdapter.notifyItemChanged(position);
-                }else {
+                } else {
                     ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
                 }
             }
@@ -380,16 +502,96 @@ public class AddPersonActivity extends BaseActivity {
     }
 
     @OnClick(R.id.tv_controll_scan)
-    void controllScan(View view){
-        if (showScan){
+    void controllScan(View view) {
+        if (showScan) {
             fragmentScan.setVisibility(View.GONE);
             tvControllScan.setText("打开扫描");
             showScan = false;
-        }else {
+        } else {
             initFragment();
             fragmentScan.setVisibility(View.VISIBLE);
             tvControllScan.setText("关闭扫描");
             showScan = true;
+        }
+    }
+
+    /**
+     * 连接设备打印机
+     */
+    private void initDevice() {
+        deviceManager = ConnUtils.getDeviceManager();
+        try {
+            deviceManager.init(AddPersonActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
+                @Override
+                public void onEvent(ConnectionCloseEvent connectionCloseEvent, Handler handler) {
+                    if (connectionCloseEvent.isSuccess()) {
+                        ToastUtils.showCommonToast(AddPersonActivity.this, "设备被客户主动断开！");
+                    }
+                    if (connectionCloseEvent.isFailed()) {
+                        ToastUtils.showCommonToast(AddPersonActivity.this, "设备链接异常断开！");
+                    }
+                }
+
+                @Override
+                public Handler getUIHandler() {
+                    return null;
+                }
+            });
+            deviceManager.connect();
+            MyLog.e("ProductingActivity", "连接成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToastUtils.showCommonToast(AddPersonActivity.this, "链接异常,请检查设备或重新连接.." + e);
+        }
+
+        rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
+    }
+
+    public void processingLock() {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                SharedPreferences setting = getSharedPreferences("setting", 0);
+                SharedPreferences.Editor editor = setting.edit();
+                editor.putBoolean("PBOC_LOCK", true);
+                editor.commit();
+            }
+        });
+
+    }
+
+    public void processingUnLock() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences setting = getSharedPreferences("setting", 0);
+                SharedPreferences.Editor editor = setting.edit();
+                editor.putBoolean("PBOC_LOCK", false);
+                editor.commit();
+            }
+        });
+    }
+    /**
+     * 获取验证码倒计时实现类
+     */
+    class TimeCount extends CountDownTimer {
+        public TimeCount(long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);//参数依次为总时长,和计时的时间间隔
+        }
+
+        @Override
+        public void onFinish() {//计时完毕时触发
+            timeTv.setVisibility(View.GONE);
+            tvNfcOpen.setText("打开NFC");
+        }
+
+        @Override
+        public void onTick(long millisUntilFinished) {//计时过程显示
+            final long time = millisUntilFinished / 1000;
+            tvNfcOpen.setText("请将卡靠近NFC感应区");
+            timeTv.setVisibility(View.VISIBLE);
+            timeTv.setText("("+time+")");
         }
     }
 }

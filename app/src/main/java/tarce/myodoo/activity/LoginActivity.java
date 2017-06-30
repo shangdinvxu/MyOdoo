@@ -1,25 +1,41 @@
 package tarce.myodoo.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amitshekhar.DebugDB;
+import com.bumptech.glide.Glide;
+import com.newland.me.ConnUtils;
+import com.newland.me.DeviceManager;
+import com.newland.mtype.ConnectionCloseEvent;
+import com.newland.mtype.ModuleType;
+import com.newland.mtype.event.DeviceEventListener;
+import com.newland.mtype.module.common.lcd.Color;
+import com.newland.mtype.module.common.rfcard.RFCardModule;
+import com.newland.mtype.module.common.rfcard.RFResult;
+import com.newland.mtype.util.ISOUtils;
+import com.newland.mtypex.nseries.NSConnV100ConnParams;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -30,29 +46,30 @@ import greendao.ContactsBeanDao;
 import greendao.DaoSession;
 import greendao.MenuListBeanDao;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import tarce.api.MyCallback;
+import tarce.api.OKHttpFactory;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.api.api.LoginApi;
-import tarce.model.GetMenuListResponse;
+import tarce.model.LoginBean;
 import tarce.model.LoginDatabase;
 import tarce.model.LoginResponse;
-import tarce.model.SearchSupplierResponse;
-import tarce.model.greendaoBean.ContactsBean;
 import tarce.model.greendaoBean.LoginResponseBean;
-import tarce.model.greendaoBean.MenuListBean;
 import tarce.model.greendaoBean.UserLogin;
-import tarce.model.LoginBean;
+import tarce.model.inventory.NFcLoginBean;
 import tarce.myodoo.IntentFactory;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
+import tarce.myodoo.device.Const;
 import tarce.myodoo.greendaoUtils.UserLoginUtils;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
@@ -65,6 +82,7 @@ import tarce.support.ToastUtils;
  */
 
 public class LoginActivity extends Activity {
+    private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     @InjectView(R.id.database)
     Button database;
     @InjectView(R.id.email)
@@ -75,16 +93,20 @@ public class LoginActivity extends Activity {
     Button toLogin;
     @InjectView(R.id.httpUrl)
     EditText httpUrl;
+    @InjectView(R.id.tv_nfc_login)
+    TextView tvNfcLogin;
     private String TAG = LoginActivity.class.getSimpleName();
     private int databaseSwitch = 0;
     private LoginApi loginApi;
     private DaoSession daoSession;
-    private MenuListBeanDao menuListBeanDao;
     private ProgressDialog progressDialog;
     private List<UserLogin> userLogins;
     private InventoryApi inventoryApi;
-    private ContactsBeanDao contactsBeanDao;
     private ArrayList<String> userStrings;
+    private DeviceManager deviceManager;
+    private RFCardModule rfCardModule;
+    private Dialog alertDialog;
+    private Retrofit retrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,19 +114,18 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
         ButterKnife.inject(this);
         String addressLog = DebugDB.getAddressLog();
-        MyLog.e(TAG,addressLog+"=============================================addressLog");
+        MyLog.e(TAG, addressLog + "=============================================addressLog");
         daoSession = MyApplication.getInstances().getDaoSession();
-        menuListBeanDao = daoSession.getMenuListBeanDao();
-        contactsBeanDao =  daoSession.getContactsBeanDao();
+        /*menuListBeanDao = daoSession.getMenuListBeanDao();
+        contactsBeanDao = daoSession.getContactsBeanDao();*/
         progressDialog = new ProgressDialog(LoginActivity.this);
         progressDialog.setMessage("loading");
         checkOutoLogin();
         initEmailAdapter();
         initListener();
         httpUrl.setSelection(httpUrl.getText().length());
+        initDevice();
     }
-
-
 
 
     @Override
@@ -124,8 +145,8 @@ public class LoginActivity extends Activity {
         email.setThreshold(1);
         userLogins = new UserLoginUtils().searchAll();
         userStrings = new ArrayList<>();
-        if (userLogins !=null&& userLogins.size()>0){
-            for (UserLogin s : userLogins){
+        if (userLogins != null && userLogins.size() > 0) {
+            for (UserLogin s : userLogins) {
                 userStrings.add(s.getUserName());
             }
             ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<>(LoginActivity.this, R.layout.auto_text_listview, userStrings);
@@ -152,15 +173,15 @@ public class LoginActivity extends Activity {
 
     private void checkOutoLogin() {
         int user_id = SharePreferenceUtils.getInt("user_id", -1000, LoginActivity.this);
-        if (StringUtils.isNullOrEmpty(RetrofitClient.Url)){
+        if (StringUtils.isNullOrEmpty(RetrofitClient.Url)) {
             httpUrl.setText("http://erp.robotime.com");
-        }else {
+        } else {
             httpUrl.setText(RetrofitClient.Url);
         }
         if (user_id != -1000) {
             String url = SharePreferenceUtils.getString("url", "null", LoginActivity.this);
             LoginActivity.this.httpUrl.setText(url);
-            RetrofitClient.Url = url ;
+            RetrofitClient.Url = url;
             loginApi = RetrofitClient.getInstance(LoginActivity.this).create(LoginApi.class);
             String database = SharePreferenceUtils.getString("database", "null", LoginActivity.this);
             LoginActivity.this.database.setText(database);
@@ -169,7 +190,7 @@ public class LoginActivity extends Activity {
             String password = SharePreferenceUtils.getString("password", "error", LoginActivity.this);
             LoginActivity.this.password.setText(password);
             toLogin(new View(LoginActivity.this));
-        }else {
+        } else {
             UpdateKey.API_TOKEN = "d8980dd0017f3e0a7b038aec2c52d737";
             UpdateKey.APP_ID = "5940d8ca959d6965c30002dc";
             //下载方式:
@@ -181,18 +202,18 @@ public class LoginActivity extends Activity {
 
     @OnClick(R.id.database)
     void setDatabase(View view) {
-        if (StringUtils.isNullOrEmpty(httpUrl.getText().toString())){
+        if (StringUtils.isNullOrEmpty(httpUrl.getText().toString())) {
             ToastUtils.showCommonToast(LoginActivity.this, "请输入url地址");
             return;
         }
         String URL;
-        if (!httpUrl.getText().toString().contains("http://")){
-            URL = "http://"+httpUrl.getText().toString();
+        if (!httpUrl.getText().toString().contains("http://")) {
+            URL = "http://" + httpUrl.getText().toString();
             httpUrl.setText(URL);
-        }else {
+        } else {
             URL = httpUrl.getText().toString();
         }
-        RetrofitClient.Url = URL ;
+        RetrofitClient.Url = URL;
         loginApi = RetrofitClient.getInstance(LoginActivity.this).create(LoginApi.class);
         final AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
         builder.setTitle("选择数据库");
@@ -208,14 +229,15 @@ public class LoginActivity extends Activity {
                         new Subscriber<LoginDatabase>() {
                             @Override
                             public void onCompleted() {
-                                if (progressDialog!=null&&progressDialog.isShowing()){
+                                if (progressDialog != null && progressDialog.isShowing()) {
                                     progressDialog.dismiss();
                                 }
                             }
+
                             @Override
                             public void onError(Throwable e) {
                                 MyLog.e(TAG, e.toString());
-                                if (progressDialog!=null&&progressDialog.isShowing()){
+                                if (progressDialog != null && progressDialog.isShowing()) {
                                     progressDialog.dismiss();
                                 }
 
@@ -223,10 +245,10 @@ public class LoginActivity extends Activity {
 
                             @Override
                             public void onNext(LoginDatabase loginDatabase) {
-                                if (progressDialog!=null&&progressDialog.isShowing()){
+                                if (progressDialog != null && progressDialog.isShowing()) {
                                     progressDialog.dismiss();
                                 }
-                                if (loginDatabase == null)return;
+                                if (loginDatabase == null) return;
                                 final List<String> res_data = loginDatabase.getRes_data();
                                 final String[] databaseArr = res_data.toArray(new String[res_data.size()]);
                                 builder.setSingleChoiceItems(databaseArr, databaseArr.length, new DialogInterface.OnClickListener() {
@@ -261,24 +283,24 @@ public class LoginActivity extends Activity {
         stringCall.enqueue(new MyCallback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if (response.body()==null)
+                if (response.body() == null)
                     return;
-                if (response.body().getError()!=null){
+                if (response.body().getError() != null) {
                     ToastUtils.showCommonToast(LoginActivity.this, response.body().getError().getMessage());
                     return;
                 }
-                if (response.body().getResult().getRes_code() == 1){
+                if (response.body().getResult().getRes_code() == 1) {
                     UserManager.getSingleton().setUserInfoBean(response.body());//单例存储
                     final int user_id = response.body().getResult().getRes_data().getUser_id();
-                    MyApplication.userID = user_id ;
+                    MyApplication.userID = user_id;
                     SharePreferenceUtils.putInt("user_id", user_id, LoginActivity.this);
                     SharePreferenceUtils.putString("email", emailString, LoginActivity.this);
-                    SharePreferenceUtils.putString("url",url,LoginActivity.this);
+                    SharePreferenceUtils.putString("url", url, LoginActivity.this);
                     SharePreferenceUtils.putString("password", passwordString, LoginActivity.this);
-                    SharePreferenceUtils.putInt("partner_id",response.body().getResult().getRes_data().getPartner_id(),LoginActivity.this);
+                    SharePreferenceUtils.putInt("partner_id", response.body().getResult().getRes_data().getPartner_id(), LoginActivity.this);
                     SharePreferenceUtils.putString("user_ava", response.body().getResult().getRes_data().getUser_ava(), LoginActivity.this);
                     final String name = response.body().getResult().getRes_data().getName();
-                    new UserLoginUtils().insertUser(new UserLogin(emailString,passwordString));
+                    new UserLoginUtils().insertUser(new UserLogin(emailString, passwordString));
                     List<LoginResponse.ResultBean.ResDataBean.GroupsBean> groups = response.body().getResult().getRes_data().getGroups();
                     Observable.from(groups)
                             .subscribe(new Action1<LoginResponse.ResultBean.ResDataBean.GroupsBean>() {
@@ -289,8 +311,8 @@ public class LoginActivity extends Activity {
                                 }
                             });
                     toMainActivity();
-                }else {
-                    if (progressDialog.isShowing()){
+                } else {
+                    if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
                     Toast.makeText(LoginActivity.this, response.body().getResult().getRes_data().getError(), Toast.LENGTH_SHORT).show();
@@ -305,7 +327,7 @@ public class LoginActivity extends Activity {
         });
     }
 
-    private void toMainActivity(){
+    private void toMainActivity() {
         if (progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
@@ -313,5 +335,160 @@ public class LoginActivity extends Activity {
         IntentFactory.start_MainActivity(LoginActivity.this);
     }
 
+    @OnClick(R.id.tv_nfc_login)
+    void nfcLogin(View view) {
+        new Thread(new Runnable() {
+            public TextView textTrue;
+            public TextView textCancel;
+            public ImageView imageHeader;
+            public TextView textNfcNum;
+            public TextView textviewName;
 
+            @Override
+            public void run() {
+                processingLock();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                        View inflate = LayoutInflater.from(LoginActivity.this).inflate(R.layout.dialog_nfc_addwork, null);
+                        textviewName = (TextView) inflate.findViewById(R.id.nfc_work_name);
+                        textNfcNum = (TextView) inflate.findViewById(R.id.tv_nfc_num);
+                        textviewName.setText("请将卡靠近NFC感应区");
+                        textviewName.setTextColor(android.graphics.Color.RED);
+                        imageHeader = (ImageView) inflate.findViewById(R.id.image_nfc_addwork);
+                        textCancel = (TextView) inflate.findViewById(R.id.tv_cancel_addnfc);
+                        textTrue = (TextView) inflate.findViewById(R.id.tv_true_addnfc);
+                        builder.setView(inflate);
+                        alertDialog = builder.create();
+                        alertDialog.show();
+                    }
+                });
+                try {
+                    final RFResult qPResult = rfCardModule.powerOn(null, 10, TimeUnit.SECONDS);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (qPResult.getCardSerialNo() == null) {
+                                ToastUtils.showCommonToast(LoginActivity.this, "非接卡序列号null: " + "" + Const.MessageTag.DATA);
+                            } else {
+                                String NFC_Number = ISOUtils.hexString(qPResult.getCardSerialNo());
+                                textNfcNum.setText(NFC_Number);
+                                progressDialog.show();
+                                retrofit = new Retrofit.Builder()
+                                        .client(new OKHttpFactory(LoginActivity.this).getOkHttpClient())
+                                        .baseUrl(httpUrl.getText().toString() + "/linkloving_user_auth/")
+                                        .addConverterFactory(GsonConverterFactory.create())
+                                        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                                        .build();
+                                HashMap<Object, Object> hashMap = new HashMap<>();
+                                hashMap.put("card_num",ISOUtils.hexString(qPResult.getCardSerialNo()));
+                                Call<NFcLoginBean> byCardnum = retrofit.create(InventoryApi.class).getByCardnum(hashMap);
+                                byCardnum.enqueue(new MyCallback<NFcLoginBean>() {
+                                    @Override
+                                    public void onResponse(Call<NFcLoginBean> call, final Response<NFcLoginBean> response) {
+                                        progressDialog.dismiss();
+                                        if (response.body() == null)return;
+                                        if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==1){
+                                            textviewName.setText(response.body().getResult().getRes_data().getName());
+                                            textviewName.setTextColor(android.graphics.Color.BLACK);
+                                            textCancel.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    alertDialog.dismiss();
+                                                    rfCardModule.powerOff(2);
+                                                }
+                                            });
+                                            textTrue.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    rfCardModule.powerOff(2);
+                                                    alertDialog.dismiss();
+                                                    email.setText(response.body().getResult().getRes_data().getWork_email());
+                                                }
+                                            });
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<NFcLoginBean> call, Throwable t) {
+                                        progressDialog.dismiss();
+
+                                    }
+                                });
+                            }
+                            processingUnLock();
+                        }
+                    });
+
+                } catch (final Exception e) {
+                    e.fillInStackTrace();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ToastUtils.showCommonToast(LoginActivity.this, "非接卡序列号null: " + "" + Const.MessageTag.DATA);
+                        }
+                    });
+                    processingUnLock();
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 连接设备打印机
+     */
+    private void initDevice() {
+        deviceManager = ConnUtils.getDeviceManager();
+        try {
+            deviceManager.init(LoginActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
+                @Override
+                public void onEvent(ConnectionCloseEvent connectionCloseEvent, Handler handler) {
+                    if (connectionCloseEvent.isSuccess()) {
+                        ToastUtils.showCommonToast(LoginActivity.this, "设备被客户主动断开！");
+                    }
+                    if (connectionCloseEvent.isFailed()) {
+                        ToastUtils.showCommonToast(LoginActivity.this, "设备链接异常断开！");
+                    }
+                }
+
+                @Override
+                public Handler getUIHandler() {
+                    return null;
+                }
+            });
+            deviceManager.connect();
+            MyLog.e("ProductingActivity", "连接成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToastUtils.showCommonToast(LoginActivity.this, "链接异常,请检查设备或重新连接.." + e);
+        }
+        rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
+    }
+
+    public void processingLock() {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                SharedPreferences setting = getSharedPreferences("setting", 0);
+                SharedPreferences.Editor editor = setting.edit();
+                editor.putBoolean("PBOC_LOCK", true);
+                editor.commit();
+            }
+        });
+
+    }
+
+    public void processingUnLock() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences setting = getSharedPreferences("setting", 0);
+                SharedPreferences.Editor editor = setting.edit();
+                editor.putBoolean("PBOC_LOCK", false);
+                editor.commit();
+            }
+        });
+    }
 }

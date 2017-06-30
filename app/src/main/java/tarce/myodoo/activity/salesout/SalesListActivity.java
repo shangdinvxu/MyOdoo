@@ -177,12 +177,15 @@ public class SalesListActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<GetSaleResponse> call, Response<GetSaleResponse> response) {
                         dismissDefultProgressDialog();
-                        GetSaleResponse.TResult result = response.body().getResult();
-                        Intent intent = new Intent(SalesListActivity.this, SalesDetailActivity.class);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("bundle", result.getRes_data());
-                        intent.putExtra("intent", bundle);
-                        startActivity(intent);
+                        if (response.body() == null)return;
+                        if (response.body().getResult().getRes_code()==1 && response.body().getResult().getRes_data()!=null){
+                            GetSaleResponse.TResult result = response.body().getResult();
+                            Intent intent = new Intent(SalesListActivity.this, SalesDetailActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("bundle", result.getRes_data());
+                            intent.putExtra("intent", bundle);
+                            startActivity(intent);
+                        }
                     }
 
                     @Override

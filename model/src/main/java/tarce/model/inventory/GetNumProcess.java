@@ -80,6 +80,26 @@ public class GetNumProcess {
         }
 
         public static class ResDataBean{
+            public List<_$1Bean> get_$1() {
+                return _$1;
+            }
+
+            public void set_$1(List<_$1Bean> _$1) {
+                this._$1 = _$1;
+            }
+
+            public List<_$2Bean> get_$2() {
+                return _$2;
+            }
+
+            public void set_$2(List<_$2Bean> _$2) {
+                this._$2 = _$2;
+            }
+
+            @SerializedName("1")
+            private List<_$1Bean> _$1;
+            @SerializedName("2")
+            private List<_$2Bean> _$2;
             @SerializedName("3")
             private List<_$3Bean> _$3;
             @SerializedName("4")
@@ -96,6 +116,47 @@ public class GetNumProcess {
             private List<?> _$10;
             @SerializedName("11")
             private List<?> _$11;
+
+            public List<?> get_$12() {
+                return _$12;
+            }
+
+            public void set_$12(List<?> _$12) {
+                this._$12 = _$12;
+            }
+
+            public List<?> get_$13() {
+                return _$13;
+            }
+
+            public void set_$13(List<?> _$13) {
+                this._$13 = _$13;
+            }
+
+            public List<?> get_$14() {
+                return _$14;
+            }
+
+            public void set_$14(List<?> _$14) {
+                this._$14 = _$14;
+            }
+
+            public List<?> get_$15() {
+                return _$15;
+            }
+
+            public void set_$15(List<?> _$15) {
+                this._$15 = _$15;
+            }
+
+            @SerializedName("12")
+            private List<?> _$12;
+            @SerializedName("13")
+            private List<?> _$13;
+            @SerializedName("14")
+            private List<?> _$14;
+            @SerializedName("15")
+            private List<?> _$15;
             @SerializedName("16")
             private List<?> _$16;
             @SerializedName("17")
@@ -192,6 +253,56 @@ public class GetNumProcess {
             }
 
             public static class _$3Bean {
+                /**
+                 * count : 2
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$1Bean {
+                /**
+                 * count : 2
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$2Bean {
                 /**
                  * count : 2
                  * state : delay

@@ -349,25 +349,29 @@ public class PhotoAreaActivity extends ToolBarActivity {
             public void onResponse(Call<FinishPrepareMaBean> call, Response<FinishPrepareMaBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
-                    AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "提交位置信息成功,点击确定将打印MO单，请等待")
-                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                  //  Toast.makeText(PhotoAreaActivity.this, "正在打印中...",Toast.LENGTH_SHORT).show();
-                                    Message message = new Message();
-                                    message.what = 1;
-                                    handler.sendMessage(message);
+                try {
+                    if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
+                        AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "提交位置信息成功,点击确定将打印MO单，请等待")
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                        //  Toast.makeText(PhotoAreaActivity.this, "正在打印中...",Toast.LENGTH_SHORT).show();
+                                        Message message = new Message();
+                                        message.what = 1;
+                                        handler.sendMessage(message);
 
-                                    Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
-                                    intent.putExtra("limit", limit);
-                                    intent.putExtra("process_id", process_id);
-                                    intent.putExtra("state", delay_state);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            }).show();
+                                        Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
+                                        intent.putExtra("limit", limit);
+                                        intent.putExtra("process_id", process_id);
+                                        intent.putExtra("state", delay_state);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }).show();
+                    }
+                }catch (Exception e){
+                    ToastUtils.showCommonToast(PhotoAreaActivity.this, e.toString());
                 }
             }
 

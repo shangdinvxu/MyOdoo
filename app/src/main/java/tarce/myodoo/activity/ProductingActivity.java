@@ -328,56 +328,60 @@ public class ProductingActivity extends ToolBarActivity {
      * 点击产出
      */
     @OnClick(R.id.tv_product_out)
-    void outProduct(View view) {
-        insertNumDialog = new InsertNumDialog(ProductingActivity.this, R.style.MyDialogStyle,
-                new InsertNumDialog.OnSendCommonClickListener() {
-                    @Override
-                    public void OnSendCommonClick(final int num) {
-                        boolean isCanAdd = false;
-                        for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
-                            if ((num + resDataBean.getQty_produced()) / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(i)
-                                    .getProduct_uom_qty() <= resDataBean.getStock_move_lines().get(i).getQuantity_done()) {
-                                isCanAdd = true;
-                            } else {
-                                AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
-                                        .setMessage(resDataBean.getStock_move_lines().get(i).getProduct_id() + "备料数量不足，请补料")
-                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                dialog.dismiss();
-                                            }
-                                        }).show();
-                                break;
+    void outProduct(View view){
+        try {
+            insertNumDialog = new InsertNumDialog(ProductingActivity.this, R.style.MyDialogStyle,
+                    new InsertNumDialog.OnSendCommonClickListener() {
+                        @Override
+                        public void OnSendCommonClick(final int num) {
+                            boolean isCanAdd = false;
+                            for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
+                                if ((num + resDataBean.getQty_produced()) / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(i)
+                                        .getProduct_uom_qty() <= resDataBean.getStock_move_lines().get(i).getQuantity_done()) {
+                                    isCanAdd = true;
+                                } else {
+                                    AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
+                                            .setMessage(resDataBean.getStock_move_lines().get(i).getProduct_id() + "备料数量不足，请补料")
+                                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    dialog.dismiss();
+                                                }
+                                            }).show();
+                                    break;
+                                }
+                            }
+                            if (isCanAdd) {
+                                showDefultProgressDialog();
+                                HashMap<Object, Object> hashMap = new HashMap<>();
+                                hashMap.put("order_id", order_id);
+                                hashMap.put("produce_qty", num);
+                                Call<OrderDetailBean> objectCall = inventoryApi.checkOut(hashMap);
+                                objectCall.enqueue(new MyCallback<OrderDetailBean>() {
+                                    @Override
+                                    public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
+                                        dismissDefultProgressDialog();
+                                        if (response.body() == null) return;
+                                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
+                                            resDataBean = response.body().getResult().getRes_data();
+                                            tvStartProduce.setVisibility(View.VISIBLE);
+                                            tvNumProduct.setText(StringUtils.doubleToString(response.body().getResult().getRes_data()
+                                                    .getQty_produced()));
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<OrderDetailBean> call, Throwable t) {
+                                        dismissDefultProgressDialog();
+                                    }
+                                });
                             }
                         }
-                        if (isCanAdd) {
-                            showDefultProgressDialog();
-                            HashMap<Object, Object> hashMap = new HashMap<>();
-                            hashMap.put("order_id", order_id);
-                            hashMap.put("produce_qty", num);
-                            Call<OrderDetailBean> objectCall = inventoryApi.checkOut(hashMap);
-                            objectCall.enqueue(new MyCallback<OrderDetailBean>() {
-                                @Override
-                                public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
-                                    dismissDefultProgressDialog();
-                                    if (response.body() == null) return;
-                                    if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
-                                        resDataBean = response.body().getResult().getRes_data();
-                                        tvStartProduce.setVisibility(View.VISIBLE);
-                                        tvNumProduct.setText(StringUtils.doubleToString(response.body().getResult().getRes_data()
-                                                .getQty_produced()));
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(Call<OrderDetailBean> call, Throwable t) {
-                                    dismissDefultProgressDialog();
-                                }
-                            });
-                        }
-                    }
-                }, resDataBean.getProduct_name());
-        insertNumDialog.show();
+                    }, resDataBean.getProduct_name());
+            insertNumDialog.show();
+        }catch (Exception e){
+            ToastUtils.showCommonToast(ProductingActivity.this, e.toString());
+        }
     }
 
     /**
@@ -385,11 +389,15 @@ public class ProductingActivity extends ToolBarActivity {
      */
     @OnClick(R.id.tv_add_ll)
     void addLl(View view) {
-        Intent intent = new Intent(ProductingActivity.this, BuGetLiaoActivity.class);
-        intent.putExtra("value", resDataBean);
-        intent.putExtra("state", resDataBean.getState());
-        intent.putExtra("order_id", order_id);
-        startActivity(intent);
+        try {
+            Intent intent = new Intent(ProductingActivity.this, BuGetLiaoActivity.class);
+            intent.putExtra("value", resDataBean);
+            intent.putExtra("state", resDataBean.getState());
+            intent.putExtra("order_id", order_id);
+            startActivity(intent);
+        }catch (Exception e){
+            ToastUtils.showCommonToast(ProductingActivity.this, e.toString());
+        }
     }
 
     /**
@@ -397,13 +405,16 @@ public class ProductingActivity extends ToolBarActivity {
      */
     @OnClick(R.id.tv_person_manage)
     void managePerson(View view) {
-
-        Intent intent = new Intent(ProductingActivity.this, AddPersonActivity.class);
-        intent.putExtra("order_id", order_id);
-        intent.putExtra("state_activity", state_activity);
-        intent.putExtra("name_activity", name_activity);
-        intent.putExtra("close", true);
-        startActivity(intent);
+        try {
+            Intent intent = new Intent(ProductingActivity.this, AddPersonActivity.class);
+            intent.putExtra("order_id", order_id);
+            intent.putExtra("state_activity", state_activity);
+            intent.putExtra("name_activity", name_activity);
+            intent.putExtra("close", true);
+            startActivity(intent);
+        }catch (Exception e){
+            ToastUtils.showCommonToast(ProductingActivity.this, e.toString());
+        }
     }
 
     /**

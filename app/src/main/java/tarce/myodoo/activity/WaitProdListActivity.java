@@ -178,26 +178,27 @@ public class WaitProdListActivity extends BaseActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (dataBeanList.get(position) == null){
-                    return;
-                }
-                int order_id = dataBeanList.get(position).getOrder_id();
-                if (dataBeanList.get(position).getState().equals("progress")) {
-                    Intent intent = new Intent(WaitProdListActivity.this, ProductingActivity.class);
-                    intent.putExtra("order_name", dataBeanList.get(position).getDisplay_name());
-                    intent.putExtra("order_id", order_id);
-                    intent.putExtra("state", "progress");
-                    intent.putExtra("name_activity", state_delay);
-                    intent.putExtra("state_activity", "already_picking");
-                    startActivity(intent);
-                } else {
-                    Intent intent = new Intent(WaitProdListActivity.this, OrderDetailActivity.class);
-                    intent.putExtra("order_name", dataBeanList.get(position).getDisplay_name());
-                    intent.putExtra("order_id", order_id);
-                    intent.putExtra("state", dataBeanList.get(position).getState());
-                    intent.putExtra("name_activity", state_delay);
-                    intent.putExtra("state_activity", "already_picking");
-                    startActivity(intent);
+                try {
+                    int order_id = dataBeanList.get(position).getOrder_id();
+                    if (dataBeanList.get(position).getState().equals("progress")) {
+                        Intent intent = new Intent(WaitProdListActivity.this, ProductingActivity.class);
+                        intent.putExtra("order_name", dataBeanList.get(position).getDisplay_name());
+                        intent.putExtra("order_id", order_id);
+                        intent.putExtra("state", "progress");
+                        intent.putExtra("name_activity", state_delay);
+                        intent.putExtra("state_activity", "already_picking");
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(WaitProdListActivity.this, OrderDetailActivity.class);
+                        intent.putExtra("order_name", dataBeanList.get(position).getDisplay_name());
+                        intent.putExtra("order_id", order_id);
+                        intent.putExtra("state", dataBeanList.get(position).getState());
+                        intent.putExtra("name_activity", state_delay);
+                        intent.putExtra("state_activity", "already_picking");
+                        startActivity(intent);
+                    }
+                }catch (Exception e){
+                    ToastUtils.showCommonToast(WaitProdListActivity.this, e.toString());
                 }
             }
         });

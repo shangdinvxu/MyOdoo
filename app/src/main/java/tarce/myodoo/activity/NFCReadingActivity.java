@@ -130,6 +130,7 @@ public class NFCReadingActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, final int position) {
                 new Thread(new Runnable() {
+                    public TextView tv_tip;
                     private AlertDialog alertDialog;
                     private Button conform_button;
                     private Button cancelButton;
@@ -149,6 +150,7 @@ public class NFCReadingActivity extends BaseActivity {
                                 errorText = (TextView) inflate.findViewById(R.id.error_text);
                                 cancelButton = (Button) inflate.findViewById(R.id.cancel_button);
                                 conform_button = (Button) inflate.findViewById(R.id.conform_button);
+                                tv_tip = (TextView) inflate.findViewById(R.id.tv_tip);
                                 textviewName.setText(res_data.get(position).getName());
                                 builder.setView(inflate);
                                 alertDialog = builder.create();
@@ -156,8 +158,7 @@ public class NFCReadingActivity extends BaseActivity {
                             }
                         });
                         try {
-
-                           final RFResult qPResult = rfCardModule.powerOn(null, 5, TimeUnit.SECONDS);
+                           final RFResult qPResult = rfCardModule.powerOn(null, 10, TimeUnit.SECONDS);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -240,7 +241,6 @@ public class NFCReadingActivity extends BaseActivity {
                             });
                             processingUnLock();
                         }
-
                     }
                 }).start();
             }
