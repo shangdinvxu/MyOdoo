@@ -313,8 +313,5 @@ public class LoginActivity extends Activity {
         IntentFactory.start_MainActivity(LoginActivity.this);
     }
 
-    @OnClick(R.id.RFCardButton)
-    void toReadRFCard(View view){
 
-    }
 }

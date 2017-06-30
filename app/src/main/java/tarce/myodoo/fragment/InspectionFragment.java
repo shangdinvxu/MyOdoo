@@ -1,8 +1,6 @@
 package tarce.myodoo.fragment;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,20 +17,13 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.newland.me.ConnUtils;
 import com.newland.me.DeviceManager;
 import com.newland.mtype.ConnectionCloseEvent;
-import com.newland.mtype.Module;
-import com.newland.mtype.ModuleType;
 import com.newland.mtype.event.DeviceEventListener;
-import com.newland.mtype.module.common.printer.Printer;
 import com.newland.mtype.module.common.rfcard.RFCardModule;
-import com.newland.mtype.module.common.rfcard.RFCardType;
-import com.newland.mtype.module.common.rfcard.RFResult;
-import com.newland.mtype.util.ISOUtils;
 import com.newland.mtypex.nseries.NSConnV100ConnParams;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -47,14 +37,12 @@ import tarce.model.inventory.LoadInspectionBean;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.NFCInsetActivity;
+import tarce.myodoo.activity.NFCReadingActivity;
 import tarce.myodoo.activity.inspect.InspectionSubActivity;
-import tarce.myodoo.activity.salesout.SalesDetailActivity;
 import tarce.myodoo.activity.takedeliver.TakeDeliveListActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
-import tarce.myodoo.device.Const;
-import tarce.myodoo.device.N900Device;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
 
@@ -148,7 +136,7 @@ public class InspectionFragment extends Fragment {
                         startActivity(intent2);
                         break;
                     case "录入NFC":
-                        Intent intent3 = new Intent(getActivity(), NFCInsetActivity.class);
+                        Intent intent3 = new Intent(getActivity(), NFCReadingActivity.class);
                         startActivity(intent3);
                         /*getActivity().runOnUiThread(new Runnable() {
                             @Override

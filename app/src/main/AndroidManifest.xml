@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tarce.myodoo">
 
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
@@ -13,23 +12,22 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.MANAGE_NEWLAND"/>
-    <uses-permission android:name="android.permission.MANAGE_NEWLANDUART3"/>
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MANAGE_NEWLAND" />
+    <uses-permission android:name="android.permission.MANAGE_NEWLANDUART3" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_LOGS" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:name=".MyApplication"
         android:theme="@style/AppTheme.NoActionBar">
         <activity
             android:name=".activity.LoginActivity"
@@ -43,85 +41,113 @@
             </intent-filter>
         </activity>
         <activity
-            android:launchMode="singleTask"
             android:name=".activity.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.salesout.SalesOutActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity
+            android:name=".activity.salesout.SalesListActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.salesout.SalesOutActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.salesout.SalesListActivity"
+        <activity
+            android:name=".activity.salesout.SalesDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.salesout.SalesDetailActivity"
+        <activity
+            android:name=".activity.SalesInActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.SalesInActivity"
+        <activity
+            android:name=".activity.SelectProcedureActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".activity.SelectProcedureActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.ShowProcessActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.ProductLlActivity"
+        <activity
+            android:name=".activity.ShowProcessActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ProductLlActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.OrderDetailActivity"
             android:screenOrientation="portrait"
-            android:launchMode="singleTask"/>
-        <activity android:name=".activity.OrderDetailActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity
+            android:name=".activity.MaterialDetailActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.PhotoAreaActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.MaterialDetailActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.AreaMessageActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.AddPersonActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ProductingActivity"
             android:screenOrientation="portrait"
-            android:launchMode="singleTask"/>
-        <activity android:name=".activity.PhotoAreaActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity
+            android:name=".activity.BuGetLiaoActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.inspect.InspectionSubActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.inspect.InspectMoDetailActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.AreaMessageActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.AddPersonActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.ProductingActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.WriteFeedMateriActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.BomFramworkActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.GetPickNumActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.WaitProdListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.ProcessOfPersonActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.FeedbackActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.WriteCheckMessaActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.BuGetLiaoActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.inspect.InspectionSubActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.ConfirmPurchaseActivity"
             android:screenOrientation="portrait"
-            android:launchMode="singleTask"/>
-        <activity android:name=".activity.inspect.InspectMoDetailActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.takedeliver.TakeDeAreaActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.WriteFeedMateriActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.BomFramworkActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.GetPickNumActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.WaitProdListActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.ProcessOfPersonActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.FeedbackActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.WriteCheckMessaActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.takedeliver.TakeDeliverActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.ConfirmPurchaseActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.takedeliver.TakeDeAreaActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.takedeliver.TakeDeliverActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.takedeliver.TakeDeliveListActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.takedeliver.TakeDeliverDetailActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.scancode.ScanCodeActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".activity.NFCInsetActivity"
-            android:screenOrientation="portrait"/>
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.takedeliver.TakeDeliveListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.takedeliver.TakeDeliverDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.scancode.ScanCodeActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activity.NFCInsetActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activity.NFCReadingActivity"></activity>
     </application>
-
-
 
 </manifest>

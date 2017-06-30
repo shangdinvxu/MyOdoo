@@ -76,4 +76,6 @@ public class IntentFactory {
         intent.putExtra("state",state);
         context.startActivity(intent);
     }
+
+
 }

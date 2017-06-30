@@ -14,6 +14,7 @@ import tarce.model.GetProcessBean;
 import tarce.model.GetSaleResponse;
 import tarce.model.LoadActionBean;
 import tarce.model.OutgoingStockpickingBean;
+import tarce.model.RequestBindUserBean;
 import tarce.model.SearchSupplierResponse;
 import tarce.model.inventory.AreaMessageBean;
 import tarce.model.inventory.AutoAddworkBean;
@@ -28,6 +29,7 @@ import tarce.model.inventory.GetReturnMaterBean;
 import tarce.model.inventory.LoadInspectionBean;
 import tarce.model.inventory.LoadProductBean;
 import tarce.model.inventory.MaterialDetailBean;
+import tarce.model.inventory.NFCUserBean;
 import tarce.model.inventory.NFCWorkerBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.PickingDetailBean;
@@ -51,6 +53,22 @@ import tarce.model.inventory.WorkingWorkerBean;
  */
 
 public interface InventoryApi {
+
+    /**
+     * 请求绑定员工
+     */
+    @POST("bind_nfc_card")
+    Call<RequestBindUserBean> requestBindUser(@Body HashMap hashMap);
+
+
+    /**
+     * 请求所有的员工
+     */
+    @POST("get_employee")
+    Call<NFCUserBean> getAllUser(@Body HashMap hashMap);
+
+
+
     /**
      * 请求员工数据
      * */
