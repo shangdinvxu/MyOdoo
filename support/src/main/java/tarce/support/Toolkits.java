@@ -22,6 +22,16 @@ public class Toolkits {
         return versionCode;
     }
 
-
+    public static String getVersionName(Context context){
+        PackageInfo info;
+        String versionName = "";
+        try {
+            info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            versionName = info.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            MyLog.d(TAG, "读程序版本信息时出错," + e.getMessage());
+        }
+        return versionName;
+    }
 
 }

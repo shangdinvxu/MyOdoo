@@ -32,6 +32,7 @@ import tarce.myodoo.activity.GetPickNumActivity;
 import tarce.myodoo.activity.ProcessOfPersonActivity;
 import tarce.myodoo.adapter.product.ProduceRednumAdapter;
 import tarce.myodoo.bean.MenuBean;
+import tarce.support.ToastUtils;
 
 /**\
  * 生产界面
@@ -105,23 +106,27 @@ public class ProduceFragment extends Fragment {
             public void onResponse(Call<LoadProductBean> call, Response<LoadProductBean> response) {
                // AlertAialogUtils.dismissDefultProgressDialog();
                 if (response.body() == null)return;
-                if (response.body().getResult().getRes_code() == 1){
-                    res_data = response.body().getResult().getRes_data();
-                    Integer needaction_counter0 = res_data.getLinkloving_mrp_extend_menu_mrp_finish_prepare_material().getNeedaction_counter();
-                    list.get(0).setNumber(needaction_counter0);
-                    Integer needaction_counter1 = res_data.getLinkloving_mrp_extend_menu_mrp_already_picking().getNeedaction_counter();
-                    list.get(1).setNumber(needaction_counter1);
-                    Integer needaction_counter2 = res_data.getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
-                    list.get(2).setNumber(needaction_counter2);
-                    Integer needaction_counter3 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
-                    list.get(3).setNumber(needaction_counter3);
-                    Integer needaction_counter4 = res_data.getLinkloving_mrp_extend_mrp_production_qc_inspection_fail().getNeedaction_counter();
-                    list.get(4).setNumber(needaction_counter4);
-                    Integer needaction_counter5 = res_data.getLinkloving_mrp_extend_menu_mrp_rework_ing().getNeedaction_counter();
-                    list.get(5).setNumber(needaction_counter5);
-                //    Integer needaction_counter6 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
-                 //   list.get(6).setNumber(0);
-                    sectionAdapter.notifyDataSetChanged();
+                try {
+                    if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
+                        res_data = response.body().getResult().getRes_data();
+                        Integer needaction_counter0 = res_data.getLinkloving_mrp_extend_menu_mrp_finish_prepare_material().getNeedaction_counter();
+                        list.get(0).setNumber(needaction_counter0);
+                        Integer needaction_counter1 = res_data.getLinkloving_mrp_extend_menu_mrp_already_picking().getNeedaction_counter();
+                        list.get(1).setNumber(needaction_counter1);
+                        Integer needaction_counter2 = res_data.getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
+                        list.get(2).setNumber(needaction_counter2);
+                        Integer needaction_counter3 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
+                        list.get(3).setNumber(needaction_counter3);
+                        Integer needaction_counter4 = res_data.getLinkloving_mrp_extend_mrp_production_qc_inspection_fail().getNeedaction_counter();
+                        list.get(4).setNumber(needaction_counter4);
+                        Integer needaction_counter5 = res_data.getLinkloving_mrp_extend_menu_mrp_rework_ing().getNeedaction_counter();
+                        list.get(5).setNumber(needaction_counter5);
+                        //    Integer needaction_counter6 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
+                        //   list.get(6).setNumber(0);
+                        sectionAdapter.notifyDataSetChanged();
+                    }
+                }catch (Exception e){
+                    ToastUtils.showCommonToast(getActivity(), e.toString());
                 }
             }
 

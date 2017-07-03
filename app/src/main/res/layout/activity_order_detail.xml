@@ -271,6 +271,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginLeft="5dp"
                         android:focusable="false"
+                        android:textSize="12sp"
                         android:background="@drawable/bac_inspect_edit"/>
                     <TextView
                         android:layout_width="wrap_content"
@@ -284,6 +285,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:focusable="false"
+                        android:textSize="12sp"
                         android:background="@drawable/bac_inspect_edit"
                         android:layout_marginLeft="5dp"/>
                 </LinearLayout>
@@ -304,6 +306,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="28dp"
                         android:layout_marginLeft="10dp"
+                        android:textSize="12sp"
                         android:layout_gravity="center_vertical"
                         android:focusable="false"
                         android:background="@drawable/bac_inspect_edit"/>

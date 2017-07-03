@@ -31,7 +31,7 @@ import tarce.support.ToolBarActivity;
  * 等待生产后续页面
  */
 
-public class GetPickNumActivity extends ToolBarActivity {
+public class GetPickNumActivity extends BaseActivity {
     @InjectView(R.id.recycler_detail_process)
     RecyclerView recyclerDetailProcess;
     private ProcessDetailAdapter detailAdapter;
@@ -44,6 +44,7 @@ public class GetPickNumActivity extends ToolBarActivity {
         setContentView(R.layout.activity_show_process);
         ButterKnife.inject(this);
         setRecyclerview(recyclerDetailProcess);
+        setTitle("等待生产");
 
         getData();
     }

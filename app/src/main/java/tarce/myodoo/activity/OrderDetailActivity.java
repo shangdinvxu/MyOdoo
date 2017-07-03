@@ -194,8 +194,19 @@ public class OrderDetailActivity extends ToolBarActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        if (state.equals("waiting_material") || state.equals("prepare_material_ing")){
+            menu.getItem(2).setTitle("备料反馈");
+        }else {
+            menu.getItem(2).setTitle("生产反馈");
+        }
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == tarce.support.R.id.action_settings){
+        if (item.getItemId() == R.id.action_settings){
             HashMap<Object, Object> hashMap = new HashMap<>();
             hashMap.put("order_id", order_id);
             Call<GetFactroyRemarkBean> factroyRemark = inventoryApi.getFactroyRemark(hashMap);
@@ -216,8 +227,12 @@ public class OrderDetailActivity extends ToolBarActivity {
                                     @Override
                                     public void onResponse(Call<CommonBean> call, Response<CommonBean> response) {
                                         if (response == null)return;
-                                        if (response.body().getResult().getRes_code() == 1){
-                                            ToastUtils.showCommonToast(OrderDetailActivity.this, "反馈成功");
+                                        try {
+                                            if (response.body().getResult().getRes_code() == 1){
+                                                ToastUtils.showCommonToast(OrderDetailActivity.this, "反馈成功");
+                                            }
+                                        }catch (Exception e){
+                                            MyLog.e(TAG, e.toString());
                                         }
                                     }
                                 });
@@ -231,30 +246,36 @@ public class OrderDetailActivity extends ToolBarActivity {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, t.toString());
                 }
             });
-        }else if (item.getItemId() == tarce.support.R.id.action_print){
+        }else if (item.getItemId() == R.id.action_print){
             AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否确认打印？\n(请尽量避免订单重复打印)")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            initDevice();
-                            printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
-                            printer.init();
-                            printer.print("\n\nMO单号："+order_name+"\n\n"+"产品: " + tvNameProduct.getText() + "\n\n" + "时间： " + tvTimeProduct.getText() + "\n\n" +
-                                    "负责人: " + tvReworkProduct.getText() + "\n\n" + "生产数量：" + tvNumProduct.getText() + "\n\n" + "需求数量：" + tvNeedNum.getText()
-                                    + "\n\n" + "规格：" + tvStringGuige.getText() + "\n\n" + "工序：" + tvGongxuProduct.getText() + "\n\n" + "类型：" + tvTypeProduct.getText()
-                                    + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+"\n\n", 30, TimeUnit.SECONDS);
-                            Bitmap mBitmap = CodeUtils.createImage(order_name, 300, 300, null);
-                            printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
-                            printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+                            prinPra();
                         }
                     })
                     .show();
         }else if (item.getItemId() == R.id.action_feedback){
             Intent intent = new Intent(OrderDetailActivity.this, FeedbackActivity.class);
+            intent.putExtra("state", state);
             intent.putExtra("order_id", order_id);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //打印
+    private void prinPra() {
+        initDevice();
+        printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+        printer.init();
+        printer.print("\n\nMO单号："+order_name+"\n\n"+"产品: " + tvNameProduct.getText() + "\n\n" + "时间： " + tvTimeProduct.getText() + "\n\n" +
+                "负责人: " + tvReworkProduct.getText() + "\n\n" + "生产数量：" + tvNumProduct.getText() + "\n\n" + "需求数量：" + tvNeedNum.getText()
+                + "\n\n" + "规格：" + tvStringGuige.getText() + "\n\n" + "工序：" + tvGongxuProduct.getText() + "\n\n" + "类型：" + tvTypeProduct.getText()
+                + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+"\n\n", 30, TimeUnit.SECONDS);
+        Bitmap mBitmap = CodeUtils.createImage(order_name, 300, 300, null);
+        printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+        printer.print("\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
     }
 
     /**
@@ -520,8 +541,8 @@ public class OrderDetailActivity extends ToolBarActivity {
     private void initView() {
         tvNameProduct.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         tvNameProduct.setText(resDataBean.getProduct_name());
-        tvNumProduct.setText(String.valueOf(new Double(resDataBean.getQty_produced()).intValue()));
-        tvNeedNum.setText(String.valueOf(new Double(resDataBean.getProduct_qty()).intValue()));
+        tvNumProduct.setText(StringUtils.doubleToString(resDataBean.getQty_produced()));
+        tvNeedNum.setText(StringUtils.doubleToString(resDataBean.getProduct_qty()));
         tvTimeProduct.setText(TimeUtils.utc2Local(resDataBean.getDate_planned_start()));
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
         tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));

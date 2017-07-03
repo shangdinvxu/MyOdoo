@@ -37,6 +37,7 @@ import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
 import tarce.support.MyLog;
+import tarce.support.ToastUtils;
 
 /**
  * 仓库界面
@@ -125,19 +126,23 @@ public class WarehouseFragment extends Fragment {
             @Override
             public void onResponse(Call<LoadActionBean> call, Response<LoadActionBean> response) {
                 //  AlertAialogUtils.dismissDefultProgressDialog();
-                if (response.body() != null && response.body().getResult().getRes_code() == 1) {
-                    res_data = response.body().getResult().getRes_data();
-                    Integer needaction_counter = res_data.getLinkloving_mrp_extend_menu_mrp_prepare_material_ing().getNeedaction_counter();
-                    Integer needaction_counter1 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection().getNeedaction_counter();
-                    Integer needaction_counter2 = res_data.getLinkloving_mrp_extend_mrp_production_action_qc_success().getNeedaction_counter();
-                    Integer needaction_counter3 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_material().getNeedaction_counter();
-                    list.get(5).t.setNumber(needaction_counter + needaction_counter3);
-                    list.get(6).t.setNumber(needaction_counter1);
-                    list.get(7).t.setNumber(needaction_counter2);
+                if (response.body() == null)return;
+                try {
+                    if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
+                        res_data = response.body().getResult().getRes_data();
+                        Integer needaction_counter = res_data.getLinkloving_mrp_extend_menu_mrp_prepare_material_ing().getNeedaction_counter();
+                        Integer needaction_counter1 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_warehouse_inspection().getNeedaction_counter();
+                        Integer needaction_counter2 = res_data.getLinkloving_mrp_extend_mrp_production_action_qc_success().getNeedaction_counter();
+                        Integer needaction_counter3 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_material().getNeedaction_counter();
+                        list.get(5).t.setNumber(needaction_counter + needaction_counter3);
+                        list.get(6).t.setNumber(needaction_counter1);
+                        list.get(7).t.setNumber(needaction_counter2);
 //                    //               warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
-                    sectionAdapter.notifyDataSetChanged();
+                        sectionAdapter.notifyDataSetChanged();
+                    }
+                }catch (Exception e){
+                    ToastUtils.showCommonToast(getActivity(),e.toString());
                 }
-
             }
 
             @Override

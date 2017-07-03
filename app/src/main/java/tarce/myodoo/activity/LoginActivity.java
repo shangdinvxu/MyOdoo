@@ -5,10 +5,12 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,13 +22,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amitshekhar.DebugDB;
-import com.bumptech.glide.Glide;
 import com.newland.me.ConnUtils;
 import com.newland.me.DeviceManager;
 import com.newland.mtype.ConnectionCloseEvent;
 import com.newland.mtype.ModuleType;
 import com.newland.mtype.event.DeviceEventListener;
-import com.newland.mtype.module.common.lcd.Color;
 import com.newland.mtype.module.common.rfcard.RFCardModule;
 import com.newland.mtype.module.common.rfcard.RFResult;
 import com.newland.mtype.util.ISOUtils;
@@ -42,9 +42,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import cn.hugeterry.updatefun.UpdateFunGO;
 import cn.hugeterry.updatefun.config.UpdateKey;
-import greendao.ContactsBeanDao;
 import greendao.DaoSession;
-import greendao.MenuListBeanDao;
 import retrofit2.Call;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -76,6 +74,7 @@ import tarce.myodoo.utils.UserManager;
 import tarce.support.MyLog;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
+import tarce.support.ViewUtils;
 
 /**
  * Created by Daniel.Xu on 2017/4/20.
@@ -95,6 +94,8 @@ public class LoginActivity extends Activity {
     EditText httpUrl;
     @InjectView(R.id.tv_nfc_login)
     TextView tvNfcLogin;
+    @InjectView(R.id.img_delete)
+    ImageView imgDelete;
     private String TAG = LoginActivity.class.getSimpleName();
     private int databaseSwitch = 0;
     private LoginApi loginApi;
@@ -127,6 +128,18 @@ public class LoginActivity extends Activity {
         initDevice();
     }
 
+    @OnClick(R.id.img_delete)
+    void deleteHost(View view){
+        httpUrl.setText("");
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        ViewUtils.collapseSoftInputMethod(LoginActivity.this, httpUrl);
+        ViewUtils.collapseSoftInputMethod(LoginActivity.this, email);
+        ViewUtils.collapseSoftInputMethod(LoginActivity.this, password);
+        return super.dispatchTouchEvent(ev);
+    }
 
     @Override
     protected void onResume() {
@@ -171,6 +184,9 @@ public class LoginActivity extends Activity {
         });
     }
 
+    /**
+     * 检查是否可以自动登录
+     */
     private void checkOutoLogin() {
         int user_id = SharePreferenceUtils.getInt("user_id", -1000, LoginActivity.this);
         if (StringUtils.isNullOrEmpty(RetrofitClient.Url)) {
@@ -355,13 +371,25 @@ public class LoginActivity extends Activity {
                         textviewName = (TextView) inflate.findViewById(R.id.nfc_work_name);
                         textNfcNum = (TextView) inflate.findViewById(R.id.tv_nfc_num);
                         textviewName.setText("请将卡靠近NFC感应区");
-                        textviewName.setTextColor(android.graphics.Color.RED);
+                        textviewName.setTextColor(Color.RED);
                         imageHeader = (ImageView) inflate.findViewById(R.id.image_nfc_addwork);
                         textCancel = (TextView) inflate.findViewById(R.id.tv_cancel_addnfc);
                         textTrue = (TextView) inflate.findViewById(R.id.tv_true_addnfc);
                         builder.setView(inflate);
                         alertDialog = builder.create();
                         alertDialog.show();
+                        textCancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                alertDialog.dismiss();
+                            }
+                        });
+                        textTrue.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                alertDialog.dismiss();
+                            }
+                        });
                     }
                 });
                 try {
@@ -375,45 +403,50 @@ public class LoginActivity extends Activity {
                                 String NFC_Number = ISOUtils.hexString(qPResult.getCardSerialNo());
                                 textNfcNum.setText(NFC_Number);
                                 progressDialog.show();
+                                String host = httpUrl.getText().toString();
+                                if (StringUtils.isNullOrEmpty(host)){
+                                    return;
+                                }else if (!host.contains("http://")){
+                                    host = "http://"+host;
+                                }
                                 retrofit = new Retrofit.Builder()
                                         .client(new OKHttpFactory(LoginActivity.this).getOkHttpClient())
-                                        .baseUrl(httpUrl.getText().toString() + "/linkloving_user_auth/")
+                                        .baseUrl(host + "/linkloving_user_auth/")
                                         .addConverterFactory(GsonConverterFactory.create())
                                         .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                                         .build();
                                 HashMap<Object, Object> hashMap = new HashMap<>();
-                                hashMap.put("card_num",ISOUtils.hexString(qPResult.getCardSerialNo()));
+                                hashMap.put("card_num", ISOUtils.hexString(qPResult.getCardSerialNo()));
                                 Call<NFcLoginBean> byCardnum = retrofit.create(InventoryApi.class).getByCardnum(hashMap);
                                 byCardnum.enqueue(new MyCallback<NFcLoginBean>() {
                                     @Override
                                     public void onResponse(Call<NFcLoginBean> call, final Response<NFcLoginBean> response) {
                                         progressDialog.dismiss();
-                                        if (response.body() == null)return;
-                                        if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==1){
+                                        if (response.body() == null) return;
+                                        if (response.body().getResult() == null) return;
+                                        if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                                             textviewName.setText(response.body().getResult().getRes_data().getName());
-                                            textviewName.setTextColor(android.graphics.Color.BLACK);
-                                            textCancel.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    alertDialog.dismiss();
-                                                    rfCardModule.powerOff(2);
-                                                }
-                                            });
+                                            textviewName.setTextColor(Color.BLACK);
                                             textTrue.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View v) {
                                                     rfCardModule.powerOff(2);
                                                     alertDialog.dismiss();
                                                     email.setText(response.body().getResult().getRes_data().getWork_email());
+
                                                 }
                                             });
+                                        }else if (response.body().getResult().getRes_code() == -1 && response.body().getResult().getRes_data()!=null){
+                                            rfCardModule.powerOff(2);
+                                            alertDialog.dismiss();
+                                            ToastUtils.showCommonToast(LoginActivity.this, response.body().getResult().getRes_data().getError());
                                         }
                                     }
 
                                     @Override
                                     public void onFailure(Call<NFcLoginBean> call, Throwable t) {
                                         progressDialog.dismiss();
-
+                                        MyLog.e("Login", t.toString());
                                     }
                                 });
                             }

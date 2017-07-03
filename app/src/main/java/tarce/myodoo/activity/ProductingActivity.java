@@ -1,5 +1,6 @@
 package tarce.myodoo.activity;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -177,6 +179,17 @@ public class ProductingActivity extends ToolBarActivity {
             getDetail();
         }
         super.onResume();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        if (state.equals("waiting_material") || state.equals("prepare_material_ing")){
+            menu.getItem(2).setTitle("备料反馈");
+        }else {
+            menu.getItem(2).setTitle("生产反馈");
+        }
+        return true;
     }
 
     /**
@@ -499,6 +512,21 @@ public class ProductingActivity extends ToolBarActivity {
                                 dismissDefultProgressDialog();
                                 if (response.body() == null) return;
                                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    ProgressDialog progressDialog = new ProgressDialog(ProductingActivity.this);
+                                                    progressDialog.setMessage("正在打印...");
+                                                    progressDialog.show();
+                                                    printPra();
+                                                    progressDialog.dismiss();
+                                                }
+                                            });
+                                        }
+                                    }).start();
                                     AlertAialogUtils.getCommonDialog(ProductingActivity.this, "生产完成，是否拍摄产品位置信息")
                                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                                 @Override
@@ -642,21 +670,16 @@ public class ProductingActivity extends ToolBarActivity {
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            initDevice();
-                            printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
-                            printer.init();
-                            printer.print("\n\nMO单号："+order_name+"\n\n"+"产品: " + tvNameProduct.getText() + "\n\n" + "时间： " + tvTimeProduct.getText() + "\n\n" +
-                                    "负责人: " + tvReworkProduct.getText() + "\n\n" + "生产数量：" + tvNumProduct.getText() + "\n\n" + "需求数量：" + tvNeedNum.getText()
-                                    + "\n\n" + "规格：" + tvStringGuige.getText() + "\n\n" + "工序：" + tvGongxuProduct.getText() + "\n\n" + "类型：" + tvTypeProduct.getText()
-                                    + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+"\n\n", 30, TimeUnit.SECONDS);
-                            Bitmap mBitmap = CodeUtils.createImage(order_name, 300, 300, null);
-                            printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
-                            printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+                            printPra();
                         }
                     })
                     .show();
         }else if (item.getItemId() == R.id.action_feedback){
-            ToastUtils.showCommonToast(ProductingActivity.this, "此功能仅适用于备料阶段");
+           // ToastUtils.showCommonToast(ProductingActivity.this, "此功能仅适用于备料阶段");
+            Intent intent = new Intent(ProductingActivity.this, FeedbackActivity.class);
+            intent.putExtra("state", state);
+            intent.putExtra("order_id", order_id);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -665,5 +688,18 @@ public class ProductingActivity extends ToolBarActivity {
         resDataBean = null;
         result = null;
         super.onPause();
+    }
+
+    private void printPra(){
+        initDevice();
+        printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+        printer.init();
+        printer.print("\n\nMO单号："+order_name+"\n\n"+"产品: " + tvNameProduct.getText() + "\n\n" + "时间： " + tvTimeProduct.getText() + "\n\n" +
+                "负责人: " + tvReworkProduct.getText() + "\n\n" + "生产数量：" + tvNumProduct.getText() + "\n\n" + "需求数量：" + tvNeedNum.getText()
+                + "\n\n" + "规格：" + tvStringGuige.getText() + "\n\n" + "工序：" + tvGongxuProduct.getText() + "\n\n" + "类型：" + tvTypeProduct.getText()
+                + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+"\n\n", 30, TimeUnit.SECONDS);
+        Bitmap mBitmap = CodeUtils.createImage(order_name, 300, 300, null);
+        printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+        printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
     }
 }

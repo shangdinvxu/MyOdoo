@@ -140,29 +140,32 @@ public class OutgoingStockpickingBean {
             }
 
             public static class CompleteRateBean {
+                public int getComplete_rate_count() {
+                    return complete_rate_count;
+                }
+
                 /**
                  * complete_rate_count : 8
                  * complete_rate : 0
                  */
 
                 private int complete_rate_count;
-                private int complete_rate;
 
-                public void setComplete_rate_count(int complete_rate_count) {
-                    this.complete_rate_count = complete_rate_count;
+
+                public int getComplete_rate() {
+                    return complete_rate;
                 }
 
                 public void setComplete_rate(int complete_rate) {
                     this.complete_rate = complete_rate;
                 }
 
-                public int getComplete_rate_count() {
-                    return complete_rate_count;
+                private int complete_rate;
+
+                public void setComplete_rate_count(int complete_rate_count) {
+                    this.complete_rate_count = complete_rate_count;
                 }
 
-                public int getComplete_rate() {
-                    return complete_rate;
-                }
             }
         }
     }

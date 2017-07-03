@@ -67,7 +67,7 @@ public class MeFragment extends Fragment {
         userName.setText(email);
         String url = SharePreferenceUtils.getString("url", "null", getActivity());
         address.setText(url);
-        version.setText(Toolkits.getVersionCode(getActivity()) + "");
+        version.setText(Toolkits.getVersionName(getActivity()));
         String user_ava = SharePreferenceUtils.getString("user_ava", "null", getActivity());
         Log.i("user_ava", user_ava);
         Glide.with(getActivity()).load(user_ava).into(heard);

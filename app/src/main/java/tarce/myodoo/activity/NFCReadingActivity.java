@@ -128,7 +128,7 @@ public class NFCReadingActivity extends BaseActivity {
     private void initadapterListener() {
         nfcUseradapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, final int position) {
+            public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
                 new Thread(new Runnable() {
                     public TextView tv_tip;
                     private AlertDialog alertDialog;
@@ -202,6 +202,8 @@ public class NFCReadingActivity extends BaseActivity {
                                                                     if (res_code == 1) {
                                                                         alertDialog.dismiss();
                                                                         ToastUtils.showCommonToast(NFCReadingActivity.this, "绑定成功");
+                                                                        res_data.get(position).setCard_num(response.body().getResult().getRes_data().getCard_num());
+                                                                        nfcUseradapter.notifyDataSetChanged();
                                                                     } else {
                                                                         ToastUtils.showCommonToast(NFCReadingActivity.this, "绑定失败");
                                                                     }

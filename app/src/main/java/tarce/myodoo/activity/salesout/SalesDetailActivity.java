@@ -37,6 +37,7 @@ import com.uuzuche.lib_zxing.activity.CaptureFragment;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -197,8 +198,10 @@ public class SalesDetailActivity extends BaseActivity {
         salesDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                if (position>=adapter.getData().size()-1)return;
                 final GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids obj =
                         (GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids) adapter.getData().get(position);
+                if (obj.getPack_id() == -1) return;
                 final EditText editText = new EditText(SalesDetailActivity.this);
                 final Integer qty_available = obj.getProduct_id().getQty_available();
                 Integer product_qty = obj.getProduct_qty();
@@ -385,6 +388,13 @@ public class SalesDetailActivity extends BaseActivity {
                     @Override
                     public void onClick(View v) {
                         final List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> data = salesDetailAdapter.getData();
+                        List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> subdata = new ArrayList<>();
+                        for (int i = 0; i < data.size(); i++) {
+                            if (data.get(i).getPack_id() == -1){
+                                subdata.add(data.get(i));
+                            }
+                        }
+                        data.removeAll(subdata);
                         int sum = 0;
                         for (int i = 0; i < data.size(); i++) {
                             sum = sum + data.get(i).getQty_done();
@@ -657,13 +667,13 @@ public class SalesDetailActivity extends BaseActivity {
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
         printer.print("\n\n出货单号：" + bundle1.getName() + "\n\n" + "源单据: " + bundle1.getOrigin() + "\n\n" + "合作伙伴： " + bundle1.getParnter_id() + "\n\n" +
-                "收货人联系电话: "+bundle1.getPhone()+"\n\n"+"-------------" + "\n\n", 30, TimeUnit.SECONDS);
+                "收货人联系电话: "+bundle1.getPhone()+"\n"+"--------------------------" + "\n", 30, TimeUnit.SECONDS);
         for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
             printer.print("产品名称：" + bundle1.getPack_operation_product_ids().get(i).getProduct_id().getName() + "\n完成数量：" +
                     bundle1.getPack_operation_product_ids().get(i).getQty_done()
                     + "\n\n", 30, TimeUnit.SECONDS);
         }
-        printer.print("\n\n", 30, TimeUnit.SECONDS);
+        printer.print("\n", 30, TimeUnit.SECONDS);
        // Bitmap mBitmap = CodeUtils.createImage(bundle1.getName()+"&stock.picking&"+bundle1.getPicking_id(), 300, 300, null);
         Bitmap mBitmap = CodeUtils.createImage(bundle1.getName(), 300, 300, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);

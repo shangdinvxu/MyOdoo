@@ -300,9 +300,7 @@ public class SalesOutActivity extends BaseActivity {
                 }).show();
     }
 
-    /**
-     * 当点击某一个item的时候  根据客户全称搜索更新数据
-     * */
+
     private void initSearchCustomerFromNet(final long id) {
         showDefultProgressDialog();
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();

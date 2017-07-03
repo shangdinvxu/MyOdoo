@@ -49,7 +49,6 @@ public class SalesListActivity extends BaseActivity {
     SwipeToLoadLayout swipeToLoad;
     private SalesListAdapter salesListAdapter;
     private InventoryApi inventoryApi;
-    private int count;
     private String state;
     private int complete_rate;
     private List<SalesOutListResponse.TResult.TRes_data> res_data;
@@ -88,11 +87,11 @@ public class SalesListActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
+        super.onResume();
         if (dataBeanList == null && "no".equals(deliver) && res_data == null){
             swipeToLoad.setRefreshing(true);
             loadTime = 0;
         }
-        super.onResume();
     }
 
     private void initrecycler() {
@@ -139,7 +138,7 @@ public class SalesListActivity extends BaseActivity {
             public void onResponse(Call<SalesOutListResponse> call, Response<SalesOutListResponse> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                     res_data = response.body().getResult().getRes_data();
                     if (move == Refresh_Move){
                         dataBeanList = res_data;

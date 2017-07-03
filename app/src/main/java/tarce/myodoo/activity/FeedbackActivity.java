@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
@@ -28,6 +29,7 @@ import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.FeedbackAdapter;
 import tarce.myodoo.uiutil.InsertFeedbackDial;
 import tarce.support.AlertAialogUtils;
+import tarce.support.MyLog;
 import tarce.support.ToastUtils;
 
 /**
@@ -44,6 +46,7 @@ public class FeedbackActivity extends BaseActivity {
     private FeedbackAdapter adapter;
     private List<GetFeedbackBean.ResultBean.ResDataBean> dataBeanList = new ArrayList<>();
     private int order_id;
+    private String state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +55,11 @@ public class FeedbackActivity extends BaseActivity {
         ButterKnife.inject(this);
 
         inventoryApi = RetrofitClient.getInstance(FeedbackActivity.this).create(InventoryApi.class);
-        setTitle("选择缺料原因");
+        setTitle("点击选择缺料原因");
         setRecyclerview(recyclerFeedback);
         Intent intent = getIntent();
         order_id = intent.getIntExtra("order_id", 1000);
+        state = intent.getStringExtra("state");
         initData();
     }
 
@@ -64,7 +68,13 @@ public class FeedbackActivity extends BaseActivity {
      * */
     private void initData() {
         showDefultProgressDialog();
-        Call<GetFeedbackBean> remark = inventoryApi.getRemark(new HashMap());
+        HashMap<Object, Object> hashMap = new HashMap<>();
+        if (state.equals("waiting_material") || state.equals("prepare_material_ing")){
+            hashMap.put("type", "material");
+        }else if (state.equals("finish_prepare_material") || state.equals("already_picking") || state.equals("progress")){
+            hashMap.put("type", "production");
+        }
+        Call<GetFeedbackBean> remark = inventoryApi.getRemark(hashMap);
         remark.enqueue(new MyCallback<GetFeedbackBean>() {
             @Override
             public void onResponse(Call<GetFeedbackBean> call, Response<GetFeedbackBean> response) {
@@ -82,7 +92,7 @@ public class FeedbackActivity extends BaseActivity {
             @Override
             public void onFailure(Call<GetFeedbackBean> call, Throwable t) {
                 dismissDefultProgressDialog();
-                ToastUtils.showCommonToast(FeedbackActivity.this, t.toString());
+                MyLog.e("FeedbackActivity",  t.toString());
             }
         });
     }
@@ -131,8 +141,24 @@ public class FeedbackActivity extends BaseActivity {
         new InsertFeedbackDial(FeedbackActivity.this, R.style.MyDialogStyle, new InsertFeedbackDial.OnSendCommonClickListener() {
             @Override
             public void OnSendCommonClick(String num) {
+                boolean isHave = false;
+                for (int i = 0; i < adapter.getData().size(); i++) {
+                    if (adapter.getData().get(i).getContent().equals(num)){
+                        isHave = true;
+                        break;
+                    }
+                }
+                if (isHave){
+                    ToastUtils.showCommonToast(FeedbackActivity.this, "已经存在该原因，请点击该条原因");
+                    return;
+                }
                 HashMap<Object, Object> hashMap = new HashMap<>();
                 hashMap.put("content",num);
+                if (state.equals("waiting_material") || state.equals("prepare_material_ing")){
+                    hashMap.put("type", "material");
+                }else if (state.equals("finish_prepare_material") || state.equals("already_picking") || state.equals("progress")){
+                    hashMap.put("type", "production");
+                }
                 Call<GetFeedbackBean> objectCall = inventoryApi.addNewRemark(hashMap);
                 objectCall.enqueue(new MyCallback<GetFeedbackBean>() {
                     @Override
@@ -142,6 +168,7 @@ public class FeedbackActivity extends BaseActivity {
                         if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                             adapter.getData().add(response.body().getResult().getRes_data().get(response.body().getResult().getRes_data().size()-1));
                             adapter.notifyDataSetChanged();
+                            ToastUtils.showCommonToast(FeedbackActivity.this, "添加成功");
                             initClick();
                         }else {
                             ToastUtils.showCommonToast(FeedbackActivity.this, "出现错误，请联系开发人员调试");

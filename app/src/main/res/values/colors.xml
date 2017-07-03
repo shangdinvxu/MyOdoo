@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="login">#efeff4</color>
     <color name="white">#ffffff</color>
+    <color name="color_5693f8">#5693f8</color>
     <color name="result_text">#ffffffff</color>
     <color name="result_view">#b0000000</color>
     <color name="sbc_header_text">#ff808080</color>
@@ -25,4 +26,5 @@
     <color name="grgray">#686868</color>
     <color name="color_70c8ea">#70c8ea</color>
     <color name="red">#ff0000</color>
+    <color name="bbutton_info">#ff5bc0de</color>
 </resources>

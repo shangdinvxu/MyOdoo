@@ -8,7 +8,7 @@
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:textSize="13sp"/>
+        android:textSize="12sp"/>
     <TextView
         android:id="@+id/tv_nameproduct_inspec"
         android:layout_width="0dp"

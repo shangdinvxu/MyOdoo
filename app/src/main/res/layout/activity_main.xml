@@ -7,7 +7,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:background="@color/colorPrimary"
+        android:background="@color/cc"
         android:layout_height="50dp">
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,25 +26,20 @@
                 android:textSize="20sp"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:layout_marginEnd="80dp"
-                />
-
+                android:layout_marginEnd="80dp" />
             <Button
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:id="@+id/search_button"
                 android:background="@mipmap/search"
-                android:layout_marginRight="20dp"
-
-                />
+                android:layout_marginRight="20dp" />
             <Button
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
                 android:id="@+id/scan_button"
                 android:background="@mipmap/scan"
                 android:layout_marginRight="20dp"
                 />
-
         </LinearLayout>
 
     </android.support.v7.widget.Toolbar>
@@ -58,11 +53,11 @@
         >
 
     </tarce.myodoo.view.NoScrollViewPager>
-    <ImageView
+    <!--<ImageView
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@android:color/black"
-        />
+        />-->
     <RadioGroup
         android:orientation="horizontal"
         android:layout_width="match_parent"

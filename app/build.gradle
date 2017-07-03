@@ -10,8 +10,8 @@ android {
         ndk {
             abiFilters "armeabi"
         }
-        versionCode 11
-        versionName "1.5.2"
+        versionCode 14
+        versionName "1.6.0"
         resValue "string", "updatefun_provider_file_authorities", "tarce.myodoo.fileprovider"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

@@ -3,6 +3,8 @@ package tarce.model.inventory;
 import java.io.Serializable;
 import java.util.List;
 
+import tarce.model.GetSaleResponse;
+
 /**
  * Created by Daniel.Xu on 2017/5/4.
  */
@@ -175,6 +177,123 @@ public class SalesOutListResponse implements Serializable {
             }
             public String getQc_img(){
                 return this.qc_img;
+            }
+            private	List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids>	pack_operation_product_ids;	/*List<TPack_operation_product_ids>*/
+            public void setPack_operation_product_ids(List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> value){
+                this.pack_operation_product_ids = value;
+            }
+            public List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> getPack_operation_product_ids(){
+                return this.pack_operation_product_ids;
+            }
+            public static class TPack_operation_product_ids implements Serializable{
+
+                public static class TProduct_id implements Serializable{
+
+                    public static class TArea_id implements Serializable{
+
+                        private	Integer	area_id;	/*210*/
+                        private	String	area_name;	/*A3C2*/
+
+                        public void setArea_id(Integer value){
+                            this.area_id = value;
+                        }
+                        public Integer getArea_id(){
+                            return this.area_id;
+                        }
+
+                        public void setArea_name(String value){
+                            this.area_name = value;
+                        }
+                        public String getArea_name(){
+                            return this.area_name;
+                        }
+
+                    }
+                    private	Integer	id;	/*49457*/
+                    private GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids.TProduct_id.TArea_id area_id;	/*TArea_id*/
+                    private	Integer	qty_available;	/*280*/
+                    private	String	name;	/*[47.1PZ005.000] PZ1005-三角彩盒(世界地图)-RT-CN*/
+                    private	String	default_code;	/*47.1PZ005.000*/
+
+                    public void setId(Integer value){
+                        this.id = value;
+                    }
+                    public Integer getId(){
+                        return this.id;
+                    }
+
+                    public void setArea_id(GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids.TProduct_id.TArea_id value){
+                        this.area_id = value;
+                    }
+                    public GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids.TProduct_id.TArea_id getArea_id(){
+                        return this.area_id;
+                    }
+
+                    public void setQty_available(Integer value){
+                        this.qty_available = value;
+                    }
+                    public Integer getQty_available(){
+                        return this.qty_available;
+                    }
+
+                    public void setName(String value){
+                        this.name = value;
+                    }
+                    public String getName(){
+                        return this.name;
+                    }
+
+                    public void setDefault_code(String value){
+                        this.default_code = value;
+                    }
+                    public String getDefault_code(){
+                        return this.default_code;
+                    }
+
+                }
+                private	Integer	product_qty;	/*900*/
+                private GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids.TProduct_id product_id;	/*TProduct_id*/
+                private	Integer	pack_id;	/*2788*/
+                private	Integer	qty_done;/*900*/
+
+                public int getOrigin_qty() {
+                    return origin_qty;
+                }
+
+                public void setOrigin_qty(int origin_qty) {
+                    this.origin_qty = origin_qty;
+                }
+
+                private int origin_qty;
+
+                public void setProduct_qty(Integer value){
+                    this.product_qty = value;
+                }
+                public Integer getProduct_qty(){
+                    return this.product_qty;
+                }
+
+                public void setProduct_id(GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids.TProduct_id value){
+                    this.product_id = value;
+                }
+                public GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids.TProduct_id getProduct_id(){
+                    return this.product_id;
+                }
+
+                public void setPack_id(Integer value){
+                    this.pack_id = value;
+                }
+                public Integer getPack_id(){
+                    return this.pack_id;
+                }
+
+                public void setQty_done(Integer value){
+                    this.qty_done = value;
+                }
+                public Integer getQty_done(){
+                    return this.qty_done;
+                }
+
             }
 
         }

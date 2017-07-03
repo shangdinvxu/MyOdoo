@@ -76,6 +76,14 @@ public class NFcLoginBean {
         }
 
         public static class ResDataBean {
+            public String getError() {
+                return error;
+            }
+
+            public void setError(String error) {
+                this.error = error;
+            }
+
             /**
              * card_num : EACF3212
              * employee_id : 455
@@ -83,6 +91,7 @@ public class NFcLoginBean {
              * name : 何婷
              */
 
+            private String error;
             private String card_num;
             private int employee_id;
             private String work_email;

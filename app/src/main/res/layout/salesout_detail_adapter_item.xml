@@ -14,9 +14,16 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="待入库"
+        android:text="位置"
         android:id="@+id/need_in"
         android:layout_weight="1"/>
+    <TextView
+        android:id="@+id/origin_qty"
+        android:layout_width="0dp"
+        android:layout_weight="1.5"
+        android:layout_height="match_parent"
+        android:text="初始需求"
+        android:gravity="center"/>
     <TextView
         android:layout_width="0dp"
         android:layout_height="match_parent"

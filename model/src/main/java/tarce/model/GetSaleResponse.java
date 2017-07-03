@@ -125,7 +125,17 @@ public class GetSaleResponse implements Serializable{
                 private	Integer	product_qty;	/*900*/
                 private	TProduct_id	product_id;	/*TProduct_id*/
                 private	Integer	pack_id;	/*2788*/
-                private	Integer	qty_done;	/*900*/
+                private	Integer	qty_done;/*900*/
+
+                public int getOrigin_qty() {
+                    return origin_qty;
+                }
+
+                public void setOrigin_qty(int origin_qty) {
+                    this.origin_qty = origin_qty;
+                }
+
+                private int origin_qty;
 
                 public void setProduct_qty(Integer value){
                     this.product_qty = value;
