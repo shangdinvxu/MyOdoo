@@ -93,13 +93,8 @@ public class ShowProcessActivity extends BaseActivity {
             @Override
             public void onResponse(Call<ProcessDeatilBean> call, Response<ProcessDeatilBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
-                    if (response.body().getResult().getRes_data() == null) {
-                        /*detailAdapter = new ProcessDetailAdapter(R.layout.adapter_process_detail, beanList);
-                        recyclerDetailProcess.setAdapter(detailAdapter);*/
-                        return;
-                    }
+                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body().getResult()==null && response.body().getResult().getRes_code() == 1) {
                     for (int i = 0; i < response.body().getResult().getRes_data().size(); i++) {
                         if (response.body().getResult().getRes_data().get(i).getState().equals("delay")) {
                             beanList.set(0, new ProcessShowBean("延误", response.body().getResult().getRes_data().get(i).getCount()));

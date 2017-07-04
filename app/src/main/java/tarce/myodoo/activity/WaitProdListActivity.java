@@ -144,6 +144,7 @@ public class WaitProdListActivity extends BaseActivity {
                     ToastUtils.showCommonToast(WaitProdListActivity.this, response.body().getError().getMessage());
                     return;
                 }
+                if (response.body().getResult() == null)return;
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                     beanList = response.body().getResult().getRes_data();
                     if (move == Refresh_Move){

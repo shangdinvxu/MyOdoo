@@ -32,6 +32,7 @@ import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.ConfirmPurchaseActivity;
 import tarce.myodoo.activity.MainActivity;
+import tarce.myodoo.activity.incentroy.InventroyActivity;
 import tarce.myodoo.activity.takedeliver.TakeDeliverActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
@@ -127,6 +128,7 @@ public class WarehouseFragment extends Fragment {
             public void onResponse(Call<LoadActionBean> call, Response<LoadActionBean> response) {
                 //  AlertAialogUtils.dismissDefultProgressDialog();
                 if (response.body() == null)return;
+                if (response.body().getResult() == null)return;
                 try {
                     if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                         res_data = response.body().getResult().getRes_data();
@@ -184,6 +186,13 @@ public class WarehouseFragment extends Fragment {
                         break;
                     case "零售出货":
                         IntentFactory.start_RetailSub_Activity(getActivity());
+                        break;
+                    case "零售退货":
+                        IntentFactory.start_RetailSub_Activity(getActivity());
+                        break;
+                    case "盘点":
+                        Intent intent2 = new Intent(getActivity(), InventroyActivity.class);
+                        startActivity(intent2);
                         break;
                 }
             }

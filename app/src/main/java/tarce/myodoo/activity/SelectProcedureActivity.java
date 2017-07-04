@@ -96,6 +96,7 @@ public class SelectProcedureActivity extends BaseActivity {
             @Override
             public void onResponse(Call<GetProcessBean> call, Response<GetProcessBean> response) {
                 if (response.body() == null)return;
+                if (response.body().getResult()==null)return;
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                     listSubBeen = response.body().getResult().getRes_data();
                     for (int i = 0; i < listSubBeen.size(); i++) {
@@ -110,7 +111,7 @@ public class SelectProcedureActivity extends BaseActivity {
                         @Override
                         public void onResponse(Call<GetNumProcess> call, Response<GetNumProcess> response) {
                             dismissDefultProgressDialog();
-                            if (response.body() == null)return;
+                            if (response.body() == null || response.body().getResult()==null)return;
                           //  Log.i(TAG, response.body().getJsonrpc()+"  "+response.body().getId());
                             if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                                 delay_num = new ArrayList<>();

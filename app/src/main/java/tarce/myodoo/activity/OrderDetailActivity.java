@@ -213,7 +213,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             factroyRemark.enqueue(new MyCallback<GetFactroyRemarkBean>() {
                 @Override
                 public void onResponse(Call<GetFactroyRemarkBean> call, Response<GetFactroyRemarkBean> response) {
-                    if (response == null)return;
+                    if (response == null || response.body().getResult() == null)return;
                     if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                         String remark = response.body().getResult().getRes_data().getFactory_mark();
                         new InsertFeedbackDial(OrderDetailActivity.this, R.style.MyDialogStyle, new InsertFeedbackDial.OnSendCommonClickListener() {
@@ -293,8 +293,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                 tvStateOrder.setText("等待备料");
                 tvStartProduce.setText("开始备料");
                 click_check = STATE_WAIT_WATERIAL;
-                //  camera_or_relative = false;
-                // framelayoutProduct.setVisibility(View.GONE);
                 tvShowCode.setVisibility(View.GONE);
                 showLinThreeCang();
                 break;
@@ -302,8 +300,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                 tvStateOrder.setText("备料中");
                 tvStartProduce.setText("备料完成");
                 click_check = STATE_START_PRODUCT;
-                //  camera_or_relative = true;
-                // framelayoutProduct.setVisibility(View.VISIBLE);
                 relativeOrderShow.setVisibility(View.GONE);
                 tvCheckState.setText("展开");
                 imgUpDown.setImageResource(R.mipmap.down);
@@ -312,7 +308,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "finish_prepare_material":
                 tvStateOrder.setText("备料完成");
-                //     framelayoutProduct.setVisibility(View.VISIBLE);
                 click_check = STATE_REQUSIT_RIGISTER;
                 tvStartProduce.setText("领料登记");
                 tvAreaLook.setVisibility(View.VISIBLE);
@@ -325,7 +320,6 @@ public class OrderDetailActivity extends ToolBarActivity {
             case "already_picking":
                 tvStateOrder.setText("已领料");
                 click_check = STATE_ALREADY_PICKING;
-                // framelayoutProduct.setVisibility(View.GONE);
                 tvShowCode.setVisibility(View.GONE);
                 relativeOrderShow.setVisibility(View.VISIBLE);
                 tvCheckState.setText("收起");
@@ -339,7 +333,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "progress":
                 tvStateOrder.setText("进行中");
-                //   framelayoutProduct.setVisibility(View.GONE);
                 tvShowCode.setVisibility(View.GONE);
                 break;
             case "waiting_inspection_finish":
@@ -353,7 +346,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "waiting_inventory_material":
                 tvStateOrder.setText("等待清点退料");
-                //         framelayoutProduct.setVisibility(View.GONE);
                 tvShowCode.setVisibility(View.GONE);
                 tvStartProduce.setText("填写退料");
                 click_check = WRITE_WATERIAL_OUT;
@@ -361,7 +353,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "waiting_warehouse_inspection":
                 tvStateOrder.setText("等待检验退料");
-                //   framelayoutProduct.setVisibility(View.GONE);
                 tvShowCode.setVisibility(View.GONE);
                 tvStartProduce.setText("仓库查看退料信息");
                 click_check = LOOK_MESSAGE_FEEDBACK;
@@ -372,7 +363,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                 break;
             case "done":
                 tvStateOrder.setText("完成");
-                //         framelayoutProduct.setVisibility(View.GONE);
                 tvShowCode.setVisibility(View.GONE);
                 tvStartProduce.setText("清点退料");
                 click_check = CHECK_MATERIAL_RETURN;
@@ -419,7 +409,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             @Override
             public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null) return;
+                if (response.body() == null || response.body().getResult() == null) return;
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                     result = response.body().getResult();
                     resDataBean = response.body().getResult().getRes_data();
@@ -696,7 +686,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                         @Override
                                         public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                             dismissDefultProgressDialog();
-                                            if (response.body() == null) return;
+                                            if (response.body() == null || response.body().getResult() == null) return;
                                             if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                                                 resDataBean = response.body().getResult().getRes_data();
                                                 initView();

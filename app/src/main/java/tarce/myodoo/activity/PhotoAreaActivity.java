@@ -184,7 +184,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
                     areaMessage.enqueue(new MyCallback<AreaMessageBean>() {
                         @Override
                         public void onResponse(Call<AreaMessageBean> call, Response<AreaMessageBean> response) {
-                            if (response.body() == null) return;
+                            if (response.body() == null || response.body().getResult() == null) return;
                             if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null) {
                                 res_data = response.body().getResult().getRes_data();
                                 adapter = new AreaMessageAdapter(R.layout.adapter_area_message, res_data);
@@ -348,7 +348,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
             @Override
             public void onResponse(Call<FinishPrepareMaBean> call, Response<FinishPrepareMaBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null) return;
+                if (response.body() == null ||response.body().getResult() == null) return;
                 try {
                     if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                         AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "提交位置信息成功,点击确定将打印MO单，请等待")

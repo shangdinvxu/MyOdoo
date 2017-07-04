@@ -254,7 +254,7 @@
                         android:id="@+id/eidt_mo_note"
                         android:layout_width="100dp"
                         android:layout_height="match_parent"
-                        android:layout_marginLeft="5dp"
+                        android:layout_marginLeft="7dp"
                         android:focusable="false"
                         android:textSize="12sp"
                         android:background="@drawable/bac_inspect_edit"/>

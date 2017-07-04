@@ -361,6 +361,7 @@ public class ProductingActivity extends ToolBarActivity {
                                                     dialog.dismiss();
                                                 }
                                             }).show();
+                                    isCanAdd = false;
                                     break;
                                 }
                             }

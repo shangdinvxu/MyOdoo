@@ -18,6 +18,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.ButterKnife;
@@ -178,12 +179,20 @@ public class WriteCheckMessaActivity extends BaseActivity {
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("picking_id",resDataBean.getPicking_id());
         hashMap.put("state",state_for);
-        int size = resDataBean.getPack_operation_product_ids().size();
+        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> ids = resDataBean.getPack_operation_product_ids();
+        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> sub_ids = new ArrayList<>();
+        for (int i = 0; i < ids.size(); i++) {
+            if (ids.get(i).getPack_id() == -1){
+                sub_ids.add(ids.get(i));
+            }
+        }
+        ids.removeAll(sub_ids);
+        int size = ids.size();
         Map[] maps = new Map[size];
         for (int i = 0; i < size; i++) {
             Map<Object, Object> map = new HashMap<>();
-            map.put("pack_id",resDataBean.getPack_operation_product_ids().get(i).getPack_id());
-            map.put("qty_done", StringUtils.doubleToInt(resDataBean.getPack_operation_product_ids().get(i).getQty_done()));
+            map.put("pack_id", ids.get(i).getPack_id());
+            map.put("qty_done", StringUtils.doubleToInt(ids.get(i).getQty_done()));
             maps[i] = map;
         }
         hashMap.put("pack_operation_product_ids",maps);
@@ -193,6 +202,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
             public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null)return;
+                if (response.body().getResult() == null)return;
                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                     if (state_for.equals("reject")){
                         ToastUtils.showCommonToast(WriteCheckMessaActivity.this, "退回成功");
@@ -249,12 +259,20 @@ public class WriteCheckMessaActivity extends BaseActivity {
         hashMap.put("qc_note",editWritePizhu.getText().toString());
         hashMap.put("state",state_for);
         hashMap.put("qc_img", BitmapUtils.bitmapToBase64(ImageUtil.decodeFile(selectedImagePath)));
-        int size = resDataBean.getPack_operation_product_ids().size();
+        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> ids = resDataBean.getPack_operation_product_ids();
+        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> sub_ids = new ArrayList<>();
+        for (int i = 0; i < ids.size(); i++) {
+            if (ids.get(i).getPack_id() == -1){
+                sub_ids.add(ids.get(i));
+            }
+        }
+        ids.removeAll(sub_ids);
+        int size = ids.size();
         Map[] maps = new Map[size];
         for (int i = 0; i < size; i++) {
             Map<Object, Object> map = new HashMap<>();
-            map.put("pack_id",resDataBean.getPack_operation_product_ids().get(i).getPack_id());
-            map.put("qty_done", StringUtils.doubleToInt(resDataBean.getPack_operation_product_ids().get(i).getQty_done()));
+            map.put("pack_id", ids.get(i).getPack_id());
+            map.put("qty_done", StringUtils.doubleToInt(ids.get(i).getQty_done()));
             maps[i] = map;
         }
         hashMap.put("pack_operation_product_ids",maps);
@@ -264,6 +282,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
             public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null)return;
+                if (response.body().getResult() == null)return;
                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                     if ("qc_ok".equals(state_for)){
                         AlertAialogUtils.getCommonDialog(WriteCheckMessaActivity.this, "品检通过,等待采购检验")

@@ -147,6 +147,7 @@ public class InspectionFragment extends Fragment {
             @Override
             public void onResponse(Call<GetGroupByListresponse> call, Response<GetGroupByListresponse> response) {
                 if (response.body() == null) return;
+                if (response.body().getResult() == null)return;
                 try {
                     if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null) {
                         int size = response.body().getResult().getRes_data().size();
@@ -174,7 +175,8 @@ public class InspectionFragment extends Fragment {
 
             @Override
             public void onFailure(Call<GetGroupByListresponse> call, Throwable t) {
-                ToastUtils.showCommonToast(getActivity(), t.toString());
+                //ToastUtils.showCommonToast(getActivity(), t.toString());
+                MyLog.e("InsepectionFragment", t.toString());
             }
         });
     }

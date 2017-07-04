@@ -164,14 +164,15 @@ public class FeedbackActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<GetFeedbackBean> call, Response<GetFeedbackBean> response) {
                         dismissDefultProgressDialog();
-                        if (response.body() == null)return;
+                        if (response.body() == null || response.body().getResult() == null)return;
                         if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                             adapter.getData().add(response.body().getResult().getRes_data().get(response.body().getResult().getRes_data().size()-1));
                             adapter.notifyDataSetChanged();
                             ToastUtils.showCommonToast(FeedbackActivity.this, "添加成功");
                             initClick();
                         }else {
-                            ToastUtils.showCommonToast(FeedbackActivity.this, "出现错误，请联系开发人员调试");
+                            MyLog.e("FeedbackActivity", "error");
+                         //   ToastUtils.showCommonToast(FeedbackActivity.this, "出现错误，请联系开发人员调试");
                         }
                     }
 

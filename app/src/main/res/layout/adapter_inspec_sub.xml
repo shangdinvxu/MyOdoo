@@ -15,7 +15,7 @@
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:textSize="12sp"/>
+        android:textSize="11sp"/>
     <TextView
         android:id="@+id/tv_num_inspection"
         android:layout_width="0dp"

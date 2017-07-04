@@ -26,6 +26,8 @@ import tarce.model.inventory.FreeWorkBean;
 import tarce.model.inventory.GetFactroyRemarkBean;
 import tarce.model.inventory.GetFeedbackBean;
 import tarce.model.inventory.GetReturnMaterBean;
+import tarce.model.inventory.InventroyDetailBean;
+import tarce.model.inventory.InventroyResultBean;
 import tarce.model.inventory.LoadInspectionBean;
 import tarce.model.inventory.LoadProductBean;
 import tarce.model.inventory.MaterialDetailBean;
@@ -38,6 +40,7 @@ import tarce.model.inventory.ProcessDeatilBean;
 import tarce.model.inventory.ProductProcessBean;
 import tarce.model.inventory.QcFeedbaskBean;
 import tarce.model.inventory.RejectResultBean;
+import tarce.model.inventory.RetailSubBean;
 import tarce.model.inventory.RukuBean;
 import tarce.model.inventory.SalesOutListResponse;
 import tarce.model.inventory.GetNumProcess;
@@ -439,6 +442,18 @@ public interface InventoryApi {
     /**
      * 零售出货
      * */
-    @POST("get_eb_shop_list")
-    Call<Object> getEbShopList(@Body HashMap hashMap);
+    @POST("eb_order/get_eb_shop_list")
+    Call<RetailSubBean> getEbShopList(@Body HashMap hashMap);
+
+    /**
+     * 盘点
+     * */
+    @POST("get_stock_inventory_list")
+    Call<InventroyResultBean> getStockInvenList(@Body HashMap hashMap);
+
+    /**
+     * 盘点详细列表
+     * */
+    @POST("get_stock_inventory_detail")
+    Call<InventroyDetailBean> getStockDetail(@Body HashMap hashMap);
 }

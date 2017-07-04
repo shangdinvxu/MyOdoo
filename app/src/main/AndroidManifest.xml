@@ -147,6 +147,12 @@
         <activity android:name=".activity.NFCReadingActivity"/>
         <activity android:name=".activity.retail.RetailSubActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".activity.incentroy.InventroyActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.incentroy.InventroyListActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.incentroy.InventroyDetailActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

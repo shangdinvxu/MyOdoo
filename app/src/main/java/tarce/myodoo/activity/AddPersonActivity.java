@@ -285,6 +285,7 @@ public class AddPersonActivity extends BaseActivity {
             public void onResponse(Call<FreeWorkBean> call, Response<FreeWorkBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
+                if (response.body().getResult() == null)return;
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     res_data = response.body().getResult().getRes_data();
                     map = new HashMap<>();
@@ -294,7 +295,7 @@ public class AddPersonActivity extends BaseActivity {
                     adapter = new WorkPersonAdapter(res_data, AddPersonActivity.this);
                     recyclerPersonWait.setAdapter(adapter);
                 } else {
-                    ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
+                    Log.e("AddpersonActivity", "error");
                 }
             }
 
@@ -340,7 +341,7 @@ public class AddPersonActivity extends BaseActivity {
                                 personAdapter.notifyDataSetChanged();
                             }
                         } else {
-                            ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
+                            Log.e("AddPersonActivity", "error");
                         }
                     }
 
@@ -372,6 +373,7 @@ public class AddPersonActivity extends BaseActivity {
                 add_name.add(new WorkingStateBean(adapter.getSelected().get(i).getName(), ""));
                 res_data_working.add(adapter.getSelected().get(i).getName());
             } else {
+              //  adapter.getSelected().remove(adapter.getSelected().get(i));
                 ToastUtils.showCommonToast(AddPersonActivity.this, "已经添加该员工");
             }
         }

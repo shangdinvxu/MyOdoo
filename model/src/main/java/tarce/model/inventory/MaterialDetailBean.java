@@ -19,6 +19,16 @@ public class MaterialDetailBean {
     private Object id;
     private ResultBean result;
 
+    public OrderDetailBean.ErrorBean getError() {
+        return error;
+    }
+
+    public void setError(OrderDetailBean.ErrorBean error) {
+        this.error = error;
+    }
+
+    private OrderDetailBean.ErrorBean error;
+
     public String getJsonrpc() {
         return jsonrpc;
     }
