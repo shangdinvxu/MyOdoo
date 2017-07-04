@@ -165,6 +165,7 @@ public class NFCReadingActivity extends BaseActivity {
                                     if (qPResult.getCardSerialNo() == null) {
                                         errorText.setText("非接卡序列号null: " + "" + Const.MessageTag.DATA);
                                     } else {
+                                        tv_tip.setVisibility(View.GONE);
                                         String NFC_Number = ISOUtils.hexString(qPResult.getCardSerialNo());
                                         nfcNumber.setText(NFC_Number);
                                         final HashMap<Object, Object> hashMapBand = new HashMap<>();
@@ -224,7 +225,7 @@ public class NFCReadingActivity extends BaseActivity {
 
                                             @Override
                                             public void onFailure(Call<RequestBindUserBean> call, Throwable t) {
-
+                                                    MyLog.e("NFCReadingActivity", t.toString());
                                             }
                                         });
 

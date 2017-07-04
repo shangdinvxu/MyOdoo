@@ -8,6 +8,7 @@ import tarce.myodoo.activity.ProductLlActivity;
 import tarce.myodoo.activity.SalesInActivity;
 import tarce.myodoo.activity.SelectProcedureActivity;
 import tarce.myodoo.activity.inspect.InspectionSubActivity;
+import tarce.myodoo.activity.retail.RetailSubActivity;
 import tarce.myodoo.activity.salesout.SalesOutActivity;
 
 
@@ -77,5 +78,12 @@ public class IntentFactory {
         context.startActivity(intent);
     }
 
+    /**
+     * 跳转至零售子页面
+     * */
+    public static void start_RetailSub_Activity(Context context){
+        Intent intent = new Intent(context, RetailSubActivity.class);
+        context.startActivity(intent);
+    }
 
 }

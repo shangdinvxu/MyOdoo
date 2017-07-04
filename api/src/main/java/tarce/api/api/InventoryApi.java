@@ -435,4 +435,10 @@ public interface InventoryApi {
 
     @POST("update_factory_remark")
     Call<CommonBean> updateFactroyRemark(@Body HashMap hashMap);
+
+    /**
+     * 零售出货
+     * */
+    @POST("get_eb_shop_list")
+    Call<Object> getEbShopList(@Body HashMap hashMap);
 }

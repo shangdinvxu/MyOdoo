@@ -201,8 +201,8 @@ public class AddPersonActivity extends BaseActivity {
                                         }
                                     });
                                 } else {
-                                    ToastUtils.showCommonToast(AddPersonActivity.this, "没有匹配到该序列号所属员工信息");
                                     time.onFinish();
+                                    ToastUtils.showCommonToast(AddPersonActivity.this, "没有匹配到该序列号所属员工信息");
                                 }
                             }
                             processingUnLock();

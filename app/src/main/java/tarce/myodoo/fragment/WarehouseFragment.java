@@ -182,6 +182,9 @@ public class WarehouseFragment extends Fragment {
                     case "生产入库":
                         IntentFactory.start_WaitRework_Activity(getActivity(),"生产入库", "qc_success");
                         break;
+                    case "零售出货":
+                        IntentFactory.start_RetailSub_Activity(getActivity());
+                        break;
                 }
             }
         });

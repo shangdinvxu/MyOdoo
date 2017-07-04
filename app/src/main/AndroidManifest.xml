@@ -144,7 +144,9 @@
         <activity
             android:name=".activity.scancode.ScanCodeActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activity.NFCReadingActivity"></activity>
+        <activity android:name=".activity.NFCReadingActivity"/>
+        <activity android:name=".activity.retail.RetailSubActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
