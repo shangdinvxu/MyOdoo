@@ -106,6 +106,8 @@ public class TakeDeliverDetailActivity extends BaseActivity {
     private DeviceManager deviceManager;
     private Printer printer;
     private LoginResponse userInfoBean;
+    private String notneed;
+    private String from;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +118,8 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         Intent intent = getIntent();
         type_code = intent.getStringExtra("type_code");
         state = intent.getStringExtra("state");
+        from = intent.getStringExtra("from");
+        notneed = intent.getStringExtra("notneed");
         resDataBean = (TakeDelListBean.ResultBean.ResDataBean) intent.getSerializableExtra("dataBean");
         if (resDataBean != null)
             setTitle(resDataBean.getName());
@@ -182,7 +186,10 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                             intent.putIntegerArrayListExtra("intArr", doneNum);
                                             intent.putExtra("type_code", type_code);
                                             intent.putExtra("state", state);
+                                            intent.putExtra("from", from);
+                                            intent.putExtra("notneed", notneed);
                                             startActivity(intent);
+                                            finish();
                                         } else {
                                             ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "请检查完成数量");
                                         }
@@ -213,6 +220,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                         intent.putExtra("bean", resDataBean);
                         intent.putExtra("type_code", type_code);
                         intent.putExtra("state", state);
+                        intent.putExtra("notneed",notneed);
                         startActivity(intent);
                         finish();
                     }
@@ -230,6 +238,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                         intent.putExtra("bean", resDataBean);
                         intent.putExtra("type_code", type_code);
                         intent.putExtra("state", state);
+                        intent.putExtra("notneed", notneed);
                         ArrayList<Integer> doneNum = new ArrayList<>();
                         for (int i = 0; i < data.size(); i++) {
                             doneNum.add(StringUtils.doubleToInt(data.get(i).getQty_done()));
@@ -253,12 +262,20 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                         HashMap<Object, Object> hashMap = new HashMap<>();
                                         hashMap.put("state", "transfer");
                                         hashMap.put("picking_id", resDataBean.getPicking_id());
-                                        int size = resDataBean.getPack_operation_product_ids().size();
+                                        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> ids = resDataBean.getPack_operation_product_ids();
+                                        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> sub_ids = new ArrayList<>();
+                                        for (int i = 0; i < ids.size(); i++) {
+                                            if (ids.get(i).getPack_id() == -1){
+                                                sub_ids.add(ids.get(i));
+                                            }
+                                        }
+                                        ids.removeAll(sub_ids);
+                                        int size = ids.size();
                                         Map[] maps = new Map[size];
                                         for (int i = 0; i < size; i++) {
                                             Map<Object, Object> map = new HashMap<>();
-                                            map.put("pack_id", resDataBean.getPack_operation_product_ids().get(i).getPack_id());
-                                            map.put("qty_done", StringUtils.doubleToInt(resDataBean.getPack_operation_product_ids().get(i).getQty_done()));
+                                            map.put("pack_id", ids.get(i).getPack_id());
+                                            map.put("qty_done", StringUtils.doubleToInt(ids.get(i).getQty_done()));
                                             maps[i] = map;
                                         }
                                         hashMap.put("pack_operation_product_ids", maps);
@@ -267,7 +284,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                             @Override
                                             public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                                                 dismissDefultProgressDialog();
-                                                if (response.body() == null) return;
+                                                if (response.body() == null || response.body().getResult() == null) return;
                                                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                                                     ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "入库完成");
                                                     finish();

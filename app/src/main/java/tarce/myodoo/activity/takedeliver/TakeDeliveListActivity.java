@@ -203,6 +203,8 @@ public class TakeDeliveListActivity extends BaseActivity {
                 intent.putExtra("dataBean", listAdapter.getData().get(position));
                 intent.putExtra("type_code", listAdapter.getData().get(position).getPicking_type_code());
                 intent.putExtra("state",listAdapter.getData().get(position).getState());
+                intent.putExtra("from", from);
+                intent.putExtra("notneed", notneed);
                 startActivity(intent);
             }
         });

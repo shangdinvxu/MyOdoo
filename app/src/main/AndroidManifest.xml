@@ -137,7 +137,8 @@
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.takedeliver.TakeDeliveListActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".activity.takedeliver.TakeDeliverDetailActivity"
             android:screenOrientation="portrait" />
@@ -152,6 +153,15 @@
         <activity android:name=".activity.incentroy.InventroyListActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.incentroy.InventroyDetailActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.inquiriesstock.StockListActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".activity.inquiriesstock.StockDetailActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.inquiriesstock.StockMoveListActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.inquiriesstock.StockSubDetailActivity"
             android:screenOrientation="portrait"/>
     </application>
 

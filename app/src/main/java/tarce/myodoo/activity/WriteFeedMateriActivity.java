@@ -114,8 +114,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                 @Override
                 public void onResponse(Call<GetReturnMaterBean> call, Response<GetReturnMaterBean> response) {
                     dismissDefultProgressDialog();
-                    if (response.body() == null) return;
-                    if (response.body().getResult() == null)return;
+                    if (response.body() == null || response.body().getResult() == null) return;
                     if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                         adapter = new WriteFeedbackNumAdapter(R.layout.adapter_write_feednum, response.body().getResult().getRes_data());
                         recyclerFeedMaterial.setAdapter(adapter);
@@ -194,8 +193,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                 @Override
                                 public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                     dismissDefultProgressDialog();
-                                    if (response.body() == null) return;
-                                    if (response.body().getResult() == null)return;
+                                    if (response.body() == null || response.body().getResult() == null) return;
                                     if (response.body().getError() != null) {
                                         ToastUtils.showCommonToast(WriteFeedMateriActivity.this, response.body().getError().getMessage());
                                         return;

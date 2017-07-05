@@ -84,6 +84,8 @@ public class TakeDeAreaActivity extends BaseActivity {
     private ArrayList<Integer> intArr;
     private String type_code;
     private String state;
+    private String notneed;
+    private String from;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +97,8 @@ public class TakeDeAreaActivity extends BaseActivity {
         type_code = intent.getStringExtra("type_code");
         state = intent.getStringExtra("state");
         intArr = intent.getIntegerArrayListExtra("intArr");
+        from = intent.getStringExtra("from");
+        notneed = intent.getStringExtra("notneed");
         resDataBean = (TakeDelListBean.ResultBean.ResDataBean) intent.getSerializableExtra("bean");
         recyclerArea.setLayoutManager(new LinearLayoutManager(TakeDeAreaActivity.this));
         recyclerArea.addItemDecoration(new DividerItemDecoration(TakeDeAreaActivity.this,
@@ -131,11 +135,19 @@ public class TakeDeAreaActivity extends BaseActivity {
                         hashMap.put("post_area_name",editAreaMessage.getText().toString());
                         hashMap.put("state","post");
                         hashMap.put("post_img", BitmapUtils.bitmapToBase64(ImageUtil.decodeFile(selectedImagePath)));
-                        int size = resDataBean.getPack_operation_product_ids().size();
+                        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> ids = resDataBean.getPack_operation_product_ids();
+                        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> sub_ids = new ArrayList<>();
+                        for (int i = 0; i < ids.size(); i++) {
+                            if (ids.get(i).getPack_id() == -1){
+                                sub_ids.add(ids.get(i));
+                            }
+                        }
+                        ids.removeAll(sub_ids);
+                        int size = ids.size();
                         Map[] maps = new Map[size];
                         for (int i = 0; i < size; i++) {
                             Map<Object, Object> map = new HashMap<>();
-                            map.put("pack_id",resDataBean.getPack_operation_product_ids().get(i).getPack_id());
+                            map.put("pack_id", ids.get(i).getPack_id());
                             map.put("qty_done", intArr.get(i));
                             maps[i] = map;
                         }
@@ -145,7 +157,7 @@ public class TakeDeAreaActivity extends BaseActivity {
                             @Override
                             public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                                 dismissDefultProgressDialog();
-                                if (response.body() == null)return;
+                                if (response.body() == null || response.body().getResult() == null)return;
                                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                                     AlertAialogUtils.getCommonDialog(TakeDeAreaActivity.this, "提交物料信息成功，等待入库品检")
                                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -154,6 +166,10 @@ public class TakeDeAreaActivity extends BaseActivity {
                                                     Intent intent = new Intent(TakeDeAreaActivity.this, TakeDeliveListActivity.class);
                                                     intent.putExtra("type_code", type_code);
                                                     intent.putExtra("state",state);
+                                                    intent.putExtra("from",from);
+                                                    if (from.equals("no")){
+                                                        intent.putExtra("notneed",notneed);
+                                                    }
                                                     startActivity(intent);
                                                     finish();
                                                 }
@@ -163,6 +179,10 @@ public class TakeDeAreaActivity extends BaseActivity {
                                             Intent intent = new Intent(TakeDeAreaActivity.this, TakeDeliveListActivity.class);
                                             intent.putExtra("type_code", type_code);
                                             intent.putExtra("state",state);
+                                            intent.putExtra("from",from);
+                                            if (from.equals("no")){
+                                                intent.putExtra("notneed",notneed);
+                                            }
                                             startActivity(intent);
                                             finish();
                                         }
@@ -198,8 +218,8 @@ public class TakeDeAreaActivity extends BaseActivity {
                     areaMessage.enqueue(new MyCallback<AreaMessageBean>() {
                         @Override
                         public void onResponse(Call<AreaMessageBean> call, Response<AreaMessageBean> response) {
-                            if (response.body() == null) return;
-                            if (response.body().getResult().getRes_code() == 1) {
+                            if (response.body() == null || response.body().getResult() == null) return;
+                            if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1) {
                                 res_data = response.body().getResult().getRes_data();
                                 adapter = new AreaMessageAdapter(R.layout.adapter_area_message, res_data);
                                 recyclerArea.setAdapter(adapter);

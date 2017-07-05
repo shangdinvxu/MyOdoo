@@ -68,6 +68,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
     private String state;
     private String confirm;
     private ArrayList<Integer> intArr;
+    private String notneed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +81,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
         confirm = intent.getStringExtra("confirm");
         type_code = intent.getStringExtra("type_code");
         state = intent.getStringExtra("state");
+        notneed = intent.getStringExtra("notneed");
         resDataBean = (TakeDelListBean.ResultBean.ResDataBean) intent.getSerializableExtra("bean");
         inventoryApi = RetrofitClient.getInstance(WriteCheckMessaActivity.this).create(InventoryApi.class);
         if (confirm.equals("confirm")){
@@ -201,8 +203,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
             @Override
             public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null)return;
-                if (response.body().getResult() == null)return;
+                if (response.body() == null || response.body().getResult() == null)return;
                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                     if (state_for.equals("reject")){
                         ToastUtils.showCommonToast(WriteCheckMessaActivity.this, "退回成功");
@@ -210,6 +211,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
                         intent.putExtra("from", "no");
                         intent.putExtra("type_code", type_code);
                         intent.putExtra("state",state);
+                        intent.putExtra("notneed", notneed);
                         startActivity(intent);
                         finish();
                     }else if (state_for.equals("cancel_backorder") || state_for.equals("process")){
@@ -221,6 +223,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
                                         intent.putExtra("from", "no");
                                         intent.putExtra("type_code", type_code);
                                         intent.putExtra("state",state);
+                                        intent.putExtra("notneed", notneed);
                                         startActivity(intent);
                                         finish();
                                     }
@@ -231,6 +234,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
                                 intent.putExtra("from", "no");
                                 intent.putExtra("type_code", type_code);
                                 intent.putExtra("state",state);
+                                intent.putExtra("notneed", notneed);
                                 startActivity(intent);
                                 finish();
                             }
@@ -281,8 +285,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
             @Override
             public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null)return;
-                if (response.body().getResult() == null)return;
+                if (response.body() == null || response.body().getResult() == null)return;
                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                     if ("qc_ok".equals(state_for)){
                         AlertAialogUtils.getCommonDialog(WriteCheckMessaActivity.this, "品检通过,等待采购检验")

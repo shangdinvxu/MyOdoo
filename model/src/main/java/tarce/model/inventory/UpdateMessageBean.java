@@ -50,6 +50,27 @@ public class UpdateMessageBean {
         private String res_msg;
         private int res_code;
 
+        public ResDataBean getRes_data() {
+            return res_data;
+        }
+
+        public void setRes_data(ResDataBean res_data) {
+            this.res_data = res_data;
+        }
+
+        private ResDataBean res_data;
+        public static class ResDataBean{
+            public String getError() {
+                return error;
+            }
+
+            public void setError(String error) {
+                this.error = error;
+            }
+
+            private String error;
+        }
+
         public String getRes_msg() {
             return res_msg;
         }

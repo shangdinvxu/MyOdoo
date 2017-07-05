@@ -100,7 +100,6 @@ public class PhotoAreaActivity extends ToolBarActivity {
 
     private String imgPath;//图片拍照照片的本地路径
     private String imgName;//后缀名
-    private Intent mIntentPic;
     private String type;
     private int order_id;
     private int limit;
@@ -184,7 +183,11 @@ public class PhotoAreaActivity extends ToolBarActivity {
                     areaMessage.enqueue(new MyCallback<AreaMessageBean>() {
                         @Override
                         public void onResponse(Call<AreaMessageBean> call, Response<AreaMessageBean> response) {
-                            if (response.body() == null || response.body().getResult() == null) return;
+                            if (response.body() == null) return;
+                            if (response.body().getResult()==null){
+                                ToastUtils.showCommonToast(PhotoAreaActivity.this, "没有返回数据");
+                                return;
+                            }
                             if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null) {
                                 res_data = response.body().getResult().getRes_data();
                                 adapter = new AreaMessageAdapter(R.layout.adapter_area_message, res_data);
@@ -241,8 +244,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
             return;
         }
         if (change) {
-            AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "")
-                    .setMessage("是否确定提交产品位置信息")
+            AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "是否确定提交产品位置信息")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -285,11 +287,14 @@ public class PhotoAreaActivity extends ToolBarActivity {
             objectCall.enqueue(new MyCallback<UpdateMessageBean>() {
                 @Override
                 public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
+                    dismissDefultProgressDialog();
                     if (response.body() == null) return;
 
                     if (response.body().getResult().getRes_code() == 1) {
                         //提交备料
                         commitBeiliao();
+                    }else if (response.body().getResult().getRes_code() == -1 && response.body().getResult().getRes_data()!=null){
+                        ToastUtils.showCommonToast(PhotoAreaActivity.this, response.body().getResult().getRes_data().getError());
                     }
                 }
 

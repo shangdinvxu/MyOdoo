@@ -27,6 +27,8 @@ public class StringUtils {
             transtring = "品检";
         }else if (string.equals("validate")){
             transtring = "等待采购检验";
+        }else if (string.equals("waiting")){
+            transtring = "等待其他作业";
         }
         return transtring;
     }

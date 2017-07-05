@@ -609,7 +609,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                     @Override
                                     public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                         dismissDefultProgressDialog();
-                                        if (response.body() == null) return;
+                                        if (response.body() == null || response.body().getResult() == null) return;
                                         if (response.body().getError() != null){
                                             ToastUtils.showCommonToast(OrderDetailActivity.this, response.body().getError().getMessage());
                                             return;

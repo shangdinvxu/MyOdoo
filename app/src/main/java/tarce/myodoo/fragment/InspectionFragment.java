@@ -146,8 +146,7 @@ public class InspectionFragment extends Fragment {
         groupsByList.enqueue(new MyCallback<GetGroupByListresponse>() {
             @Override
             public void onResponse(Call<GetGroupByListresponse> call, Response<GetGroupByListresponse> response) {
-                if (response.body() == null) return;
-                if (response.body().getResult() == null)return;
+                if (response.body() == null || response.body().getResult() == null) return;
                 try {
                     if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null) {
                         int size = response.body().getResult().getRes_data().size();
@@ -189,8 +188,7 @@ public class InspectionFragment extends Fragment {
         loadActionBeanCall.enqueue(new MyCallback<LoadInspectionBean>() {
             @Override
             public void onResponse(Call<LoadInspectionBean> call, Response<LoadInspectionBean> response) {
-                    if (response.body() == null)return;
-                    if (response.body().getResult() == null)return;
+                    if (response.body() == null || response.body().getResult() == null)return;
                     if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                         res_data = response.body().getResult().getRes_data();
                         Integer needaction_counter0 = res_data.getLinkloving_mrp_extend_mrp_production_wait_qc_inspection().getNeedaction_counter();

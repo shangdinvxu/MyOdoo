@@ -6,13 +6,24 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toobar_inventroy"
         android:layout_width="match_parent"
-        android:layout_height="50dp">
+        android:layout_height="50dp"
+        android:background="@color/color_5693f8">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <ImageView
+            <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="库存调整"
+                android:layout_centerInParent="true"/>
+            <ImageView
+                android:id="@+id/image_inven"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/attention_right_plus"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"/>
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
     <android.support.v4.widget.SwipeRefreshLayout

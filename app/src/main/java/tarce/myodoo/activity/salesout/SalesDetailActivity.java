@@ -198,7 +198,7 @@ public class SalesDetailActivity extends BaseActivity {
         salesDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (position>=adapter.getData().size()-1)return;
+                if (position>adapter.getData().size()-1)return;
                 final GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids obj =
                         (GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids) adapter.getData().get(position);
                 if (obj.getPack_id() == -1) return;
@@ -435,7 +435,7 @@ public class SalesDetailActivity extends BaseActivity {
                                             @Override
                                             public void onResponse(Call<GetSaleResponse> call, final Response<GetSaleResponse> response) {
                                                 dismissDefultProgressDialog();
-                                                if (response.body() == null) return;
+                                                if (response.body() == null || response.body().getResult() == null) return;
                                                 if (response.body().getError() != null) {
                                                     ToastUtils.showCommonToast(SalesDetailActivity.this, response.body().getError().getMessage());
                                                     return;
@@ -535,7 +535,7 @@ public class SalesDetailActivity extends BaseActivity {
                         @Override
                         public void onResponse(Call<GetSaleResponse> call, Response<GetSaleResponse> response) {
                             dismissDefultProgressDialog();
-                            if (response.body() == null) return;
+                            if (response.body() == null || response.body().getResult() == null) return;
                             if (response.body().getResult().getRes_code() == 1) {
                                 Toast.makeText(SalesDetailActivity.this, "物流信息上传成功!\n由于未操作打印，此次将自动打印笨单据，请等待！", Toast.LENGTH_LONG).show();
                                 for (int i = 0; i < 3; i++) {

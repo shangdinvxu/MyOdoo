@@ -47,6 +47,8 @@ import tarce.model.inventory.GetNumProcess;
 import tarce.model.inventory.StartInspectBean;
 import tarce.model.inventory.StartProductBean;
 import tarce.model.inventory.StartReworkBean;
+import tarce.model.inventory.StockListBean;
+import tarce.model.inventory.StockMoveListBean;
 import tarce.model.inventory.TakeDeAreaBean;
 import tarce.model.inventory.TakeDelListBean;
 import tarce.model.inventory.UpdateMessageBean;
@@ -58,6 +60,17 @@ import tarce.model.inventory.WorkingWorkerBean;
 
 public interface InventoryApi {
 
+    /**
+     * 查询移动列表
+     * */
+    @POST("get_stock_moves_by_product_id")
+    Call<StockMoveListBean> getStockMoves(@Body HashMap hashMap);
+
+    /**
+     * 库存查询
+     * */
+    @POST("get_product_list")
+    Call<StockListBean> getProductList(@Body HashMap hashMap);
     /**
      * nfc登录
      * */

@@ -105,8 +105,7 @@ public class ProduceFragment extends Fragment {
             @Override
             public void onResponse(Call<LoadProductBean> call, Response<LoadProductBean> response) {
                // AlertAialogUtils.dismissDefultProgressDialog();
-                if (response.body() == null)return;
-                if (response.body().getResult() == null)return;
+                if (response.body() == null || response.body().getResult() == null)return;
                 try {
                     if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                         res_data = response.body().getResult().getRes_data();
