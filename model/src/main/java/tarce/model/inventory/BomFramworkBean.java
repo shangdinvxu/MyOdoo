@@ -198,7 +198,7 @@ public class BomFramworkBean{
 
                 public String code;
                 public String product_specs;
-                private double qty;
+                public double qty;
 
                 public Object process_id;
                 private int id;
@@ -342,7 +342,7 @@ public class BomFramworkBean{
                      */
 
                     public String code;
-                    private double qty;
+                    public double qty;
                     public Object process_id;
                     private int id;
                     public String product_specs;

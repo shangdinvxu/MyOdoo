@@ -12,6 +12,7 @@ import java.util.List;
 
 import tarce.model.inventory.BomFramworkBean;
 import tarce.myodoo.R;
+import tarce.myodoo.utils.StringUtils;
 
 public class DepartmentItem extends AbstractExpandableAdapterItem {
 
@@ -19,6 +20,7 @@ public class DepartmentItem extends AbstractExpandableAdapterItem {
     private ImageView mArrow;
     private TextView mExpand;
     private TextView mProcess_id;
+    private TextView mNum;
 
     @Override
     public int getLayoutResId() {
@@ -31,6 +33,7 @@ public class DepartmentItem extends AbstractExpandableAdapterItem {
         mArrow = (ImageView) root.findViewById(R.id.iv_arrow);
         mExpand = (TextView) root.findViewById(R.id.tv_gongxu);
         mProcess_id = (TextView) root.findViewById(R.id.tv_process_id);
+        mNum = (TextView) root.findViewById(R.id.tv_num);
         root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,6 +76,7 @@ public class DepartmentItem extends AbstractExpandableAdapterItem {
         mName.setText("["+department.code+"]"+department.name);
         mExpand.setText(department.product_specs);
         mProcess_id.setText(String.valueOf(department.process_id));
+        mNum.setText(StringUtils.doubleToString(department.qty));
         ExpandableListItem parentListItem = (ExpandableListItem) model;
         List<?> childItemList = parentListItem.getChildItemList();
         if (childItemList != null && !childItemList.isEmpty()) {

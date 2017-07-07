@@ -12,6 +12,7 @@ import java.util.List;
 
 import tarce.model.inventory.BomSubBean;
 import tarce.myodoo.R;
+import tarce.myodoo.utils.StringUtils;
 
 /**
  * Created by rose.zou on 2017/6/8.
@@ -25,6 +26,7 @@ public class WorkerItem extends AbstractExpandableAdapterItem {
     private ImageView mArrow;
     private TextView mExpand;
     private TextView mProcess_id;
+    private TextView mNum;
 
     @Override
     public void onExpansionToggled(boolean expanded){
@@ -52,6 +54,7 @@ public class WorkerItem extends AbstractExpandableAdapterItem {
         mArrow = (ImageView) root.findViewById(R.id.iv_arrow);
         mExpand = (TextView) root.findViewById(R.id.tv_gongxu);
         mProcess_id = (TextView) root.findViewById(R.id.tv_process_id);
+        mNum = (TextView) root.findViewById(R.id.tv_num);
         root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
@@ -79,6 +82,7 @@ public class WorkerItem extends AbstractExpandableAdapterItem {
         mName.setText("["+employee.code+"]"+employee.name);
         mExpand.setText(employee.product_specs);
         mProcess_id.setText(String.valueOf(employee.process_id));
+        mNum.setText(StringUtils.doubleToString(employee.qty));
         ExpandableListItem parentListItem = (ExpandableListItem) model;
         List<?> childItemList = parentListItem.getChildItemList();
         if (childItemList != null && !childItemList.isEmpty()){

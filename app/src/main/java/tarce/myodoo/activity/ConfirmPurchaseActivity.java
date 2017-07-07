@@ -34,6 +34,7 @@ import tarce.myodoo.adapter.takedeliver.SupplierAdapter;
 import tarce.myodoo.bean.MenuBean;
 import tarce.myodoo.greendaoUtils.SupplierBeanUtils;
 import tarce.myodoo.utils.UserManager;
+import tarce.support.MyLog;
 import tarce.support.ToastUtils;
 import tarce.support.ViewUtils;
 
@@ -195,7 +196,7 @@ public class ConfirmPurchaseActivity extends BaseActivity {
             @Override
             public void onFailure(Call<GetGroupByListresponse> call, Throwable t) {
                 dismissDefultProgressDialog();
-                ToastUtils.showCommonToast(ConfirmPurchaseActivity.this, t.toString());
+                MyLog.e("ConfirmPurchaseActivity:  "+t.toString());
             }
         });
     }

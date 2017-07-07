@@ -53,7 +53,6 @@ public class GetPickNumActivity extends BaseActivity {
     private void getData() {
         showDefultProgressDialog();
         beanList = new ArrayList<>();
-        ProcessShowBean showBean = new ProcessShowBean();
         beanList.add(new ProcessShowBean("延误", 0));
         beanList.add(new ProcessShowBean("今天", 0));
         beanList.add(new ProcessShowBean("明天", 0));
@@ -71,7 +70,7 @@ public class GetPickNumActivity extends BaseActivity {
             @Override
             public void onResponse(Call<ProcessDeatilBean> call, Response<ProcessDeatilBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null) return;
+                if (response.body() == null || response.body().getResult() == null) return;
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null) {
                     for (int i = 0; i < response.body().getResult().getRes_data().size(); i++) {
                         if (response.body().getResult().getRes_data().get(i).getState().equals("delay")) {

@@ -104,7 +104,7 @@ public class BuGetLiaoActivity extends BaseActivity {
                             @Override
                             public void onResponse(Call<BuLlBean> call, Response<BuLlBean> response) {
                                 dismissDefultProgressDialog();
-                                if (response.body() == null)return;
+                                if (response.body() == null || response.body().getResult()==null)return;
                                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                                     finish();
                                 }

@@ -106,20 +106,22 @@ public class NFCReadingActivity extends BaseActivity {
         allUser.enqueue(new Callback<NFCUserBean>() {
             @Override
             public void onResponse(Call<NFCUserBean> call, Response<NFCUserBean> response) {
-                if (response.body().getResult()==null)return;
-                allList = new ArrayList<>();
-                res_data = response.body().getResult().getRes_data();
-                allList =res_data;
-                nfcUseradapter = new NFCUseradapter(R.layout.adapter_nfcread_detail, res_data);
-                recyclerview.setAdapter(nfcUseradapter);
-                initadapterListener();
-                dismissDefultProgressDialog();
+                if (response.body().getResult()==null || response.body().getResult()==null)return;
+                if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_data()!=null){
+                    allList = new ArrayList<>();
+                    res_data = response.body().getResult().getRes_data();
+                    allList =res_data;
+                    nfcUseradapter = new NFCUseradapter(R.layout.adapter_nfcread_detail, res_data);
+                    recyclerview.setAdapter(nfcUseradapter);
+                    initadapterListener();
+                    dismissDefultProgressDialog();
+                }
             }
 
             @Override
             public void onFailure(Call<NFCUserBean> call, Throwable t) {
                 dismissDefultProgressDialog();
-
+                MyLog.e(t.toString());
             }
         });
 
@@ -176,6 +178,7 @@ public class NFCReadingActivity extends BaseActivity {
                                         stringCall.enqueue(new Callback<RequestBindUserBean>() {
                                             @Override
                                             public void onResponse(Call<RequestBindUserBean> call, Response<RequestBindUserBean> response) {
+                                                if (response.body()==null || response.body().getResult()==null)return;
                                                 int res_code = response.body().getResult().getRes_code();
                                                 if (res_code == 1) {
                                                     alertDialog.dismiss();

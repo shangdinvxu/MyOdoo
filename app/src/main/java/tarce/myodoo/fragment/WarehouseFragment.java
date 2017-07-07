@@ -122,12 +122,10 @@ public class WarehouseFragment extends Fragment {
                 "linkloving_mrp_extend.mrp_production_action_qc_success"};
         objectObjectHashMap.put("xml_names", names);
         objectObjectHashMap.put("user_id", MyApplication.userID);
-        //   AlertAialogUtils.showDefultProgressDialog(MainActivity.this);
         Call<LoadActionBean> objectCall = inventoryApi.load_actionCall(objectObjectHashMap);
         objectCall.enqueue(new Callback<LoadActionBean>() {
             @Override
             public void onResponse(Call<LoadActionBean> call, Response<LoadActionBean> response) {
-                //  AlertAialogUtils.dismissDefultProgressDialog();
                 if (response.body() == null || response.body().getResult() == null)return;
                 try {
                     if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
@@ -149,7 +147,6 @@ public class WarehouseFragment extends Fragment {
 
             @Override
             public void onFailure(Call<LoadActionBean> call, Throwable t) {
-                //      AlertAialogUtils.dismissDefultProgressDialog();
                 MyLog.e("WarehouseFragment", t.toString());
             }
         });
@@ -201,7 +198,6 @@ public class WarehouseFragment extends Fragment {
                 }
             }
         });
-
     }
 
 

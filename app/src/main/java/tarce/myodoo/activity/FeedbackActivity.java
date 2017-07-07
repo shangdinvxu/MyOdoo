@@ -79,14 +79,14 @@ public class FeedbackActivity extends BaseActivity {
             @Override
             public void onResponse(Call<GetFeedbackBean> call, Response<GetFeedbackBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null)return;
+                if (response.body() == null || response.body().getResult() == null)return;
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                     dataBeanList = response.body().getResult().getRes_data();
                     adapter = new FeedbackAdapter(R.layout.adapter_feedback, dataBeanList);
                     recyclerFeedback.setAdapter(adapter);
                     initClick();
                 }else {
-                    ToastUtils.showCommonToast(FeedbackActivity.this, "出现错误，请联系开发人员调试");
+                    MyLog.e("FeedbackActivity",  "网络请求出错");
                 }
             }
             @Override
@@ -116,18 +116,18 @@ public class FeedbackActivity extends BaseActivity {
                                     @Override
                                     public void onResponse(Call<CommonBean> call, Response<CommonBean> response) {
                                         dismissDefultProgressDialog();
-                                        if (response.body() == null)return;
-                                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult()!=null){
+                                        if (response.body() == null || response.body().getResult()== null)return;
+                                        if (response.body().getResult()!=null && response.body().getResult().getRes_code() == 1){
                                             finish();
                                         }else {
-                                            ToastUtils.showCommonToast(FeedbackActivity.this, "出现错误，请联系开发人员调试");
+                                            MyLog.e("FeedbackActivity", "出现错误，请联系开发人员调试");
                                         }
                                     }
 
                                     @Override
                                     public void onFailure(Call<CommonBean> call, Throwable t) {
                                         dismissDefultProgressDialog();
-                                        ToastUtils.showCommonToast(FeedbackActivity.this, t.toString());
+                                        MyLog.e("FeedbackActivity", t.toString());
                                     }
                                 });
                             }

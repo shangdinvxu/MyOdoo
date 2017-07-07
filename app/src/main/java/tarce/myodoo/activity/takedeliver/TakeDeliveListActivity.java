@@ -163,8 +163,7 @@ public class TakeDeliveListActivity extends BaseActivity {
             @Override
             public void onResponse(Call<TakeDelListBean> call, Response<TakeDelListBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null)return;
-                if (response.body().getResult()==null)return;
+                if (response.body() == null || response.body().getResult()==null)return;
                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                     res_data = response.body().getResult().getRes_data();
                     if (move == Refresh_Move){

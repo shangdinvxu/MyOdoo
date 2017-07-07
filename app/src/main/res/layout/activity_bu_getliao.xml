@@ -64,8 +64,8 @@
         android:layout_below="@+id/linear_up"
         android:id="@+id/recycler_bu_getliao"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:layout_above="@+id/tv_bottom_bu">
     </android.support.v7.widget.RecyclerView>
     <TextView
         android:id="@+id/tv_bottom_bu"

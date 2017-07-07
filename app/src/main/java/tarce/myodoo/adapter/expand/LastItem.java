@@ -13,6 +13,7 @@ import java.util.List;
 
 import tarce.model.inventory.BomSubBean;
 import tarce.myodoo.R;
+import tarce.myodoo.utils.StringUtils;
 
 /**
  * Created by rose.zou on 2017/6/6.
@@ -24,6 +25,7 @@ public class LastItem extends AbstractExpandableAdapterItem{
     private TextView mTv_name;
     private TextView mTv_gongxu;
     private TextView mTv_processid;
+    private TextView mNum;
     @Override
     public void onExpansionToggled(boolean expanded){
         float start, target;
@@ -49,6 +51,7 @@ public class LastItem extends AbstractExpandableAdapterItem{
         mTv_name = (TextView) root.findViewById(R.id.tv_name);
         mTv_gongxu = (TextView) root.findViewById(R.id.tv_gongxu);
         mTv_processid = (TextView) root.findViewById(R.id.tv_process_id);
+        mNum = (TextView) root.findViewById(R.id.tv_num);
         root.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v){
@@ -76,6 +79,7 @@ public class LastItem extends AbstractExpandableAdapterItem{
         mTv_name.setText("["+employee.code+"]"+employee.name);
         mTv_gongxu.setText(employee.product_specs);
         mTv_processid.setText(String.valueOf(employee.process_id));
+        mNum.setText(StringUtils.doubleToString(employee.qty));
         ExpandableListItem parentListItem = (ExpandableListItem) model;
         List<?> childItemList = parentListItem.getChildItemList();
         if (childItemList != null && !childItemList.isEmpty()){

@@ -147,6 +147,7 @@ public class BomFramworkActivity extends BaseActivity {
             department.code = bomIdsBeanX.getCode();
             department.product_specs = bomIdsBeanX.getProduct_specs();
             department.process_id = bomIdsBeanX.getProcess_id();
+            department.qty = bomIdsBeanX.getQty();
             if (bomIdsBeanX.getBom_ids().size()>0) {
                 department.setExpanded(false);
                 List<BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX.BomIdsBean> employeeList = new ArrayList<>();
@@ -157,6 +158,7 @@ public class BomFramworkActivity extends BaseActivity {
                     employee.code = bomIdsBean.getCode();
                     employee.product_specs = bomIdsBean.getProduct_specs();
                     employee.process_id = bomIdsBean.getProcess_id();
+                    employee.qty = bomIdsBean.getQty();
                     if (bomIdsBean.getBom_ids().size()>0){
                         employee.setExpanded(false);
                         List<BomSubBean> lastList = new ArrayList<>();
@@ -167,6 +169,7 @@ public class BomFramworkActivity extends BaseActivity {
                             last.code = bomSubBean.getCode();
                             last.product_specs = bomSubBean.getProduct_specs();
                             last.process_id = bomSubBean.getProcess_id();
+                            last.qty = bomSubBean.getQty();
                             if (bomSubBean.getBom_ids().size()>0){
                                 last.setExpanded(false);
                                 List<BomSubBean.BomBottomBean> bottomBeanList = new ArrayList<>();
@@ -177,6 +180,7 @@ public class BomFramworkActivity extends BaseActivity {
                                     bottomBean.code = bottomBean1.getCode();
                                     bottomBean.product_specs = bottomBean1.getProduct_specs();
                                     bottomBean.process_id = bottomBean1.getProcess_id();
+                                    bottomBean.qty = bottomBean1.getQty();
                                     if (bottomBean1.getBom_ids().size()>0){
                                         bottomBean.setExpanded(false);
                                         List<BomSubBean.BomBottomBean.SixBomBottomBean> sixBomBottomBeen = new ArrayList<>();
@@ -187,6 +191,7 @@ public class BomFramworkActivity extends BaseActivity {
                                             bean.code = bean1.getCode();
                                             bean.product_specs = bean1.getProduct_specs();
                                             bean.process_id = bean1.getProcess_id();
+                                            bean.qty = bean1.getQty();
                                             sixBomBottomBeen.add(bean);
                                         }
                                         bottomBean.bom_ids = sixBomBottomBeen;

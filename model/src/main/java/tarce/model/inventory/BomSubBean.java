@@ -11,7 +11,7 @@ import java.util.List;
 
 public class BomSubBean implements ExpandableListItem{
     public String code;
-    private double qty;
+    public double qty;
 
     public Object process_id;
     private int id;
@@ -141,7 +141,7 @@ public class BomSubBean implements ExpandableListItem{
     public static class BomBottomBean implements ExpandableListItem{
 
         public String code;
-        private double qty;
+        public double qty;
 
         public Object process_id;
         private int id;
@@ -270,7 +270,7 @@ public class BomSubBean implements ExpandableListItem{
 
         public static class SixBomBottomBean{
             public String code;
-            private double qty;
+            public double qty;
 
             public Object process_id;
             private int id;
