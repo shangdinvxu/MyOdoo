@@ -284,8 +284,7 @@ public class AddPersonActivity extends BaseActivity {
             @Override
             public void onResponse(Call<FreeWorkBean> call, Response<FreeWorkBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null) return;
-                if (response.body().getResult() == null)return;
+                if (response.body() == null || response.body().getResult() == null) return;
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     res_data = response.body().getResult().getRes_data();
                     map = new HashMap<>();

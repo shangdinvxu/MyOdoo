@@ -675,7 +675,7 @@ public class SalesDetailActivity extends BaseActivity {
         }
         printer.print("\n", 30, TimeUnit.SECONDS);
        // Bitmap mBitmap = CodeUtils.createImage(bundle1.getName()+"&stock.picking&"+bundle1.getPicking_id(), 300, 300, null);
-        Bitmap mBitmap = CodeUtils.createImage(bundle1.getName(), 300, 300, null);
+        Bitmap mBitmap = CodeUtils.createImage(bundle1.getName(), 150, 150, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
         printer.print("\n\n"+"打印时间："+ DateTool.getDateTime(), 30, TimeUnit.SECONDS);
         printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);

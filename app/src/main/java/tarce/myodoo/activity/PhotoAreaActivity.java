@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -107,19 +108,21 @@ public class PhotoAreaActivity extends ToolBarActivity {
     private Printer printer;
     private DeviceManager deviceManager;
     private String typeString;
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 1:
                     printer.print("MO单号：" + resDataBean.getDisplay_name() + "\n\n" + "产品: " + resDataBean.getProduct_name() + "\n\n" + "时间： " + TimeUtils.utc2Local(resDataBean.getDate_planned_start()) + "\n\n" +
                             "负责人: " + resDataBean.getIn_charge_name() + "\n\n" + "生产数量：" + resDataBean.getQty_produced() + "\n\n" + "需求数量：" + resDataBean.getProduct_qty()
                             + "\n\n" + "规格：" + resDataBean.getProduct_id().getProduct_specs() + "\n\n" + "工序：" + resDataBean.getProcess_id().getName() + "\n\n" + "类型：" + typeString
-                            + "\n\n" + "MO单备注：" + resDataBean.getRemark() + "\n\n" + "销售单备注：" + resDataBean.getSale_remark() + "\n\n"+"仓库备注：\n\n\n\n"+"品检备注：\n\n\n\n", 30, TimeUnit.SECONDS);
-                    Bitmap mBitmap = CodeUtils.createImage(resDataBean.getDisplay_name(), 300, 300, null);
+                            + "\n\n" + "MO单备注：" + resDataBean.getRemark() + "\n\n" + "销售单备注：" + resDataBean.getSale_remark() + "\n\n" + "仓库备注：\n\n\n\n" + "品检备注：\n\n\n\n", 30, TimeUnit.SECONDS);
+                    Bitmap mBitmap = CodeUtils.createImage(resDataBean.getDisplay_name(), 150, 150, null);
                     printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
-                    printer.print("\n\n"+"打印时间："+ DateTool.getDateTime(), 30, TimeUnit.SECONDS);
+                    printer.print("\n\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
                     printer.print("\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+                    break;
+                case 2:
                     break;
                 default:
                     break;
@@ -154,7 +157,6 @@ public class PhotoAreaActivity extends ToolBarActivity {
                 typeString = "订单制";
                 break;
         }
-        // setRecyclerview(recyclerArea);
         recyclerArea.setLayoutManager(new LinearLayoutManager(PhotoAreaActivity.this));
         recyclerArea.addItemDecoration(new DividerItemDecoration(PhotoAreaActivity.this,
                 DividerItemDecoration.VERTICAL));
@@ -181,11 +183,11 @@ public class PhotoAreaActivity extends ToolBarActivity {
                         @Override
                         public void onResponse(Call<AreaMessageBean> call, Response<AreaMessageBean> response) {
                             if (response.body() == null) return;
-                            if (response.body().getResult()==null){
+                            if (response.body().getResult() == null) {
                                 ToastUtils.showCommonToast(PhotoAreaActivity.this, "没有返回数据");
                                 return;
                             }
-                            if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null) {
+                            if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                                 res_data = response.body().getResult().getRes_data();
                                 adapter = new AreaMessageAdapter(R.layout.adapter_area_message, res_data);
                                 recyclerArea.setAdapter(adapter);
@@ -202,7 +204,8 @@ public class PhotoAreaActivity extends ToolBarActivity {
 
                         @Override
                         public void onFailure(Call<AreaMessageBean> call, Throwable t) {
-                            ToastUtils.showCommonToast(PhotoAreaActivity.this, t.toString());
+//                            ToastUtils.showCommonToast(PhotoAreaActivity.this, t.toString());
+                            Log.d("PhotoAreaActivity", t.toString());
                         }
                     });
                     return true;
@@ -232,15 +235,19 @@ public class PhotoAreaActivity extends ToolBarActivity {
      */
     @OnClick(R.id.tv_finish_order)
     void commitMessage(View view) {
+        showDefultProgressDialog();
         if (StringUtils.isNullOrEmpty(editAreaMessage.getText().toString())) {
+            dismissDefultProgressDialog();
             ToastUtils.showCommonToast(PhotoAreaActivity.this, "请填写位置信息");
             return;
-        }
-        if (StringUtils.isNullOrEmpty(selectedImagePath)) {
+        } else if (StringUtils.isNullOrEmpty(selectedImagePath)) {
+            dismissDefultProgressDialog();
             ToastUtils.showCommonToast(PhotoAreaActivity.this, "请拍照");
             return;
         }
+        tvFinishOrder.setEnabled(false);
         if (change) {
+            dismissDefultProgressDialog();
             AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "是否确定提交产品位置信息")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
@@ -254,6 +261,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
                             objectCall.enqueue(new MyCallback<UpdateMessageBean>() {
                                 @Override
                                 public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
+                                    tvFinishOrder.setEnabled(true);
                                     dismissDefultProgressDialog();
                                     if (response.body() == null) return;
                                     if (response.body().getResult().getRes_code() == 1) {
@@ -267,14 +275,15 @@ public class PhotoAreaActivity extends ToolBarActivity {
 
                                 @Override
                                 public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
+                                    tvFinishOrder.setEnabled(true);
                                     dismissDefultProgressDialog();
-                                    ToastUtils.showCommonToast(PhotoAreaActivity.this, t.toString());
+//                                    ToastUtils.showCommonToast(PhotoAreaActivity.this, t.toString());
+                                    Log.d("PhotoAreaActivity", t.toString());
                                 }
                             });
                         }
                     }).show();
         } else {
-            showDefultProgressDialog();
             HashMap<Object, Object> hashMap = new HashMap<>();
             hashMap.put("type", type);
             hashMap.put("order_id", order_id);
@@ -284,19 +293,20 @@ public class PhotoAreaActivity extends ToolBarActivity {
             objectCall.enqueue(new MyCallback<UpdateMessageBean>() {
                 @Override
                 public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
-                    dismissDefultProgressDialog();
                     if (response.body() == null) return;
 
                     if (response.body().getResult().getRes_code() == 1) {
+                        showDefultProgressDialog();
                         //提交备料
                         commitBeiliao();
-                    }else if (response.body().getResult().getRes_code() == -1 && response.body().getResult().getRes_data()!=null){
+                    } else if (response.body().getResult().getRes_code() == -1 && response.body().getResult().getRes_data() != null) {
                         ToastUtils.showCommonToast(PhotoAreaActivity.this, response.body().getResult().getRes_data().getError());
                     }
                 }
 
                 @Override
                 public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
+                    tvFinishOrder.setEnabled(true);
                     dismissDefultProgressDialog();
                 }
             });
@@ -349,36 +359,43 @@ public class PhotoAreaActivity extends ToolBarActivity {
         objectCall.enqueue(new MyCallback<FinishPrepareMaBean>() {
             @Override
             public void onResponse(Call<FinishPrepareMaBean> call, Response<FinishPrepareMaBean> response) {
+                tvFinishOrder.setEnabled(true);
                 dismissDefultProgressDialog();
-                if (response.body() == null ||response.body().getResult() == null) return;
-                try {
-                    if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
-                        AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "提交位置信息成功,点击确定将打印MO单，请等待")
-                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        //  Toast.makeText(PhotoAreaActivity.this, "正在打印中...",Toast.LENGTH_SHORT).show();
-                                        Message message = new Message();
-                                        message.what = 1;
-                                        handler.sendMessage(message);
+                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
+                    AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "提交位置信息成功,点击确定将打印MO单，请等待")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    Message message = new Message();
+                                    message.what = 1;
+                                    handler.sendMessage(message);
 
-                                        Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
-                                        intent.putExtra("limit", limit);
-                                        intent.putExtra("process_id", process_id);
-                                        intent.putExtra("state", delay_state);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                }).show();
-                    }
-                }catch (Exception e){
-                    ToastUtils.showCommonToast(PhotoAreaActivity.this, e.toString());
+                                    Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
+                                    intent.putExtra("limit", limit);
+                                    intent.putExtra("process_id", process_id);
+                                    intent.putExtra("state", delay_state);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
+                            intent.putExtra("limit", limit);
+                            intent.putExtra("process_id", process_id);
+                            intent.putExtra("state", delay_state);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }).show();
                 }
             }
 
             @Override
             public void onFailure(Call<FinishPrepareMaBean> call, Throwable t) {
+                tvFinishOrder.setEnabled(true);
                 dismissDefultProgressDialog();
                 ToastUtils.showCommonToast(PhotoAreaActivity.this, t.toString());
             }

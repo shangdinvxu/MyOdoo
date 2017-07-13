@@ -32,9 +32,11 @@ public class UserManager {
     }
 
     public List<String> getGrops(){
-        groups = userInfoBean.getResult().getRes_data().getGroups();
-        for (int i = 0; i < groups.size(); i++) {
-            permissionList.add(groups.get(i).getName());
+        if (userInfoBean!=null){
+            groups = userInfoBean.getResult().getRes_data().getGroups();
+            for (int i = 0; i < groups.size(); i++) {
+                permissionList.add(groups.get(i).getName());
+            }
         }
         return permissionList;
     }

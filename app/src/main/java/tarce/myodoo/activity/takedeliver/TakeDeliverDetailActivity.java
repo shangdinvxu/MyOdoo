@@ -203,6 +203,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 buttomButton2.setText("填写品检信息");
                 buttomButton2.setVisibility(View.VISIBLE);
                 showLinThreePin();
+                initListenerAdapter();
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -316,6 +317,9 @@ public class TakeDeliverDetailActivity extends BaseActivity {
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 final TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean bean
                         = takedAdapter.getData().get(position);
+                if (bean.getPack_id() == -1){
+                    return;
+                }
                 final EditText editText = new EditText(TakeDeliverDetailActivity.this);
                 // final int qty_available = StringUtils.doubleToInt(bean.getProduct_id().getQty_available());
                 final int product_qty = StringUtils.doubleToInt(bean.getProduct_qty());
@@ -391,16 +395,19 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         printer.init();
         printer.print("仓库备注:\n\n\n\n" + "品检备注:\n\n\n\n" + "入库单号：" + resDataBean.getName() + "\n\n" + "源单据: " + resDataBean.getOrigin() + "\n\n" + "合作伙伴： " + resDataBean.getParnter_id(), 30, TimeUnit.SECONDS);
         if (userInfoBean != null) {
-            printer.print("\n\n" + "入库人：" + userInfoBean.getResult().getRes_data().getName() + "\n\n" +
-                    "-------------" + "\n", 30, TimeUnit.SECONDS);
+            printer.print("\n\n" + "入库人：" + userInfoBean.getResult().getRes_data().getName() + "\n" +
+                    "--------------------" + "\n", 30, TimeUnit.SECONDS);
         }
+        printer.print("产品名称        完成数量", 30, TimeUnit.SECONDS);
         for (int i = 0; i < resDataBean.getPack_operation_product_ids().size(); i++) {
-            printer.print("产品名称：" + resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getName() + "\n完成数量：" +
-                    takedAdapter.getData().get(i).getQty_done()
-                    + "\n\n", 30, TimeUnit.SECONDS);
+            if (resDataBean.getPack_operation_product_ids().get(i).getPack_id() != -1){
+                printer.print(resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getName() + "\n" +
+                        takedAdapter.getData().get(i).getQty_done()
+                        + "\n", 30, TimeUnit.SECONDS);
+            }
         }
         printer.print("\n\n", 30, TimeUnit.SECONDS);
-        Bitmap mBitmap = CodeUtils.createImage(resDataBean.getName(), 300, 300, null);
+        Bitmap mBitmap = CodeUtils.createImage(resDataBean.getName(), 150, 150, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
         printer.print("\n\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
         printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);

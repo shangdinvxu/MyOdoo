@@ -299,7 +299,7 @@ public class LoginActivity extends Activity {
         stringCall.enqueue(new MyCallback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if (response.body() == null)
+                if (response.body() == null || response.body().getResult() == null)
                     return;
                 if (response.body().getError() != null) {
                     ToastUtils.showCommonToast(LoginActivity.this, response.body().getError().getMessage());

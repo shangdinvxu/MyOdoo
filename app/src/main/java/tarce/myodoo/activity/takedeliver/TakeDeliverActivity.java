@@ -220,8 +220,8 @@ public class TakeDeliverActivity extends BaseActivity {
                 tvGetLast.setVisibility(View.GONE);
                 if (menuBeanList != null) {
                     menuBeanList.set(0, new MenuBean("待收货", 0));
-                    menuBeanList.set(0, new MenuBean("完成", 0));
-                    menuBeanList.set(0, new MenuBean("待入库", 0));
+                    menuBeanList.set(1, new MenuBean("完成", 0));
+                    menuBeanList.set(2, new MenuBean("待入库", 0));
                 }
                 adapter.notifyDataSetChanged();
                 initDeliever(supplierBeanList.get(position).getPartner_id());
@@ -244,7 +244,7 @@ public class TakeDeliverActivity extends BaseActivity {
             @Override
             public void onResponse(Call<GetGroupByListresponse> call, Response<GetGroupByListresponse> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null) return;
+                if (response.body() == null || response.body().getResult()==null) return;
                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                     List<GetGroupByListresponse.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
                     states = new ArrayList<>();

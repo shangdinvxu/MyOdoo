@@ -1,5 +1,7 @@
 package tarce.myodoo.adapter.takedeliver;
 
+import android.graphics.Color;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -29,6 +31,17 @@ public class DetailTakedAdapter extends BaseQuickAdapter<TakeDelListBean.ResultB
             helper.setText(R.id.need_in,"");
         }else {
             helper.setText(R.id.need_in,item.getProduct_id().getArea_id().getArea_name()+"");
+        }
+        if (item.getPack_id() == -1){
+            helper.setTextColor(R.id.product, Color.GRAY)
+                    .setTextColor(R.id.need_out, Color.GRAY)
+                    .setTextColor(R.id.done, Color.GRAY)
+                    .setTextColor(R.id.need_in, Color.GRAY);
+        }else {
+            helper.setTextColor(R.id.product, Color.BLACK)
+                    .setTextColor(R.id.need_out, Color.BLACK)
+                    .setTextColor(R.id.done, Color.BLACK)
+                    .setTextColor(R.id.need_in, Color.BLACK);
         }
     }
 }

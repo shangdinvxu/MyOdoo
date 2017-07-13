@@ -97,7 +97,7 @@ public class DialogForOrder extends Dialog {
         if (linesBean.getQty_available()>=linesBean.getProduct_uom_qty()){
             tvPrepareNum.setText(StringUtils.doubleToString(linesBean.getProduct_uom_qty()));
         }else {
-            tvPrepareNum.setText("");
+            tvPrepareNum.setText("0");
         }
         tvPrepareNum.setSelection(tvPrepareNum.getText().length());
     }

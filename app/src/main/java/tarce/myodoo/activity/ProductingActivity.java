@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -511,7 +512,7 @@ public class ProductingActivity extends ToolBarActivity {
                             @Override
                             public void onResponse(Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
                                 dismissDefultProgressDialog();
-                                if (response.body() == null) return;
+                                if (response.body() == null || response.body().getResult() == null) return;
                                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                                     new Thread(new Runnable() {
                                         @Override
@@ -554,14 +555,16 @@ public class ProductingActivity extends ToolBarActivity {
                                                 }
                                             }).show();
                                 }else {
-                                    ToastUtils.showCommonToast(ProductingActivity.this, "出现错误，请联系开发人员调试");
+                                    Log.d("ProductingActivity", "出现错误，请联系开发人员调试");
+//                                    ToastUtils.showCommonToast(ProductingActivity.this, "出现错误，请联系开发人员调试");
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                                 dismissDefultProgressDialog();
-                                ToastUtils.showCommonToast(ProductingActivity.this, t.toString());
+                                Log.d("ProductingActivity", t.toString());
+//                                ToastUtils.showCommonToast(ProductingActivity.this, t.toString());
                             }
                         });
                     }
@@ -635,7 +638,7 @@ public class ProductingActivity extends ToolBarActivity {
             factroyRemark.enqueue(new MyCallback<GetFactroyRemarkBean>() {
                 @Override
                 public void onResponse(Call<GetFactroyRemarkBean> call, Response<GetFactroyRemarkBean> response) {
-                    if (response == null)return;
+                    if (response.body() == null || response.body().getResult() == null)return;
                     if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                         String remark = response.body().getResult().getRes_data().getFactory_mark();
                         new InsertFeedbackDial(ProductingActivity.this, R.style.MyDialogStyle, new InsertFeedbackDial.OnSendCommonClickListener() {
@@ -699,7 +702,7 @@ public class ProductingActivity extends ToolBarActivity {
                 "负责人: " + tvReworkProduct.getText() + "\n\n" + "生产数量：" + tvNumProduct.getText() + "\n\n" + "需求数量：" + tvNeedNum.getText()
                 + "\n\n" + "规格：" + tvStringGuige.getText() + "\n\n" + "工序：" + tvGongxuProduct.getText() + "\n\n" + "类型：" + tvTypeProduct.getText()
                 + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+"\n\n", 30, TimeUnit.SECONDS);
-        Bitmap mBitmap = CodeUtils.createImage(order_name, 300, 300, null);
+        Bitmap mBitmap = CodeUtils.createImage(order_name, 150, 150, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
         printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
     }

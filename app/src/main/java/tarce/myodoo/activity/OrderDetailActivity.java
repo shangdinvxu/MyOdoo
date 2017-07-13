@@ -273,7 +273,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 "负责人: " + tvReworkProduct.getText() + "\n\n" + "生产数量：" + tvNumProduct.getText() + "\n\n" + "需求数量：" + tvNeedNum.getText()
                 + "\n\n" + "规格：" + tvStringGuige.getText() + "\n\n" + "工序：" + tvGongxuProduct.getText() + "\n\n" + "类型：" + tvTypeProduct.getText()
                 + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+"\n\n", 30, TimeUnit.SECONDS);
-        Bitmap mBitmap = CodeUtils.createImage(order_name, 300, 300, null);
+        Bitmap mBitmap = CodeUtils.createImage(order_name, 150, 150, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
         printer.print("\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
     }

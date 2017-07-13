@@ -121,7 +121,6 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                         initRecyc();
                     }
                 }
-
                 @Override
                 public void onFailure(Call<GetReturnMaterBean> call, Throwable t) {
                     dismissDefultProgressDialog();

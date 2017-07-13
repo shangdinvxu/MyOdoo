@@ -151,7 +151,7 @@ public class ProductLlActivity extends BaseActivity {
             @Override
             public void onResponse(Call<PickingDetailBean> call, Response<PickingDetailBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null) return;
+                if (response.body() == null || response.body().getResult() == null) return;
                 if (response.body().getError() != null){
                     ToastUtils.showCommonToast(ProductLlActivity.this, response.body().getError().getMessage());
                     return;
