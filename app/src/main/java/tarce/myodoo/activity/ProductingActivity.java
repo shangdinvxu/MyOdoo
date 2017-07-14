@@ -25,6 +25,7 @@ import com.newland.mtype.ConnectionCloseEvent;
 import com.newland.mtype.ModuleType;
 import com.newland.mtype.event.DeviceEventListener;
 import com.newland.mtype.module.common.printer.Printer;
+import com.newland.mtype.module.common.printer.WordStockType;
 import com.newland.mtypex.nseries.NSConnV100ConnParams;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
@@ -698,12 +699,13 @@ public class ProductingActivity extends ToolBarActivity {
         initDevice();
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
-        printer.print("\n\nMO单号："+order_name+"\n\n"+"产品: " + tvNameProduct.getText() + "\n\n" + "时间： " + tvTimeProduct.getText() + "\n\n" +
-                "负责人: " + tvReworkProduct.getText() + "\n\n" + "生产数量：" + tvNumProduct.getText() + "\n\n" + "需求数量：" + tvNeedNum.getText()
-                + "\n\n" + "规格：" + tvStringGuige.getText() + "\n\n" + "工序：" + tvGongxuProduct.getText() + "\n\n" + "类型：" + tvTypeProduct.getText()
-                + "\n\n" + "MO单备注："+eidtMoNote.getText()+"\n\n"+"销售单备注："+editSaleNote.getText()+"\n\n", 30, TimeUnit.SECONDS);
+        printer.setLineSpace(1);
+        printer.print("\nMO单号："+order_name+"\n"+"产品: " + tvNameProduct.getText() + "\n" + "时间： " + tvTimeProduct.getText() + "\n" +
+                "负责人: " + tvReworkProduct.getText() + "\n" + "生产数量：" + tvNumProduct.getText() + "\n" + "需求数量：" + tvNeedNum.getText()
+                + "\n" + "规格：" + tvStringGuige.getText() + "\n" + "工序：" + tvGongxuProduct.getText() + "\n" + "类型：" + tvTypeProduct.getText()
+                + "\n" + "MO单备注："+eidtMoNote.getText()+"\n"+"销售单备注："+editSaleNote.getText()+"\n", 30, TimeUnit.SECONDS);
         Bitmap mBitmap = CodeUtils.createImage(order_name, 150, 150, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
-        printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+        printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
     }
 }

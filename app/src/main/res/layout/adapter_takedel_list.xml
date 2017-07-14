@@ -4,6 +4,13 @@
     android:layout_height="50dp">
 
         <TextView
+            android:id="@+id/tv_num"
+            android:layout_width="0dp"
+            android:layout_weight="0.7"
+            android:textSize="12sp"
+            android:layout_height="match_parent"
+            android:gravity="center"/>
+        <TextView
             android:id="@+id/sale_number"
             android:layout_width="0dp"
             android:layout_height="match_parent"

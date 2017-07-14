@@ -32,6 +32,7 @@ import com.newland.mtype.ConnectionCloseEvent;
 import com.newland.mtype.ModuleType;
 import com.newland.mtype.event.DeviceEventListener;
 import com.newland.mtype.module.common.printer.Printer;
+import com.newland.mtype.module.common.printer.WordStockType;
 import com.newland.mtypex.nseries.NSConnV100ConnParams;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
@@ -113,14 +114,15 @@ public class PhotoAreaActivity extends ToolBarActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
-                    printer.print("MO单号：" + resDataBean.getDisplay_name() + "\n\n" + "产品: " + resDataBean.getProduct_name() + "\n\n" + "时间： " + TimeUtils.utc2Local(resDataBean.getDate_planned_start()) + "\n\n" +
-                            "负责人: " + resDataBean.getIn_charge_name() + "\n\n" + "生产数量：" + resDataBean.getQty_produced() + "\n\n" + "需求数量：" + resDataBean.getProduct_qty()
-                            + "\n\n" + "规格：" + resDataBean.getProduct_id().getProduct_specs() + "\n\n" + "工序：" + resDataBean.getProcess_id().getName() + "\n\n" + "类型：" + typeString
-                            + "\n\n" + "MO单备注：" + resDataBean.getRemark() + "\n\n" + "销售单备注：" + resDataBean.getSale_remark() + "\n\n" + "仓库备注：\n\n\n\n" + "品检备注：\n\n\n\n", 30, TimeUnit.SECONDS);
+                    printer.setLineSpace(1);
+                    printer.print("MO单号：" + resDataBean.getDisplay_name() + "\n" + "产品: " + resDataBean.getProduct_name() + "\n" + "时间： " + TimeUtils.utc2Local(resDataBean.getDate_planned_start()) + "\n" +
+                            "负责人: " + resDataBean.getIn_charge_name() + "\n" + "生产数量：" + resDataBean.getQty_produced() + "\n" + "需求数量：" + resDataBean.getProduct_qty()
+                            + "\n" + "规格：" + resDataBean.getProduct_id().getProduct_specs() + "\n" + "工序：" + resDataBean.getProcess_id().getName() + "\n" + "类型：" + typeString
+                            + "\n" + "MO单备注：" + resDataBean.getRemark() + "\n" + "销售单备注：" + resDataBean.getSale_remark() + "\n" + "仓库备注：\n\n" + "品检备注：\n\n", 30, TimeUnit.SECONDS);
                     Bitmap mBitmap = CodeUtils.createImage(resDataBean.getDisplay_name(), 150, 150, null);
                     printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
-                    printer.print("\n\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
-                    printer.print("\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+                    printer.print("\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
+                    printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
                     break;
                 case 2:
                     break;

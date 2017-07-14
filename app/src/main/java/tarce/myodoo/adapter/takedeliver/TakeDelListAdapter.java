@@ -34,7 +34,8 @@ public class TakeDelListAdapter extends BaseQuickAdapter<TakeDelListBean.ResultB
     protected void convert(BaseViewHolder helper, TakeDelListBean.ResultBean.ResDataBean item) {
         helper.setText(R.id.sale_number,  item.getOrigin());
         helper.setText(R.id.parnter_name, item.getParnter_id());
-        helper.setText(R.id.state_deliever, StringUtils.switchString(item.getState()));
+        helper.setText(R.id.state_deliever, StringUtils.switchString(item.getState()))
+                .setText(R.id.tv_num, helper.getPosition()+1+".");
     }
 
 }

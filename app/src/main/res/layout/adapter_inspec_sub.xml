@@ -3,6 +3,13 @@
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="45dp">
     <TextView
+        android:id="@+id/tv_num"
+        android:layout_width="0dp"
+        android:layout_weight="0.4"
+        android:layout_height="match_parent"
+        android:textSize="12sp"
+        android:gravity="center"/>
+    <TextView
         android:id="@+id/tv_receipts_origin"
         android:layout_width="0dp"
         android:layout_weight="1"

@@ -31,7 +31,11 @@ import com.newland.me.DeviceManager;
 import com.newland.mtype.ConnectionCloseEvent;
 import com.newland.mtype.ModuleType;
 import com.newland.mtype.event.DeviceEventListener;
+import com.newland.mtype.module.common.printer.FontSettingScope;
+import com.newland.mtype.module.common.printer.FontType;
+import com.newland.mtype.module.common.printer.LiteralType;
 import com.newland.mtype.module.common.printer.Printer;
+import com.newland.mtype.module.common.printer.WordStockType;
 import com.newland.mtypex.nseries.NSConnV100ConnParams;
 import com.uuzuche.lib_zxing.activity.CaptureFragment;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
@@ -666,19 +670,24 @@ public class SalesDetailActivity extends BaseActivity {
         initDevice();
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
-        printer.print("\n\n出货单号：" + bundle1.getName() + "\n\n" + "源单据: " + bundle1.getOrigin() + "\n\n" + "合作伙伴： " + bundle1.getParnter_id() + "\n\n" +
-                "收货人联系电话: "+bundle1.getPhone()+"\n"+"--------------------------" + "\n", 30, TimeUnit.SECONDS);
+        printer.setLineSpace(1);
+        printer.print("\n出货单号：" + bundle1.getName() + "\n" + "源单据: " + bundle1.getOrigin() + "\n" + "合作伙伴： " +
+                bundle1.getParnter_id() + "\n" +
+                "收货人联系电话: "+bundle1.getPhone()+"\n--------------------------\n", 30, TimeUnit.SECONDS);
+        printer.print("产品名称         完成数量", 30, TimeUnit.SECONDS);
         for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
-            printer.print("产品名称：" + bundle1.getPack_operation_product_ids().get(i).getProduct_id().getName() + "\n完成数量：" +
-                    bundle1.getPack_operation_product_ids().get(i).getQty_done()
-                    + "\n\n", 30, TimeUnit.SECONDS);
+            if (bundle1.getPack_operation_product_ids().get(i).getPack_id() != -1){
+                printer.print(bundle1.getPack_operation_product_ids().get(i).getProduct_id().getName() + "-----" +
+                        bundle1.getPack_operation_product_ids().get(i).getQty_done()
+                        + "\n", 30, TimeUnit.SECONDS);
+            }
         }
         printer.print("\n", 30, TimeUnit.SECONDS);
        // Bitmap mBitmap = CodeUtils.createImage(bundle1.getName()+"&stock.picking&"+bundle1.getPicking_id(), 300, 300, null);
         Bitmap mBitmap = CodeUtils.createImage(bundle1.getName(), 150, 150, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
-        printer.print("\n\n"+"打印时间："+ DateTool.getDateTime(), 30, TimeUnit.SECONDS);
-        printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+        printer.print("\n"+"打印时间："+ DateTool.getDateTime(), 30, TimeUnit.SECONDS);
+        printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
         dismissDefultProgressDialog();
     }
 

@@ -31,7 +31,8 @@ public class SalesListAdapter extends BaseQuickAdapter<SalesOutListResponse.TRes
     @Override
     protected void convert(BaseViewHolder helper, SalesOutListResponse.TResult.TRes_data item) {
         helper.setText(R.id.sale_number,item.getOrigin())
-                .setText(R.id.userable,item.getComplete_rate()+"%");
+                .setText(R.id.userable,item.getComplete_rate()+"%")
+                .setText(R.id.tv_num, helper.getPosition()+1+".");
         if (item.getParnter_id().contains(",")){
             String parnter_id = item.getParnter_id();
             String[] split = parnter_id.split(",");

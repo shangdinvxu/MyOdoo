@@ -26,7 +26,8 @@ public class DetailTakedAdapter extends BaseQuickAdapter<TakeDelListBean.ResultB
     protected void convert(BaseViewHolder helper, TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean item) {
         helper.setText(R.id.product,item.getProduct_id().getName())
                 .setText(R.id.need_out, StringUtils.doubleToString(item.getProduct_qty()))
-                .setText(R.id.done, StringUtils.doubleToString(item.getQty_done()));
+                .setText(R.id.done, StringUtils.doubleToString(item.getQty_done()))
+                .setText(R.id.tv_num, helper.getPosition()+1+".");
         if (item.getProduct_id().getArea_id().getArea_name() == null){
             helper.setText(R.id.need_in,"");
         }else {
@@ -36,12 +37,14 @@ public class DetailTakedAdapter extends BaseQuickAdapter<TakeDelListBean.ResultB
             helper.setTextColor(R.id.product, Color.GRAY)
                     .setTextColor(R.id.need_out, Color.GRAY)
                     .setTextColor(R.id.done, Color.GRAY)
-                    .setTextColor(R.id.need_in, Color.GRAY);
+                    .setTextColor(R.id.need_in, Color.GRAY)
+                    .setTextColor(R.id.tv_num, Color.GRAY);
         }else {
             helper.setTextColor(R.id.product, Color.BLACK)
                     .setTextColor(R.id.need_out, Color.BLACK)
                     .setTextColor(R.id.done, Color.BLACK)
-                    .setTextColor(R.id.need_in, Color.BLACK);
+                    .setTextColor(R.id.need_in, Color.BLACK)
+                    .setTextColor(R.id.tv_num, Color.BLACK);
         }
     }
 }

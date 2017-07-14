@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +26,7 @@ import com.newland.mtype.ConnectionCloseEvent;
 import com.newland.mtype.ModuleType;
 import com.newland.mtype.event.DeviceEventListener;
 import com.newland.mtype.module.common.printer.Printer;
+import com.newland.mtype.module.common.printer.WordStockType;
 import com.newland.mtypex.nseries.NSConnV100ConnParams;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
@@ -203,7 +205,6 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 buttomButton2.setText("填写品检信息");
                 buttomButton2.setVisibility(View.VISIBLE);
                 showLinThreePin();
-                initListenerAdapter();
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -290,7 +291,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                                     ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "入库完成");
                                                     finish();
                                                 } else {
-                                                    ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "出现错误，请联系开发人员调试");
+                                                    ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "some error");
                                                 }
                                             }
 
@@ -393,24 +394,25 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         initDevice();
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
-        printer.print("仓库备注:\n\n\n\n" + "品检备注:\n\n\n\n" + "入库单号：" + resDataBean.getName() + "\n\n" + "源单据: " + resDataBean.getOrigin() + "\n\n" + "合作伙伴： " + resDataBean.getParnter_id(), 30, TimeUnit.SECONDS);
+        printer.setLineSpace(1);
+        printer.print("仓库备注:\n\n\n" + "品检备注:\n\n\n" + "入库单号：" + resDataBean.getName() + "\n" + "源单据: " + resDataBean.getOrigin() + "\n" + "合作伙伴： " + resDataBean.getParnter_id(), 30, TimeUnit.SECONDS);
         if (userInfoBean != null) {
-            printer.print("\n\n" + "入库人：" + userInfoBean.getResult().getRes_data().getName() + "\n" +
+            printer.print("\n" + "入库人：" + userInfoBean.getResult().getRes_data().getName() + "\n" +
                     "--------------------" + "\n", 30, TimeUnit.SECONDS);
         }
         printer.print("产品名称        完成数量", 30, TimeUnit.SECONDS);
         for (int i = 0; i < resDataBean.getPack_operation_product_ids().size(); i++) {
             if (resDataBean.getPack_operation_product_ids().get(i).getPack_id() != -1){
-                printer.print(resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getName() + "\n" +
+                printer.print(resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getName() + "-----" +
                         takedAdapter.getData().get(i).getQty_done()
                         + "\n", 30, TimeUnit.SECONDS);
             }
         }
-        printer.print("\n\n", 30, TimeUnit.SECONDS);
+        printer.print("\n", 30, TimeUnit.SECONDS);
         Bitmap mBitmap = CodeUtils.createImage(resDataBean.getName(), 150, 150, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
-        printer.print("\n\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
-        printer.print("\n\n\n\n\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+        printer.print("\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
+        printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
     }
 
     /**
