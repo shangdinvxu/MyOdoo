@@ -58,6 +58,7 @@ import tarce.myodoo.device.AbstractDevice;
 import tarce.myodoo.uiutil.DialogForOrder;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.InsertFeedbackDial;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
@@ -538,6 +539,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         tvTimeProduct.setText(TimeUtils.utc2Local(resDataBean.getDate_planned_start()));
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
         tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));
+        tvStringGuige.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         switch (String.valueOf(resDataBean.getProduction_order_type())) {
             case "stockup":
                 tvTypeProduct.setText("备货制");
@@ -592,6 +594,15 @@ public class OrderDetailActivity extends ToolBarActivity {
                 }
             });
         }
+    }
+
+    /**
+     * 点击规格显示更详细内容
+     * */
+    @OnClick(R.id.tv_string_guige)
+    void showDetail(View view){
+        new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, String.valueOf(resDataBean.getProduct_id().getProduct_specs()))
+                .show();
     }
 
     @OnClick(R.id.tv_start_produce)

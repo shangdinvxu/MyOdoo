@@ -1,5 +1,6 @@
 package tarce.myodoo.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -51,6 +52,7 @@ import tarce.myodoo.uiutil.DialogForOrder;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.InsertFeedbackDial;
 import tarce.myodoo.uiutil.InsertNumDialog;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
@@ -308,6 +310,7 @@ public class ProductingActivity extends ToolBarActivity {
         tvTimeProduct.setText(TimeUtils.utc2Local(resDataBean.getDate_planned_start()));
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
         tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));
+        tvStringGuige.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         eidtMoNote.setText(resDataBean.getRemark());
         editSaleNote.setText(resDataBean.getSale_remark());
         switch (String.valueOf(resDataBean.getProduction_order_type())){
@@ -416,6 +419,14 @@ public class ProductingActivity extends ToolBarActivity {
         }
     }
 
+    /**
+     * 点击规格显示更详细内容
+     * */
+    @OnClick(R.id.tv_string_guige)
+    void showDetail(View view){
+        new TipDialog(ProductingActivity.this, R.style.MyDialogStyle, String.valueOf(resDataBean.getProduct_id().getProduct_specs()))
+                .show();
+    }
     /**
      * 点击人员管理
      */

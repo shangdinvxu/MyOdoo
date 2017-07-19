@@ -343,6 +343,14 @@ public class TakeDelListBean {
                 }
 
                 public static class ProductIdBean implements Serializable{
+                    public String getProduct_specs() {
+                        return product_specs;
+                    }
+
+                    public void setProduct_specs(String product_specs) {
+                        this.product_specs = product_specs;
+                    }
+
                     /**
                      * default_code : 98.DG104A.100
                      * qty_available : 0.0
@@ -351,6 +359,7 @@ public class TakeDelListBean {
                      * name : [98.DG104A.100] DG104A-组装好成品(凯西花房)-RT
                      */
 
+                    private String product_specs;
                     private String default_code;
                     private double qty_available;
                     private AreaIdBean area_id;

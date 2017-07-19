@@ -149,7 +149,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         }
         remarks.setText(String.valueOf(resDataBean.getSale_note()));
         List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> pack_operation_product_ids = resDataBean.getPack_operation_product_ids();
-        takedAdapter = new DetailTakedAdapter(R.layout.adapter_detaildeleive, pack_operation_product_ids);
+        takedAdapter = new DetailTakedAdapter(R.layout.adapter_detaildeleive, pack_operation_product_ids, TakeDeliverDetailActivity.this);
         recyclerview.setAdapter(takedAdapter);
         refreshButtom(resDataBean.getState());
     }
@@ -346,6 +346,14 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         });
     }
 
+    private void initNongoodListen(){
+        takedAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+
+            }
+        });
+    }
     /**
      * 打印操作
      * */

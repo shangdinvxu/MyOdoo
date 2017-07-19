@@ -59,6 +59,7 @@ import tarce.model.inventory.UpdateMessageBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.uiutil.ImageUtil;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
@@ -365,11 +366,10 @@ public class PhotoAreaActivity extends ToolBarActivity {
                 dismissDefultProgressDialog();
                 if (response.body() == null || response.body().getResult() == null) return;
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
-                    AlertAialogUtils.getCommonDialog(PhotoAreaActivity.this, "提交位置信息成功,点击确定将打印MO单，请等待")
-                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    new TipDialog(PhotoAreaActivity.this, R.style.MyDialogStyle, "提交位置信息成功,点击确定将打印MO单，请等待")
+                            .setTrue(new View.OnClickListener() {
                                 @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
+                                public void onClick(View v) {
                                     Message message = new Message();
                                     message.what = 1;
                                     handler.sendMessage(message);
@@ -381,17 +381,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
                                     startActivity(intent);
                                     finish();
                                 }
-                            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
-                            intent.putExtra("limit", limit);
-                            intent.putExtra("process_id", process_id);
-                            intent.putExtra("state", delay_state);
-                            startActivity(intent);
-                            finish();
-                        }
-                    }).show();
+                            }).show();
                 }
             }
 

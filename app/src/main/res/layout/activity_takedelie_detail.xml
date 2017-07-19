@@ -195,6 +195,12 @@
                     android:gravity="center"
                     android:text="完成" />
 
+                <!--<TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:text="不良品"
+                    android:gravity="center"/>-->
             </LinearLayout>
 
             <android.support.v7.widget.RecyclerView

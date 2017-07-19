@@ -36,6 +36,7 @@ import tarce.myodoo.R;
 import tarce.myodoo.activity.takedeliver.TakeDeliveListActivity;
 import tarce.myodoo.uiutil.DialogIsSave;
 import tarce.myodoo.uiutil.ImageUtil;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
 import tarce.support.BitmapUtils;
@@ -215,10 +216,10 @@ public class WriteCheckMessaActivity extends BaseActivity {
                         startActivity(intent);
                         finish();
                     }else if (state_for.equals("cancel_backorder") || state_for.equals("process")){
-                        AlertAialogUtils.getCommonDialog(WriteCheckMessaActivity.this, "入库调拨成功，等待入库")
-                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        new TipDialog(WriteCheckMessaActivity.this, R.style.MyDialogStyle, "入库调拨成功，等待入库")
+                                .setTrue(new View.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {
+                                    public void onClick(View v) {
                                         Intent intent = new Intent(WriteCheckMessaActivity.this, TakeDeliveListActivity.class);
                                         intent.putExtra("from", "no");
                                         intent.putExtra("type_code", type_code);
@@ -227,18 +228,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
                                         startActivity(intent);
                                         finish();
                                     }
-                                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(WriteCheckMessaActivity.this, TakeDeliveListActivity.class);
-                                intent.putExtra("from", "no");
-                                intent.putExtra("type_code", type_code);
-                                intent.putExtra("state",state);
-                                intent.putExtra("notneed", notneed);
-                                startActivity(intent);
-                                finish();
-                            }
-                        }).show();
+                                }).show();
                     }
                 }else {
                     ToastUtils.showCommonToast(WriteCheckMessaActivity.this, "出现错误，请联系开发人员调试");
@@ -288,10 +278,10 @@ public class WriteCheckMessaActivity extends BaseActivity {
                 if (response.body() == null || response.body().getResult() == null)return;
                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                     if ("qc_ok".equals(state_for)){
-                        AlertAialogUtils.getCommonDialog(WriteCheckMessaActivity.this, "品检通过,等待采购检验")
-                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        new TipDialog(WriteCheckMessaActivity.this, R.style.MyDialogStyle, "品检通过,等待采购检验")
+                                .setTrue(new View.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {
+                                    public void onClick(View v) {
                                         Intent intent = new Intent(WriteCheckMessaActivity.this, TakeDeliveListActivity.class);
                                         intent.putExtra("from", "yes");
                                         intent.putExtra("type_code", type_code);
@@ -299,22 +289,12 @@ public class WriteCheckMessaActivity extends BaseActivity {
                                         startActivity(intent);
                                         finish();
                                     }
-                                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(WriteCheckMessaActivity.this, TakeDeliveListActivity.class);
-                                intent.putExtra("from", "yes");
-                                intent.putExtra("type_code", type_code);
-                                intent.putExtra("state",state);
-                                startActivity(intent);
-                                finish();
-                            }
-                        }).show();
+                                }).show();
                     }else if ("qc_failed".equals(state_for)){
-                        AlertAialogUtils.getCommonDialog(WriteCheckMessaActivity.this, "品检不通过，提交成功！")
-                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        new TipDialog(WriteCheckMessaActivity.this, R.style.MyDialogStyle, "品检不通过，提交成功！")
+                                .setTrue(new View.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialog, int which) {
+                                    public void onClick(View v) {
                                         Intent intent = new Intent(WriteCheckMessaActivity.this, TakeDeliveListActivity.class);
                                         intent.putExtra("from", "yes");
                                         intent.putExtra("type_code", type_code);
@@ -322,17 +302,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
                                         startActivity(intent);
                                         finish();
                                     }
-                                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(WriteCheckMessaActivity.this, TakeDeliveListActivity.class);
-                                intent.putExtra("from", "yes");
-                                intent.putExtra("type_code", type_code);
-                                intent.putExtra("state",state);
-                                startActivity(intent);
-                                finish();
-                            }
-                        }).show();
+                                }).show();
                     }
                 }
             }

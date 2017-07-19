@@ -1,6 +1,8 @@
 package tarce.myodoo.adapter.takedeliver;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -9,6 +11,7 @@ import java.util.List;
 
 import tarce.model.inventory.TakeDelListBean;
 import tarce.myodoo.R;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 
 /**
@@ -18,16 +21,19 @@ import tarce.myodoo.utils.StringUtils;
 
 public class DetailTakedAdapter extends BaseQuickAdapter<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean, BaseViewHolder>{
 
-    public DetailTakedAdapter(int layoutResId, List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> data) {
+    private Context context;
+    public DetailTakedAdapter(int layoutResId, List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> data, Context context) {
         super(layoutResId, data);
+        this.context = context;
     }
 
     @Override
-    protected void convert(BaseViewHolder helper, TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean item) {
+    protected void convert(BaseViewHolder helper, final TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean item) {
         helper.setText(R.id.product,item.getProduct_id().getName())
                 .setText(R.id.need_out, StringUtils.doubleToString(item.getProduct_qty()))
                 .setText(R.id.done, StringUtils.doubleToString(item.getQty_done()))
                 .setText(R.id.tv_num, helper.getPosition()+1+".");
+             //   .setText(R.id.nongood, "");
         if (item.getProduct_id().getArea_id().getArea_name() == null){
             helper.setText(R.id.need_in,"");
         }else {
@@ -39,12 +45,22 @@ public class DetailTakedAdapter extends BaseQuickAdapter<TakeDelListBean.ResultB
                     .setTextColor(R.id.done, Color.GRAY)
                     .setTextColor(R.id.need_in, Color.GRAY)
                     .setTextColor(R.id.tv_num, Color.GRAY);
+               //     .setTextColor(R.id.nongood, Color.GRAY);
         }else {
             helper.setTextColor(R.id.product, Color.BLACK)
                     .setTextColor(R.id.need_out, Color.BLACK)
                     .setTextColor(R.id.done, Color.BLACK)
                     .setTextColor(R.id.need_in, Color.BLACK)
                     .setTextColor(R.id.tv_num, Color.BLACK);
+            //        .setTextColor(R.id.nongood, Color.BLACK);
         }
+
+        helper.addOnClickListener(R.id.tv_guige);
+        helper.getView(R.id.tv_guige).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new TipDialog(context, R.style.MyDialogStyle, item.getProduct_id().getProduct_specs()).show();
+            }
+        });
     }
 }

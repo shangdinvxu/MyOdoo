@@ -422,7 +422,7 @@ public class AddPersonActivity extends BaseActivity {
                         personAdapter.notifyDataSetChanged();
                     }
                 } else {
-                    ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
+                    ToastUtils.showCommonToast(AddPersonActivity.this, "some error,please try again");
                 }
             }
 
