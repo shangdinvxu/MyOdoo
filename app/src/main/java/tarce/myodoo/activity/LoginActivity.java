@@ -290,11 +290,27 @@ public class LoginActivity extends Activity {
 
     @OnClick(R.id.to_login)
     void toLogin(View view) {
-        progressDialog.show();
         String chooseDB = database.getText().toString();
+        if (chooseDB.equals("选择数据库")){
+            ToastUtils.showCommonToast(LoginActivity.this, "请选择数据库");
+            return;
+        }
         final String emailString = this.email.getText().toString();
+        if (StringUtils.isNullOrEmpty(emailString)){
+            ToastUtils.showCommonToast(LoginActivity.this, "请输入邮箱");
+            return;
+        }
         final String passwordString = password.getText().toString();
+        if (StringUtils.isNullOrEmpty(passwordString)){
+            ToastUtils.showCommonToast(LoginActivity.this, "请输入密码");
+            return;
+        }
         final String url = httpUrl.getText().toString();
+        if (StringUtils.isNullOrEmpty(url)){
+            ToastUtils.showCommonToast(LoginActivity.this, "请输入url地址");
+            return;
+        }
+        progressDialog.show();
         Call<LoginResponse> stringCall = loginApi.toLogin(new LoginBean(emailString, passwordString, chooseDB));
         stringCall.enqueue(new MyCallback<LoginResponse>() {
             @Override

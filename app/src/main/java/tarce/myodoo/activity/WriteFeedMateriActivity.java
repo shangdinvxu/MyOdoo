@@ -48,6 +48,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
     private int order_id;
     private String from;
     private WriteFeedAdapter feedAdapter;
+    private List<GetReturnMaterBean.ResultBean.ResDataBean> res_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,6 +117,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                     dismissDefultProgressDialog();
                     if (response.body() == null || response.body().getResult() == null) return;
                     if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
+                        res_data = response.body().getResult().getRes_data();
                         adapter = new WriteFeedbackNumAdapter(R.layout.adapter_write_feednum, response.body().getResult().getRes_data());
                         recyclerFeedMaterial.setAdapter(adapter);
                         initRecyc();
@@ -154,7 +156,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                 // TODO: 2017/6/8 生产num/需求num*item的需求num
                                 double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(position).getProduct_uom_qty();
                                 if (num <= (beiNum - v)) {
-                                    resDataBean.getStock_move_lines().get(position).setReturn_qty(num);
+                                    res_data.get(position).setReturn_qty(num);
                                     adapter.notifyDataSetChanged();
                                 } else {
                                     ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料过多");

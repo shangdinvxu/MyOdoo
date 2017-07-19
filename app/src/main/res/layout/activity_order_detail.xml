@@ -423,11 +423,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/header"
+            android:background="@color/cc"
             android:gravity="center"
             android:text="查看位置信息"
             android:textColor="@color/white"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:layout_marginLeft="2dp"/>
     </LinearLayout>
 
 </RelativeLayout>

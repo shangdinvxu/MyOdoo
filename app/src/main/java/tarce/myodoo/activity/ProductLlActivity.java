@@ -172,6 +172,8 @@ public class ProductLlActivity extends BaseActivity {
                         adapter.setData(dataBeanList);
                     }
                     clickAdapterItem();
+                }else if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() == null){
+                    ToastUtils.showCommonToast(ProductLlActivity.this, "没有更多数据...");
                 }
             }
 

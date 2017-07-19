@@ -307,6 +307,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                 tvCheckState.setText("展开");
                 imgUpDown.setImageResource(R.mipmap.down);
                 up_or_down = false;
+                tvAreaLook.setVisibility(View.VISIBLE);
+                tvAreaLook.setText("保存");
                 showLinThreeCang();
                 break;
             case "finish_prepare_material":
@@ -659,7 +661,33 @@ public class OrderDetailActivity extends ToolBarActivity {
                         }).show();
                 break;
             case STATE_START_PRODUCT:
-                showNext();
+                /**
+                 * 判断流转品列表，逻辑为：备料数量至少要大于等于1，不然不能领料登记，而是提醒去修改备料数量，这时候 ，原材料和半成品是不能点击的
+                 * */
+                boolean nextone = true;
+                int indexone = -1;
+                try {
+                    for (int i = 0; i < list_one.size(); i++) {
+                        if (StringUtils.doubleToInt(list_one.get(i).getQuantity_ready()) < 1) {
+                            nextone = false;
+                            indexone = i;
+                            break;
+                        }
+                    }
+                }catch (Exception e){
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
+                }
+                if (nextone) {
+                    showNext();
+                } else {
+                    AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "").setMessage(list_one.get(indexone).getProduct_id() + " 未备料")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                }
                 break;
             case STATE_REQUSIT_RIGISTER:
                 /**
@@ -826,11 +854,79 @@ public class OrderDetailActivity extends ToolBarActivity {
      */
     @OnClick(R.id.tv_area_look)
     void lookArea(View view) {
-        ToastUtils.showCommonToast(OrderDetailActivity.this, "正在跳转");
-        Intent intent = new Intent(OrderDetailActivity.this, AreaMessageActivity.class);
-        intent.putExtra("img_area", prepare_material_img);
-        intent.putExtra("string_area", (String) prepare_material_area_id.getArea_name());
-        startActivity(intent);
+        switch (click_check){
+            case STATE_REQUSIT_RIGISTER:
+                ToastUtils.showCommonToast(OrderDetailActivity.this, "正在跳转");
+                Intent intent = new Intent(OrderDetailActivity.this, AreaMessageActivity.class);
+                intent.putExtra("img_area", prepare_material_img);
+                intent.putExtra("string_area", (String) prepare_material_area_id.getArea_name());
+                startActivity(intent);
+                break;
+            case STATE_START_PRODUCT:
+                String next = "";
+                int index = -1;
+                try {
+                    for (int i = 0; i < list_one.size(); i++) {
+                        if (StringUtils.doubleToInt(list_one.get(i).getQuantity_ready()) < StringUtils.doubleToInt(list_one.get(i).getProduct_uom_qty())
+                                && StringUtils.doubleToInt(list_one.get(i).getQuantity_ready())!=0) {
+                            next = "pass";
+                        }else if (StringUtils.doubleToInt(list_one.get(i).getQuantity_ready()) == 0){
+                            next = "false";
+                            index = i+1;
+                            break;
+                        }else {
+                            next = "true";
+                        }
+                    }
+                }catch (Exception e){
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
+                }
+                switch (next){
+                    case "true":
+                        showNext();
+                        break;
+                    case "false":
+                        AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "").setMessage(list_one.get(index).getProduct_id() + " 未备料")
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                }).show();
+                        break;
+                    case "pass":
+                        AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "确定保存备料数量")
+                                .setPositiveButton("保存", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        HashMap<Object, Object> hashMap = new HashMap<>();
+                                        Map[] maps = new Map[resDataBean.getStock_move_lines().size()];
+                                        for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
+                                            Map<Object, Object> mapSmall = new HashMap<>();
+                                            mapSmall.put("stock_move_lines_id", resDataBean.getStock_move_lines().get(i).getId());
+                                            mapSmall.put("quantity_ready", resDataBean.getStock_move_lines().get(i).getQuantity_ready());
+                                            mapSmall.put("order_id", resDataBean.getStock_move_lines().get(i).getOrder_id());
+                                            maps[i] = mapSmall;
+                                        }
+                                        hashMap.put("stock_moves", maps);
+                                        Call<Object> objectCall = inventoryApi.saveMaterialData(hashMap);
+                                        objectCall.enqueue(new MyCallback<Object>() {
+                                            @Override
+                                            public void onResponse(Call<Object> call, Response<Object> response) {
+                                                if (response.body() == null)return;
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<Object> call, Throwable t) {
+                                                super.onFailure(call, t);
+                                            }
+                                        });
+                                    }
+                                }).show();
+                        break;
+                }
+                break;
+        }
     }
 
     /**

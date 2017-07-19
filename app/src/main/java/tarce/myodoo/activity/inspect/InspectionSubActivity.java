@@ -134,7 +134,7 @@ public class InspectionSubActivity extends BaseActivity {
             @Override
             public void onResponse(Call<QcFeedbaskBean> call, Response<QcFeedbaskBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null)return;
+                if (response.body() == null || response.body().getResult()==null)return;
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                     if (move == Refresh_Move){
                         res_data = response.body().getResult().getRes_data();
@@ -153,6 +153,8 @@ public class InspectionSubActivity extends BaseActivity {
                         }
                     }
                     clickItem();
+                }else if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() == null){
+                    ToastUtils.showCommonToast(InspectionSubActivity.this, "没有更多数据...");
                 }
             }
 

@@ -349,6 +349,12 @@ public interface InventoryApi {
     Call<UpdateMessageBean> uploadProductArea(@Body HashMap hashMap);
 
     /**
+     * 保存备料信息
+     * */
+    @POST("saving_material_data")
+    Call<Object> saveMaterialData(@Body HashMap hashMap);
+
+    /**
      * 提交备料
      * */
     @POST("finish_prepare_material")
