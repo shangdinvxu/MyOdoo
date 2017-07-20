@@ -277,8 +277,8 @@ public class SalesOutActivity extends BaseActivity {
                         stringCall.enqueue(new Callback<SearchSupplierResponse>() {
                             @Override
                             public void onResponse(Call<SearchSupplierResponse> call, Response<SearchSupplierResponse> response) {
-                                if (response.body() == null)return;
-                                if (response.body().getResult() != null) {
+                                if (response.body() == null || response.body().getResult() == null)return;
+                                if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code()==1) {
                                     List<SearchSupplierResponse.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
                                     if (res_data != null && res_data.size() > 0) {
                                         for (SearchSupplierResponse.ResultBean.ResDataBean resDataBean : res_data) {
@@ -311,8 +311,8 @@ public class SalesOutActivity extends BaseActivity {
             @Override
             public void onResponse(Call<OutgoingStockpickingBean> call, Response<OutgoingStockpickingBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null)return;
-                if (response.body().getResult().getRes_code() == 1){
+                if (response.body() == null || response.body().getResult() == null)return;
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                     List<OutgoingStockpickingBean.ResultBean.ResDataBean.CompleteRateBean> complete_rate = response.body().getResult().getRes_data().getComplete_rate();
                     for (int i = 0; i < complete_rate.size(); i++) {
                         if (complete_rate.get(i).getComplete_rate() == 0){

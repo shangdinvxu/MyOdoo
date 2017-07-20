@@ -55,6 +55,7 @@ import tarce.myodoo.R;
 import tarce.myodoo.activity.takedeliver.TakeDeliverDetailActivity;
 import tarce.myodoo.adapter.NFCUseradapter;
 import tarce.myodoo.device.Const;
+import tarce.myodoo.utils.StringUtils;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
 
@@ -182,6 +183,9 @@ public class NFCReadingActivity extends BaseActivity {
                                                 int res_code = response.body().getResult().getRes_code();
                                                 if (res_code == 1) {
                                                     alertDialog.dismiss();
+                                                    String card_num = response.body().getResult().getRes_data().getCard_num();
+                                                    res_data.get(position).setCard_num(card_num);
+                                                    nfcUseradapter.notifyDataSetChanged();
                                                     ToastUtils.showCommonToast(NFCReadingActivity.this, "绑定成功");
                                                 } else {
                                                     String error = response.body().getResult().getRes_data().getError();
@@ -206,7 +210,18 @@ public class NFCReadingActivity extends BaseActivity {
                                                                     if (res_code == 1) {
                                                                         alertDialog.dismiss();
                                                                         ToastUtils.showCommonToast(NFCReadingActivity.this, "绑定成功");
-                                                                        res_data.get(position).setCard_num(response.body().getResult().getRes_data().getCard_num());
+                                                                        String card_num = response.body().getResult().getRes_data().getCard_num();
+                                                                        int index = -1;
+                                                                        for (int i = 0; i < res_data.size(); i++) {
+                                                                            if (res_data.get(i).getCard_num().equals(card_num)){
+                                                                                index = i;
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                        if (index!=-1){
+                                                                            res_data.get(index).setCard_num("");
+                                                                        }
+                                                                        res_data.get(position).setCard_num(card_num);
                                                                         nfcUseradapter.notifyDataSetChanged();
                                                                     } else {
                                                                         ToastUtils.showCommonToast(NFCReadingActivity.this, "绑定失败");
@@ -258,11 +273,15 @@ public class NFCReadingActivity extends BaseActivity {
         searchName.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
+                ToastUtils.showCommonToast(NFCReadingActivity.this, "可以了？");
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
+                if (StringUtils.isNullOrEmpty(s)){
+                    res_data = allList;
+                }
                 ArrayList<NFCUserBean.ResultBean.ResDataBean> searchList = new ArrayList<>();
                 for (NFCUserBean.ResultBean.ResDataBean bean : allList) {
                     if (bean.getName().contains(s)) {
@@ -273,10 +292,8 @@ public class NFCReadingActivity extends BaseActivity {
                 nfcUseradapter.setNewData(res_data);
                 nfcUseradapter.notifyDataSetChanged();
                 return false;
-
             }
         });
-
     }
 
     /**

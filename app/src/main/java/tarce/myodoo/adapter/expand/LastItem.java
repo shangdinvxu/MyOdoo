@@ -1,6 +1,8 @@
 package tarce.myodoo.adapter.expand;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
+import android.graphics.Paint;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -13,6 +15,7 @@ import java.util.List;
 
 import tarce.model.inventory.BomSubBean;
 import tarce.myodoo.R;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 
 /**
@@ -26,6 +29,12 @@ public class LastItem extends AbstractExpandableAdapterItem{
     private TextView mTv_gongxu;
     private TextView mTv_processid;
     private TextView mNum;
+
+    public LastItem(Context context) {
+        this.context = context;
+    }
+
+    private Context context;
     @Override
     public void onExpansionToggled(boolean expanded){
         float start, target;
@@ -75,9 +84,16 @@ public class LastItem extends AbstractExpandableAdapterItem{
     public void onUpdateViews(Object model, int position) {
         super.onUpdateViews(model, position);
         onSetViews();
-        BomSubBean.BomBottomBean employee = (BomSubBean.BomBottomBean) model;
+        final BomSubBean.BomBottomBean employee = (BomSubBean.BomBottomBean) model;
         mTv_name.setText("["+employee.code+"]"+employee.name);
-        mTv_gongxu.setText(employee.product_specs);
+        mTv_gongxu.setText(StringUtils.stringFilter(employee.product_specs));
+        mTv_gongxu.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+        mTv_gongxu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new TipDialog(context, R.style.MyDialogStyle, employee.product_specs).show();
+            }
+        });
         mTv_processid.setText(String.valueOf(employee.process_id));
         mNum.setText(StringUtils.doubleToString(employee.qty));
         ExpandableListItem parentListItem = (ExpandableListItem) model;

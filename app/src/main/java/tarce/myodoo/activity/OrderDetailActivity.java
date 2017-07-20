@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DividerItemDecoration;
@@ -52,6 +53,7 @@ import tarce.model.FindProductByConditionResponse;
 import tarce.model.inventory.CommonBean;
 import tarce.model.inventory.GetFactroyRemarkBean;
 import tarce.model.inventory.OrderDetailBean;
+import tarce.model.inventory.UpdateMessageBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.OrderDetailAdapter;
 import tarce.myodoo.device.AbstractDevice;
@@ -160,6 +162,38 @@ public class OrderDetailActivity extends ToolBarActivity {
     private Printer printer;
     private DeviceManager deviceManager;
     private String order_name;
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list = new ArrayList<>();
+    private volatile String wantNext = "";
+    private volatile int indexForList = -1;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+
+                    break;
+                case 2:
+                    state = "prepare_material_ing";
+                    stateView("prepare_material_ing");
+                    canClick();
+                    adapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
+                            isShowDialog = true;
+                            initDialog(linesBean);
+                        }
+                    });
+                    adapter_two.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
+                        @Override
+                        public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
+                            isShowDialog = true;
+                            initDialog(linesBean);
+                        }
+                    });
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -198,9 +232,9 @@ public class OrderDetailActivity extends ToolBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        if (state.equals("waiting_material") || state.equals("prepare_material_ing")){
+        if (state.equals("waiting_material") || state.equals("prepare_material_ing")) {
             menu.getItem(2).setTitle("备料反馈");
-        }else {
+        } else {
             menu.getItem(2).setTitle("生产反馈");
         }
         return true;
@@ -208,15 +242,15 @@ public class OrderDetailActivity extends ToolBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_settings){
+        if (item.getItemId() == R.id.action_settings) {
             HashMap<Object, Object> hashMap = new HashMap<>();
             hashMap.put("order_id", order_id);
             Call<GetFactroyRemarkBean> factroyRemark = inventoryApi.getFactroyRemark(hashMap);
             factroyRemark.enqueue(new MyCallback<GetFactroyRemarkBean>() {
                 @Override
                 public void onResponse(Call<GetFactroyRemarkBean> call, Response<GetFactroyRemarkBean> response) {
-                    if (response == null || response.body().getResult() == null)return;
-                    if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
+                    if (response == null || response.body().getResult() == null) return;
+                    if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                         String remark = response.body().getResult().getRes_data().getFactory_mark();
                         new InsertFeedbackDial(OrderDetailActivity.this, R.style.MyDialogStyle, new InsertFeedbackDial.OnSendCommonClickListener() {
                             @Override
@@ -228,12 +262,12 @@ public class OrderDetailActivity extends ToolBarActivity {
                                 objectCall.enqueue(new MyCallback<CommonBean>() {
                                     @Override
                                     public void onResponse(Call<CommonBean> call, Response<CommonBean> response) {
-                                        if (response == null)return;
+                                        if (response == null) return;
                                         try {
-                                            if (response.body().getResult().getRes_code() == 1){
+                                            if (response.body().getResult().getRes_code() == 1) {
                                                 ToastUtils.showCommonToast(OrderDetailActivity.this, "反馈成功");
                                             }
-                                        }catch (Exception e){
+                                        } catch (Exception e) {
                                             MyLog.e(TAG, e.toString());
                                         }
                                     }
@@ -248,7 +282,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, t.toString());
                 }
             });
-        }else if (item.getItemId() == R.id.action_print){
+        } else if (item.getItemId() == R.id.action_print) {
             AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否确认打印？\n(请尽量避免订单重复打印)")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
@@ -257,7 +291,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                         }
                     })
                     .show();
-        }else if (item.getItemId() == R.id.action_feedback){
+        } else if (item.getItemId() == R.id.action_feedback) {
             Intent intent = new Intent(OrderDetailActivity.this, FeedbackActivity.class);
             intent.putExtra("state", state);
             intent.putExtra("order_id", order_id);
@@ -272,10 +306,10 @@ public class OrderDetailActivity extends ToolBarActivity {
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
         printer.setLineSpace(1);
-        printer.print("\nMO单号："+order_name+"\n"+"产品: " + tvNameProduct.getText() + "\n" + "时间： " + tvTimeProduct.getText() + "\n" +
+        printer.print("\nMO单号：" + order_name + "\n" + "产品: " + tvNameProduct.getText() + "\n" + "时间： " + tvTimeProduct.getText() + "\n" +
                 "负责人: " + tvReworkProduct.getText() + "\n" + "生产数量：" + tvNumProduct.getText() + "\n" + "需求数量：" + tvNeedNum.getText()
                 + "\n" + "规格：" + tvStringGuige.getText() + "\n" + "工序：" + tvGongxuProduct.getText() + "\n" + "类型：" + tvTypeProduct.getText()
-                + "\n" + "MO单备注："+eidtMoNote.getText()+"\n"+"销售单备注："+editSaleNote.getText()+"\n", 30, TimeUnit.SECONDS);
+                + "\n" + "MO单备注：" + eidtMoNote.getText() + "\n" + "销售单备注：" + editSaleNote.getText() + "\n", 30, TimeUnit.SECONDS);
         Bitmap mBitmap = CodeUtils.createImage(order_name, 150, 150, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
         printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
@@ -383,7 +417,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             if (!UserManager.getSingleton().getGrops().contains("group_charge_produce")) {
                 linearThree.setVisibility(View.GONE);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
         }
     }
@@ -396,7 +430,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             if (!UserManager.getSingleton().getGrops().contains("group_charge_warehouse")) {
                 linearThree.setVisibility(View.GONE);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
         }
     }
@@ -415,7 +449,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null || response.body().getResult() == null) return;
-                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     result = response.body().getResult();
                     resDataBean = response.body().getResult().getRes_data();
                     prepare_material_area_id = response.body().getResult().getRes_data().getPrepare_material_area_id();
@@ -571,6 +605,11 @@ public class OrderDetailActivity extends ToolBarActivity {
         recyclerOrderDetail.setAdapter(adapter);
         recycler2OrderDetail.setAdapter(adapter_two);
         recycler3OrderDetail.setAdapter(adapter_three);
+        canClick();
+    }
+
+    //设置adapter点击事件什么情况下可触发
+    private void canClick() {
         if (state.equals("prepare_material_ing")) {
             adapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
                 @Override
@@ -600,11 +639,22 @@ public class OrderDetailActivity extends ToolBarActivity {
 
     /**
      * 点击规格显示更详细内容
-     * */
+     */
     @OnClick(R.id.tv_string_guige)
-    void showDetail(View view){
+    void showDetail(View view) {
         new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, String.valueOf(resDataBean.getProduct_id().getProduct_specs()))
                 .show();
+    }
+
+    //将listone和listto合并为一个list
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> linkOneTwo() {
+        for (int i = 0; i < list_one.size(); i++) {
+            list.add(list_one.get(i));
+        }
+        for (int i = 0; i < list_two.size(); i++) {
+            list.add(list_two.get(i));
+        }
+        return list;
     }
 
     @OnClick(R.id.tv_start_produce)
@@ -624,30 +674,17 @@ public class OrderDetailActivity extends ToolBarActivity {
                                     @Override
                                     public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                         dismissDefultProgressDialog();
-                                        if (response.body() == null || response.body().getResult() == null) return;
-                                        if (response.body().getError() != null){
+                                        if (response.body() == null || response.body().getResult() == null)
+                                            return;
+                                        if (response.body().getError() != null) {
                                             ToastUtils.showCommonToast(OrderDetailActivity.this, response.body().getError().getMessage());
                                             return;
                                         }
-                                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
+                                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                                             resDataBean = response.body().getResult().getRes_data();
-                                            initView();
-                                            state = "prepare_material_ing";
-                                            stateView("prepare_material_ing");
-                                            adapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
-                                                @Override
-                                                public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
-                                                    isShowDialog = true;
-                                                    initDialog(linesBean);
-                                                }
-                                            });
-                                            adapter_two.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
-                                                @Override
-                                                public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
-                                                    isShowDialog = true;
-                                                    initDialog(linesBean);
-                                                }
-                                            });
+                                            Message message = mHandler.obtainMessage();
+                                            message.what = 2;
+                                            mHandler.sendMessage(message);
                                         }
                                     }
 
@@ -661,26 +698,23 @@ public class OrderDetailActivity extends ToolBarActivity {
                         }).show();
                 break;
             case STATE_START_PRODUCT:
-                /**
-                 * 判断流转品列表，逻辑为：备料数量至少要大于等于1，不然不能领料登记，而是提醒去修改备料数量，这时候 ，原材料和半成品是不能点击的
-                 * */
                 boolean nextone = true;
                 int indexone = -1;
                 try {
-                    for (int i = 0; i < list_one.size(); i++) {
-                        if (StringUtils.doubleToInt(list_one.get(i).getQuantity_ready()) < 1) {
+                    for (int i = 0; i < linkOneTwo().size(); i++) {
+                        if (StringUtils.doubleToInt(linkOneTwo().get(i).getQuantity_ready() + linkOneTwo().get(i).getQuantity_done()) < 1) {
                             nextone = false;
                             indexone = i;
                             break;
                         }
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
                 }
                 if (nextone) {
                     showNext();
                 } else {
-                    AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "").setMessage(list_one.get(indexone).getProduct_id() + " 未备料")
+                    AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "").setMessage(linkOneTwo().get(indexone).getProduct_id() + " 未备料")
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -702,7 +736,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                             index = i;
                         }
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
                 }
                 if (next) {
@@ -727,8 +761,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                                         @Override
                                         public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                             dismissDefultProgressDialog();
-                                            if (response.body() == null || response.body().getResult() == null) return;
-                                            if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
+                                            if (response.body() == null || response.body().getResult() == null)
+                                                return;
+                                            if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                                                 resDataBean = response.body().getResult().getRes_data();
                                                 initView();
                                                 stateView("already_picking");
@@ -773,9 +808,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                     intent.putExtra("close", false);
                     startActivity(intent);
                     finish();
-                }catch (Exception e){
+                } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
-            }
+                }
                 break;
             case WRITE_WATERIAL_OUT://填写退料
                 try {
@@ -784,7 +819,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                     intent1.putExtra("order_id", order_id);
                     intent1.putExtra("from", "write");
                     startActivity(intent1);
-                }catch (Exception e){
+                } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
                 }
                 break;
@@ -795,7 +830,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                     intent2.putExtra("order_id", order_id);
                     intent2.putExtra("from", "look");
                     startActivity(intent2);
-                }catch (Exception e){
+                } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
                 }
                 break;
@@ -806,7 +841,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                     intent3.putExtra("order_id", order_id);
                     intent3.putExtra("from", "check");
                     startActivity(intent3);
-                }catch (Exception e){
+                } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
                 }
                 break;
@@ -854,7 +889,7 @@ public class OrderDetailActivity extends ToolBarActivity {
      */
     @OnClick(R.id.tv_area_look)
     void lookArea(View view) {
-        switch (click_check){
+        switch (click_check) {
             case STATE_REQUSIT_RIGISTER:
                 ToastUtils.showCommonToast(OrderDetailActivity.this, "正在跳转");
                 Intent intent = new Intent(OrderDetailActivity.this, AreaMessageActivity.class);
@@ -863,30 +898,26 @@ public class OrderDetailActivity extends ToolBarActivity {
                 startActivity(intent);
                 break;
             case STATE_START_PRODUCT:
-                String next = "";
-                int index = -1;
-                try {
-                    for (int i = 0; i < list_one.size(); i++) {
-                        if (StringUtils.doubleToInt(list_one.get(i).getQuantity_ready()) < StringUtils.doubleToInt(list_one.get(i).getProduct_uom_qty())
-                                && StringUtils.doubleToInt(list_one.get(i).getQuantity_ready())!=0) {
-                            next = "pass";
-                        }else if (StringUtils.doubleToInt(list_one.get(i).getQuantity_ready()) == 0){
-                            next = "false";
-                            index = i+1;
-                            break;
-                        }else {
-                            next = "true";
-                        }
+                for (int i = 0; i < linkOneTwo().size(); i++) {
+                    if (StringUtils.doubleToInt(linkOneTwo().get(i).getQuantity_ready() + linkOneTwo().get(i).getQuantity_done())
+                            < StringUtils.doubleToInt(linkOneTwo().get(i).getProduct_uom_qty())
+                            && StringUtils.doubleToInt(linkOneTwo().get(i).getQuantity_ready() + linkOneTwo().get(i).getQuantity_done()) != 0) {
+                        wantNext = "pass";
+                    } else if (StringUtils.doubleToInt(linkOneTwo().get(i).getQuantity_ready() + linkOneTwo().get(i).getQuantity_done()) == 0) {
+                        wantNext = "false";
+                        indexForList = i;
+                        break;
+                    } else {
+                        wantNext = "true";
                     }
-                }catch (Exception e){
-                    ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
                 }
-                switch (next){
+
+                switch (wantNext) {
                     case "true":
                         showNext();
                         break;
                     case "false":
-                        AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "").setMessage(list_one.get(index).getProduct_id() + " 未备料")
+                        AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "").setMessage(linkOneTwo().get(indexForList).getProduct_id() + " 未备料")
                                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
@@ -899,6 +930,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                 .setPositiveButton("保存", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        showDefultProgressDialog();
                                         HashMap<Object, Object> hashMap = new HashMap<>();
                                         Map[] maps = new Map[resDataBean.getStock_move_lines().size()];
                                         for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
@@ -909,16 +941,26 @@ public class OrderDetailActivity extends ToolBarActivity {
                                             maps[i] = mapSmall;
                                         }
                                         hashMap.put("stock_moves", maps);
-                                        Call<Object> objectCall = inventoryApi.saveMaterialData(hashMap);
-                                        objectCall.enqueue(new MyCallback<Object>() {
+                                        Call<UpdateMessageBean> objectCall = inventoryApi.saveMaterialData(hashMap);
+                                        objectCall.enqueue(new MyCallback<UpdateMessageBean>() {
                                             @Override
-                                            public void onResponse(Call<Object> call, Response<Object> response) {
-                                                if (response.body() == null)return;
+                                            public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
+                                                dismissDefultProgressDialog();
+                                                if (response.body() == null) return;
+                                                if (response.body().getResult().getRes_code() == 1) {
+                                                    Intent intent = new Intent(OrderDetailActivity.this, MaterialDetailActivity.class);
+                                                    intent.putExtra("limit", limit);
+                                                    intent.putExtra("process_id", process_id);
+                                                    intent.putExtra("state", delay_state);
+                                                    startActivity(intent);
+                                                    finish();
+                                                }
                                             }
 
                                             @Override
-                                            public void onFailure(Call<Object> call, Throwable t) {
-                                                super.onFailure(call, t);
+                                            public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
+                                                dismissDefultProgressDialog();
+                                                Log.e("OrderDetailActivity", t.toString());
                                             }
                                         });
                                     }
@@ -977,8 +1019,8 @@ public class OrderDetailActivity extends ToolBarActivity {
 
     /**
      * 展示dialog  后续改的  用于等待生产
-     * */
-    private void showNext(){
+     */
+    private void showNext() {
         AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否确定完成备料，下一步确认物料位置")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
@@ -995,12 +1037,13 @@ public class OrderDetailActivity extends ToolBarActivity {
                             intent.putExtra("bean", resDataBean);
                             startActivity(intent);
                             finish();
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             ToastUtils.showCommonToast(OrderDetailActivity.this, "It is exception for this activity,please connect manager");
                         }
                     }
                 }).show();
     }
+
     @Override
     protected void onDestroy() {
         if (dialogForOrder != null) {

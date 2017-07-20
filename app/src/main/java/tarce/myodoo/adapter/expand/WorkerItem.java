@@ -1,6 +1,8 @@
 package tarce.myodoo.adapter.expand;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
+import android.graphics.Paint;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,6 +14,7 @@ import java.util.List;
 
 import tarce.model.inventory.BomSubBean;
 import tarce.myodoo.R;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 
 /**
@@ -27,6 +30,12 @@ public class WorkerItem extends AbstractExpandableAdapterItem {
     private TextView mExpand;
     private TextView mProcess_id;
     private TextView mNum;
+
+    public WorkerItem(Context context) {
+        this.context = context;
+    }
+
+    private Context context;
 
     @Override
     public void onExpansionToggled(boolean expanded){
@@ -78,9 +87,16 @@ public class WorkerItem extends AbstractExpandableAdapterItem {
     public void onUpdateViews(Object model, int position) {
         super.onUpdateViews(model, position);
         onSetViews();
-        BomSubBean employee = (BomSubBean) model;
+        final BomSubBean employee = (BomSubBean) model;
         mName.setText("["+employee.code+"]"+employee.name);
-        mExpand.setText(employee.product_specs);
+        mExpand.setText(StringUtils.stringFilter(employee.product_specs));
+        mExpand.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+        mExpand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new TipDialog(context, R.style.MyDialogStyle, employee.product_specs).show();
+            }
+        });
         mProcess_id.setText(String.valueOf(employee.process_id));
         mNum.setText(StringUtils.doubleToString(employee.qty));
         ExpandableListItem parentListItem = (ExpandableListItem) model;

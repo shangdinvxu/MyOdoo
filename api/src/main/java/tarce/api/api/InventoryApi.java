@@ -352,7 +352,7 @@ public interface InventoryApi {
      * 保存备料信息
      * */
     @POST("saving_material_data")
-    Call<Object> saveMaterialData(@Body HashMap hashMap);
+    Call<UpdateMessageBean> saveMaterialData(@Body HashMap hashMap);
 
     /**
      * 提交备料

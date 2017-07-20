@@ -1,5 +1,7 @@
 package tarce.myodoo.adapter.expand;
 
+import android.content.Context;
+import android.graphics.Paint;
 import android.view.View;
 import android.widget.TextView;
 
@@ -7,6 +9,7 @@ import com.zaihuishou.expandablerecycleradapter.viewholder.AbstractAdapterItem;
 
 import tarce.model.inventory.BomSubBean;
 import tarce.myodoo.R;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 
 /**
@@ -18,6 +21,12 @@ public class SixItem extends AbstractAdapterItem {
     private TextView mTv_gongxu;
     private TextView mTv_processid;
     private TextView mNum;
+
+    public SixItem(Context context) {
+        this.context = context;
+    }
+
+    private Context context;
     @Override
     public int getLayoutResId() {
         return R.layout.item_six;
@@ -45,9 +54,16 @@ public class SixItem extends AbstractAdapterItem {
     @Override
     public void onUpdateViews(Object model, int position) {
         if (model instanceof BomSubBean.BomBottomBean.SixBomBottomBean) {
-            BomSubBean.BomBottomBean.SixBomBottomBean sixBomBottomBean = (BomSubBean.BomBottomBean.SixBomBottomBean) model;
+            final BomSubBean.BomBottomBean.SixBomBottomBean sixBomBottomBean = (BomSubBean.BomBottomBean.SixBomBottomBean) model;
             mTv_name.setText("["+sixBomBottomBean.code+"]"+sixBomBottomBean.name);
-            mTv_gongxu.setText(sixBomBottomBean.product_specs);
+            mTv_gongxu.setText(StringUtils.stringFilter(sixBomBottomBean.product_specs));
+            mTv_gongxu.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+            mTv_gongxu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new TipDialog(context, R.style.MyDialogStyle, sixBomBottomBean.product_specs).show();
+                }
+            });
             mTv_processid.setText(String.valueOf(sixBomBottomBean.getProcess_id()));
             mNum.setText(StringUtils.doubleToString(sixBomBottomBean.qty));
         }

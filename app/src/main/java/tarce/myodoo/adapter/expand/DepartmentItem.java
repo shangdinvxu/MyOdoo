@@ -1,6 +1,8 @@
 package tarce.myodoo.adapter.expand;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
+import android.graphics.Paint;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,7 +14,9 @@ import java.util.List;
 
 import tarce.model.inventory.BomFramworkBean;
 import tarce.myodoo.R;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
+import tarce.support.ToastUtils;
 
 public class DepartmentItem extends AbstractExpandableAdapterItem {
 
@@ -21,6 +25,12 @@ public class DepartmentItem extends AbstractExpandableAdapterItem {
     private TextView mExpand;
     private TextView mProcess_id;
     private TextView mNum;
+
+    public DepartmentItem(Context context) {
+        this.context = context;
+    }
+
+    private Context context;
 
     @Override
     public int getLayoutResId() {
@@ -72,9 +82,16 @@ public class DepartmentItem extends AbstractExpandableAdapterItem {
     public void onUpdateViews(Object model, int position) {
         super.onUpdateViews(model, position);
         onSetViews();
-        BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX department = (BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX) model;
+        final BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX department = (BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX) model;
         mName.setText("["+department.code+"]"+department.name);
-        mExpand.setText(department.product_specs);
+        mExpand.setText(StringUtils.stringFilter(department.product_specs));
+        mExpand.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
+        mExpand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new TipDialog(context, R.style.MyDialogStyle, department.product_specs).show();
+            }
+        });
         mProcess_id.setText(String.valueOf(department.process_id));
         mNum.setText(StringUtils.doubleToString(department.qty));
         ExpandableListItem parentListItem = (ExpandableListItem) model;

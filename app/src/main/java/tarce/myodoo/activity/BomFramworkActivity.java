@@ -89,15 +89,15 @@ public class BomFramworkActivity extends BaseActivity {
                                 case ITEM_TYPE_COMPANY:
                                     return new CompanyItem();
                                 case ITEM_TYPE_DEPARTMENT:
-                                    return new DepartmentItem();
+                                    return new DepartmentItem(BomFramworkActivity.this);
                                 case ITEM_TYPE_EMPLOYEE:
-                                    return new EmployeeItem();
+                                    return new EmployeeItem(BomFramworkActivity.this);
                                 case ITEM_TYPE_WORKER:
-                                    return new WorkerItem();
+                                    return new WorkerItem(BomFramworkActivity.this);
                                 case ITEM_TYPE_LAST:
-                                    return new LastItem();
+                                    return new LastItem(BomFramworkActivity.this);
                                 case ITEM_TYPE_SIX:
-                                    return new SixItem();
+                                    return new SixItem(BomFramworkActivity.this);
                             }
                             return null;
                         }
