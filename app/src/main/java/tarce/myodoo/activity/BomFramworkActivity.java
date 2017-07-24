@@ -3,6 +3,7 @@ package tarce.myodoo.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.zaihuishou.expandablerecycleradapter.adapter.BaseExpandableAdapter;
 import com.zaihuishou.expandablerecycleradapter.viewholder.AbstractAdapterItem;
@@ -130,6 +131,7 @@ public class BomFramworkActivity extends BaseActivity {
             public void onFailure(Call<BomFramworkBean> call, Throwable t){
                 dismissDefultProgressDialog();
                 ToastUtils.showCommonToast(BomFramworkActivity.this, t.toString());
+                Log.e("zws", t.toString());
             }
         });
     }

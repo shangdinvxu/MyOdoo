@@ -166,6 +166,8 @@
         <activity android:name=".activity.inquiriesstock.SearchForActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".activity.PdfActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

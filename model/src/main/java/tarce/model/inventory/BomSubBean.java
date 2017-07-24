@@ -1,5 +1,6 @@
 package tarce.model.inventory;
 
+import com.google.gson.annotations.SerializedName;
 import com.zaihuishou.expandablerecycleradapter.model.ExpandableListItem;
 
 import java.util.List;
@@ -13,9 +14,20 @@ public class BomSubBean implements ExpandableListItem{
     public String code;
     public double qty;
 
-    public Object process_id;
     private int id;
-    public String product_specs;
+
+    public Object getProduct_specs() {
+        if (product_specs instanceof Boolean){
+            product_specs = "";
+        }
+        return product_specs;
+    }
+
+    public void setProduct_specs(Object product_specs) {
+        this.product_specs = product_specs;
+    }
+
+    public Object product_specs;
     private boolean is_highlight;
     public String name;
     private int level;
@@ -23,6 +35,16 @@ public class BomSubBean implements ExpandableListItem{
     private int product_tmpl_id;
     private int product_id;
     public List<BomBottomBean> bom_ids;
+
+    public List<Object> getProcess_id() {
+        return process_id;
+    }
+
+    public void setProcess_id(List<Object> process_id) {
+        this.process_id = process_id;
+    }
+
+    public List<Object> process_id;
 
     public String getCode() {
         return code;
@@ -39,16 +61,6 @@ public class BomSubBean implements ExpandableListItem{
     public void setQty(double qty) {
         this.qty = qty;
     }
-    public Object getProcess_id() {
-        if (process_id instanceof Boolean){
-            process_id = "";
-        }
-        return process_id;
-    }
-
-    public void setProcess_id(Object process_id) {
-        this.process_id = process_id;
-    }
 
     public int getId() {
         return id;
@@ -58,13 +70,6 @@ public class BomSubBean implements ExpandableListItem{
         this.id = id;
     }
 
-    public String getProduct_specs() {
-        return product_specs;
-    }
-
-    public void setProduct_specs(String product_specs) {
-        this.product_specs = product_specs;
-    }
 
     public boolean is_highlight() {
         return is_highlight;
@@ -143,15 +148,36 @@ public class BomSubBean implements ExpandableListItem{
         public String code;
         public double qty;
 
-        public Object process_id;
         private int id;
-        public String product_specs;
+
+        public Object getProduct_specs() {
+            if (product_specs instanceof Boolean){
+                product_specs = "";
+            }
+            return product_specs;
+        }
+
+        public void setProduct_specs(Object product_specs) {
+            this.product_specs = product_specs;
+        }
+
+        public Object product_specs;
         private boolean is_highlight;
         public String name;
         private int level;
         private String uuid;
         private int product_tmpl_id;
         private int product_id;
+
+        public List<Object> getProcess_id() {
+            return process_id;
+        }
+
+        public void setProcess_id(List<Object> process_id) {
+            this.process_id = process_id;
+        }
+
+        public List<Object> process_id;
 
         public String getCode() {
             return code;
@@ -168,16 +194,6 @@ public class BomSubBean implements ExpandableListItem{
         public void setQty(double qty) {
             this.qty = qty;
         }
-        public Object getProcess_id() {
-            if (process_id instanceof Boolean){
-                process_id = "";
-            }
-            return process_id;
-        }
-
-        public void setProcess_id(Object process_id) {
-            this.process_id = process_id;
-        }
 
         public int getId() {
             return id;
@@ -187,13 +203,6 @@ public class BomSubBean implements ExpandableListItem{
             this.id = id;
         }
 
-        public String getProduct_specs() {
-            return product_specs;
-        }
-
-        public void setProduct_specs(String product_specs) {
-            this.product_specs = product_specs;
-        }
 
         public boolean is_highlight() {
             return is_highlight;
@@ -272,9 +281,20 @@ public class BomSubBean implements ExpandableListItem{
             public String code;
             public double qty;
 
-            public Object process_id;
             private int id;
-            public String product_specs;
+
+            public Object getProduct_specs() {
+                if (product_specs instanceof Boolean){
+                    product_specs = "";
+                }
+                return product_specs;
+            }
+
+            public void setProduct_specs(Object product_specs) {
+                this.product_specs = product_specs;
+            }
+
+            public Object product_specs;
             private boolean is_highlight;
             public String name;
             private int level;
@@ -282,6 +302,16 @@ public class BomSubBean implements ExpandableListItem{
             private int product_tmpl_id;
             private int product_id;
             public List<?> bom_ids;
+
+            public List<Object> getProcess_id() {
+                return process_id;
+            }
+
+            public void setProcess_id(List<Object> process_id) {
+                this.process_id = process_id;
+            }
+
+            public List<Object> process_id;
 
             public String getCode() {
                 return code;
@@ -298,16 +328,7 @@ public class BomSubBean implements ExpandableListItem{
             public void setQty(double qty) {
                 this.qty = qty;
             }
-            public Object getProcess_id() {
-                if (process_id instanceof Boolean){
-                    process_id = "";
-                }
-                return process_id;
-            }
 
-            public void setProcess_id(Object process_id) {
-                this.process_id = process_id;
-            }
 
             public int getId() {
                 return id;
@@ -317,13 +338,6 @@ public class BomSubBean implements ExpandableListItem{
                 this.id = id;
             }
 
-            public String getProduct_specs() {
-                return product_specs;
-            }
-
-            public void setProduct_specs(String product_specs) {
-                this.product_specs = product_specs;
-            }
 
             public boolean is_highlight() {
                 return is_highlight;

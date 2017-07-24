@@ -16,4 +16,8 @@
         android:title="备料反馈"
         android:orderInCategory="100"
         app:showAsAction="never"/>
+    <item android:id="@+id/action_download"
+        android:title="文件下载"
+        android:orderInCategory="100"
+        app:showAsAction="never"/>
 </menu>

@@ -3,6 +3,127 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/linear_all"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/linear"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="产品名称:"
+                android:gravity="right|center_vertical"
+                android:textColor="@color/black"/>
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="0dp"
+                android:layout_weight="4"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:gravity="left|center_vertical"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="完成数量:"
+                android:gravity="right|center_vertical"
+                android:textColor="@color/black"/>
+            <TextView
+                android:id="@+id/tv_done"
+                android:layout_width="0dp"
+                android:layout_weight="4"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:gravity="left|center_vertical"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="不良品数量:"
+                android:gravity="right|center_vertical"
+                android:textColor="@color/black"/>
+            <TextView
+                android:id="@+id/tv_reject_num"
+                android:layout_width="0dp"
+                android:layout_weight="4"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:gravity="left|center_vertical"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="品检结果:"
+                android:gravity="right|center_vertical"
+                android:textColor="@color/black"/>
+            <TextView
+                android:id="@+id/tv_check_state"
+                android:layout_width="0dp"
+                android:layout_weight="4"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:gravity="left|center_vertical"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="品检批注:"
+                android:gravity="right|center_vertical"
+                android:textColor="@color/black"/>
+            <TextView
+                android:id="@+id/tv_tip"
+                android:layout_width="0dp"
+                android:layout_weight="4"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="20dp"
+                android:gravity="left|center_vertical"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="品检图片:"
+                android:gravity="right|center_vertical"
+                android:textColor="@color/black"/>
+            <ImageView
+                android:id="@+id/img_check"
+                android:layout_width="0dp"
+                android:layout_weight="4"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+    </LinearLayout>
     <TextView
         android:id="@+id/tv_pizhu"
         android:layout_width="wrap_content"
@@ -30,12 +151,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"/>
     <TextView
+        android:id="@+id/tv_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="点击上方图片拍照"
         android:layout_below="@+id/img_take_photo"
         android:layout_centerHorizontal="true"/>
     <LinearLayout
+        android:id="@+id/linear"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"

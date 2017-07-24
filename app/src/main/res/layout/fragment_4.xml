@@ -114,7 +114,8 @@
         android:textColor="@color/white"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"/>
+        android:layout_marginRight="20dp"
+        android:visibility="gone"/>
     <Button
         android:id="@+id/button_exit"
         android:layout_marginLeft="20dp"

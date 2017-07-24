@@ -56,15 +56,17 @@ public class SixItem extends AbstractAdapterItem {
         if (model instanceof BomSubBean.BomBottomBean.SixBomBottomBean) {
             final BomSubBean.BomBottomBean.SixBomBottomBean sixBomBottomBean = (BomSubBean.BomBottomBean.SixBomBottomBean) model;
             mTv_name.setText("["+sixBomBottomBean.code+"]"+sixBomBottomBean.name);
-            mTv_gongxu.setText(StringUtils.stringFilter(sixBomBottomBean.product_specs));
+            mTv_gongxu.setText(StringUtils.stringFilter((String) sixBomBottomBean.product_specs));
             mTv_gongxu.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
             mTv_gongxu.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new TipDialog(context, R.style.MyDialogStyle, sixBomBottomBean.product_specs).show();
+                    new TipDialog(context, R.style.MyDialogStyle, (String) sixBomBottomBean.product_specs).show();
                 }
             });
-            mTv_processid.setText(String.valueOf(sixBomBottomBean.getProcess_id()));
+            if (sixBomBottomBean.getProcess_id().size()!=0){
+                mTv_processid.setText(String.valueOf(sixBomBottomBean.getProcess_id()));
+            }
             mNum.setText(StringUtils.doubleToString(sixBomBottomBean.qty));
         }
     }

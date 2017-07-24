@@ -122,6 +122,16 @@ public class OrderDetailBean {
             private String error;
             private String remark;
 
+            public String getSop_file_url() {
+                return sop_file_url;
+            }
+
+            public void setSop_file_url(String sop_file_url) {
+                this.sop_file_url = sop_file_url;
+            }
+
+            private String sop_file_url;
+
             public String getRemark() {
                 return remark;
             }

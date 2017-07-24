@@ -9,7 +9,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,7 +25,6 @@ import com.newland.mtype.ConnectionCloseEvent;
 import com.newland.mtype.ModuleType;
 import com.newland.mtype.event.DeviceEventListener;
 import com.newland.mtype.module.common.printer.Printer;
-import com.newland.mtype.module.common.printer.WordStockType;
 import com.newland.mtypex.nseries.NSConnV100ConnParams;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
@@ -100,6 +98,8 @@ public class TakeDeliverDetailActivity extends BaseActivity {
     LinearLayout linearBottom;
     @InjectView(R.id.tv_print)
     TextView tvPrint;
+    @InjectView(R.id.tv_false_product)
+    TextView tvFalseProduct;
     private TakeDelListBean.ResultBean.ResDataBean resDataBean;
     private InventoryApi inventoryApi;
     private DetailTakedAdapter takedAdapter;
@@ -149,7 +149,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         }
         remarks.setText(String.valueOf(resDataBean.getSale_note()));
         List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> pack_operation_product_ids = resDataBean.getPack_operation_product_ids();
-        takedAdapter = new DetailTakedAdapter(R.layout.adapter_detaildeleive, pack_operation_product_ids, TakeDeliverDetailActivity.this);
+        takedAdapter = new DetailTakedAdapter(R.layout.adapter_detaildeleive, pack_operation_product_ids, TakeDeliverDetailActivity.this, "notShow");
         recyclerview.setAdapter(takedAdapter);
         refreshButtom(resDataBean.getState());
     }
@@ -201,10 +201,13 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 });
                 break;
             case "qc_check":
+                takedAdapter.setShowNotgood("qc_check");
+                tvFalseProduct.setVisibility(View.VISIBLE);
                 buttomButton1.setText("查看入库信息");
                 buttomButton2.setText("填写品检信息");
                 buttomButton2.setVisibility(View.VISIBLE);
                 showLinThreePin();
+                initRejectAdapter();
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -222,13 +225,15 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                         intent.putExtra("bean", resDataBean);
                         intent.putExtra("type_code", type_code);
                         intent.putExtra("state", state);
-                        intent.putExtra("notneed",notneed);
+                        intent.putExtra("notneed", notneed);
                         startActivity(intent);
                         finish();
                     }
                 });
                 break;
             case "validate":
+                takedAdapter.setShowNotgood("validate");
+                tvFalseProduct.setVisibility(View.VISIBLE);
                 buttomButton1.setText("查看品检结果");
                 showLinThreePin();
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
@@ -267,7 +272,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                         List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> ids = resDataBean.getPack_operation_product_ids();
                                         List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> sub_ids = new ArrayList<>();
                                         for (int i = 0; i < ids.size(); i++) {
-                                            if (ids.get(i).getPack_id() == -1){
+                                            if (ids.get(i).getPack_id() == -1) {
                                                 sub_ids.add(ids.get(i));
                                             }
                                         }
@@ -286,7 +291,8 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                             @Override
                                             public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                                                 dismissDefultProgressDialog();
-                                                if (response.body() == null || response.body().getResult() == null) return;
+                                                if (response.body() == null || response.body().getResult() == null)
+                                                    return;
                                                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                                                     ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "入库完成");
                                                     finish();
@@ -312,13 +318,48 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         }
     }
 
+    //adapter的另一个点击事件
+    private void initRejectAdapter() {
+        takedAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                final TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean bean
+                        = takedAdapter.getData().get(position);
+                if (bean.getPack_id() == -1) {
+                    return;
+                }
+                final EditText editText = new EditText(TakeDeliverDetailActivity.this);
+                // final int qty_available = StringUtils.doubleToInt(bean.getProduct_id().getQty_available());
+                final int product_qty = StringUtils.doubleToInt(bean.getProduct_qty());
+                //final int qty = qty_available >= product_qty ? qty_available:product_qty;
+                editText.setText(bean.getRejects_qty()+"");
+                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                editText.setSelection(editText.getText().length());
+                AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "请输入 " + bean.getProduct_id().getName() + " 不良品数量");
+                dialog.setView(editText)
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                int anInt = Integer.parseInt(editText.getText().toString());
+                                if (anInt > bean.getQty_done()){
+                                    Toast.makeText(TakeDeliverDetailActivity.this, "不能超过完成数量", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                bean.setRejects_qty(anInt);
+                                takedAdapter.notifyDataSetChanged();
+                            }
+                        }).show();
+            }
+        });
+    }
+
     private void initListenerAdapter() {
         takedAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 final TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean bean
                         = takedAdapter.getData().get(position);
-                if (bean.getPack_id() == -1){
+                if (bean.getPack_id() == -1) {
                     return;
                 }
                 final EditText editText = new EditText(TakeDeliverDetailActivity.this);
@@ -346,7 +387,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         });
     }
 
-    private void initNongoodListen(){
+    private void initNongoodListen() {
         takedAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
@@ -354,16 +395,17 @@ public class TakeDeliverDetailActivity extends BaseActivity {
             }
         });
     }
+
     /**
      * 打印操作
-     * */
+     */
     @OnClick(R.id.tv_print)
-    void printDan(View view){
+    void printDan(View view) {
         AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "确定打印？(请尽量避免重复打印)")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                            printTra();
+                        printTra();
                     }
                 }).show();
     }
@@ -410,7 +452,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         }
         printer.print("产品名称        完成数量", 30, TimeUnit.SECONDS);
         for (int i = 0; i < resDataBean.getPack_operation_product_ids().size(); i++) {
-            if (resDataBean.getPack_operation_product_ids().get(i).getPack_id() != -1){
+            if (resDataBean.getPack_operation_product_ids().get(i).getPack_id() != -1) {
                 printer.print(resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getName() + "-----" +
                         takedAdapter.getData().get(i).getQty_done()
                         + "\n", 30, TimeUnit.SECONDS);

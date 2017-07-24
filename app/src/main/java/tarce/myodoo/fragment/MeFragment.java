@@ -1,7 +1,12 @@
 package tarce.myodoo.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -14,9 +19,24 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import tarce.api.MyCallback;
+import tarce.api.OKHttpFactory;
+import tarce.api.RetrofitClient;
+import tarce.api.api.InventoryApi;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.LoginActivity;
 import tarce.myodoo.activity.NFCReadingActivity;
@@ -30,6 +50,7 @@ import tarce.support.Toolkits;
  */
 
 public class MeFragment extends Fragment {
+
     @InjectView(R.id.heard)
     ImageView heard;
     @InjectView(R.id.user_name)
@@ -71,6 +92,13 @@ public class MeFragment extends Fragment {
         String user_ava = SharePreferenceUtils.getString("user_ava", "null", getActivity());
         Log.i("user_ava", user_ava);
         Glide.with(getActivity()).load(user_ava).into(heard);
+        try {
+            if (UserManager.getSingleton().getGrops().contains("group_mrp_manager")) {
+                insertNfc.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            Log.e("MeFragment", "权限问题");
+        }
     }
 
 
@@ -79,6 +107,7 @@ public class MeFragment extends Fragment {
         super.onDestroyView();
         ButterKnife.reset(this);
     }
+
 
     /**
      * 退出登录  需要删除一些本地数据，缓存的数据
@@ -96,8 +125,9 @@ public class MeFragment extends Fragment {
     }
 
     @OnClick(R.id.insert_nfc)
-    void insertNFC(View view){
+    void insertNFC(View view) {
         Intent intent3 = new Intent(getActivity(), NFCReadingActivity.class);
         startActivity(intent3);
     }
+
 }

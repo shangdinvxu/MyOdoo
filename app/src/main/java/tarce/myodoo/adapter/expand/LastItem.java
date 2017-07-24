@@ -86,15 +86,17 @@ public class LastItem extends AbstractExpandableAdapterItem{
         onSetViews();
         final BomSubBean.BomBottomBean employee = (BomSubBean.BomBottomBean) model;
         mTv_name.setText("["+employee.code+"]"+employee.name);
-        mTv_gongxu.setText(StringUtils.stringFilter(employee.product_specs));
+        mTv_gongxu.setText(StringUtils.stringFilter((String) employee.product_specs));
         mTv_gongxu.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         mTv_gongxu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new TipDialog(context, R.style.MyDialogStyle, employee.product_specs).show();
+                new TipDialog(context, R.style.MyDialogStyle, (String) employee.product_specs).show();
             }
         });
-        mTv_processid.setText(String.valueOf(employee.process_id));
+        if (employee.process_id.size()!=0){
+            mTv_processid.setText(String.valueOf(employee.process_id));
+        }
         mNum.setText(StringUtils.doubleToString(employee.qty));
         ExpandableListItem parentListItem = (ExpandableListItem) model;
         List<?> childItemList = parentListItem.getChildItemList();

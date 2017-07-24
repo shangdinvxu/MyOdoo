@@ -68,6 +68,8 @@ public class CompanyItem extends AbstractExpandableAdapterItem {
         onExpansionToggled(getExpandableListItem().isExpanded());
         mCompany = (BomFramworkBean.ResultBean.ResDataBean) model;
         mName.setText("["+mCompany.code+"]"+mCompany.name);
-        mProcess.setText(mCompany.process_id);
+        if (mCompany.process_id.size()!=0){
+            mProcess.setText((String)mCompany.process_id.get(1));
+        }
     }
 }

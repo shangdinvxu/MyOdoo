@@ -89,15 +89,17 @@ public class WorkerItem extends AbstractExpandableAdapterItem {
         onSetViews();
         final BomSubBean employee = (BomSubBean) model;
         mName.setText("["+employee.code+"]"+employee.name);
-        mExpand.setText(StringUtils.stringFilter(employee.product_specs));
+        mExpand.setText(StringUtils.stringFilter((String) employee.product_specs));
         mExpand.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         mExpand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new TipDialog(context, R.style.MyDialogStyle, employee.product_specs).show();
+                new TipDialog(context, R.style.MyDialogStyle, (String) employee.product_specs).show();
             }
         });
-        mProcess_id.setText(String.valueOf(employee.process_id));
+        if (employee.process_id.size()!=0){
+            mProcess_id.setText(String.valueOf(employee.process_id.get(1)));
+        }
         mNum.setText(StringUtils.doubleToString(employee.qty));
         ExpandableListItem parentListItem = (ExpandableListItem) model;
         List<?> childItemList = parentListItem.getChildItemList();

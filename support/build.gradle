@@ -87,4 +87,7 @@ dependencies {
 
     //树形
     compile 'com.github.bmelnychuk:atv:1.2.+'
+    //打开pdf
+    compile 'com.github.barteksc:android-pdf-viewer:2.6.1'
 }
+

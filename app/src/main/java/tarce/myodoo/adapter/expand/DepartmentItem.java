@@ -84,15 +84,17 @@ public class DepartmentItem extends AbstractExpandableAdapterItem {
         onSetViews();
         final BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX department = (BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX) model;
         mName.setText("["+department.code+"]"+department.name);
-        mExpand.setText(StringUtils.stringFilter(department.product_specs));
+        mExpand.setText(StringUtils.stringFilter((String) department.product_specs));
         mExpand.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         mExpand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new TipDialog(context, R.style.MyDialogStyle, department.product_specs).show();
+                new TipDialog(context, R.style.MyDialogStyle, (String) department.product_specs).show();
             }
         });
-        mProcess_id.setText(String.valueOf(department.process_id));
+        if (department.process_id.size()!=0){
+            mProcess_id.setText(String.valueOf(department.process_id.get(1)));
+        }
         mNum.setText(StringUtils.doubleToString(department.qty));
         ExpandableListItem parentListItem = (ExpandableListItem) model;
         List<?> childItemList = parentListItem.getChildItemList();

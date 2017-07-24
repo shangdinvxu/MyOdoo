@@ -1,10 +1,14 @@
 package tarce.myodoo.activity;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
@@ -28,17 +32,20 @@ import com.newland.mtype.ConnectionCloseEvent;
 import com.newland.mtype.ModuleType;
 import com.newland.mtype.event.DeviceEventListener;
 import com.newland.mtype.module.common.printer.Printer;
-import com.newland.mtype.module.common.printer.WordStockType;
 import com.newland.mtypex.nseries.NSConnV100ConnParams;
 import com.uuzuche.lib_zxing.activity.CaptureFragment;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 import com.uuzuche.lib_zxing.camera.CameraManager;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
@@ -68,13 +75,16 @@ import tarce.support.MyLog;
 import tarce.support.TimeUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
-
 /**
  * Created by rose.zou on 2017/5/22.
  * 生产订单详情页面
  */
 
 public class OrderDetailActivity extends ToolBarActivity {
+    // 下载失败
+    public static final int DOWNLOAD_ERROR = 4;
+    // 下载成功
+    public static final int DOWNLOAD_SUCCESS = 3;
     private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     private static final String TAG = "OrderDetailActivity";
     @InjectView(R.id.img_up_down)
@@ -163,8 +173,10 @@ public class OrderDetailActivity extends ToolBarActivity {
     private DeviceManager deviceManager;
     private String order_name;
     private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list = new ArrayList<>();
-    private volatile String wantNext = "";
-    private volatile int indexForList = -1;
+    private  String wantNext = "";
+    private  int indexForList = -1;
+    private ProgressDialog mProgressDialog;
+    private  File file1;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -190,6 +202,14 @@ public class OrderDetailActivity extends ToolBarActivity {
                             initDialog(linesBean);
                         }
                     });
+                    break;
+                case DOWNLOAD_SUCCESS:
+                    Intent intent = new Intent(OrderDetailActivity.this, PdfActivity.class);
+                    intent.putExtra("path",file1.getAbsolutePath());
+                    startActivity(intent);
+                    break;
+                case DOWNLOAD_ERROR:
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, "下载失败");
                     break;
             }
         }
@@ -296,10 +316,76 @@ public class OrderDetailActivity extends ToolBarActivity {
             intent.putExtra("state", state);
             intent.putExtra("order_id", order_id);
             startActivity(intent);
+        }else if (item.getItemId() == R.id.action_download){
+            if (StringUtils.isNullOrEmpty(resDataBean.getSop_file_url())){
+                ToastUtils.showCommonToast(OrderDetailActivity.this, "本单暂时没有SOP文件");
+                return true;
+            }
+            final String strname = resDataBean.getSop_file_url();
+            mProgressDialog = new ProgressDialog(OrderDetailActivity.this);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            mProgressDialog.setCancelable(false);
+            mProgressDialog.show();
+            //文件存储
+            file1 = new File(Environment.getExternalStorageDirectory(), resDataBean.getDisplay_name()+".pdf");
+            new Thread() {
+                public void run() {
+                    Log.e("zws", "走了这里下载");
+//              本地没有此文件 则从网上下载打开
+                    File downloadfile = downLoad(strname, file1.getAbsolutePath(), mProgressDialog);
+                    Log.e("zws",file1.getAbsolutePath());
+                    Message msg = Message.obtain();
+                    if (downloadfile != null) {
+                        // 下载成功,安装....
+                        msg.obj = downloadfile;
+                        msg.what = DOWNLOAD_SUCCESS;
+                    } else {
+                        // 提示用户下载失败.
+                        msg.what = DOWNLOAD_ERROR;
+                    }
+                    mHandler.sendMessage(msg);
+                    mProgressDialog.dismiss();
+                }
+            }.start();
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * 传入文件 url  文件路径  和 弹出的dialog  进行 下载文档
+     */
+    public File downLoad(String serverpath, String savedfilepath, ProgressDialog pd) {
+        try {
+            URL url = new URL(serverpath);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(5000);
+            if (conn.getResponseCode() == 200) {
+                int max = conn.getContentLength();
+                pd.setMax(max);
+                InputStream is = conn.getInputStream();
+                File file = new File(savedfilepath);
+                FileOutputStream fos = new FileOutputStream(file);
+                int len = 0;
+                byte[] buffer = new byte[1024];
+                int total = 0;
+                while ((len = is.read(buffer)) != -1) {
+                    fos.write(buffer, 0, len);
+                    total += len;
+                    pd.setProgress(total);
+                }
+                fos.flush();
+                fos.close();
+                is.close();
+                return file;
+            } else {
+                ToastUtils.showCommonToast(OrderDetailActivity.this, "link some error");
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     //打印
     private void prinPra() {
         initDevice();
@@ -648,12 +734,12 @@ public class OrderDetailActivity extends ToolBarActivity {
 
     //将listone和listto合并为一个list
     private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> linkOneTwo() {
-        for (int i = 0; i < list_one.size(); i++) {
-            list.add(list_one.get(i));
-        }
-        for (int i = 0; i < list_two.size(); i++) {
-            list.add(list_two.get(i));
-        }
+                for (int i = 0; i < list_one.size(); i++) {
+                    list.add(list_one.get(i));
+                }
+                for (int i = 0; i < list_two.size(); i++) {
+                    list.add(list_two.get(i));
+                }
         return list;
     }
 
@@ -700,9 +786,10 @@ public class OrderDetailActivity extends ToolBarActivity {
             case STATE_START_PRODUCT:
                 boolean nextone = true;
                 int indexone = -1;
+                linkOneTwo();
                 try {
-                    for (int i = 0; i < linkOneTwo().size(); i++) {
-                        if (StringUtils.doubleToInt(linkOneTwo().get(i).getQuantity_ready() + linkOneTwo().get(i).getQuantity_done()) < 1) {
+                    for (int i = 0; i < list.size(); i++) {
+                        if (StringUtils.doubleToInt(list.get(i).getQuantity_ready() + list.get(i).getQuantity_done()) < 1) {
                             nextone = false;
                             indexone = i;
                             break;
@@ -714,7 +801,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 if (nextone) {
                     showNext();
                 } else {
-                    AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "").setMessage(linkOneTwo().get(indexone).getProduct_id() + " 未备料")
+                    AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "").setMessage(list.get(indexone).getProduct_id() + " 未备料")
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -889,85 +976,68 @@ public class OrderDetailActivity extends ToolBarActivity {
      */
     @OnClick(R.id.tv_area_look)
     void lookArea(View view) {
-        switch (click_check) {
-            case STATE_REQUSIT_RIGISTER:
-                ToastUtils.showCommonToast(OrderDetailActivity.this, "正在跳转");
-                Intent intent = new Intent(OrderDetailActivity.this, AreaMessageActivity.class);
-                intent.putExtra("img_area", prepare_material_img);
-                intent.putExtra("string_area", (String) prepare_material_area_id.getArea_name());
-                startActivity(intent);
-                break;
-            case STATE_START_PRODUCT:
-                for (int i = 0; i < linkOneTwo().size(); i++) {
-                    if (StringUtils.doubleToInt(linkOneTwo().get(i).getQuantity_ready() + linkOneTwo().get(i).getQuantity_done())
-                            < StringUtils.doubleToInt(linkOneTwo().get(i).getProduct_uom_qty())
-                            && StringUtils.doubleToInt(linkOneTwo().get(i).getQuantity_ready() + linkOneTwo().get(i).getQuantity_done()) != 0) {
-                        wantNext = "pass";
-                    } else if (StringUtils.doubleToInt(linkOneTwo().get(i).getQuantity_ready() + linkOneTwo().get(i).getQuantity_done()) == 0) {
-                        wantNext = "false";
-                        indexForList = i;
-                        break;
-                    } else {
-                        wantNext = "true";
-                    }
+        if (click_check == STATE_REQUSIT_RIGISTER){
+            ToastUtils.showCommonToast(OrderDetailActivity.this, "正在跳转");
+            Intent intent = new Intent(OrderDetailActivity.this, AreaMessageActivity.class);
+            intent.putExtra("img_area", prepare_material_img);
+            intent.putExtra("string_area", (String) prepare_material_area_id.getArea_name());
+            startActivity(intent);
+        }else if (click_check == STATE_START_PRODUCT){
+            linkOneTwo();
+            for (int i = 0; i < list.size(); i++) {
+                if (StringUtils.doubleToInt(list.get(i).getQuantity_ready() + list.get(i).getQuantity_done())
+                        < StringUtils.doubleToInt(list.get(i).getProduct_uom_qty())) {
+                    wantNext = "pass";
+                    break;
+                } else {
+                    wantNext = "true";
                 }
-
-                switch (wantNext) {
-                    case "true":
-                        showNext();
-                        break;
-                    case "false":
-                        AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "").setMessage(linkOneTwo().get(indexForList).getProduct_id() + " 未备料")
-                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
+            }
+            if (!StringUtils.isNullOrEmpty(wantNext)){
+                if ("true".equals(wantNext)){
+                    showNext();
+                }else if ("pass".equals(wantNext)){
+                    AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "确定保存备料数量?")
+                            .setPositiveButton("保存", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    showDefultProgressDialog();
+                                    HashMap<Object, Object> hashMap = new HashMap<>();
+                                    Map[] maps = new Map[resDataBean.getStock_move_lines().size()];
+                                    for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
+                                        Map<Object, Object> mapSmall = new HashMap<>();
+                                        mapSmall.put("stock_move_lines_id", resDataBean.getStock_move_lines().get(i).getId());
+                                        mapSmall.put("quantity_ready", resDataBean.getStock_move_lines().get(i).getQuantity_ready());
+                                        mapSmall.put("order_id", resDataBean.getStock_move_lines().get(i).getOrder_id());
+                                        maps[i] = mapSmall;
                                     }
-                                }).show();
-                        break;
-                    case "pass":
-                        AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "确定保存备料数量")
-                                .setPositiveButton("保存", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        showDefultProgressDialog();
-                                        HashMap<Object, Object> hashMap = new HashMap<>();
-                                        Map[] maps = new Map[resDataBean.getStock_move_lines().size()];
-                                        for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
-                                            Map<Object, Object> mapSmall = new HashMap<>();
-                                            mapSmall.put("stock_move_lines_id", resDataBean.getStock_move_lines().get(i).getId());
-                                            mapSmall.put("quantity_ready", resDataBean.getStock_move_lines().get(i).getQuantity_ready());
-                                            mapSmall.put("order_id", resDataBean.getStock_move_lines().get(i).getOrder_id());
-                                            maps[i] = mapSmall;
+                                    hashMap.put("stock_moves", maps);
+                                    Call<UpdateMessageBean> objectCall = inventoryApi.saveMaterialData(hashMap);
+                                    objectCall.enqueue(new MyCallback<UpdateMessageBean>() {
+                                        @Override
+                                        public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
+                                            dismissDefultProgressDialog();
+                                            if (response.body() == null) return;
+                                            if (response.body().getResult().getRes_code() == 1) {
+                                                Intent intent = new Intent(OrderDetailActivity.this, MaterialDetailActivity.class);
+                                                intent.putExtra("limit", limit);
+                                                intent.putExtra("process_id", process_id);
+                                                intent.putExtra("state", delay_state);
+                                                startActivity(intent);
+                                                finish();
+                                            }
                                         }
-                                        hashMap.put("stock_moves", maps);
-                                        Call<UpdateMessageBean> objectCall = inventoryApi.saveMaterialData(hashMap);
-                                        objectCall.enqueue(new MyCallback<UpdateMessageBean>() {
-                                            @Override
-                                            public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
-                                                dismissDefultProgressDialog();
-                                                if (response.body() == null) return;
-                                                if (response.body().getResult().getRes_code() == 1) {
-                                                    Intent intent = new Intent(OrderDetailActivity.this, MaterialDetailActivity.class);
-                                                    intent.putExtra("limit", limit);
-                                                    intent.putExtra("process_id", process_id);
-                                                    intent.putExtra("state", delay_state);
-                                                    startActivity(intent);
-                                                    finish();
-                                                }
-                                            }
 
-                                            @Override
-                                            public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
-                                                dismissDefultProgressDialog();
-                                                Log.e("OrderDetailActivity", t.toString());
-                                            }
-                                        });
-                                    }
-                                }).show();
-                        break;
+                                        @Override
+                                        public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
+                                            dismissDefultProgressDialog();
+                                            Log.e("OrderDetailActivity", t.toString());
+                                        }
+                                    });
+                                }
+                            }).show();
                 }
-                break;
+            }
         }
     }
 

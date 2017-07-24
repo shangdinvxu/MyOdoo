@@ -173,13 +173,6 @@
                     android:gravity="center"
                     android:text="位置" />
 
-                <!--<TextView
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="库存" />-->
-
                 <TextView
                     android:id="@+id/textView"
                     android:layout_width="0dp"
@@ -195,12 +188,14 @@
                     android:gravity="center"
                     android:text="完成" />
 
-                <!--<TextView
+                <TextView
+                    android:id="@+id/tv_false_product"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:text="不良品"
-                    android:gravity="center"/>-->
+                    android:gravity="center"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <android.support.v7.widget.RecyclerView

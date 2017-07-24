@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
 import retrofit2.http.POST;
 import tarce.model.AddworkBean;
 import tarce.model.BuLlBean;
@@ -59,6 +60,11 @@ import tarce.model.inventory.WorkingWorkerBean;
  */
 
 public interface InventoryApi {
+    /**
+     * 下载
+     * */
+    @GET("22654308/28514df791a24598977c3d416f132f4b54235c14?ip=1500616570,112.80.45.130&ssig=jJdnpZQdB4&Expires=1500617170&KID=sae,l30zoo1wmz&fn=%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20%20%E7%AC%AC3%E7%89%88%20PDF%E7%94%B5%E5%AD%90%E4%B9%A6%E4%B8%8B%E8%BD%BD%20%E5%B8%A6%E4%B9%A6%E7%AD%BE%E7%9B%AE%E5%BD%95%20%E5%AE%8C%E6%95%B4%E7%89%88.pdf&skiprd=2&se_ip_debug=112.80.45.130&corp=2&from=1221134&wsiphost=local")
+    Call<Object> downLoad();
 
     /**
      * 查询移动列表

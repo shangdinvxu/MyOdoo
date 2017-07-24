@@ -137,7 +137,7 @@ public class SalesListActivity extends BaseActivity {
             @Override
             public void onResponse(Call<SalesOutListResponse> call, Response<SalesOutListResponse> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null) return;
+                if (response.body() == null || response.body().getResult() == null) return;
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                     res_data = response.body().getResult().getRes_data();
                     if (move == Refresh_Move){

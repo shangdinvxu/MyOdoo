@@ -272,7 +272,7 @@ public class InspectMoDetailActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<StartInspectBean> call, Response<StartInspectBean> response) {
                         dismissDefultProgressDialog();
-                        if (response.body() == null) return;
+                        if (response.body() == null || response.body().getResult() == null) return;
                         if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() !=null) {
                             AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "")
                                     .setMessage("该单据状态变为品检中")
@@ -378,7 +378,7 @@ public class InspectMoDetailActivity extends BaseActivity {
                 objectCall2.enqueue(new MyCallback<StartReworkBean>() {
                     @Override
                     public void onResponse(Call<StartReworkBean> call, Response<StartReworkBean> response) {
-                        if (response.body() == null) return;
+                        if (response.body() == null || response.body().getResult()==null) return;
                         if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                             AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "该单据开始返工")
                                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {

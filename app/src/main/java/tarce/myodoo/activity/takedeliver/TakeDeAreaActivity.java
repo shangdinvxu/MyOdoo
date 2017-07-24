@@ -44,6 +44,7 @@ import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
 import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.uiutil.ImageUtil;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
 import tarce.support.BitmapUtils;
@@ -159,10 +160,10 @@ public class TakeDeAreaActivity extends BaseActivity {
                                 dismissDefultProgressDialog();
                                 if (response.body() == null || response.body().getResult() == null)return;
                                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
-                                    AlertAialogUtils.getCommonDialog(TakeDeAreaActivity.this, "提交物料信息成功，等待入库品检")
-                                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                    new TipDialog(TakeDeAreaActivity.this, R.style.MyDialogStyle, "提交物料信息成功，等待入库品检")
+                                            .setTrue(new View.OnClickListener() {
                                                 @Override
-                                                public void onClick(DialogInterface dialog, int which) {
+                                                public void onClick(View v) {
                                                     Intent intent = new Intent(TakeDeAreaActivity.this, TakeDeliveListActivity.class);
                                                     intent.putExtra("type_code", type_code);
                                                     intent.putExtra("state",state);
@@ -173,20 +174,7 @@ public class TakeDeAreaActivity extends BaseActivity {
                                                     startActivity(intent);
                                                     finish();
                                                 }
-                                            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            Intent intent = new Intent(TakeDeAreaActivity.this, TakeDeliveListActivity.class);
-                                            intent.putExtra("type_code", type_code);
-                                            intent.putExtra("state",state);
-                                            intent.putExtra("from",from);
-                                            if (from.equals("no")){
-                                                intent.putExtra("notneed",notneed);
-                                            }
-                                            startActivity(intent);
-                                            finish();
-                                        }
-                                    }).show();
+                                            }).show();
                                 }
                             }
                             @Override

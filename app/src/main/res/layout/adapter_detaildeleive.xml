@@ -39,12 +39,13 @@
             android:gravity="center"
             android:id="@+id/done"
             android:layout_weight="1"/>
-        <!--<TextView
+        <TextView
             android:id="@+id/nongood"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:gravity="center"/>-->
+            android:gravity="center"
+            android:visibility="gone"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
