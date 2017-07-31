@@ -2,7 +2,10 @@ package tarce.myodoo.adapter.expand;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.text.Layout;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -10,10 +13,12 @@ import android.widget.TextView;
 import com.zaihuishou.expandablerecycleradapter.model.ExpandableListItem;
 import com.zaihuishou.expandablerecycleradapter.viewholder.AbstractExpandableAdapterItem;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import tarce.model.inventory.BomFramworkBean;
 import tarce.myodoo.R;
+import tarce.myodoo.uiutil.CheckOverSizeTextView;
 import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.ToastUtils;

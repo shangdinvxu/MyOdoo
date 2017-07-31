@@ -59,8 +59,23 @@ public class DialogIsSave extends Dialog {
         setCancelable(true);
     }
 
+    public DialogIsSave changeT(String title){
+        tvTitle.setText(title);
+        return this;
+    }
+
+    public DialogIsSave changeFirst(String first){
+        tvSave.setText(first);
+        return this;
+    }
+
+    public DialogIsSave changeSecond(String second){
+        tvSave.setText(second);
+        return this;
+    }
+
     public DialogIsSave changeTitle() {
-        tvSave.setText("选择生产单类型");
+        tvTitle.setText("选择生产单类型");
         return this;
     }
 

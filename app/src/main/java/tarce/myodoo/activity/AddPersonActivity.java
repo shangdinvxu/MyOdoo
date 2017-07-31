@@ -214,7 +214,7 @@ public class AddPersonActivity extends BaseActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            ToastUtils.showCommonToast(AddPersonActivity.this, "非接卡序列号null: " + "" + Const.MessageTag.DATA);
+                            ToastUtils.showCommonToast(AddPersonActivity.this, "非接卡序列号为空: " + "" + Const.MessageTag.DATA);
                         }
                     });
                     processingUnLock();
@@ -422,7 +422,8 @@ public class AddPersonActivity extends BaseActivity {
                         personAdapter.notifyDataSetChanged();
                     }
                 } else {
-                    ToastUtils.showCommonToast(AddPersonActivity.this, "some error,please try again");
+                    //ToastUtils.showCommonToast(AddPersonActivity.this, "some error,please try again");
+                    Log.e("zws", "数据异常");
                 }
             }
 
@@ -457,7 +458,8 @@ public class AddPersonActivity extends BaseActivity {
                                     startActivity(intent);
                                     finish();
                                 } else {
-                                    ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
+                                   // ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
+                                    Log.e("zws", "数据异常");
                                 }
                             }
 
@@ -491,7 +493,8 @@ public class AddPersonActivity extends BaseActivity {
                     adapterList.set(position, new WorkingStateBean(adapterList.get(position).getName(), state));
                     personAdapter.notifyItemChanged(position);
                 } else {
-                    ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
+                   // ToastUtils.showCommonToast(AddPersonActivity.this, "出现错误，请联系开发人员调试");
+                    Log.e("zws", "数据异常");
                 }
             }
 

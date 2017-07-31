@@ -74,6 +74,10 @@ public class WriteCheckMessaActivity extends BaseActivity {
     TextView tvTextview;
     @InjectView(R.id.linear_all)
     LinearLayout linearAll;
+    @InjectView(R.id.one_linear)
+    LinearLayout oneLinear;
+    @InjectView(R.id.two_linear)
+    LinearLayout twoLinear;
     private String selectedImagePath = "";
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;//拍照
 
@@ -107,19 +111,38 @@ public class WriteCheckMessaActivity extends BaseActivity {
             notPassTv.setText("退回");
             editWritePizhu.setFocusable(false);
             editWritePizhu.setHint("");
-            editWritePizhu.setVisibility(View.GONE);
+            /*editWritePizhu.setVisibility(View.GONE);
             imgTakePhoto.setVisibility(View.GONE);
             tvPizhu.setVisibility(View.GONE);
             tvTextview.setVisibility(View.GONE);
             linearAll.setVisibility(View.VISIBLE);
             tvName.setText(resDataBean.getName());
-
-
+            tvCheckState.setText(resDataBean.getState());
+            tvTip.setText(resDataBean.getQc_note().toString());
+            if (StringUtils.isNullOrEmpty(resDataBean.getQc_img())) {
+            } else {
+                Glide.with(WriteCheckMessaActivity.this).load(resDataBean.getQc_img()).into(imgCheck);
+            }
+            if (resDataBean.getPack_operation_product_ids().size() == 1) {
+                tvDone.setText(resDataBean.getPack_operation_product_ids().get(0).getQty_done() + "");
+                tvRejectNum.setText(resDataBean.getPack_operation_product_ids().get(0).getRejects_qty() + "");
+            } else {
+                oneLinear.setVisibility(View.GONE);
+                twoLinear.setVisibility(View.GONE);
+            }
+            String qc_result = resDataBean.getQc_result();
+            if (qc_result.equals("no_result")){
+                tvCheckState.setText("暂时没有品检结果");
+            }else if (qc_result.equals("success")){
+                tvCheckState.setText("品检通过");
+            }else if (qc_result.equals("fail")){
+                tvCheckState.setText("品检不通过");
+            }*/
             editWritePizhu.setText(resDataBean.getQc_note().toString());
             imgTakePhoto.setClickable(false);
-            if (StringUtils.isNullOrEmpty(resDataBean.getQc_img())) {
+            if (StringUtils.isNullOrEmpty(resDataBean.getQc_img())){
                 imgTakePhoto.setVisibility(View.GONE);
-            } else {
+            }else {
                 Glide.with(WriteCheckMessaActivity.this).load(resDataBean.getQc_img()).into(imgTakePhoto);
             }
         }
@@ -132,11 +155,57 @@ public class WriteCheckMessaActivity extends BaseActivity {
         intent.putExtra(MediaStore.EXTRA_OUTPUT, setImageUri());
         startActivityForResult(intent, REQUEST_CODE_IMAGE_CAPTURE);
     }
-
     @OnClick(R.id.pass_tv)
     void passTv(View view) {
         switch (confirm) {
             case "confirm":
+                /*boolean haveReject = false;
+                for (int i = 0; i < resDataBean.getPack_operation_product_ids().size(); i++) {
+                    int rejects_qty = resDataBean.getPack_operation_product_ids().get(i).getRejects_qty();
+                    if (rejects_qty>0){
+                        haveReject = true;
+                        break;
+                    }
+                }
+                if (haveReject){
+                    new DialogIsSave(WriteCheckMessaActivity.this).changeT("请选择入库方式").changeFirst("全部入库")
+                            .changeSecond("仅良品入库，不良品退回")
+                            .setSave(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                }
+                            }).setNotSave(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    }).setCancel().show();
+                }else {
+                    boolean showDia = false;
+                    for (int i = 0; i < intArr.size(); i++) {
+                        if (intArr.get(i) < resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getQty_available()) {
+                            showDia = true;
+                            break;
+                        }
+                    }
+                    if (showDia) {
+                        new DialogIsSave(WriteCheckMessaActivity.this).changeTitle().changeOne().changeTwo()
+                                .setSave(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        rejectBotcreate("process");
+                                    }
+                                }).setNotSave(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                rejectBotcreate("cancel_backorder");
+                            }
+                        }).setCancel().show();
+                    } else {
+                        rejectBotcreate("cancel_backorder");
+                    }
+                }*/
                 boolean showDia = false;
                 for (int i = 0; i < intArr.size(); i++) {
                     if (intArr.get(i) < resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getQty_available()) {
@@ -160,6 +229,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
                 } else {
                     rejectBotcreate("cancel_backorder");
                 }
+
                 break;
             case "notConfirm":
                 if (StringUtils.isNullOrEmpty(editWritePizhu.getText().toString())) {

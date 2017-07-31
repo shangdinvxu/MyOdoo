@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
@@ -39,6 +40,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Response;
+import rx.Subscriber;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
@@ -201,13 +203,13 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 });
                 break;
             case "qc_check":
-                takedAdapter.setShowNotgood("qc_check");
-                tvFalseProduct.setVisibility(View.VISIBLE);
+            //    takedAdapter.setShowNotgood("qc_check");
+             //   tvFalseProduct.setVisibility(View.VISIBLE);
                 buttomButton1.setText("查看入库信息");
                 buttomButton2.setText("填写品检信息");
                 buttomButton2.setVisibility(View.VISIBLE);
                 showLinThreePin();
-                initRejectAdapter();
+            //    initRejectAdapter();
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -232,8 +234,8 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 });
                 break;
             case "validate":
-                takedAdapter.setShowNotgood("validate");
-                tvFalseProduct.setVisibility(View.VISIBLE);
+               // takedAdapter.setShowNotgood("validate");
+              //  tvFalseProduct.setVisibility(View.VISIBLE);
                 buttomButton1.setText("查看品检结果");
                 showLinThreePin();
                 buttomButton1.setOnClickListener(new View.OnClickListener() {

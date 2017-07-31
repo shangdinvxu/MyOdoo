@@ -274,7 +274,8 @@ public class ProductingActivity extends ToolBarActivity {
                     prepare_material_img = response.body().getResult().getRes_data().getPrepare_material_img();
                     initView();
                 }else {
-                    ToastUtils.showCommonToast(ProductingActivity.this, "出现错误,请联系开发人员调试");
+                    //ToastUtils.showCommonToast(ProductingActivity.this, "数据异常");
+                    Log.e("zws", "数据异常");
                 }
             }
 
@@ -494,7 +495,8 @@ public class ProductingActivity extends ToolBarActivity {
                         product_line = true;
                     }
                 }else {
-                    ToastUtils.showCommonToast(ProductingActivity.this, "出现错误，请联系开发人员调试");
+                //    ToastUtils.showCommonToast(ProductingActivity.this, "出现错误，请联系开发人员调试");
+                    Log.e("zws", "数据异常");
                 }
             }
 
@@ -567,16 +569,14 @@ public class ProductingActivity extends ToolBarActivity {
                                                 }
                                             }).show();
                                 }else {
-                                    Log.d("ProductingActivity", "出现错误，请联系开发人员调试");
-//                                    ToastUtils.showCommonToast(ProductingActivity.this, "出现错误，请联系开发人员调试");
+                                    Log.e("zws", "出现错误，请联系开发人员调试");
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                                 dismissDefultProgressDialog();
-                                Log.d("ProductingActivity", t.toString());
-//                                ToastUtils.showCommonToast(ProductingActivity.this, t.toString());
+                                Log.e("zws", t.toString());
                             }
                         });
                     }
@@ -634,7 +634,7 @@ public class ProductingActivity extends ToolBarActivity {
                 }
             });
             deviceManager.connect();
-            MyLog.e("ProductingActivity", "连接成功");
+            MyLog.e("zws", "连接成功");
         } catch (Exception e) {
             e.printStackTrace();
             ToastUtils.showCommonToast(ProductingActivity.this, "链接异常,请检查设备或重新连接.." + e);
@@ -672,7 +672,8 @@ public class ProductingActivity extends ToolBarActivity {
                             }
                         }, remark).show();
                     }else {
-                        ToastUtils.showCommonToast(ProductingActivity.this, "出现错误，请联系开发人员调试");
+                        //ToastUtils.showCommonToast(ProductingActivity.this, "出现错误，请联系开发人员调试");
+                        Log.e("zws", "数据异常");
                     }
                 }
 

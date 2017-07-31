@@ -27,6 +27,8 @@
         android:layout_height="match_parent"
         android:layout_marginLeft="5dp"
         android:textSize="11sp"
+        android:ellipsize="end"
+        android:maxLines="4"
         android:textColor="@color/black"
         android:gravity="center_vertical|left"/>
     <TextView

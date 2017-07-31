@@ -32,7 +32,6 @@ public class PdfActivity extends BaseActivity implements OnPageChangeListener, O
     @InjectView(R.id.pdfView)
     PDFView pdfView;
 
-    private final static int REQUEST_CODE = 42;
     private int pageNumber = 0;
     private Uri uri;
     private String pdfFileName;
@@ -45,6 +44,7 @@ public class PdfActivity extends BaseActivity implements OnPageChangeListener, O
 
         Intent intent = getIntent();
         path = intent.getStringExtra("path");
+        Log.e("zws", "path"+path);
         File file = new File(path);
         Uri uri = Uri.fromFile(file);
         displayFromUri(uri);
@@ -57,8 +57,8 @@ public class PdfActivity extends BaseActivity implements OnPageChangeListener, O
                 .defaultPage(pageNumber)
                 .onPageChange(this)
                 .enableAnnotationRendering(true)
-                .onLoad(this)
-                .scrollHandle(new DefaultScrollHandle(this))
+                .onLoad(PdfActivity.this)
+                .scrollHandle(new DefaultScrollHandle(PdfActivity.this))
                 .load();
     }
     public String getFileName(Uri uri) {
@@ -89,14 +89,14 @@ public class PdfActivity extends BaseActivity implements OnPageChangeListener, O
     @Override
     public void loadComplete(int nbPages) {
         PdfDocument.Meta meta = pdfView.getDocumentMeta();
-        Log.e("zws", "title = " + meta.getTitle());
+      /*  Log.e("zws", "title = " + meta.getTitle());
         Log.e("zws", "author = " + meta.getAuthor());
         Log.e("zws", "subject = " + meta.getSubject());
         Log.e("zws", "keywords = " + meta.getKeywords());
         Log.e("zws", "creator = " + meta.getCreator());
         Log.e("zws", "producer = " + meta.getProducer());
         Log.e("zws", "creationDate = " + meta.getCreationDate());
-        Log.e("zws", "modDate = " + meta.getModDate());
+        Log.e("zws", "modDate = " + meta.getModDate());*/
 
         printBookmarksTree(pdfView.getTableOfContents(), "-");
     }

@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -213,7 +214,8 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                     } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1){
                                         ToastUtils.showCommonToast(WriteFeedMateriActivity.this, response.body().getResult().getRes_data().getError());
                                     } else {
-                                        ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "数据错误");
+                                        //ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "数据错误");
+                                        Log.e("zws", "数据异常");
                                     }
                                 }
 
@@ -265,7 +267,8 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                         startActivity(intent);
                                         finish();
                                     } else {
-                                        ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "数据错误");
+                                        //ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "数据错误");
+                                        Log.e("zws", "数据异常");
                                     }
                                 }
 

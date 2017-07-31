@@ -3,6 +3,7 @@ package tarce.myodoo.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 
@@ -161,7 +162,8 @@ public class WaitProdListActivity extends BaseActivity {
                     }
                     clickAdapterItem();
                 }else {
-                    ToastUtils.showCommonToast(WaitProdListActivity.this, "出现错误。请联系开发人员调试");
+                   // ToastUtils.showCommonToast(WaitProdListActivity.this, "出现错误。请联系开发人员调试");
+                    Log.e("zws", "数据异常");
                 }
             }
 

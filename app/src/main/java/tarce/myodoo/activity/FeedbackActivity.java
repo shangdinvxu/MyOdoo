@@ -86,13 +86,13 @@ public class FeedbackActivity extends BaseActivity {
                     recyclerFeedback.setAdapter(adapter);
                     initClick();
                 }else {
-                    MyLog.e("FeedbackActivity",  "网络请求出错");
+                    MyLog.e("zws",  "网络请求出错");
                 }
             }
             @Override
             public void onFailure(Call<GetFeedbackBean> call, Throwable t) {
                 dismissDefultProgressDialog();
-                MyLog.e("FeedbackActivity",  t.toString());
+                MyLog.e("zws",  t.toString());
             }
         });
     }

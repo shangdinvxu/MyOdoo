@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -462,7 +463,7 @@ public class SalesDetailActivity extends BaseActivity {
                                                         @Override
                                                         public void onClick(DialogInterface dialog, int which) {
                                                             Toast.makeText(SalesDetailActivity.this, "由于未执行打印操作，将自动打印此单据，请等待", Toast.LENGTH_LONG).show();
-                                                            for (int i = 0; i < 3; i++) {
+                                                            for (int i = 0; i < 2; i++) {
                                                                 printTra();
                                                             }
                                                             finish();
@@ -542,7 +543,7 @@ public class SalesDetailActivity extends BaseActivity {
                             if (response.body() == null || response.body().getResult() == null) return;
                             if (response.body().getResult().getRes_code() == 1) {
                                 Toast.makeText(SalesDetailActivity.this, "物流信息上传成功!\n由于未操作打印，此次将自动打印笨单据，请等待！", Toast.LENGTH_LONG).show();
-                                for (int i = 0; i < 3; i++) {
+                                for (int i = 0; i < 2; i++) {
                                     printTra();
                                 }
                             } else {
@@ -577,8 +578,14 @@ public class SalesDetailActivity extends BaseActivity {
                     isSave = false;
                 }
             }
-            if ("change".equals(model_state) || ((bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))
-                    && isSave)) {
+            /**
+             * 情况一：点进来是开始备货状态，什么都没操作，点击返回按钮默认取消保留
+             * 情况二：点击了开始备货，什么也没操作，全是0，点击返回默认取消保留
+             * 情况三：点击了开始备货，并且至少备了一个，则进行选择是否保留
+             * 情况一和二合并
+             * */
+
+            if ("change".equals(model_state) && isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
                 new DialogIsSave(SalesDetailActivity.this)
                         .setSave(new View.OnClickListener() {
                             @Override
@@ -592,11 +599,54 @@ public class SalesDetailActivity extends BaseActivity {
                     }
                 }).setCancel().show();
             } else {
-                finish();
+                cacelReserver();
             }
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * 返回按钮
+     * */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK) { //监控/拦截/屏蔽返回键
+            boolean isSave = false;
+            for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
+                if (bundle1.getPack_operation_product_ids().get(i).getQty_done() > 0) {
+                    isSave = true;
+                    break;
+                } else {
+                    isSave = false;
+                }
+            }
+            /**
+             * 情况一：点进来是开始备货状态，什么都没操作，点击返回按钮默认取消保留
+             * 情况二：点击了开始备货，什么也没操作，全是0，点击返回默认取消保留
+             * 情况三：点击了开始备货，并且至少备了一个，则进行选择是否保留
+             * 情况一和二合并
+             * */
+
+            if ("change".equals(model_state) && isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
+                new DialogIsSave(SalesDetailActivity.this)
+                        .setSave(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                saveState();
+                            }
+                        }).setNotSave(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        cacelReserver();
+                    }
+                }).setCancel().show();
+            } else {
+                cacelReserver();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     /**
@@ -631,7 +681,15 @@ public class SalesDetailActivity extends BaseActivity {
     private void saveState() {
         showDefultProgressDialog();
         HashMap<Object, Object> hashMap = new HashMap<>();
-        hashMap.put("pack_operation_product_ids", bundle1.getPack_operation_product_ids());
+        List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> ids = bundle1.getPack_operation_product_ids();
+        List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> sub_ids = new ArrayList<>();
+        for (int i = 0; i < ids.size(); i++) {
+            if (ids.get(i).getPack_id() == -1){
+                sub_ids.add(ids.get(i));
+            }
+        }
+        ids.removeAll(sub_ids);
+        hashMap.put("pack_operation_product_ids", ids);
         hashMap.put("picking_id", bundle1.getPicking_id());
         hashMap.put("state", "prepare");
         Call<GetSaleResponse> getSaleResponseCall = inventoryApi.changeStockPicking(hashMap);
@@ -670,24 +728,24 @@ public class SalesDetailActivity extends BaseActivity {
         initDevice();
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
-        printer.setLineSpace(1);
+        printer.setLineSpace(2);
         printer.print("\n出货单号：" + bundle1.getName() + "\n" + "源单据: " + bundle1.getOrigin() + "\n" + "合作伙伴： " +
                 bundle1.getParnter_id() + "\n" +
                 "收货人联系电话: "+bundle1.getPhone()+"\n--------------------------\n", 30, TimeUnit.SECONDS);
         printer.print("产品名称         完成数量", 30, TimeUnit.SECONDS);
         for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
             if (bundle1.getPack_operation_product_ids().get(i).getPack_id() != -1){
-                printer.print(bundle1.getPack_operation_product_ids().get(i).getProduct_id().getName() + "-----" +
+                printer.print(bundle1.getPack_operation_product_ids().get(i).getProduct_id().getName() + "  ---  " +
                         bundle1.getPack_operation_product_ids().get(i).getQty_done()
                         + "\n", 30, TimeUnit.SECONDS);
             }
         }
         printer.print("\n", 30, TimeUnit.SECONDS);
        // Bitmap mBitmap = CodeUtils.createImage(bundle1.getName()+"&stock.picking&"+bundle1.getPicking_id(), 300, 300, null);
-        Bitmap mBitmap = CodeUtils.createImage(bundle1.getName(), 150, 150, null);
+        Bitmap mBitmap = CodeUtils.createImage(bundle1.getName(), 200, 200, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
         printer.print("\n"+"打印时间："+ DateTool.getDateTime(), 30, TimeUnit.SECONDS);
-        printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+        printer.print("\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
         dismissDefultProgressDialog();
     }
 

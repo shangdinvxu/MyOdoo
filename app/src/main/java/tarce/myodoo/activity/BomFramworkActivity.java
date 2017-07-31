@@ -122,7 +122,8 @@ public class BomFramworkActivity extends BaseActivity {
                     };
                     recyclerRomFramwork.setAdapter(adapter);
                 }else {
-                    ToastUtils.showCommonToast(BomFramworkActivity.this, "出现错误，请联系开发人员调试");
+                  //  ToastUtils.showCommonToast(BomFramworkActivity.this, "出现错误，请联系开发人员调试");
+                    Log.e("zws", "数据异常");
                 }
 
             }

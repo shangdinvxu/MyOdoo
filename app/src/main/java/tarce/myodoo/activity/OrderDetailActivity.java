@@ -166,9 +166,7 @@ public class OrderDetailActivity extends ToolBarActivity {
     private String state_activity;
     private OrderDetailBean.ResultBean result;
     private boolean isShowDialog = true;//用于判断是否已经显示了dialog，为了防止扫描时候的连续弹出
-    private String scanResult = "";
     private CaptureFragment captureFragment;
-    private long mExitTime;
     private Printer printer;
     private DeviceManager deviceManager;
     private String order_name;
@@ -187,21 +185,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 case 2:
                     state = "prepare_material_ing";
                     stateView("prepare_material_ing");
-                    canClick();
-                    adapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
-                            isShowDialog = true;
-                            initDialog(linesBean);
-                        }
-                    });
-                    adapter_two.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
-                        @Override
-                        public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean) {
-                            isShowDialog = true;
-                            initDialog(linesBean);
-                        }
-                    });
+                    initView();
                     break;
                 case DOWNLOAD_SUCCESS:
                     Intent intent = new Intent(OrderDetailActivity.this, PdfActivity.class);
@@ -333,7 +317,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                     Log.e("zws", "走了这里下载");
 //              本地没有此文件 则从网上下载打开
                     File downloadfile = downLoad(strname, file1.getAbsolutePath(), mProgressDialog);
-                    Log.e("zws",file1.getAbsolutePath());
+                    Log.e("zws",file1.getAbsolutePath()+"url="+strname);
                     Message msg = Message.obtain();
                     if (downloadfile != null) {
                         // 下载成功,安装....
@@ -354,13 +338,16 @@ public class OrderDetailActivity extends ToolBarActivity {
     /**
      * 传入文件 url  文件路径  和 弹出的dialog  进行 下载文档
      */
-    public File downLoad(String serverpath, String savedfilepath, ProgressDialog pd) {
+    private File downLoad(String serverpath, String savedfilepath, ProgressDialog pd) {
         try {
             URL url = new URL(serverpath);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setConnectTimeout(5000);
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Accept-Encoding", "identity");
             if (conn.getResponseCode() == 200) {
                 int max = conn.getContentLength();
+                Log.e("zws", "长度为="+max);
                 pd.setMax(max);
                 InputStream is = conn.getInputStream();
                 File file = new File(savedfilepath);

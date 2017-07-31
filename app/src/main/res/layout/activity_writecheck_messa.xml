@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:id="@+id/linear_all"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/linear"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="gone">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -30,6 +32,7 @@
                 android:gravity="left|center_vertical"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/one_linear"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal">
@@ -49,6 +52,7 @@
                 android:gravity="left|center_vertical"/>
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/two_linear"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:orientation="horizontal">
@@ -84,7 +88,8 @@
                 android:layout_weight="4"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="20dp"
-                android:gravity="left|center_vertical"/>
+                android:gravity="left|center_vertical"
+                android:textColor="@color/red"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -101,26 +106,27 @@
                 android:id="@+id/tv_tip"
                 android:layout_width="0dp"
                 android:layout_weight="4"
-                android:layout_height="match_parent"
+                android:layout_height="40dp"
                 android:layout_marginLeft="20dp"
                 android:gravity="left|center_vertical"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
             <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="品检图片:"
-                android:gravity="right|center_vertical"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black"
+                android:layout_marginLeft="15dp"/>
             <ImageView
                 android:id="@+id/img_check"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="match_parent" />
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_gravity="left"
+                android:layout_marginLeft="15dp"/>
         </LinearLayout>
 
     </LinearLayout>

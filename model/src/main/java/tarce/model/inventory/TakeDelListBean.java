@@ -119,6 +119,16 @@ public class TakeDelListBean {
             private String post_img;
             private String min_date;
 
+            public String getQc_result() {
+                return qc_result;
+            }
+
+            public void setQc_result(String qc_result) {
+                this.qc_result = qc_result;
+            }
+
+            private String qc_result;
+
             public String getPhone() {
                 return phone;
             }
