@@ -9,28 +9,28 @@
         android:layout_height="40dp"
         android:background="@color/result_view">
         <TextView
-            android:text="产品"
+            android:text="@string/product"
             android:layout_width="0dp"
             android:layout_weight="4"
             android:layout_height="match_parent"
             android:textColor="@color/white"
             android:gravity="center"/>
         <TextView
-            android:text="规格"
+            android:text="@string/specifications"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:textColor="@color/white"
             android:gravity="center"/>
         <TextView
-            android:text="工序"
+            android:text="@string/process"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:textColor="@color/white"
             android:gravity="center"/>
         <TextView
-            android:text="数量"
+            android:text="@string/num"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"

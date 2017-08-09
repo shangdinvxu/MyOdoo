@@ -29,7 +29,7 @@ public class InsertNumDialog extends Dialog {
 
     @InjectView(R.id.name_product_dialog)
     TextView nameProductDialog;
-    @InjectView(R.id.eidt_out_num)
+    @InjectView(R.id.edit_out_num)
     EditText eidtOutNum;
     @InjectView(R.id.cancel_insert_dialog)
     TextView cancelInsertDialog;

@@ -131,7 +131,8 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/bac_inspect_edit"
                     android:focusable="false"
-                    android:textSize="12sp"/>
+                    android:textSize="12sp"
+                    android:inputType="text" />
             </LinearLayout>
             <FrameLayout
                 android:id="@+id/framelayout"

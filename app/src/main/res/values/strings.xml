@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">MyOdoo</string>
+    <string name="openScan">打开扫描</string>
+    <string name="openNFC">打开NFC</string>
+    <string name="wait_working">待工中</string>
+    <string name="move">移动</string>
+    <string name="working">工作中</string>
+    <string name="finish_add">添加完成</string>
+    <string name="product">产品</string>
+    <string name="specifications">规格</string>
+    <string name="process">工序</string>
+    <string name="num">数量</string>
+    <string name="stock">库存</string>
+    <string name="need">需求</string>
+    <string name="advice">建议</string>
+    <string name="prepare_feed">备料</string>
+    <string name="out_getnum">超领数</string>
+    <string name="repair_get">补领料</string>
+    <string name="get_Latest">获取最新</string>
+
+    <string name="ten">10</string>
+    <string name="zero">0</string>
 </resources>

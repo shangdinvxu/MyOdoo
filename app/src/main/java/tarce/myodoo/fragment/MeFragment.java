@@ -1,12 +1,7 @@
 package tarce.myodoo.fragment;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -19,24 +14,10 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-import tarce.api.MyCallback;
-import tarce.api.OKHttpFactory;
-import tarce.api.RetrofitClient;
-import tarce.api.api.InventoryApi;
+import tarce.model.LoginResponse;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.LoginActivity;
 import tarce.myodoo.activity.NFCReadingActivity;
@@ -65,6 +46,8 @@ public class MeFragment extends Fragment {
     Button buttonExit;
     @InjectView(R.id.insert_nfc)
     TextView insertNfc;
+    @InjectView(R.id.distance_name)
+    TextView distanceName;
 
     @Nullable
     @Override
@@ -98,6 +81,10 @@ public class MeFragment extends Fragment {
             }
         } catch (Exception e) {
             Log.e("MeFragment", "权限问题");
+        }
+        LoginResponse userInfoBean = UserManager.getSingleton().getUserInfoBean();
+        if (userInfoBean != null) {
+            distanceName.setText(userInfoBean.getResult().getRes_data().getCompany());
         }
     }
 

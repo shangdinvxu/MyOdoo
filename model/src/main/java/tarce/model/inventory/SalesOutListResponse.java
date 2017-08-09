@@ -62,6 +62,16 @@ public class SalesOutListResponse implements Serializable {
                 this.phone = phone;
             }
 
+
+            public String getBack_order_id() {
+                return back_order_id;
+            }
+
+            public void setBack_order_id(String back_order_id) {
+                this.back_order_id = back_order_id;
+            }
+
+            private String back_order_id;
             private String phone;
             private	Object	sale_note;	/*false*/
             private	String	state;	/*confirmed*/

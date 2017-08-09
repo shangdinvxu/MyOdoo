@@ -33,7 +33,7 @@ public class PrepareMdAdapter extends BaseSectionQuickAdapter<MainMdBean, BaseVi
     protected void convert(BaseViewHolder helper, MainMdBean item) {
         helper.setText(R.id.tv_name_dan, item.t.getDisplay_name());
         helper.setText(R.id.tv_name_prod, item.t.getProduct_name());
-        helper.setText(R.id.tv_num_state, StringUtils.doubleToString(item.t.getProduct_qty()));
+        helper.setText(R.id.tv_num_state, item.t.getProduct_qty()+"");
         helper.setText(R.id.tv_person_need, item.t.getIn_charge_name());
         switch (item.t.getState()){
             case "draft":

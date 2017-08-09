@@ -272,7 +272,8 @@
                         android:layout_marginLeft="7dp"
                         android:focusable="false"
                         android:textSize="12sp"
-                        android:background="@drawable/bac_inspect_edit"/>
+                        android:background="@drawable/bac_inspect_edit"
+                        android:inputType="text"/>
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -19,7 +19,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"/>
     <EditText
-        android:id="@+id/eidt_out_num"
+        android:id="@+id/edit_out_num"
         android:background="@drawable/edit_input_bac"
         android:layout_width="100dp"
         android:layout_height="40dp"

@@ -9,6 +9,7 @@ import tarce.myodoo.activity.SalesInActivity;
 import tarce.myodoo.activity.SelectProcedureActivity;
 import tarce.myodoo.activity.inspect.InspectionSubActivity;
 import tarce.myodoo.activity.retail.RetailSubActivity;
+import tarce.myodoo.activity.salesout.NewSaleoutActivity;
 import tarce.myodoo.activity.salesout.SalesOutActivity;
 
 
@@ -31,7 +32,7 @@ public class IntentFactory {
      * @param context
      */
     public static void start_SalesOut_Activity(Context context){
-        Intent intent = new Intent(context, SalesOutActivity.class);
+        Intent intent = new Intent(context, NewSaleoutActivity.class);
         context.startActivity(intent);
     }
 

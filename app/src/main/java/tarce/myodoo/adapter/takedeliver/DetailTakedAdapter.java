@@ -2,6 +2,7 @@ package tarce.myodoo.adapter.takedeliver;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;

@@ -1,6 +1,7 @@
 package tarce.myodoo.adapter;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
@@ -21,12 +22,13 @@ public class SalesDetailAdapter extends BaseQuickAdapter<GetSaleResponse.TResult
 
     @Override
     protected void convert(BaseViewHolder helper, GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids item) {
+        Log.e("zws", "need_out = "+item.getProduct_qty()+"done = "+item.getQty_done());
         helper.setText(R.id.product,item.getProduct_id().getName())
-                .setText(R.id.need_in,item.getProduct_id().getArea_id().getArea_name())
-                .setText(R.id.origin_qty, item.getOrigin_qty()+"")
-                .setText(R.id.inventory,item.getProduct_id().getQty_available()+"")
-                .setText(R.id.need_out,item.getProduct_qty()+"")
-                .setText(R.id.done,item.getQty_done()+"")
+                .setText(R.id.need_in,"位置: "+item.getProduct_id().getArea_id().getArea_name())
+                .setText(R.id.origin_qty, "初始需求: "+item.getOrigin_qty()+"")
+                .setText(R.id.inventory,"库存: "+item.getProduct_id().getQty_available()+"")
+                .setText(R.id.need_out,"待出库: "+item.getProduct_qty()+"")
+                .setText(R.id.done,"完成: "+item.getQty_done()+"")
                 .setText(R.id.line_num, helper.getPosition()+1+".");
         if (item.getPack_id() == -1){
             helper.setTextColor(R.id.product, Color.GRAY)

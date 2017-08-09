@@ -22,6 +22,7 @@ import tarce.model.inventory.AreaMessageBean;
 import tarce.model.inventory.AutoAddworkBean;
 import tarce.model.inventory.BomFramworkBean;
 import tarce.model.inventory.CommonBean;
+import tarce.model.inventory.CustomerSaleBean;
 import tarce.model.inventory.DoUnreservBean;
 import tarce.model.inventory.FinishPrepareMaBean;
 import tarce.model.inventory.FreeWorkBean;
@@ -36,6 +37,7 @@ import tarce.model.inventory.MaterialDetailBean;
 import tarce.model.inventory.NFCUserBean;
 import tarce.model.inventory.NFCWorkerBean;
 import tarce.model.inventory.NFcLoginBean;
+import tarce.model.inventory.NewSaleBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.model.inventory.ProcessDeatilBean;
@@ -61,6 +63,21 @@ import tarce.model.inventory.WorkingWorkerBean;
  */
 
 public interface InventoryApi {
+    /**
+     * 获取客户下的销售列表
+     * */
+    @POST("get_stock_picking_by_partner")
+    Call<SalesOutListResponse> getBypartner(@Body HashMap hashMap);
+    /**
+     * 根据team获取客户
+     * */
+    @POST("get_partner_by_team")
+    Call<CustomerSaleBean> getPartnerByTeam(@Body HashMap hashMap);
+    /**
+     * 获取销售团队
+     * */
+    @POST("get_sale_team")
+    Call<NewSaleBean> getSaleTeam(@Body HashMap hashMap);
     /**
      * 查询移动列表
      * */

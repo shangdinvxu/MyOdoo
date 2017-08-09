@@ -649,7 +649,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
         tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));
         tvStringGuige.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
-        switch (String.valueOf(resDataBean.getProduction_order_type())) {
+        switch (String.valueOf(resDataBean.getProduction_order_type())){
             case "stockup":
                 tvTypeProduct.setText("备货制");
                 break;

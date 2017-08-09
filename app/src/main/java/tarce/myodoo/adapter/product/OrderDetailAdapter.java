@@ -63,18 +63,18 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
             case body:
                 holder.tv_id_order.setText(position+".");
                 holder.tv_id_product.setText(list.get(position-1).getProduct_id());
-                holder.tv_advice_order.setText(StringUtils.doubleToString(list.get(position-1).getSuggest_qty()));
+                holder.tv_advice_order.setText("建议:"+list.get(position-1).getSuggest_qty());
                 if (list.get(position-1).getArea_id() != null){
-                    holder.tv_area_order.setText(list.get(position-1).getArea_id().getArea_name()+"");
+                    holder.tv_area_order.setText("位置:"+list.get(position-1).getArea_id().getArea_name());
                 }
-                holder.tv_kucun_order.setText(StringUtils.doubleToString(list.get(position-1).getQty_available()));
-                holder.tv_need_order.setText(StringUtils.doubleToString(list.get(position-1).getProduct_uom_qty()));
+                holder.tv_kucun_order.setText("库存:"+StringUtils.changeDouble(list.get(position-1).getQty_available()));
+                holder.tv_need_order.setText("需求:"+list.get(position-1).getProduct_uom_qty());
                 if (result.getRes_data().getState().equals("waiting_material")
                         || result.getRes_data().getState().equals("prepare_material_ing")
                         || result.getRes_data().getState().equals("finish_prepare_material")){
-                    holder.tv_prepare_order.setText(StringUtils.doubleToString(list.get(position-1).getQuantity_ready()+list.get(position-1).getQuantity_done()));
+                    holder.tv_prepare_order.setText("备料:"+(list.get(position-1).getQuantity_ready()+list.get(position-1).getQuantity_done()));
                 }else {
-                    holder.tv_prepare_order.setText(StringUtils.doubleToString(list.get(position-1).getQuantity_done()));
+                    holder.tv_prepare_order.setText("备料:"+list.get(position-1).getQuantity_done());
                 }
                 holder.itemView.setTag(list.get(position-1));
                 break;

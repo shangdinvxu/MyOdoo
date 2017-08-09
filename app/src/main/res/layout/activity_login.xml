@@ -30,7 +30,8 @@
             android:text="http://erp.robotime.com"
             android:textSize="12sp"
             android:layout_height="35dp"
-            android:paddingLeft="5dp"/>
+            android:paddingLeft="5dp"
+            android:inputType="text" />
         <ImageView
             android:id="@+id/img_delete"
             android:layout_width="20dp"
@@ -88,7 +89,8 @@
             android:textSize="12sp"
             android:maxLines="1"
             android:layout_height="35dp"
-            android:paddingLeft="5dp"/>
+            android:paddingLeft="5dp"
+            android:inputType="text"/>
     </RelativeLayout>
     <TextView
         android:id="@+id/tv_nfc_login"

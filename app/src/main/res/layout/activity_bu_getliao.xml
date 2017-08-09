@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:layout_weight="2.5"
             android:gravity="center"
-            android:text="产品"
+            android:text="@string/product"
             android:textColor="@color/white" />
 
         <TextView
@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="库存"
+            android:text="@string/product"
             android:textColor="@color/white" />
 
         <TextView
@@ -32,7 +32,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="需求"
+            android:text="@string/need"
             android:textColor="@color/white" />
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="建议"
+            android:text="@string/advice"
             android:textColor="@color/white" />
 
         <TextView
@@ -48,7 +48,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="备料"
+            android:text="@string/prepare_feed"
             android:textColor="@color/white" />
 
         <TextView
@@ -56,7 +56,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="超领数"
+            android:text="@string/out_getnum"
             android:textColor="@color/white" />
     </LinearLayout>
 
@@ -73,7 +73,7 @@
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:background="@color/cc"
-        android:text="补领料"
+        android:text="@string/repair_get"
         android:textColor="@color/white"
         android:gravity="center"/>
 </RelativeLayout>

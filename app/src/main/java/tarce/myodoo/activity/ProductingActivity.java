@@ -142,6 +142,7 @@ public class ProductingActivity extends ToolBarActivity {
     private DeviceManager deviceManager;
     private Printer printer;
     private String order_name;
+    private boolean is_rework;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -272,6 +273,7 @@ public class ProductingActivity extends ToolBarActivity {
                     resDataBean = response.body().getResult().getRes_data();
                     prepare_material_area_id = response.body().getResult().getRes_data().getPrepare_material_area_id();
                     prepare_material_img = response.body().getResult().getRes_data().getPrepare_material_img();
+                    is_rework = resDataBean.getProcess_id().isIs_rework();
                     initView();
                 }else {
                     //ToastUtils.showCommonToast(ProductingActivity.this, "数据异常");
@@ -354,21 +356,29 @@ public class ProductingActivity extends ToolBarActivity {
                         @Override
                         public void OnSendCommonClick(final int num) {
                             boolean isCanAdd = false;
-                            for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
-                                if ((num + resDataBean.getQty_produced()) / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(i)
-                                        .getProduct_uom_qty() <= resDataBean.getStock_move_lines().get(i).getQuantity_done()) {
-                                    isCanAdd = true;
-                                } else {
-                                    AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
-                                            .setMessage(resDataBean.getStock_move_lines().get(i).getProduct_id() + "备料数量不足，请补料")
-                                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.dismiss();
-                                                }
-                                            }).show();
-                                    isCanAdd = false;
-                                    break;
+                            if (is_rework){
+                                isCanAdd = true;
+                            }else {
+                                for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
+                                    if ((num + resDataBean.getQty_produced()) / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(i)
+                                            .getProduct_uom_qty() <= resDataBean.getStock_move_lines().get(i).getQuantity_done()) {
+                                        isCanAdd = true;
+                                    } else {
+                                        if (resDataBean.getProcess_id().getName().equals("返工")){
+                                            isCanAdd = true;
+                                            return;
+                                        }
+                                        AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
+                                                .setMessage(resDataBean.getStock_move_lines().get(i).getProduct_id() + "备料数量不足，请补料")
+                                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.dismiss();
+                                                    }
+                                                }).show();
+                                        isCanAdd = false;
+                                        break;
+                                    }
                                 }
                             }
                             if (isCanAdd) {

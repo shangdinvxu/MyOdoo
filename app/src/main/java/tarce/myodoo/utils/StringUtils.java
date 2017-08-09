@@ -1,5 +1,6 @@
 package tarce.myodoo.utils;
 
+import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,4 +72,11 @@ public class StringUtils {
             }
             return new String(c);
     }
+
+    public static double changeDouble(double i){
+        BigDecimal bd=new BigDecimal(i);
+        bd=bd.setScale(4, BigDecimal.ROUND_HALF_UP);
+        return bd.doubleValue();
+    }
+
 }

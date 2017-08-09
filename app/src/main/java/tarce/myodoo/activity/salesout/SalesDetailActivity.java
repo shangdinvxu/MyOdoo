@@ -531,7 +531,15 @@ public class SalesDetailActivity extends BaseActivity {
                     HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
                     objectObjectHashMap.put("state", "upload_img");
                     objectObjectHashMap.put("picking_id", bundle1.getPicking_id());
-                    objectObjectHashMap.put("pack_operation_product_ids", bundle1.getPack_operation_product_ids());
+                    List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> ids = bundle1.getPack_operation_product_ids();
+                    List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> sub_ids = new ArrayList<>();
+                    for (int i = 0; i < ids.size(); i++) {
+                        if (ids.get(i).getPack_id() == -1){
+                            sub_ids.add(ids.get(i));
+                        }
+                    }
+                    ids.removeAll(sub_ids);
+                    objectObjectHashMap.put("pack_operation_product_ids", ids);
                     objectObjectHashMap.put("qc_note", bundle1.getQc_note());
                     objectObjectHashMap.put("qc_img", BitmapUtils.bitmapToBase64(ImageUtil.decodeFile(selectedImagePath)));
                     Call<GetSaleResponse> getSaleResponseCall = inventoryApi.changeStockPicking(objectObjectHashMap);
@@ -729,7 +737,7 @@ public class SalesDetailActivity extends BaseActivity {
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
         printer.setLineSpace(2);
-        printer.print("\n出货单号：" + bundle1.getName() + "\n" + "源单据: " + bundle1.getOrigin() + "\n" + "合作伙伴： " +
+        printer.print("销售订单备注: "+bundle1.getSale_note()+"\n\n"+"\n出货单号：" + bundle1.getName() + "\n" + "源单据: " + bundle1.getOrigin() + "\n" + "合作伙伴： " +
                 bundle1.getParnter_id() + "\n" +
                 "收货人联系电话: "+bundle1.getPhone()+"\n--------------------------\n", 30, TimeUnit.SECONDS);
         printer.print("产品名称         完成数量", 30, TimeUnit.SECONDS);

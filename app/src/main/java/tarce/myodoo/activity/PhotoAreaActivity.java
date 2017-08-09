@@ -300,6 +300,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
             objectCall.enqueue(new MyCallback<UpdateMessageBean>() {
                 @Override
                 public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
+                    dismissDefultProgressDialog();
                     if (response.body() == null) return;
 
                     if (response.body().getResult().getRes_code() == 1) {
