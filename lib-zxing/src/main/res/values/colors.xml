@@ -33,5 +33,6 @@
     <color name="header">#58567D</color>
     <color name="grgray">#686868</color>
     <color name="height_yellow">#ff6600</color>
+    <color name="color_b7b7b7">#b7b7b7</color>
 
 </resources>

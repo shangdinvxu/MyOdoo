@@ -170,7 +170,7 @@
         <activity android:name=".activity.salesout.NewSaleActivity"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity android:name=".activity.salesout.NewSaleoutActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
         <activity android:name=".activity.salesout.NewSaleListActivity"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
     </application>

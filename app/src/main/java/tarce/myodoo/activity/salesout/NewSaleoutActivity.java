@@ -19,20 +19,24 @@ import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
+import tarce.model.inventory.CustomerSaleBean;
 import tarce.model.inventory.NewSaleBean;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
+import tarce.myodoo.adapter.NewSaleCustomAdapter;
 import tarce.myodoo.adapter.SalesStatesAdapter;
 import tarce.myodoo.greendaoUtils.ContactBeanUtils;
+import tarce.myodoo.utils.StringUtils;
+import tarce.support.ViewUtils;
 
 /**
  * Created by zws on 2017/8/9.
  */
 
 public class NewSaleoutActivity extends BaseActivity {
-    /*@InjectView(R.id.search_customer)
-    SearchView searchCustomer;*/
+    @InjectView(R.id.search_customer)
+    SearchView searchCustomer;
     @InjectView(R.id.search_sales_number)
     SearchView searchSalesNumber;
     @InjectView(R.id.recyclerview)
@@ -55,11 +59,47 @@ public class NewSaleoutActivity extends BaseActivity {
         setRecyclerview(recyclerview);
         setRecyclerview(recyclerviewStates);
         initData();
+        serach();
+    }
+
+    private void serach() {
+        searchCustomer.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Intent intent = new Intent(NewSaleoutActivity.this, NewSaleActivity.class);
+                intent.putExtra("from", "firstPage");
+                intent.putExtra("name", query);
+                startActivity(intent);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (StringUtils.isNullOrEmpty(newText)){
+                    ViewUtils.collapseSoftInputMethod(NewSaleoutActivity.this, searchCustomer);
+                }
+                return false;
+            }
+        });
+        searchSalesNumber.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Intent intent = new Intent(NewSaleoutActivity.this, NewSaleListActivity.class);
+                intent.putExtra("from", "fistPage");
+                intent.putExtra("danhao", query);
+                startActivity(intent);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     private void initData() {
         showDefultProgressDialog();
-
         Call<NewSaleBean> saleTeam = inventoryApi.getSaleTeam(new HashMap());
         saleTeam.enqueue(new MyCallback<NewSaleBean>() {
             @Override
@@ -92,5 +132,9 @@ public class NewSaleoutActivity extends BaseActivity {
         });
     }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ViewUtils.collapseSoftInputMethod(NewSaleoutActivity.this, searchSalesNumber);
+    }
 }

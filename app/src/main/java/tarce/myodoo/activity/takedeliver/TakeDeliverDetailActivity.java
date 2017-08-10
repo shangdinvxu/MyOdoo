@@ -455,9 +455,16 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         printer.print("产品名称        完成数量", 30, TimeUnit.SECONDS);
         for (int i = 0; i < resDataBean.getPack_operation_product_ids().size(); i++) {
             if (resDataBean.getPack_operation_product_ids().get(i).getPack_id() != -1) {
-                printer.print(resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getName() + "-----" +
-                        takedAdapter.getData().get(i).getQty_done()
-                        + "\n", 30, TimeUnit.SECONDS);
+                String name = resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getName();
+                if (name.length()>9){
+                    printer.print(name.substring(0, 7) + "     " +
+                            resDataBean.getPack_operation_product_ids().get(i).getQty_done()
+                            + "\n"+name.substring(7, name.length())+"\n", 30, TimeUnit.SECONDS);
+                }else {
+                    printer.print(name+ "     " +
+                            resDataBean.getPack_operation_product_ids().get(i).getQty_done()
+                            + "\n", 30, TimeUnit.SECONDS);
+                }
             }
         }
         printer.print("\n", 30, TimeUnit.SECONDS);

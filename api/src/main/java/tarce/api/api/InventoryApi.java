@@ -38,6 +38,7 @@ import tarce.model.inventory.NFCUserBean;
 import tarce.model.inventory.NFCWorkerBean;
 import tarce.model.inventory.NFcLoginBean;
 import tarce.model.inventory.NewSaleBean;
+import tarce.model.inventory.NewSaleListBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.model.inventory.ProcessDeatilBean;
@@ -64,10 +65,15 @@ import tarce.model.inventory.WorkingWorkerBean;
 
 public interface InventoryApi {
     /**
+     * 根据订单号搜索（新）
+     * */
+    @POST("get_picking_by_origin")
+    Call<NewSaleListBean> getPickby(@Body HashMap hashMap);
+    /**
      * 获取客户下的销售列表
      * */
     @POST("get_stock_picking_by_partner")
-    Call<SalesOutListResponse> getBypartner(@Body HashMap hashMap);
+    Call<NewSaleListBean> getBypartner(@Body HashMap hashMap);
     /**
      * 根据team获取客户
      * */

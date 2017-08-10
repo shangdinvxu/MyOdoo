@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -345,11 +346,8 @@ public class SalesDetailActivity extends BaseActivity {
             case "partially_available":
             case "assigned":
                 showLinThreeCang();
-                if (bundle1.getComplete_rate() == 0){
-                    linearBottom.setVisibility(View.GONE);
-                    return;
-                }
                 buttomButton1.setText("开始备货");
+                buttomButton1.setBackgroundResource(R.color.result_view);
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -389,6 +387,7 @@ public class SalesDetailActivity extends BaseActivity {
             case "备货完成":
                 buttomButton1.setVisibility(View.VISIBLE);
                 buttomButton1.setText(s);
+                buttomButton1.setBackgroundResource(R.color.color_5693f8);
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -740,12 +739,20 @@ public class SalesDetailActivity extends BaseActivity {
         printer.print("销售订单备注: "+bundle1.getSale_note()+"\n\n"+"\n出货单号：" + bundle1.getName() + "\n" + "源单据: " + bundle1.getOrigin() + "\n" + "合作伙伴： " +
                 bundle1.getParnter_id() + "\n" +
                 "收货人联系电话: "+bundle1.getPhone()+"\n--------------------------\n", 30, TimeUnit.SECONDS);
-        printer.print("产品名称         完成数量", 30, TimeUnit.SECONDS);
+        printer.print("产品名称      完成数量", 30, TimeUnit.SECONDS);
+
         for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
             if (bundle1.getPack_operation_product_ids().get(i).getPack_id() != -1){
-                printer.print(bundle1.getPack_operation_product_ids().get(i).getProduct_id().getName() + "  ---  " +
-                        bundle1.getPack_operation_product_ids().get(i).getQty_done()
-                        + "\n", 30, TimeUnit.SECONDS);
+                String name = bundle1.getPack_operation_product_ids().get(i).getProduct_id().getName();
+                if (name.length()>9){
+                    printer.print(name.substring(0, 7) + "      " +
+                            bundle1.getPack_operation_product_ids().get(i).getQty_done()
+                            + "\n"+name.substring(7, name.length())+"\n", 30, TimeUnit.SECONDS);
+                }else {
+                    printer.print(name+ "      " +
+                            bundle1.getPack_operation_product_ids().get(i).getQty_done()
+                            + "\n", 30, TimeUnit.SECONDS);
+                }
             }
         }
         printer.print("\n", 30, TimeUnit.SECONDS);

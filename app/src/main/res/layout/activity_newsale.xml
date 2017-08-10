@@ -8,7 +8,7 @@
         android:layout_height="45dp">
         <ImageView
             android:id="@+id/back_no_left"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="25dp"
             android:src="@drawable/back_no_left"
             android:layout_centerVertical="true"
@@ -17,7 +17,7 @@
             android:id="@+id/sale_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="国内客户"
+            android:text="搜索的客户"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:layout_centerInParent="true"/>
@@ -33,40 +33,34 @@
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:background="@color/result_minor_text"/>
-    <!--<RadioGroup
-        android:id="@+id/parent_radio"
+    <SearchView
+        android:id="@+id/search_newsale"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:orientation="horizontal"
-        android:layout_marginTop="15dp">
-        <RadioButton
-            android:id="@+id/wait_radio"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:button="@null"
-            android:background="@drawable/radio_bac"
-            android:layout_height="match_parent"
-            android:text="客户待处理"
-            android:gravity="center"
-            android:textColor="@color/white"/>
-        <RadioButton
-            android:id="@+id/can_radio"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:button="@null"
-            android:background="@drawable/radio_bac"
-            android:layout_height="match_parent"
-            android:text="客户可处理"
-            android:gravity="center"
-            android:textColor="@color/white"/>
-    </RadioGroup>-->
-    <!--<FrameLayout
-        android:id="@+id/fragment_sale"
+        android:layout_height="35dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:focusable="false"
+        android:iconifiedByDefault="false"
+        android:queryHint="请输入客户简称用于搜索"
+        android:background="@drawable/edit_input_bac"/>
+    <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>-->
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_customer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent"
+        android:id="@+id/swipeToLoad">
+        <tarce.myodoo.uiutil.RecyclerHeaderView
+            android:id="@+id/swipe_refresh_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </tarce.myodoo.uiutil.RecyclerHeaderView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/swipe_target"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
+        <tarce.myodoo.uiutil.RecyclerFooterView
+            android:id="@+id/swipe_load_more_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </tarce.myodoo.uiutil.RecyclerFooterView>
+    </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
 </LinearLayout>

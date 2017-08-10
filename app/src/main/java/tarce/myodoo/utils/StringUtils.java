@@ -33,6 +33,8 @@ public class StringUtils {
             transtring = "等待采购检验";
         }else if (string.equals("waiting")){
             transtring = "等待其他作业";
+        }else if (string.equals("waiting_out")){
+            transtring = "待出库";
         }
         return transtring;
     }
