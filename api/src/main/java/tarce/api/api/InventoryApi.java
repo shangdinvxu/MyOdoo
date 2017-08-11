@@ -26,6 +26,7 @@ import tarce.model.inventory.CustomerSaleBean;
 import tarce.model.inventory.DoUnreservBean;
 import tarce.model.inventory.FinishPrepareMaBean;
 import tarce.model.inventory.FreeWorkBean;
+import tarce.model.inventory.GetDonePickBean;
 import tarce.model.inventory.GetFactroyRemarkBean;
 import tarce.model.inventory.GetFeedbackBean;
 import tarce.model.inventory.GetReturnMaterBean;
@@ -64,6 +65,11 @@ import tarce.model.inventory.WorkingWorkerBean;
  */
 
 public interface InventoryApi {
+    /**
+     * 已完成订单
+     * */
+    @POST("get_done_picking")
+    Call<GetDonePickBean> getDonePicking(@Body HashMap hashMap);
     /**
      * 根据订单号搜索（新）
      * */

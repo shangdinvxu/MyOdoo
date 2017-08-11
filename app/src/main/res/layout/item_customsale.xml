@@ -21,7 +21,7 @@
             android:layout_height="25dp"
             android:text="hahah"
             android:lines="1"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textColor="@color/black"
             android:gravity="center_vertical"
             android:paddingLeft="10dp"/>

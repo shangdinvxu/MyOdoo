@@ -66,6 +66,8 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                 holder.tv_advice_order.setText("建议:"+list.get(position-1).getSuggest_qty());
                 if (list.get(position-1).getArea_id() != null){
                     holder.tv_area_order.setText("位置:"+list.get(position-1).getArea_id().getArea_name());
+                }else {
+                    holder.tv_area_order.setText("位置:null");
                 }
                 holder.tv_kucun_order.setText("库存:"+StringUtils.changeDouble(list.get(position-1).getQty_available()));
                 holder.tv_need_order.setText("需求:"+list.get(position-1).getProduct_uom_qty());

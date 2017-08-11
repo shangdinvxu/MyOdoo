@@ -3,9 +3,10 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <!--<RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="45dp">
+        android:layout_height="50dp"
+        android:background="@color/color_5693f8">
         <ImageView
             android:id="@+id/finish_this"
             android:layout_width="50dp"
@@ -17,23 +18,23 @@
             android:id="@+id/sale_title_dan"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="某某公司"
             android:textColor="@color/black"
             android:textSize="16sp"
             android:layout_centerInParent="true"/>
-        <ImageView
+        &lt;!&ndash;<ImageView
             android:id="@+id/right_detail"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:src="@drawable/right_icon"
             android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"/>
-    </RelativeLayout>
+            android:layout_alignParentRight="true"/>&ndash;&gt;
+    </RelativeLayout>-->
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"
         android:background="@color/result_minor_text"/>
     <SearchView
+        android:layout_marginTop="15dp"
         android:id="@+id/search_newsalelist"
         android:layout_width="match_parent"
         android:layout_height="35dp"
@@ -70,14 +71,37 @@
             android:text="单据可处理"
             android:gravity="center"
             android:textColor="@color/white"/>
+        <RadioButton
+            android:id="@+id/all_done"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:background="@drawable/radio_bac"
+            android:layout_height="match_parent"
+            android:text="已完成"
+            android:gravity="center"
+            android:textColor="@color/white"/>
     </RadioGroup>
 
-    <android.support.v7.widget.RecyclerView
+    <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
+        android:layout_marginTop="15dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/recycler_sale_list"/>
-    <!--<FrameLayout
-        android:id="@+id/fragment_sale_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>-->
+        android:id="@+id/swipeToLoad">
+        <tarce.myodoo.uiutil.RecyclerHeaderView
+            android:id="@+id/swipe_refresh_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </tarce.myodoo.uiutil.RecyclerHeaderView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/swipe_target"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
+        <tarce.myodoo.uiutil.RecyclerFooterView
+            android:id="@+id/swipe_load_more_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </tarce.myodoo.uiutil.RecyclerFooterView>
+    </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
 </LinearLayout>

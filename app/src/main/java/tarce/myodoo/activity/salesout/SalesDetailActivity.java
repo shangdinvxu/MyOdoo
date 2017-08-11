@@ -172,6 +172,11 @@ public class SalesDetailActivity extends BaseActivity {
         remarks.setText(String.valueOf(bundle1.getSale_note()));
         List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> pack_operation_product_ids = bundle1.getPack_operation_product_ids();
         salesDetailAdapter = new SalesDetailAdapter(R.layout.salesout_detail_adapter_item, pack_operation_product_ids);
+        if (bundle1.getState().equals("done") || bundle1.getState().equals("cancel")){
+            salesDetailAdapter.setState("two");
+        }else {
+            salesDetailAdapter.setState("");
+        }
         recyclerview.setAdapter(salesDetailAdapter);
         refreshButtom(bundle1.getState());
     }
@@ -347,7 +352,7 @@ public class SalesDetailActivity extends BaseActivity {
             case "assigned":
                 showLinThreeCang();
                 buttomButton1.setText("开始备货");
-                buttomButton1.setBackgroundResource(R.color.result_view);
+                buttomButton1.setBackgroundResource(R.color.violet);
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -527,6 +532,7 @@ public class SalesDetailActivity extends BaseActivity {
             if (requestCode == REQUEST_CODE_IMAGE_CAPTURE) {
                 selectedImagePath = getImagePath();
                 if (!StringUtils.isNullOrEmpty(selectedImagePath)) {
+                    showDefultProgressDialog();
                     HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
                     objectObjectHashMap.put("state", "upload_img");
                     objectObjectHashMap.put("picking_id", bundle1.getPicking_id());
@@ -542,7 +548,6 @@ public class SalesDetailActivity extends BaseActivity {
                     objectObjectHashMap.put("qc_note", bundle1.getQc_note());
                     objectObjectHashMap.put("qc_img", BitmapUtils.bitmapToBase64(ImageUtil.decodeFile(selectedImagePath)));
                     Call<GetSaleResponse> getSaleResponseCall = inventoryApi.changeStockPicking(objectObjectHashMap);
-                    showDefultProgressDialog();
                     getSaleResponseCall.enqueue(new Callback<GetSaleResponse>() {
                         @Override
                         public void onResponse(Call<GetSaleResponse> call, Response<GetSaleResponse> response) {
@@ -562,7 +567,6 @@ public class SalesDetailActivity extends BaseActivity {
                         @Override
                         public void onFailure(Call<GetSaleResponse> call, Throwable t) {
                             dismissDefultProgressDialog();
-
                         }
                     });
                 }
@@ -592,7 +596,20 @@ public class SalesDetailActivity extends BaseActivity {
              * 情况一和二合并
              * */
 
-            if ("change".equals(model_state) && isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
+            if ("change".equals(model_state) && isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))){
+                new DialogIsSave(SalesDetailActivity.this)
+                        .setSave(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                saveState();
+                            }
+                        }).setNotSave(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        cacelReserver();
+                    }
+                }).setCancel().show();
+            } else if (isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))){
                 new DialogIsSave(SalesDetailActivity.this)
                         .setSave(new View.OnClickListener() {
                             @Override
@@ -648,7 +665,20 @@ public class SalesDetailActivity extends BaseActivity {
                         cacelReserver();
                     }
                 }).setCancel().show();
-            } else {
+            } else if (isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))){
+                new DialogIsSave(SalesDetailActivity.this)
+                        .setSave(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                saveState();
+                            }
+                        }).setNotSave(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        cacelReserver();
+                    }
+                }).setCancel().show();
+            }else {
                 cacelReserver();
             }
             return true;
@@ -736,7 +766,7 @@ public class SalesDetailActivity extends BaseActivity {
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
         printer.setLineSpace(2);
-        printer.print("销售订单备注: "+bundle1.getSale_note()+"\n\n"+"\n出货单号：" + bundle1.getName() + "\n" + "源单据: " + bundle1.getOrigin() + "\n" + "合作伙伴： " +
+        printer.print("销售订单备注: "+bundle1.getSale_note()+"\n\n"+"出货单号：" + bundle1.getName() + "\n" + "源单据: " + bundle1.getOrigin() + "\n" + "合作伙伴： " +
                 bundle1.getParnter_id() + "\n" +
                 "收货人联系电话: "+bundle1.getPhone()+"\n--------------------------\n", 30, TimeUnit.SECONDS);
         printer.print("产品名称      完成数量", 30, TimeUnit.SECONDS);
@@ -744,10 +774,10 @@ public class SalesDetailActivity extends BaseActivity {
         for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
             if (bundle1.getPack_operation_product_ids().get(i).getPack_id() != -1){
                 String name = bundle1.getPack_operation_product_ids().get(i).getProduct_id().getName();
-                if (name.length()>9){
-                    printer.print(name.substring(0, 7) + "      " +
+                if (name.length()>10){
+                    printer.print(name.substring(0, 8) + "      " +
                             bundle1.getPack_operation_product_ids().get(i).getQty_done()
-                            + "\n"+name.substring(7, name.length())+"\n", 30, TimeUnit.SECONDS);
+                            + "\n"+name.substring(8, name.length())+"\n", 30, TimeUnit.SECONDS);
                 }else {
                     printer.print(name+ "      " +
                             bundle1.getPack_operation_product_ids().get(i).getQty_done()

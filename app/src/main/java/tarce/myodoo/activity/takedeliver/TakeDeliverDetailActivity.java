@@ -456,10 +456,10 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         for (int i = 0; i < resDataBean.getPack_operation_product_ids().size(); i++) {
             if (resDataBean.getPack_operation_product_ids().get(i).getPack_id() != -1) {
                 String name = resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getName();
-                if (name.length()>9){
-                    printer.print(name.substring(0, 7) + "     " +
+                if (name.length()>10){
+                    printer.print(name.substring(0, 8) + "     " +
                             resDataBean.getPack_operation_product_ids().get(i).getQty_done()
-                            + "\n"+name.substring(7, name.length())+"\n", 30, TimeUnit.SECONDS);
+                            + "\n"+name.substring(8, name.length())+"\n", 30, TimeUnit.SECONDS);
                 }else {
                     printer.print(name+ "     " +
                             resDataBean.getPack_operation_product_ids().get(i).getQty_done()

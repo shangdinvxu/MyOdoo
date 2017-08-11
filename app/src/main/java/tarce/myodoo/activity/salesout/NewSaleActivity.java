@@ -8,8 +8,8 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -18,7 +18,6 @@ import com.aspsine.swipetoloadlayout.OnRefreshListener;
 import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,7 +32,6 @@ import tarce.api.api.InventoryApi;
 import tarce.model.inventory.CustomerSaleBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.NewSaleCustomAdapter;
-import tarce.myodoo.adapter.SalesListAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
 import tarce.myodoo.utils.StringUtils;
@@ -47,13 +45,14 @@ import tarce.support.ViewUtils;
 public class NewSaleActivity extends Activity {
     private static final int Refresh_Move = 1;//下拉动作
     private static final int Load_Move = 2;//上拉动作
+    private static final int LOAD_NUM = 30;//每次加载的数量
 
-    @InjectView(R.id.sale_title)
+    /*@InjectView(R.id.sale_title)
     TextView saleTitle;
     @InjectView(R.id.back_no_left)
-    ImageView backNoLeft;
-    @InjectView(R.id.right_detail)
-    ImageView rightDetail;
+    ImageView backNoLeft;*/
+    /*@InjectView(R.id.right_detail)
+    ImageView rightDetail;*/
     @InjectView(R.id.search_newsale)
     SearchView searchNewsale;
     @InjectView(R.id.swipe_refresh_header)
@@ -64,6 +63,8 @@ public class NewSaleActivity extends Activity {
     RecyclerFooterView swipeLoadMoreFooter;
     @InjectView(R.id.swipeToLoad)
     SwipeToLoadLayout swipeToLoad;
+    @InjectView(R.id.tv_diy_update)
+    TextView tvDiyUpdate;
     private int team_id;
     private InventoryApi inventoryApi;
     private ProgressDialog progressDialog;
@@ -72,6 +73,7 @@ public class NewSaleActivity extends Activity {
     private List<CustomerSaleBean.ResultBean.ResDataBean> allList;
     private int loadTime = 0;
     private String from;
+    private String name;//搜索的单号
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,19 +81,20 @@ public class NewSaleActivity extends Activity {
         setContentView(R.layout.activity_newsale);
         ButterKnife.inject(this);
 
-        inventoryApi = RetrofitClient.getInstance(NewSaleActivity.this).create(InventoryApi.class);
         progressDialog = new ProgressDialog(NewSaleActivity.this);
-        progressDialog.setMessage("加载中...");
+        progressDialog.setMessage("努力加载中...");
+        progressDialog.setCancelable(false);
+        inventoryApi = RetrofitClient.getInstance(NewSaleActivity.this).create(InventoryApi.class);
         Intent intent = getIntent();
         from = intent.getStringExtra("from");
-        if ("firstPage".equals(from)){
-            String name = intent.getStringExtra("name");
+        if ("firstPage".equals(from)) {
+            name = intent.getStringExtra("name");
             serchData(name);
-        }else {
+        } else {
             team_id = intent.getIntExtra("team_id", -1);
             String team_name = intent.getStringExtra("team_name");
-            saleTitle.setText(team_name);
-            getData(40, 0, Refresh_Move);
+            setTitle(team_name);
+            getData(LOAD_NUM, 0, Refresh_Move);
             searchLinst();
             initView();
         }
@@ -108,8 +111,8 @@ public class NewSaleActivity extends Activity {
         swipeToLoad.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                getData(40, 0, Refresh_Move);
-                if (newSaleCustomAdapter != null){
+                getData(LOAD_NUM, 0, Refresh_Move);
+                if (newSaleCustomAdapter != null) {
                     newSaleCustomAdapter.notifyDataSetChanged();
                 }
                 swipeToLoad.setRefreshing(false);
@@ -121,8 +124,8 @@ public class NewSaleActivity extends Activity {
                 swipeToLoad.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        loadTime++;
-                        getData(40, 40*loadTime, Load_Move);
+                        /*loadTime++;
+                        getData(LOAD_NUM, LOAD_NUM*loadTime, Load_Move);*/
                         swipeToLoad.setLoadingMore(false);
                     }
                 }, 500);
@@ -130,21 +133,35 @@ public class NewSaleActivity extends Activity {
         });
     }
 
+    @OnClick(R.id.tv_diy_update)
+    void updateData(View view){
+        if ("firstPage".equals(from)){
+            serchData(name);
+        }else {
+            getData(LOAD_NUM, 0, Refresh_Move);
+        }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
 
     private void getData(final int limit, final int offset, final int move) {
         progressDialog.show();
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("team_id", team_id);
-        hashMap.put("limit", limit);
-        hashMap.put("offset", offset);
+        /*hashMap.put("limit", limit);
+        hashMap.put("offset", offset);*/
         Call<CustomerSaleBean> partnerByTeam = inventoryApi.getPartnerByTeam(hashMap);
         partnerByTeam.enqueue(new MyCallback<CustomerSaleBean>() {
             @Override
             public void onResponse(Call<CustomerSaleBean> call, Response<CustomerSaleBean> response) {
                 progressDialog.dismiss();
                 if (response.body() == null || response.body().getResult() == null) return;
-                res_data = response.body().getResult().getRes_data();
-                if (move == Refresh_Move){
+                if (response.body().getResult().getRes_code() == 1) {
+                    res_data = response.body().getResult().getRes_data();
+                /*if (move == Refresh_Move){
                     allList = res_data;
                     newSaleCustomAdapter = new NewSaleCustomAdapter(R.layout.item_customsale, res_data);
                     swipeTarget.setAdapter(newSaleCustomAdapter);
@@ -156,13 +173,20 @@ public class NewSaleActivity extends Activity {
                     allList = newSaleCustomAdapter.getData();
                     allList.addAll(res_data);
                     newSaleCustomAdapter.setData(allList);
+                }*/
+                    allList = res_data;
+                    newSaleCustomAdapter = new NewSaleCustomAdapter(R.layout.item_customsale, res_data);
+                    swipeTarget.setAdapter(newSaleCustomAdapter);
+                    initListner();
+                } else {
+                    ToastUtils.showCommonToast(NewSaleActivity.this, "加载失败，请稍后重试");
                 }
-                initListner();
             }
 
             @Override
             public void onFailure(Call<CustomerSaleBean> call, Throwable t) {
                 progressDialog.dismiss();
+                ToastUtils.showCommonToast(NewSaleActivity.this, "加载失败，请稍后重试");
             }
         });
     }
@@ -177,7 +201,7 @@ public class NewSaleActivity extends Activity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                if (StringUtils.isNullOrEmpty(newText)){
+                if (StringUtils.isNullOrEmpty(newText)) {
                     res_data = allList;
                     newSaleCustomAdapter.setNewData(res_data);
                 }
@@ -190,7 +214,7 @@ public class NewSaleActivity extends Activity {
     private void serchData(String query) {
         progressDialog.show();
         HashMap<Object, Object> hashMap = new HashMap<>();
-        if (!"firstPage".equals(from)){
+        if (!"firstPage".equals(from)) {
             hashMap.put("team_id", team_id);
         }
         hashMap.put("name", query);
@@ -200,22 +224,26 @@ public class NewSaleActivity extends Activity {
             public void onResponse(Call<CustomerSaleBean> call, Response<CustomerSaleBean> response) {
                 progressDialog.dismiss();
                 if (response.body() == null || response.body().getResult() == null) return;
-                final List<CustomerSaleBean.ResultBean.ResDataBean> data = response.body().getResult().getRes_data();
-                if (newSaleCustomAdapter!=null){
-                    newSaleCustomAdapter.setNewData(data);
-                }else {
-                    newSaleCustomAdapter = new NewSaleCustomAdapter(R.layout.item_customsale, data);
-                    swipeTarget.setAdapter(newSaleCustomAdapter);
-                }
-                newSaleCustomAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(BaseQuickAdapter listAdapter, View view, int position) {
-                        Intent intent = new Intent(NewSaleActivity.this, NewSaleListActivity.class);
-                        intent.putExtra("partner_id", data.get(position).getPartner_id());
-                        intent.putExtra("partner_name", data.get(position).getName());
-                        startActivity(intent);
+                if (response.body().getResult().getRes_code() == 1) {
+                    final List<CustomerSaleBean.ResultBean.ResDataBean> data = response.body().getResult().getRes_data();
+                    if (newSaleCustomAdapter != null) {
+                        newSaleCustomAdapter.setNewData(data);
+                    } else {
+                        newSaleCustomAdapter = new NewSaleCustomAdapter(R.layout.item_customsale, data);
+                        swipeTarget.setAdapter(newSaleCustomAdapter);
                     }
-                });
+                    newSaleCustomAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(BaseQuickAdapter listAdapter, View view, int position) {
+                            Intent intent = new Intent(NewSaleActivity.this, NewSaleListActivity.class);
+                            intent.putExtra("partner_id", data.get(position).getPartner_id());
+                            intent.putExtra("partner_name", data.get(position).getName());
+                            startActivity(intent);
+                        }
+                    });
+                } else if (response.body().getResult().getRes_code() == -1) {
+                    //   ToastUtils.showCommonToast();
+                }
             }
 
             @Override
@@ -247,6 +275,11 @@ public class NewSaleActivity extends Activity {
     protected void onPause() {
         super.onPause();
         ViewUtils.collapseSoftInputMethod(NewSaleActivity.this, searchNewsale);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     /*waitRadio.setChecked(true);

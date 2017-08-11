@@ -17,8 +17,19 @@ import tarce.myodoo.utils.StringUtils;
  */
 
 public class NewSaleListAdapte extends BaseQuickAdapter<NewSaleListBean.ResultBean.ResDataBean.AbleToDataBean, BaseViewHolder>{
+
+    public List<NewSaleListBean.ResultBean.ResDataBean.AbleToDataBean> getDataAll() {
+        return dataAll;
+    }
+
+    public void setDataAll(List<NewSaleListBean.ResultBean.ResDataBean.AbleToDataBean> dataAll) {
+        this.dataAll = dataAll;
+    }
+
+    private List<NewSaleListBean.ResultBean.ResDataBean.AbleToDataBean> dataAll;
     public NewSaleListAdapte(int layoutResId, List<NewSaleListBean.ResultBean.ResDataBean.AbleToDataBean> data) {
         super(layoutResId, data);
+        this.dataAll = data;
     }
 
     @Override
@@ -34,7 +45,7 @@ public class NewSaleListAdapte extends BaseQuickAdapter<NewSaleListBean.ResultBe
             helper.setText(R.id.name_origin_note, "");
         }
         if (!StringUtils.isNullOrEmpty(item.getState())){
-            if ("confirmed".equals(item.getState()) || "assigned".equals(item.getState())
+            if ("assigned".equals(item.getState())
                     || "partially_available".equals(item.getState())){
                 helper.getView(R.id.baoliu).setVisibility(View.VISIBLE);
             }else {
@@ -49,9 +60,19 @@ public class NewSaleListAdapte extends BaseQuickAdapter<NewSaleListBean.ResultBe
             helper.getView(R.id.qiandan).setVisibility(View.GONE);
         }
         if (!StringUtils.isNullOrEmpty(item.getState())){
-            helper.setText(R.id.keyong, StringUtils.switchString(item.getState()));
-        }else {
-            helper.setText(R.id.keyong, "");
+            if ("done".equals(item.getState())){
+                helper.getView(R.id.alldone).setVisibility(View.VISIBLE);
+            }else {
+                helper.getView(R.id.alldone).setVisibility(View.GONE);
+            }
+        }
+        if (!StringUtils.isNullOrEmpty(item.getState())){
+            if (!"done".equals(item.getState()) && !"assigned".equals(item.getState())
+                    && !"partially_available".equals(item.getState()) && StringUtils.isNullOrEmpty(item.getBack_order_id())){
+                helper.getView(R.id.quanxin).setVisibility(View.VISIBLE);
+            }else {
+                helper.getView(R.id.quanxin).setVisibility(View.GONE);
+            }
         }
     }
 }

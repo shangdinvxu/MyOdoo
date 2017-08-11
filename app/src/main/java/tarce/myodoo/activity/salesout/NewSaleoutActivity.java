@@ -28,6 +28,7 @@ import tarce.myodoo.adapter.NewSaleCustomAdapter;
 import tarce.myodoo.adapter.SalesStatesAdapter;
 import tarce.myodoo.greendaoUtils.ContactBeanUtils;
 import tarce.myodoo.utils.StringUtils;
+import tarce.support.ToastUtils;
 import tarce.support.ViewUtils;
 
 /**
@@ -106,15 +107,20 @@ public class NewSaleoutActivity extends BaseActivity {
             public void onResponse (Call < NewSaleBean > call, Response< NewSaleBean > response){
                 dismissDefultProgressDialog();
                 if (response.body() == null || response.body().getResult() == null) return;
-                beanList = response.body().getResult().getRes_data();
-                salesStatesAdapter = new SalesStatesAdapter(R.layout.item_sale_new, beanList);
-                recyclerviewStates.setAdapter(salesStatesAdapter);
-                initListener();
+                if (response.body().getResult().getRes_code() == 1){
+                    beanList = response.body().getResult().getRes_data();
+                    salesStatesAdapter = new SalesStatesAdapter(R.layout.item_sale_new, beanList);
+                    recyclerviewStates.setAdapter(salesStatesAdapter);
+                    initListener();
+                }else {
+                    ToastUtils.showCommonToast(NewSaleoutActivity.this, "加载失败，请稍后重试");
+                }
             }
 
             @Override
             public void onFailure (Call < NewSaleBean > call, Throwable t){
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(NewSaleoutActivity.this, "加载失败，请稍后重试");
             }
         });
     }

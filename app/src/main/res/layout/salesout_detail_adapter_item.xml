@@ -21,7 +21,7 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical|left"
             android:text="产品"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:lines="1"
             android:ellipsize="end"
             android:id="@+id/product"
@@ -39,7 +39,7 @@
             android:layout_height="match_parent"
             android:gravity="left|center_vertical"
             android:text="位置"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:id="@+id/need_in"
             android:layout_weight="1"/>
         <TextView
@@ -47,7 +47,7 @@
             android:layout_height="match_parent"
             android:gravity="left|center_vertical"
             android:text="可用"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:id="@+id/inventory"
             android:layout_weight="1"/>
         <TextView
@@ -55,7 +55,7 @@
             android:layout_height="match_parent"
             android:gravity="left|center_vertical"
             android:text="待出库"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:id="@+id/need_out"
             android:layout_weight="1"/>
     </LinearLayout>
@@ -71,7 +71,7 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:text="初始需求"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:gravity="left|center_vertical"/>
         <TextView
             android:id="@+id/baoliu"
@@ -79,14 +79,14 @@
             android:layout_height="match_parent"
             android:gravity="left|center_vertical"
             android:text="保留"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:layout_weight="1"/>
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="left|center_vertical"
             android:text="完成"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:id="@+id/done"
             android:layout_weight="1"/>
     </LinearLayout>

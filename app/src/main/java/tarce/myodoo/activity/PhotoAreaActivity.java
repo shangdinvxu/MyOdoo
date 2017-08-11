@@ -291,6 +291,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
                         }
                     }).show();
         } else {
+            showDefultProgressDialog();
             HashMap<Object, Object> hashMap = new HashMap<>();
             hashMap.put("type", type);
             hashMap.put("order_id", order_id);

@@ -12,14 +12,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="15dp"/>
         <TextView
             android:id="@+id/name_origin_note"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="15dp"/>
     </LinearLayout>
@@ -35,7 +35,7 @@
             android:text="已保留未出货"
             android:layout_marginLeft="15dp"
             android:gravity="center"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:layout_gravity="center_vertical"
             android:visibility="gone"
             android:background="@drawable/back_common_tv"/>
@@ -47,7 +47,7 @@
             android:text="欠单"
             android:layout_marginLeft="15dp"
             android:gravity="center"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/back_common_tv"/>
         <TextView
@@ -58,17 +58,19 @@
             android:text="全新"
             android:layout_marginLeft="15dp"
             android:gravity="center"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:layout_gravity="center_vertical"
             android:background="@drawable/back_common_tv"/>
         <TextView
-            android:id="@+id/keyong"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="hahah"
-            android:textSize="13sp"
-            android:textColor="@color/red"
-            android:gravity="right|center_vertical"
-            android:layout_marginRight="15dp"/>
+            android:visibility="gone"
+            android:id="@+id/alldone"
+            android:layout_width="60dp"
+            android:layout_height="25dp"
+            android:text="已完成"
+            android:layout_marginLeft="15dp"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/back_common_tv"/>
     </LinearLayout>
 </LinearLayout>

@@ -20,8 +20,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
 public class OKHttpFactory {
     private final OkHttpClient okHttpClient;
 
-    private static final int TIMEOUT_READ = 25;
-    private static final int TIMEOUT_CONNECTION = 25;
+    private static final int TIMEOUT_READ = 60;
+    private static final int TIMEOUT_CONNECTION = 60;
 
    public OKHttpFactory(Context context) {
         //打印请求Log
