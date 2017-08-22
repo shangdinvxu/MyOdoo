@@ -44,7 +44,6 @@ public class BuGetLiaoAdapter extends BaseQuickAdapter<OrderDetailBean.ResultBea
         }else {
             helper.setText(R.id.tv_prepare_order, "备料:"+item.getQuantity_done());
         }
-
         helper.setText(R.id.tv_out_num, "补料数量："+item.getOver_picking_qty());
     }
 }
