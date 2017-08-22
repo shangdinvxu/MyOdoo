@@ -106,12 +106,22 @@ public class GetNumProcess {
             private List<_$4Bean> _$4;
             @SerializedName("5")
             private List<_$5Bean> _$5;
+            @SerializedName("21")
+            private List<_$21Bean> _$21;
             @SerializedName("6")
-            private List<?> _$6;
+            private List<_$6Bean> _$6;
             @SerializedName("7")
             private List<?> _$7;
             @SerializedName("8")
             private List<?> _$8;
+
+            public List<_$21Bean> get_$21() {
+                return _$21;
+            }
+
+            public void set_$21(List<_$21Bean> _$21) {
+                this._$21 = _$21;
+            }
 
             public List<?> get_$9() {
                 return _$9;
@@ -172,8 +182,24 @@ public class GetNumProcess {
             private List<?> _$16;
             @SerializedName("17")
             private List<?> _$17;
-            @SerializedName("21")
-            private List<?> _$21;
+            @SerializedName("23")
+            private List<_$23Bean> _$23;
+
+            public List<_$23Bean> get_$23() {
+                return _$23;
+            }
+
+            public void set_$23(List<_$23Bean> _$23) {
+                this._$23 = _$23;
+            }
+
+            public List<_$6Bean> get_$6() {
+                return _$6;
+            }
+
+            public void set_$6(List<_$6Bean> _$6) {
+                this._$6 = _$6;
+            }
 
             public List<_$3Bean> get_$3() {
                 return _$3;
@@ -199,13 +225,6 @@ public class GetNumProcess {
                 this._$5 = _$5;
             }
 
-            public List<?> get_$6() {
-                return _$6;
-            }
-
-            public void set_$6(List<?> _$6) {
-                this._$6 = _$6;
-            }
 
             public List<?> get_$7() {
                 return _$7;
@@ -255,14 +274,57 @@ public class GetNumProcess {
                 this._$17 = _$17;
             }
 
-            public List<?> get_$21() {
-                return _$21;
-            }
 
-            public void set_$21(List<?> _$21) {
-                this._$21 = _$21;
-            }
+            public static class _$21Bean {
+                /**
+                 * count : 2
+                 * state : delay
+                 */
 
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$23Bean {
+                /**
+                 * count : 2
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
             public static class _$3Bean {
                 /**
                  * count : 2

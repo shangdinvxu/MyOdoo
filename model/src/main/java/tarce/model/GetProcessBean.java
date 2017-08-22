@@ -95,8 +95,6 @@ public class GetProcessBean {
 
            private int process_id;
            private String name;
-
-
        }
     }
 }

@@ -14,16 +14,35 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import tarce.api.OKHttpFactory;
+import tarce.api.RetrofitClient;
+import tarce.api.api.InventoryApi;
+import tarce.model.CompanyTwoBean;
+import tarce.model.ComponyQueryBean;
 import tarce.model.LoginResponse;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.LoginActivity;
 import tarce.myodoo.activity.NFCReadingActivity;
+import tarce.myodoo.uiutil.CompanyDialog;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.SharePreferenceUtils;
+import tarce.support.ToastUtils;
 import tarce.support.Toolkits;
+
+import static tarce.api.RetrofitClient.Url;
 
 /**
  * 我界面
@@ -48,12 +67,23 @@ public class MeFragment extends Fragment {
     TextView insertNfc;
     @InjectView(R.id.distance_name)
     TextView distanceName;
+    private Retrofit retrofit;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_4, null);
         ButterKnife.inject(this, view);
+        retrofit = new Retrofit.Builder()
+                //设置OKHttpClient
+                .client(new OKHttpFactory(getActivity()).getOkHttpClient())
+
+                .baseUrl(Url+"/linkloving_oa_api/")
+                //gson转化器
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+        Url = RetrofitClient.Url;
         initData();
         return view;
     }
@@ -88,6 +118,54 @@ public class MeFragment extends Fragment {
         }
     }
 
+    @OnClick(R.id.distance_name)
+    void changeDistance(View view){
+        final InventoryApi inventoryApi = retrofit.create(InventoryApi.class);
+        HashMap<Object, Object> hashMap = new HashMap<>();
+        final int user_id = SharePreferenceUtils.getInt("user_id", 1, getActivity());
+        hashMap.put("user_id", user_id);
+        Call<ComponyQueryBean> componyQueryBeanCall = inventoryApi.changeCompany(hashMap);
+        componyQueryBeanCall.enqueue(new Callback<ComponyQueryBean>() {
+            @Override
+            public void onResponse(Call<ComponyQueryBean> call, Response<ComponyQueryBean> response) {
+                    if (response.body() == null || response.body().getResult() == null)return;
+                List<ComponyQueryBean.ResultBean.ResDataBean> result = response.body().getResult().getRes_data();
+                CompanyDialog dialog = new CompanyDialog(getActivity(), result);
+                dialog.show();
+                dialog.sendNameCompany(new CompanyDialog.GetCompany() {
+                    @Override
+                    public void getCompanyName(String name, int companyId) {
+                        distanceName.setText(name);
+                        HashMap<Object, Object> hashMap = new HashMap<>();
+                        hashMap.put("id", companyId);
+                        hashMap.put("user_id", user_id);
+                        Call<CompanyTwoBean> objectCall = inventoryApi.changeCompanyTwo(hashMap);
+                        objectCall.enqueue(new Callback<CompanyTwoBean>() {
+                            @Override
+                            public void onResponse(Call<CompanyTwoBean> call, Response<CompanyTwoBean> response) {
+                                if (response.body() == null)return;
+                                if (response.body().getResult().getRes_code() == 1){
+                                    if (response.body().getResult().getRes_data().getSuccess() == 1){
+                                        ToastUtils.showCommonToast(getActivity(), "切换成功");
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<CompanyTwoBean> call, Throwable t) {
+                                Log.e("zws", t.toString());
+                            }
+                        });
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(Call<ComponyQueryBean> call, Throwable t) {
+                Log.e("zws", t.toString());
+            }
+        });
+    }
 
     @Override
     public void onDestroyView() {

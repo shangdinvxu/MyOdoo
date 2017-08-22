@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -111,7 +112,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
             notPassTv.setText("退回");
             editWritePizhu.setFocusable(false);
             editWritePizhu.setHint("");
-            /*editWritePizhu.setVisibility(View.GONE);
+            editWritePizhu.setVisibility(View.GONE);
             imgTakePhoto.setVisibility(View.GONE);
             tvPizhu.setVisibility(View.GONE);
             tvTextview.setVisibility(View.GONE);
@@ -137,13 +138,6 @@ public class WriteCheckMessaActivity extends BaseActivity {
                 tvCheckState.setText("品检通过");
             }else if (qc_result.equals("fail")){
                 tvCheckState.setText("品检不通过");
-            }*/
-            editWritePizhu.setText(resDataBean.getQc_note().toString());
-            imgTakePhoto.setClickable(false);
-            if (StringUtils.isNullOrEmpty(resDataBean.getQc_img())){
-                imgTakePhoto.setVisibility(View.GONE);
-            }else {
-                Glide.with(WriteCheckMessaActivity.this).load(resDataBean.getQc_img()).into(imgTakePhoto);
             }
         }
     }
@@ -159,7 +153,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
     void passTv(View view) {
         switch (confirm) {
             case "confirm":
-                /*boolean haveReject = false;
+                boolean haveReject = false;
                 for (int i = 0; i < resDataBean.getPack_operation_product_ids().size(); i++) {
                     int rejects_qty = resDataBean.getPack_operation_product_ids().get(i).getRejects_qty();
                     if (rejects_qty>0){
@@ -168,68 +162,45 @@ public class WriteCheckMessaActivity extends BaseActivity {
                     }
                 }
                 if (haveReject){
+                    boolean showDia = false;
+                    for (int i = 0; i < intArr.size(); i++) {
+                        if (intArr.get(i) < resDataBean.getPack_operation_product_ids().get(i).getProduct_qty()) {
+                            showDia = true;
+                            break;
+                        }
+                    }
+                    final boolean finalShowDia = showDia;
                     new DialogIsSave(WriteCheckMessaActivity.this).changeT("请选择入库方式").changeFirst("全部入库")
                             .changeSecond("仅良品入库，不良品退回")
                             .setSave(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-
+                                    if (finalShowDia){
+                                        changeTranser("allno");
+                                    }else {
+                                        changeTranser("all");
+                                    }
                                 }
                             }).setNotSave(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-
+                                changeTranser("part");
                         }
                     }).setCancel().show();
                 }else {
                     boolean showDia = false;
                     for (int i = 0; i < intArr.size(); i++) {
-                        if (intArr.get(i) < resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getQty_available()) {
+                        if (intArr.get(i) < resDataBean.getPack_operation_product_ids().get(i).getProduct_qty()) {
                             showDia = true;
                             break;
                         }
                     }
                     if (showDia) {
-                        new DialogIsSave(WriteCheckMessaActivity.this).changeTitle().changeOne().changeTwo()
-                                .setSave(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        rejectBotcreate("process");
-                                    }
-                                }).setNotSave(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                rejectBotcreate("cancel_backorder");
-                            }
-                        }).setCancel().show();
+                        showDialog();
                     } else {
                         rejectBotcreate("cancel_backorder");
                     }
-                }*/
-                boolean showDia = false;
-                for (int i = 0; i < intArr.size(); i++) {
-                    if (intArr.get(i) < resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getQty_available()) {
-                        showDia = true;
-                        break;
-                    }
                 }
-                if (showDia) {
-                    new DialogIsSave(WriteCheckMessaActivity.this).changeTitle().changeOne().changeTwo()
-                            .setSave(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    rejectBotcreate("process");
-                                }
-                            }).setNotSave(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            rejectBotcreate("cancel_backorder");
-                        }
-                    }).setCancel().show();
-                } else {
-                    rejectBotcreate("cancel_backorder");
-                }
-
                 break;
             case "notConfirm":
                 if (StringUtils.isNullOrEmpty(editWritePizhu.getText().toString())) {
@@ -245,6 +216,68 @@ public class WriteCheckMessaActivity extends BaseActivity {
                         }).show();
                 break;
         }
+    }
+    /**
+     * 显示二级选择dialog
+     * */
+    private void showDialog(){
+        new DialogIsSave(WriteCheckMessaActivity.this).changeTitle().changeOne().changeTwo()
+                .setSave(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        rejectBotcreate("process");
+                    }
+                }).setNotSave(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                rejectBotcreate("cancel_backorder");
+            }
+        }).setCancel().show();
+    }
+
+    /**
+     *全部入库  部分入库
+     * */
+    private void changeTranser(final String is_all) {
+        showDefultProgressDialog();
+        HashMap<Object, Object> hashMap = new HashMap<>();
+        hashMap.put("state", "transfer_way");
+        if (is_all.contains("all")){
+            hashMap.put("is_all", "all");
+        }else if (is_all.equals("part")){
+            hashMap.put("is_all", "part");
+        }
+        hashMap.put("picking_id", resDataBean.getPicking_id());
+        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> ids = resDataBean.getPack_operation_product_ids();
+        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> sub_ids = new ArrayList<>();
+        for (int i = 0; i < ids.size(); i++) {
+            if (ids.get(i).getPack_id() == -1) {
+                sub_ids.add(ids.get(i));
+            }
+        }
+        ids.removeAll(sub_ids);
+        hashMap.put("pack_operation_product_ids", ids);
+        Call<TakeDeAreaBean> takeDeAreaBeanCall = inventoryApi.commitRuku(hashMap);
+        takeDeAreaBeanCall.enqueue(new MyCallback<TakeDeAreaBean>() {
+            @Override
+            public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
+                dismissDefultProgressDialog();
+                if (response.body() == null || response.body().getResult() == null)return;
+                if (response.body().getResult().getRes_code() == 1){
+                    resDataBean = response.body().getResult().getRes_data();
+                    if ("allno".equals(is_all) || "part".equals(is_all)){
+                        showDialog();
+                    }else {
+                        rejectBotcreate("cancel_backorder");//取消欠单
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TakeDeAreaBean> call, Throwable t) {
+                dismissDefultProgressDialog();
+            }
+        });
     }
 
     @OnClick(R.id.not_pass_tv)
@@ -285,15 +318,15 @@ public class WriteCheckMessaActivity extends BaseActivity {
             }
         }
         ids.removeAll(sub_ids);
-        int size = ids.size();
+        /*int size = ids.size();
         Map[] maps = new Map[size];
         for (int i = 0; i < size; i++) {
             Map<Object, Object> map = new HashMap<>();
             map.put("pack_id", ids.get(i).getPack_id());
             map.put("qty_done", StringUtils.doubleToInt(ids.get(i).getQty_done()));
             maps[i] = map;
-        }
-        hashMap.put("pack_operation_product_ids", maps);
+        }*/
+        hashMap.put("pack_operation_product_ids", ids);
         final Call<TakeDeAreaBean> reject = inventoryApi.reject(hashMap);
         reject.enqueue(new MyCallback<TakeDeAreaBean>() {
             @Override
@@ -326,7 +359,8 @@ public class WriteCheckMessaActivity extends BaseActivity {
                                 }).show();
                     }
                 } else {
-                    ToastUtils.showCommonToast(WriteCheckMessaActivity.this, "出现错误，请联系开发人员调试");
+                    //ToastUtils.showCommonToast(WriteCheckMessaActivity.this, "出现错误，请联系开发人员调试");
+                    Log.e("zws", "出现错误，请联系开发人员调试");
                 }
             }
 
@@ -427,6 +461,5 @@ public class WriteCheckMessaActivity extends BaseActivity {
                 super.onActivityResult(requestCode, resultCode, data);
             }
         }
-
     }
 }

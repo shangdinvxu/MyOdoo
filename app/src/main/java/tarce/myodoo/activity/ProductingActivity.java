@@ -578,8 +578,8 @@ public class ProductingActivity extends ToolBarActivity {
                                                     startActivity(intent);
                                                 }
                                             }).show();
-                                }else {
-                                    Log.e("zws", "出现错误，请联系开发人员调试");
+                                }else if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == -1){
+                                    ToastUtils.showCommonToast(ProductingActivity.this, response.body().getResult().getRes_data().getError());
                                 }
                             }
 

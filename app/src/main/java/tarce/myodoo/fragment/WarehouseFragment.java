@@ -156,6 +156,9 @@ public class WarehouseFragment extends Fragment {
         sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                /*if (position==0 || position==4 || position==7 || position==10 || position==14){
+                    return;
+                }*/
                 if (position==0 || position==4 || position==9 || position==12 || position==15){
                     return;
                 }

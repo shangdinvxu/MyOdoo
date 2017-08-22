@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/status_view">
+
+    <ImageView
+        android:id="@+id/image_nfc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/waitingnfc"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="100dp" />
+    <TextView
+        android:id="@+id/tip_nfc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="25dp"
+        android:gravity="center"
+        android:text="请仓库人员将手环靠近POS机"/>
+    <Button
+        android:id="@+id/btn_cancel_nfc"
+        android:layout_width="70dp"
+        android:layout_height="30dp"
+        android:text="取消"
+        android:textColor="@color/white"
+        android:background="@drawable/bac_button_nfc"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="55dp"/>
+</LinearLayout>

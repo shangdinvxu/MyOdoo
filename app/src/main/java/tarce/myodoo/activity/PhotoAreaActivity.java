@@ -355,7 +355,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
     private void commitBeiliao() {
         HashMap<Object, Object> hashMap = new HashMap();
         hashMap.put("order_id", order_id);
-        Map[] maps = new Map[resDataBean.getStock_move_lines().size()];
+        /*Map[] maps = new Map[resDataBean.getStock_move_lines().size()];
         for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
             Map<Object, Object> mapSmall = new HashMap<>();
             mapSmall.put("stock_move_lines_id", resDataBean.getStock_move_lines().get(i).getId());
@@ -363,8 +363,8 @@ public class PhotoAreaActivity extends ToolBarActivity {
             mapSmall.put("order_id", resDataBean.getStock_move_lines().get(i).getOrder_id());
             maps[i] = mapSmall;
         }
-        hashMap.put("stock_moves", maps);
-        Call<FinishPrepareMaBean> objectCall = inventoryApi.finishPrepareMa(hashMap);
+        hashMap.put("stock_moves", maps);*/
+        Call<FinishPrepareMaBean> objectCall = inventoryApi.newfinishPrepareMa(hashMap);
         objectCall.enqueue(new MyCallback<FinishPrepareMaBean>() {
             @Override
             public void onResponse(Call<FinishPrepareMaBean> call, Response<FinishPrepareMaBean> response) {

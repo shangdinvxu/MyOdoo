@@ -334,10 +334,10 @@
                     android:layout_height="match_parent"
                     android:layout_weight="2.5"
                     android:gravity="center"
-                    android:text="产品"
-                    android:textColor="@color/white" />
+                    android:text="产品明细"
+                    android:textColor="@color/white"/>
 
-                <TextView
+                <!--<TextView
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -375,7 +375,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="备料"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white" />-->
             </LinearLayout>
 
             <LinearLayout
@@ -414,7 +414,7 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="@color/cc"
+            android:background="@color/height_yellow"
             android:gravity="center"
             android:text="开始生产"
             android:textColor="@color/white" />

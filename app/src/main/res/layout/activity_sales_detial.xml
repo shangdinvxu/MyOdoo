@@ -17,20 +17,30 @@
                 android:layout_height="30dp"
                 android:orientation="horizontal"
                 android:background="@color/result_view">
+                <TextView
+                    android:visibility="invisible"
+                    android:id="@+id/tv_auto_num"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:background="@drawable/bac_tv_order"
+                    android:text="一键填写"
+                    android:layout_marginLeft="15dp"
+                    android:gravity="center"/>
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:id="@+id/top_imageview"
                     android:layout_gravity="center_horizontal"
                     android:src="@mipmap/down"
-                    android:layout_marginLeft="120dp"/>
+                    android:layout_marginLeft="30dp"/>
                 <TextView
                     android:id="@+id/tv_print"
                     android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_gravity="right"
                     android:background="@drawable/bac_tv_order"
-                    android:layout_marginLeft="50dp"
+                    android:layout_marginLeft="40dp"
                     android:text="打印"
                     android:gravity="center"/>
             </LinearLayout>

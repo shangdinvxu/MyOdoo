@@ -88,7 +88,6 @@ public class NFCReadingActivity extends BaseActivity {
         initData();
         initListener();
         initDevice();
-
     }
 
     private void initData() {
@@ -326,7 +325,6 @@ public class NFCReadingActivity extends BaseActivity {
         }
 
         rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
-
     }
 
     public void processingLock() {

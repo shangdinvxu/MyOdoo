@@ -176,16 +176,20 @@ public class ConfirmPurchaseActivity extends BaseActivity {
                     states = new ArrayList<>();
                     for (int i = 0; i < res_data.size(); i++) {
                         if (res_data.get(i).getPicking_type_code().equals("incoming")) {
-                            states = res_data.get(i).getStates();
+                            states.addAll(res_data.get(i).getStates());
                             picking_type_code = res_data.get(i).getPicking_type_code();
                             picking_type_id = res_data.get(i).getPicking_type_id();
                         }
                     }
+                    int sumOne = 0;
+                    int sumTwo = 0;
                     for (int i = 0; i < states.size(); i++) {
                         if (states.get(i).getState().equals("validate")) {
-                            menuBeanList.set(0, new MenuBean("等待采购检验", states.get(i).getState_count()));
+                            sumOne = sumOne + states.get(i).getState_count();
+                            menuBeanList.set(0, new MenuBean("等待采购检验", sumOne));
                         } else if (states.get(i).getState().equals("done")) {
-                            menuBeanList.set(1, new MenuBean("完成", states.get(i).getState_count()));
+                            sumTwo = sumTwo + states.get(i).getState_count();
+                            menuBeanList.set(1, new MenuBean("完成", sumTwo));
                         }
                     }
                     adapter.notifyDataSetChanged();

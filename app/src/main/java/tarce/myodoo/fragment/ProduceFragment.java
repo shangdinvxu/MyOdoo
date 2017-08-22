@@ -30,7 +30,9 @@ import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.GetPickNumActivity;
 import tarce.myodoo.activity.ProcessOfPersonActivity;
+import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.adapter.product.ProduceRednumAdapter;
+import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
 import tarce.support.ToastUtils;
 
@@ -41,8 +43,10 @@ import tarce.support.ToastUtils;
 
 public class ProduceFragment extends Fragment {
 
+  //  public List<MainItemBean> list;
     public List<MenuBean> list;
     public ProduceRednumAdapter sectionAdapter;
+   // public SectionAdapter sectionAdapter;
     @InjectView(R.id.recyclerview)
     RecyclerView recyclerview;
     private InventoryApi inventoryApi;
@@ -55,6 +59,17 @@ public class ProduceFragment extends Fragment {
     }
 
     private void initData() {
+        /*list = new ArrayList<>();
+        list.add(new MainItemBean(new MenuBean("备料", 0)));
+        list.add(new MainItemBean(new MenuBean("退料", 0)));
+        list.add(new MainItemBean(new MenuBean("入库", 0)));
+        list.add(new MainItemBean(new MenuBean("领料", 0)));
+        list.add(new MainItemBean(true, ""));
+        list.add(new MainItemBean(new MenuBean("等待生产", 0)));
+        list.add(new MainItemBean(new MenuBean("生产中", 0)));
+        list.add(new MainItemBean(new MenuBean("等待返工", 0)));
+        list.add(new MainItemBean(new MenuBean("返工中", 0)));*/
+
         list = new ArrayList<>();
         list.add(new MenuBean("领料", 0));
         list.add(new MenuBean("等待生产", 0));
@@ -71,7 +86,8 @@ public class ProduceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_2, null);
         ButterKnife.inject(this, view);
-        sectionAdapter = new ProduceRednumAdapter(R.layout.mian_list_item, list);
+     //   sectionAdapter = new SectionAdapter(R.layout.mian_list_item, R.layout.adapter_head,list);
+        sectionAdapter = new ProduceRednumAdapter(R.layout.mian_list_item,list);
         setRecyclerview(recyclerview);
         recyclerview.setAdapter(sectionAdapter);
         setOnclick();
@@ -145,10 +161,20 @@ public class ProduceFragment extends Fragment {
         sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
+                /*if (position == 3){
+                    return;
+                }*/
+               // String name = list.get(position).t.getName();
                 String name = list.get(position).getName();
                 switch (name){
                     case "领料":
                         IntentFactory.start_ProducLl_Activity(getActivity(), "领料", "finish_prepare_material");
+                        break;
+                    case "备料":
+                        IntentFactory.start_SeProce_Activity(getActivity());
+                        break;
+                    case "入库":
+
                         break;
                     case "等待生产":
                         Intent intent = new Intent(getActivity(), GetPickNumActivity.class);

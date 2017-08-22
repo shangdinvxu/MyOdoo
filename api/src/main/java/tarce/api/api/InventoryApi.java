@@ -10,6 +10,8 @@ import rx.Observable;
 import tarce.model.AddworkBean;
 import tarce.model.BuLlBean;
 import tarce.model.ChangeStateBean;
+import tarce.model.CompanyTwoBean;
+import tarce.model.ComponyQueryBean;
 import tarce.model.FindProductByConditionResponse;
 import tarce.model.GetGroupByListresponse;
 import tarce.model.GetProcessBean;
@@ -40,6 +42,7 @@ import tarce.model.inventory.NFCWorkerBean;
 import tarce.model.inventory.NFcLoginBean;
 import tarce.model.inventory.NewSaleBean;
 import tarce.model.inventory.NewSaleListBean;
+import tarce.model.inventory.NfcOrderBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.model.inventory.ProcessDeatilBean;
@@ -65,6 +68,26 @@ import tarce.model.inventory.WorkingWorkerBean;
  */
 
 public interface InventoryApi {
+    /**
+     * 单条改变数据
+     * */
+    @POST("new_prepare_material")
+    Call<OrderDetailBean> newPrepareMater(@Body HashMap hashMap);
+    /**
+     * 仓库人员打卡
+     * */
+    @POST("auth_warehouse_manager")
+    Call<NfcOrderBean> authWarehouse(@Body HashMap hashMap);
+    /**
+     * 切换公司
+     * */
+    @POST("change_company")
+    Call<ComponyQueryBean> changeCompany(@Body HashMap hashMap);
+    /**
+     * 切换公司
+     * */
+    @POST("change_company")
+    Call<CompanyTwoBean> changeCompanyTwo(@Body HashMap hashMap);
     /**
      * 已完成订单
      * */
@@ -389,6 +412,12 @@ public interface InventoryApi {
      * */
     @POST("finish_prepare_material")
     Call<FinishPrepareMaBean> finishPrepareMa(@Body HashMap hashMap);
+
+    /**
+     * 提交备料(新的接口)
+     * */
+    @POST("new_finish_prepare_material")
+    Call<FinishPrepareMaBean> newfinishPrepareMa(@Body HashMap hashMap);
 //    Observable<FinishPrepareMaBean> finishPrepareMa(@Body HashMap hashMap);
     /**
      * 等待生产品检

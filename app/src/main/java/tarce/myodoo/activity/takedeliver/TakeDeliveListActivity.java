@@ -180,7 +180,9 @@ public class TakeDeliveListActivity extends BaseActivity {
                         listAdapter.setData(dataBeanList);
                     }
                     initListener();
-                }else if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() == null){
+                }else if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() == null
+                        && move!=Load_Move){
+                    swipeTarget.setVisibility(View.GONE);
                     ToastUtils.showCommonToast(TakeDeliveListActivity.this, "没有更多数据...");
                 }
             }

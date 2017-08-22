@@ -1,7 +1,9 @@
 package tarce.myodoo.adapter.product;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +27,28 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
 
     private Context context;
     private String head_name;
-    private OrderDetailBean.ResultBean result;
 
-    public OrderDetailAdapter(Context context, List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list, String head_name,OrderDetailBean.ResultBean result) {
+    private OrderDetailBean.ResultBean result;
+    private boolean gray_bac;
+    private boolean notView;
+
+    public boolean isNotView() {
+        return notView;
+    }
+
+    public void setNotView(boolean notView) {
+        this.notView = notView;
+    }
+
+    public boolean isGray_bac() {
+        return gray_bac;
+    }
+
+    public void setGray_bac(boolean gray_bac) {
+        this.gray_bac = gray_bac;
+    }
+
+    public OrderDetailAdapter(Context context, List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list, String head_name, OrderDetailBean.ResultBean result) {
         this.context = context;
         this.list = list;
         this.head_name = head_name;
@@ -40,6 +61,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
     }
 
     private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list;
+
     @Override
     public OrderViewhold onCreateViewHolder(ViewGroup parent, int viewType) {
         OrderViewhold viewhold = null;
@@ -78,7 +100,32 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                 }else {
                     holder.tv_prepare_order.setText("备料:"+list.get(position-1).getQuantity_done());
                 }
-                holder.itemView.setTag(list.get(position-1));
+                if (isGray_bac()){
+                    holder.tv_kucun_order.setTextColor(Color.GRAY);
+                    holder.tv_prepare_order.setTextColor(Color.GRAY);
+                    holder.tv_need_order.setTextColor(Color.GRAY);
+                    holder.tv_area_order.setTextColor(Color.GRAY);
+                    holder.tv_id_order.setTextColor(Color.GRAY);
+                    holder.tv_id_product.setTextColor(Color.GRAY);
+                    holder.tv_advice_order.setTextColor(Color.GRAY);
+                }else {
+                    holder.tv_kucun_order.setTextColor(Color.BLACK);
+                    holder.tv_prepare_order.setTextColor(Color.BLACK);
+                    holder.tv_need_order.setTextColor(Color.BLACK);
+                    holder.tv_area_order.setTextColor(Color.BLACK);
+                    holder.tv_id_order.setTextColor(Color.BLACK);
+                    holder.tv_id_product.setTextColor(Color.BLACK);
+                    holder.tv_advice_order.setTextColor(Color.BLACK);
+                }
+                if (isNotView()){
+                    holder.tv_feedback.setText("退料："+list.get(position-1).getReturn_qty());
+                    holder.tv_feedback.setVisibility(View.VISIBLE);
+                }else {
+                    holder.tv_feedback.setVisibility(View.INVISIBLE);
+                }
+              //  holder.itemView.setTag(list.get(position-1));
+                holder.itemView.setTag(R.id.tag_first,list.get(position-1));
+                holder.itemView.setTag(R.id.tag_second,position-1);
                 break;
         }
     }
@@ -102,9 +149,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
     @Override
     public void onClick(View v) {
         if (listener!=null){
-            if (v.getTag()!=null){
-                listener.onItemClick(v, (OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean) v.getTag());
-            }
+                listener.onItemClick(v, (OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean) v.getTag(R.id.tag_first), (int) v.getTag(R.id.tag_second));
         }
     }
 
@@ -117,6 +162,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
         public TextView tv_need_order;
         public TextView tv_advice_order;
         public TextView tv_prepare_order;
+        public TextView tv_feedback;
         public OrderViewhold(View itemView, int type) {
             super(itemView);
             if (type == header){
@@ -130,12 +176,13 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                 tv_need_order = (TextView) itemView.findViewById(R.id.tv_need_order);
                 tv_advice_order = (TextView) itemView.findViewById(R.id.tv_advice_order);
                 tv_prepare_order = (TextView) itemView.findViewById(R.id.tv_prepare_order);
+                tv_feedback = (TextView) itemView.findViewById(R.id.tv_feedback);
             }
         }
     }
 
     public static interface OnRecyclerViewItemClickListener{
-        void onItemClick(View view,OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean);
+        void onItemClick(View view,OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean, int position);
     }
 
     private OnRecyclerViewItemClickListener listener;

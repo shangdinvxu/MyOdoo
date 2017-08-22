@@ -95,9 +95,17 @@ public class DialogForOrder extends Dialog {
         dialogNeedNum.setText(StringUtils.doubleToString(linesBean.getProduct_uom_qty()));
         dialogAdviceNum.setText(StringUtils.doubleToString(linesBean.getSuggest_qty()));
         if (linesBean.getQty_available()>=linesBean.getProduct_uom_qty()){
-            tvPrepareNum.setText(StringUtils.doubleToString(linesBean.getProduct_uom_qty()));
+            double v = linesBean.getProduct_uom_qty() - linesBean.getQuantity_done() - linesBean.getQuantity_ready();
+            if (v<0){
+                v = 0;
+            }
+            tvPrepareNum.setText(StringUtils.doubleToString(v));
         }else {
-            tvPrepareNum.setText("0");
+            double v = linesBean.getQty_available() - linesBean.getQuantity_done() - linesBean.getQuantity_ready();
+            if (v<0){
+                v = 0;
+            }
+            tvPrepareNum.setText(StringUtils.doubleToString(v));
         }
         tvPrepareNum.setSelection(tvPrepareNum.getText().length());
     }

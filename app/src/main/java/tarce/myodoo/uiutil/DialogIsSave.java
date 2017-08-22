@@ -70,7 +70,7 @@ public class DialogIsSave extends Dialog {
     }
 
     public DialogIsSave changeSecond(String second){
-        tvSave.setText(second);
+        tvNotSave.setText(second);
         return this;
     }
 

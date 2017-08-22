@@ -41,13 +41,9 @@ public class SalesDetailAdapter extends BaseQuickAdapter<GetSaleResponse.TResult
         helper.setText(R.id.need_out, "待出库: " + item.getProduct_qty())
                 .setText(R.id.done, "完成: " + qty_done)
                 .setText(R.id.line_num, helper.getPosition() + 1 + ".");
-        if (state.equals("two")) {
             helper.setText(R.id.inventory, "可用: " + (item.getProduct_id().getQty_available() - reserved_qty));
             helper.setText(R.id.baoliu, "保留: " + (reserved_qty));
-        } else {
-            helper.setText(R.id.inventory, "可用: " + (item.getProduct_id().getQty_available() - reserved_qty - qty_done));
-            helper.setText(R.id.baoliu, "保留: " + (reserved_qty + qty_done));
-        }
+
 
         if (item.getPack_id() == -1) {
             helper.setTextColor(R.id.product, Color.GRAY)

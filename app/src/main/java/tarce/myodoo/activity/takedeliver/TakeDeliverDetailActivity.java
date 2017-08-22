@@ -2,6 +2,7 @@ package tarce.myodoo.activity.takedeliver;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +27,9 @@ import com.newland.mtype.ConnectionCloseEvent;
 import com.newland.mtype.ModuleType;
 import com.newland.mtype.event.DeviceEventListener;
 import com.newland.mtype.module.common.printer.Printer;
+import com.newland.mtype.module.common.rfcard.RFCardModule;
+import com.newland.mtype.module.common.rfcard.RFResult;
+import com.newland.mtype.util.ISOUtils;
 import com.newland.mtypex.nseries.NSConnV100ConnParams;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
@@ -39,20 +44,29 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Subscriber;
 import tarce.api.MyCallback;
+import tarce.api.OKHttpFactory;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.LoginResponse;
+import tarce.model.inventory.NfcOrderBean;
 import tarce.model.inventory.TakeDeAreaBean;
 import tarce.model.inventory.TakeDelListBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.AreaMessageActivity;
 import tarce.myodoo.activity.BaseActivity;
+import tarce.myodoo.activity.OrderDetailActivity;
 import tarce.myodoo.activity.WriteCheckMessaActivity;
 import tarce.myodoo.adapter.takedeliver.DetailTakedAdapter;
+import tarce.myodoo.device.Const;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
+import tarce.myodoo.uiutil.NFCdialog;
 import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
@@ -60,6 +74,8 @@ import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
 import tarce.support.TimeUtils;
 import tarce.support.ToastUtils;
+
+import static tarce.api.RetrofitClient.Url;
 
 /**
  * Created by zouzou on 2017/6/23.
@@ -112,6 +128,9 @@ public class TakeDeliverDetailActivity extends BaseActivity {
     private LoginResponse userInfoBean;
     private String notneed;
     private String from;
+    private RFCardModule rfCardModule;
+    private Retrofit retrofit;
+    private NFCdialog nfCdialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +138,15 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_takedelie_detail);
         ButterKnife.inject(this);
 
+        retrofit = new Retrofit.Builder()
+                //设置OKHttpClient
+                .client(new OKHttpFactory(TakeDeliverDetailActivity.this).getOkHttpClient())
+                .baseUrl(Url+"/linkloving_user_auth/")
+                //gson转化器
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+        Url = RetrofitClient.Url;
         Intent intent = getIntent();
         type_code = intent.getStringExtra("type_code");
         state = intent.getStringExtra("state");
@@ -203,13 +231,13 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 });
                 break;
             case "qc_check":
-            //    takedAdapter.setShowNotgood("qc_check");
-             //   tvFalseProduct.setVisibility(View.VISIBLE);
+                takedAdapter.setShowNotgood("qc_check");
+                tvFalseProduct.setVisibility(View.VISIBLE);
                 buttomButton1.setText("查看入库信息");
                 buttomButton2.setText("填写品检信息");
                 buttomButton2.setVisibility(View.VISIBLE);
                 showLinThreePin();
-            //    initRejectAdapter();
+                initRejectAdapter();
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -234,8 +262,8 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 });
                 break;
             case "validate":
-               // takedAdapter.setShowNotgood("validate");
-              //  tvFalseProduct.setVisibility(View.VISIBLE);
+                takedAdapter.setShowNotgood("validate");
+                tvFalseProduct.setVisibility(View.VISIBLE);
                 buttomButton1.setText("查看品检结果");
                 showLinThreePin();
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
@@ -260,64 +288,157 @@ public class TakeDeliverDetailActivity extends BaseActivity {
             case "waiting_in":
                 buttomButton1.setText("入库");
                 showLinThreeCang();//根据权限判断
-                buttomButton1.setOnClickListener(new View.OnClickListener() {
+                new Thread(new Runnable() {
                     @Override
-                    public void onClick(View v) {
-                        AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "是否确定入库")
-                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
+                    public void run() {
+                        initDevice();
+                        processingLock();
+                        showNfcDialog();
+                        try {
+                            final RFResult qPResult = rfCardModule.powerOn(null, 10, TimeUnit.SECONDS);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (qPResult.getCardSerialNo() == null){
+                                        ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "不能识别序列号："+ Const.MessageTag.DATA);
+                                    }else {
                                         showDefultProgressDialog();
+                                        String NFC_Number = ISOUtils.hexString(qPResult.getCardSerialNo());
+                                        InventoryApi inventory = retrofit.create(InventoryApi.class);
                                         HashMap<Object, Object> hashMap = new HashMap<>();
-                                        hashMap.put("state", "transfer");
-                                        hashMap.put("picking_id", resDataBean.getPicking_id());
-                                        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> ids = resDataBean.getPack_operation_product_ids();
-                                        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> sub_ids = new ArrayList<>();
-                                        for (int i = 0; i < ids.size(); i++) {
-                                            if (ids.get(i).getPack_id() == -1) {
-                                                sub_ids.add(ids.get(i));
-                                            }
-                                        }
-                                        ids.removeAll(sub_ids);
-                                        int size = ids.size();
-                                        Map[] maps = new Map[size];
-                                        for (int i = 0; i < size; i++) {
-                                            Map<Object, Object> map = new HashMap<>();
-                                            map.put("pack_id", ids.get(i).getPack_id());
-                                            map.put("qty_done", StringUtils.doubleToInt(ids.get(i).getQty_done()));
-                                            maps[i] = map;
-                                        }
-                                        hashMap.put("pack_operation_product_ids", maps);
-                                        Call<TakeDeAreaBean> objectCall = inventoryApi.ruKu(hashMap);
-                                        objectCall.enqueue(new MyCallback<TakeDeAreaBean>() {
+                                        hashMap.put("card_num", NFC_Number);
+                                        final Call<NfcOrderBean> objectCall = inventory.authWarehouse(hashMap);
+                                        objectCall.enqueue(new Callback<NfcOrderBean>() {
                                             @Override
-                                            public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
+                                            public void onResponse(Call<NfcOrderBean> call, Response<NfcOrderBean> response) {
                                                 dismissDefultProgressDialog();
-                                                if (response.body() == null || response.body().getResult() == null)
-                                                    return;
-                                                if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
-                                                    ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "入库完成");
-                                                    finish();
-                                                } else {
-                                                    ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "some error");
+                                                if (response.body() == null)return;
+                                                if (response.body().getError()!=null){
+                                                    nfCdialog.setHeaderImage(R.drawable.warning)
+                                                            .setTip(response.body().getError().getData().getMessage())
+                                                            .setCancelVisi().show();
+                                                    threadDismiss(nfCdialog);
+                                                }else if (response.body().getResult()!=null && response.body().getResult().getRes_code() == -1){
+                                                    nfCdialog.setHeaderImage(R.drawable.warning)
+                                                            .setTip(response.body().getResult().getRes_data().getErrorX())
+                                                            .setCancelVisi().show();
+                                                    threadDismiss(nfCdialog);
+                                                }else if (response.body().getResult()!=null && response.body().getResult().getRes_code() == 1){
+                                                    final NfcOrderBean.ResultBean.ResDataBean res_data = response.body().getResult().getRes_data();
+                                                    nfCdialog.setHeaderImage(R.drawable.defaultimage)
+                                                            .setTip(res_data.getName()+res_data.getEmployee_id()+"\n"+res_data.getWork_email()
+                                                                    +"\n\n"+"打卡成功")
+                                                            .setCancelVisi().show();
+                                                    threadDismiss(nfCdialog);
+                                                    showDefultProgressDialog();
+                                                    HashMap<Object, Object> hashMap = new HashMap<>();
+                                                    hashMap.put("state", "transfer");
+                                                    hashMap.put("picking_id", resDataBean.getPicking_id());
+                                                    List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> ids = resDataBean.getPack_operation_product_ids();
+                                                    List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> sub_ids = new ArrayList<>();
+                                                    for (int i = 0; i < ids.size(); i++) {
+                                                        if (ids.get(i).getPack_id() == -1) {
+                                                            sub_ids.add(ids.get(i));
+                                                        }
+                                                    }
+                                                    ids.removeAll(sub_ids);
+                                                    int size = ids.size();
+                                                    Map[] maps = new Map[size];
+                                                    for (int i = 0; i < size; i++) {
+                                                        Map<Object, Object> map = new HashMap<>();
+                                                        map.put("pack_id", ids.get(i).getPack_id());
+                                                        map.put("qty_done", StringUtils.doubleToInt(ids.get(i).getQty_done()));
+                                                        maps[i] = map;
+                                                    }
+                                                    hashMap.put("pack_operation_product_ids", maps);
+                                                    Call<TakeDeAreaBean> objectCall = inventoryApi.ruKu(hashMap);
+                                                    objectCall.enqueue(new MyCallback<TakeDeAreaBean>() {
+                                                        @Override
+                                                        public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
+                                                            dismissDefultProgressDialog();
+                                                            if (response.body() == null || response.body().getResult() == null)
+                                                                return;
+                                                            if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
+                                                                ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "入库完成");
+                                                                finish();
+                                                            } else {
+                                                                ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "some error");
+                                                            }
+                                                        }
+                                                        @Override
+                                                        public void onFailure(Call<TakeDeAreaBean> call, Throwable t) {
+                                                            dismissDefultProgressDialog();
+                                                            ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, t.toString());
+                                                        }
+                                                    });
                                                 }
                                             }
-
                                             @Override
-                                            public void onFailure(Call<TakeDeAreaBean> call, Throwable t) {
+                                            public void onFailure(Call<NfcOrderBean> call, Throwable t) {
                                                 dismissDefultProgressDialog();
-                                                ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, t.toString());
+                                                Log.e("zws", t.toString());
                                             }
                                         });
                                     }
-                                }).show();
+                                    processingUnLock();
+                                }
+                            });
+                        }catch (final Exception e){
+                            e.fillInStackTrace();
+                            if (e.getMessage().equals("device invoke timeout!7")){
+                                runOnUiThread(new Runnable(){
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Thread.sleep(1000);
+                                            ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, e.getMessage()+"  "+Const.MessageTag.ERROR);
+                                            nfCdialog.dismiss();
+                                        } catch (InterruptedException e1) {
+                                            e1.printStackTrace();
+                                        }
+                                    }
+                                });
+                            }
+                            processingUnLock();
+                        }
                     }
-                });
+                }).start();
                 break;
             case "done":
                 buttomButton1.setVisibility(View.GONE);
                 break;
         }
+    }
+    //显示nfc的dialog
+    private void showNfcDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                nfCdialog = new NFCdialog(TakeDeliverDetailActivity.this);
+                nfCdialog.setCancel(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        processingUnLock();
+                        nfCdialog.dismiss();
+                        return;
+                    }
+                }).show();
+            }
+        });
+    }
+    //关闭dialog
+    private void threadDismiss(final NFCdialog dialog) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(1000);
+                    dialog.dismiss();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     //adapter的另一个点击事件
@@ -502,5 +623,32 @@ public class TakeDeliverDetailActivity extends BaseActivity {
             e.printStackTrace();
             ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "链接异常,请检查设备或重新连接.." + e);
         }
+    }
+
+    public void processingLock() {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                SharedPreferences setting = getSharedPreferences("setting", 0);
+                SharedPreferences.Editor editor = setting.edit();
+                editor.putBoolean("PBOC_LOCK", true);
+                editor.commit();
+            }
+        });
+
+    }
+
+    public void processingUnLock() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences setting = getSharedPreferences("setting", 0);
+                SharedPreferences.Editor editor = setting.edit();
+                editor.putBoolean("PBOC_LOCK", false);
+                editor.commit();
+            }
+        });
+
     }
 }

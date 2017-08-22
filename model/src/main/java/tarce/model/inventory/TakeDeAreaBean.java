@@ -1,5 +1,6 @@
 package tarce.model.inventory;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  * 提交入库信息
  */
 
-public class TakeDeAreaBean {
+public class TakeDeAreaBean implements Serializable{
     /**
      * jsonrpc : 2.0
      * id : null
@@ -42,22 +43,22 @@ public class TakeDeAreaBean {
         this.result = result;
     }
 
-    public static class ResultBean {
+    public static class ResultBean implements Serializable{
         /**
          * res_data : {"origin":"PO2017050405186","sale_note":false,"qc_img":"http://192.168.2.4:8069/linkloving_app_api/get_worker_image?worker_id=6101&model=stock.picking&field=qc_img","complete_rate":0,"parnter_id":"浙江佳龙电子有限公司（上海办事处）","name":"WHIN2017050501689","post_img":"http://192.168.2.4:8069/linkloving_app_api/get_worker_image?worker_id=6101&model=stock.picking&field=post_img","min_date":"2017-05-10 07:47:04","qc_note":false,"state":"qc_check","picking_type_code":"incoming","has_attachment":false,"post_area_id":{"area_id":84,"area_name":"A1A3"},"pack_operation_product_ids":[{"pack_id":112644,"qty_done":5000,"product_id":{"default_code":"22.041002.003","qty_available":0,"area_id":{"area_id":242,"area_name":"A3L2"},"id":48381,"name":"[22.041002.003] SS-12F46 MDxx0、VXX0控制盒两档拨动开关"},"product_qty":5000}],"delivery_rule":null,"picking_id":6101}
          * res_msg :
          * res_code : 1
          */
 
-        private ResDataBean res_data;
+        private TakeDelListBean.ResultBean.ResDataBean res_data;
         private String res_msg;
         private int res_code;
 
-        public ResDataBean getRes_data() {
+        public TakeDelListBean.ResultBean.ResDataBean getRes_data() {
             return res_data;
         }
 
-        public void setRes_data(ResDataBean res_data) {
+        public void setRes_data(TakeDelListBean.ResultBean.ResDataBean res_data) {
             this.res_data = res_data;
         }
 
@@ -77,7 +78,7 @@ public class TakeDeAreaBean {
             this.res_code = res_code;
         }
 
-        public static class ResDataBean {
+        public static class ResDataBean implements Serializable{
             public Object getOrigin() {
                 if (origin instanceof Boolean){
                     origin = "";
@@ -118,14 +119,37 @@ public class TakeDeAreaBean {
 
             private String phone;
             private Object origin;
-            private boolean sale_note;
+            public Object getSale_note() {
+                if (sale_note instanceof Boolean){
+                    sale_note = "";
+                }
+                return sale_note;
+            }
+
+            public void setSale_note(Object sale_note) {
+                this.sale_note = sale_note;
+            }
+
+            private Object sale_note;
             private String qc_img;
             private int complete_rate;
             private String parnter_id;
             private String name;
             private String post_img;
             private String min_date;
-            private boolean qc_note;
+
+            public Object getQc_note() {
+                if (qc_note instanceof Boolean){
+                    qc_note = "";
+                }
+                return qc_note;
+            }
+
+            public void setQc_note(Object qc_note) {
+                this.qc_note = qc_note;
+            }
+
+            private Object qc_note;
             private String state;
             private String picking_type_code;
             private boolean has_attachment;
@@ -133,10 +157,10 @@ public class TakeDeAreaBean {
             private Object delivery_rule;
             private int picking_id;
             private List<PackOperationProductIdsBean> pack_operation_product_ids;
+            private String qc_result;
 
-
-            public boolean isSale_note() {
-                return sale_note;
+            public String getQc_result() {
+                return qc_result;
             }
 
             public void setSale_note(boolean sale_note) {
@@ -189,14 +213,6 @@ public class TakeDeAreaBean {
 
             public void setMin_date(String min_date) {
                 this.min_date = min_date;
-            }
-
-            public boolean isQc_note() {
-                return qc_note;
-            }
-
-            public void setQc_note(boolean qc_note) {
-                this.qc_note = qc_note;
             }
 
             public String getState() {
@@ -255,7 +271,7 @@ public class TakeDeAreaBean {
                 this.pack_operation_product_ids = pack_operation_product_ids;
             }
 
-            public static class PostAreaIdBean {
+            public static class PostAreaIdBean implements Serializable{
                 public Object getArea_id() {
                     if (area_id instanceof Boolean){
                         area_id = 0;
@@ -289,7 +305,7 @@ public class TakeDeAreaBean {
 
             }
 
-            public static class PackOperationProductIdsBean {
+            public static class PackOperationProductIdsBean implements Serializable{
                 /**
                  * pack_id : 112644
                  * qty_done : 5000.0
@@ -301,6 +317,15 @@ public class TakeDeAreaBean {
                 private double qty_done;
                 private ProductIdBean product_id;
                 private double product_qty;
+                private int rejects_qty;
+
+                public int getRejects_qty() {
+                    return rejects_qty;
+                }
+
+                public void setRejects_qty(int rejects_qty) {
+                    this.rejects_qty = rejects_qty;
+                }
 
                 public int getPack_id() {
                     return pack_id;
@@ -334,7 +359,7 @@ public class TakeDeAreaBean {
                     this.product_qty = product_qty;
                 }
 
-                public static class ProductIdBean {
+                public static class ProductIdBean implements Serializable{
                     /**
                      * default_code : 22.041002.003
                      * qty_available : 0.0
@@ -389,7 +414,7 @@ public class TakeDeAreaBean {
                         this.name = name;
                     }
 
-                    public static class AreaIdBean {
+                    public static class AreaIdBean implements Serializable{
                         /**
                          * area_id : 242
                          * area_name : A3L2

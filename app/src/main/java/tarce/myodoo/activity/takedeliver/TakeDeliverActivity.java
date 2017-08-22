@@ -250,18 +250,24 @@ public class TakeDeliverActivity extends BaseActivity {
                     states = new ArrayList<>();
                     for (int i = 0; i < res_data.size(); i++) {
                         if (res_data.get(i).getPicking_type_code().equals("incoming")) {
-                            states = res_data.get(i).getStates();
+                            states.addAll(res_data.get(i).getStates());
                             picking_type_code = res_data.get(i).getPicking_type_code();
                             picking_type_id = res_data.get(i).getPicking_type_id();
                         }
                     }
+                    int sumOne = 0;
+                    int sumTwo = 0;
+                    int sumThree = 0;
                     for (int i = 0; i < states.size(); i++) {
                         if (states.get(i).getState().equals("assigned")) {
-                            menuBeanList.set(0, new MenuBean("待收货", states.get(i).getState_count()));
+                            sumOne = sumOne + states.get(i).getState_count();
+                            menuBeanList.set(0, new MenuBean("待收货", sumOne));
                         } else if (states.get(i).getState().equals("done")) {
-                            menuBeanList.set(1, new MenuBean("完成", states.get(i).getState_count()));
+                            sumTwo = sumTwo + states.get(i).getState_count();
+                            menuBeanList.set(1, new MenuBean("完成", sumTwo));
                         } else if (states.get(i).getState().equals("waiting_in")) {
-                            menuBeanList.set(2, new MenuBean("待入库", states.get(i).getState_count()));
+                            sumThree = sumThree + states.get(i).getState_count();
+                            menuBeanList.set(2, new MenuBean("待入库", sumThree));
                         }
                     }
                     adapter.notifyDataSetChanged();

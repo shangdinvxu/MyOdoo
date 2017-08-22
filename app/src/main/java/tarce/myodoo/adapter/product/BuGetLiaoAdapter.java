@@ -26,19 +26,25 @@ public class BuGetLiaoAdapter extends BaseQuickAdapter<OrderDetailBean.ResultBea
 
     @Override
     protected void convert(BaseViewHolder helper, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean item) {
+        helper.setText(R.id.num_position, (helper.getPosition()+1)+".");
         helper.setText(R.id.tv_id_product, item.getProduct_id());
         /*if (item.getArea_id()!=null){
             helper.setText(R.id.tv_area_order, item.getArea_id().getArea_name()+"");
         }*/
-        helper.setText(R.id.tv_advice_order, StringUtils.doubleToString(item.getSuggest_qty()));
-        helper.setText(R.id.tv_kucun_order, StringUtils.doubleToString(item.getQty_available()));
-        helper.setText(R.id.tv_need_order, StringUtils.doubleToString(item.getProduct_uom_qty()));
-        if (state.equals("waiting_material") || state.equals("prepare_material_ing") || state.equals("finish_prepare_material")){
-            helper.setText(R.id.tv_prepare_order, StringUtils.doubleToString(item.getQuantity_ready()+item.getQuantity_done()));
+        if (item.getArea_id()!=null){
+            helper.setText(R.id.tv_area_order, "位置："+item.getArea_id().getArea_name());
         }else {
-            helper.setText(R.id.tv_prepare_order, StringUtils.doubleToString(item.getQuantity_done()));
+            helper.setText(R.id.tv_area_order, "位置：null");
+        }
+        helper.setText(R.id.tv_advice_order, "建议："+item.getSuggest_qty());
+        helper.setText(R.id.tv_kucun_order, "库存："+item.getQty_available());
+        helper.setText(R.id.tv_need_order, "需求："+item.getProduct_uom_qty());
+        if (state.equals("waiting_material") || state.equals("prepare_material_ing") || state.equals("finish_prepare_material")){
+            helper.setText(R.id.tv_prepare_order, "备料:"+(item.getQuantity_ready()+item.getQuantity_done()));
+        }else {
+            helper.setText(R.id.tv_prepare_order, "备料:"+item.getQuantity_done());
         }
 
-        helper.setText(R.id.tv_out_num, StringUtils.doubleToString(item.getOver_picking_qty()));
+        helper.setText(R.id.tv_out_num, "补料数量："+item.getOver_picking_qty());
     }
 }

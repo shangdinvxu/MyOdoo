@@ -41,7 +41,7 @@ public class DetailTakedAdapter extends BaseQuickAdapter<TakeDelListBean.ResultB
 
     @Override
     protected void convert(BaseViewHolder helper, final TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean item) {
-        /*switch (showNotgood){
+        switch (showNotgood){
             case "qc_check":
                 helper.setVisible(R.id.nongood, true);
                 helper.setBackgroundColor(R.id.nongood, context.getResources().getColor(R.color.grgray));
@@ -51,7 +51,7 @@ public class DetailTakedAdapter extends BaseQuickAdapter<TakeDelListBean.ResultB
                 helper.setVisible(R.id.nongood, true);
                 helper.setText(R.id.nongood, item.getRejects_qty()+"");
                 break;
-        }*/
+        }
         helper.setText(R.id.product,item.getProduct_id().getName())
                 .setText(R.id.need_out, StringUtils.doubleToString(item.getProduct_qty()))
                 .setText(R.id.done, StringUtils.doubleToString(item.getQty_done()))
@@ -66,15 +66,15 @@ public class DetailTakedAdapter extends BaseQuickAdapter<TakeDelListBean.ResultB
                     .setTextColor(R.id.need_out, Color.GRAY)
                     .setTextColor(R.id.done, Color.GRAY)
                     .setTextColor(R.id.need_in, Color.GRAY)
-                    .setTextColor(R.id.tv_num, Color.GRAY);
-             //       .setTextColor(R.id.nongood, Color.GRAY);
+                    .setTextColor(R.id.tv_num, Color.GRAY)
+                    .setTextColor(R.id.nongood, Color.GRAY);
         }else {
             helper.setTextColor(R.id.product, Color.BLACK)
                     .setTextColor(R.id.need_out, Color.BLACK)
                     .setTextColor(R.id.done, Color.BLACK)
                     .setTextColor(R.id.need_in, Color.BLACK)
-                    .setTextColor(R.id.tv_num, Color.BLACK);
-                 //   .setTextColor(R.id.nongood, Color.BLACK);
+                    .setTextColor(R.id.tv_num, Color.BLACK)
+                    .setTextColor(R.id.nongood, Color.BLACK);
         }
 
         helper.addOnClickListener(R.id.tv_guige);

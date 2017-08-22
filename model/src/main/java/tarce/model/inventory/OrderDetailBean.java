@@ -443,6 +443,9 @@ public class OrderDetailBean {
                     }
 
                     public Object getArea_name() {
+                        if (area_name instanceof Boolean){
+                            area_name = "";
+                        }
                         return area_name;
                     }
 
