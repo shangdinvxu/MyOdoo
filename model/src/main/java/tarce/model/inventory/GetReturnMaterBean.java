@@ -88,6 +88,15 @@ public class GetReturnMaterBean {
             private int product_tmpl_id;
             private String product_id;
             private double return_qty;
+            private boolean isNfc = false;
+
+            public boolean isNfc() {
+                return isNfc;
+            }
+
+            public void setNfc(boolean nfc) {
+                isNfc = nfc;
+            }
 
             public int getProduct_tmpl_id() {
                 return product_tmpl_id;

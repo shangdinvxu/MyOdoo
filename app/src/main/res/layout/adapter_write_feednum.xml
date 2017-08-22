@@ -8,11 +8,13 @@
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent"
+        android:textSize="13sp"
         android:gravity="center"/>
     <TextView
         android:id="@+id/num_feedback_write"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent"
+        android:textSize="13sp"
         android:gravity="center"/>
 </LinearLayout>

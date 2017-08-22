@@ -1,5 +1,7 @@
 package tarce.myodoo.adapter.product;
 
+import android.graphics.Color;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -25,5 +27,12 @@ public class WriteFeedbackNumAdapter extends BaseQuickAdapter<GetReturnMaterBean
     protected void convert(BaseViewHolder helper, GetReturnMaterBean.ResultBean.ResDataBean item) {
         helper.setText(R.id.name_product_feedback, item.getProduct_id());
         helper.setText(R.id.num_feedback_write, StringUtils.doubleToString(item.getReturn_qty()));
+        if (item.isNfc()){
+            helper.setTextColor(R.id.name_product_feedback, Color.BLUE);
+            helper.setTextColor(R.id.num_feedback_write, Color.BLUE);
+        }else {
+            helper.setTextColor(R.id.name_product_feedback, Color.BLACK);
+            helper.setTextColor(R.id.num_feedback_write, Color.BLACK);
+        }
     }
 }

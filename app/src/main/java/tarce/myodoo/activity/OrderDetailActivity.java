@@ -148,6 +148,7 @@ public class OrderDetailActivity extends ToolBarActivity {
     private static final int WRITE_WATERIAL_OUT = 5;//填写退料
     private static final int LOOK_MESSAGE_FEEDBACK = 6;//仓库查看退料信息
     private static final int CHECK_MATERIAL_RETURN = 7;//清点退料
+    private static final int FINISH_FEEDBACK = 8;//清点退料
     @InjectView(R.id.tv_area_look)
     TextView tvAreaLook;
     @InjectView(R.id.linear_three)
@@ -794,13 +795,10 @@ public class OrderDetailActivity extends ToolBarActivity {
         if (state.equals("waiting_inventory_material") || state.equals("waiting_warehouse_inspection")
                 || state.equals("done")) {
             adapter.setGray_bac(true);
-            adapter.setNotView(true);
             adapter.notifyDataSetChanged();
             adapter_two.setGray_bac(true);
-            adapter_two.setNotView(true);
             adapter_two.notifyDataSetChanged();
             adapter_three.setGray_bac(true);
-            adapter_three.setNotView(true);
             adapter_three.notifyDataSetChanged();
         }
     }
@@ -983,7 +981,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 }
                 break;
             case WRITE_WATERIAL_OUT://填写退料
-                /*try {
+                try {
                     Intent intent1 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
                     intent1.putExtra("recycler_data", resDataBean);
                     intent1.putExtra("order_id", order_id);
@@ -991,20 +989,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                     startActivity(intent1);
                 } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
-                }*/
-                tvStartProduce.setText("退料完成");
-                adapter.setGray_bac(false);
-                adapter.setNotView(true);
-                adapter.notifyDataSetChanged();
-                adapter_two.setGray_bac(false);
-                adapter_two.setNotView(true);
-                adapter_two.notifyDataSetChanged();
-                adapter_three.setGray_bac(false);
-                adapter_three.setNotView(true);
-                adapter_three.notifyDataSetChanged();
-                initWritefeedback(adapter);
-                initWritefeedback(adapter_two);
-                initWritefeedback(adapter_three);
+                }
                 break;
             case LOOK_MESSAGE_FEEDBACK:
                 try {
@@ -1029,118 +1014,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                 }
                 break;
         }
-    }
-
-    /**
-     * 填写退料的方法
-     */
-    private void initWritefeedback(final OrderDetailAdapter listAdapter) {
-        listAdapter.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
-            @Override
-            public void onItemClick(View view, final OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean, final int position) {
-                insertNumDialog = new InsertNumDialog(OrderDetailActivity.this, R.style.MyDialogStyle,
-                        new InsertNumDialog.OnSendCommonClickListener() {
-                            public double beiNum;//备料数量
-
-                            @Override
-                            public void OnSendCommonClick(final int num) {
-                                if (resDataBean.getState().equals("waiting_material")
-                                        || resDataBean.getState().equals("prepare_material_ing")
-                                        || resDataBean.getState().equals("finish_prepare_material")) {
-                                    beiNum = linesBean.getQuantity_ready() + linesBean.getQuantity_done();
-                                } else {
-                                    beiNum = linesBean.getQuantity_done();
-                                }
-                                // TODO: 2017/6/8 生产num/需求num*item的需求num
-                                double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * linesBean.getProduct_uom_qty();
-                                if (num <= (beiNum - v)) {
-                                    new Thread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            initDevice();
-                                            processingLock();
-                                            showNfcDialog();
-                                            try {
-                                                final RFResult qPResult = rfCardModule.powerOn(null, 10, TimeUnit.SECONDS);
-                                                runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        if (qPResult.getCardSerialNo() == null) {
-                                                            ToastUtils.showCommonToast(OrderDetailActivity.this, "不能识别序列号：" + Const.MessageTag.DATA);
-                                                        } else {
-                                                            showDefultProgressDialog();
-                                                            String NFC_Number = ISOUtils.hexString(qPResult.getCardSerialNo());
-                                                            InventoryApi inventory = retrofit.create(InventoryApi.class);
-                                                            HashMap<Object, Object> hashMap = new HashMap<>();
-                                                            hashMap.put("card_num", NFC_Number);
-                                                            final Call<NfcOrderBean> objectCall = inventory.authWarehouse(hashMap);
-                                                            objectCall.enqueue(new Callback<NfcOrderBean>() {
-                                                                @Override
-                                                                public void onResponse(Call<NfcOrderBean> call, Response<NfcOrderBean> response) {
-                                                                    dismissDefultProgressDialog();
-                                                                    if (response.body() == null)
-                                                                        return;
-                                                                    if (response.body().getError() != null) {
-                                                                        nfCdialog.setHeaderImage(R.drawable.warning)
-                                                                                .setTip(response.body().getError().getData().getMessage())
-                                                                                .setCancelVisi().show();
-                                                                        threadDismiss(nfCdialog);
-                                                                    } else if (response.body().getResult() != null && response.body().getResult().getRes_code() == -1) {
-                                                                        nfCdialog.setHeaderImage(R.drawable.warning)
-                                                                                .setTip(response.body().getResult().getRes_data().getErrorX())
-                                                                                .setCancelVisi().show();
-                                                                        threadDismiss(nfCdialog);
-                                                                    } else if (response.body().getResult() != null && response.body().getResult().getRes_code() == 1) {
-                                                                        final NfcOrderBean.ResultBean.ResDataBean res_data = response.body().getResult().getRes_data();
-                                                                        nfCdialog.setHeaderImage(R.drawable.defaultimage)
-                                                                                .setTip(res_data.getName() + res_data.getEmployee_id() + "\n" + res_data.getWork_email()
-                                                                                        + "\n\n" + "打卡成功")
-                                                                                .setCancelVisi().show();
-                                                                        threadDismiss(nfCdialog);
-                                                                        linesBean.setReturn_qty(num);
-                                                                        listAdapter.notifyDataSetChanged();
-                                                                    }
-                                                                }
-
-                                                                @Override
-                                                                public void onFailure(Call<NfcOrderBean> call, Throwable t) {
-                                                                    dismissDefultProgressDialog();
-                                                                    Log.e("zws", t.toString());
-                                                                }
-                                                            });
-                                                        }
-                                                        processingUnLock();
-                                                    }
-                                                });
-                                            } catch (final Exception e) {
-                                                e.fillInStackTrace();
-                                                if (e.getMessage().equals("device invoke timeout!7")) {
-                                                    runOnUiThread(new Runnable() {
-                                                        @Override
-                                                        public void run() {
-                                                            try {
-                                                                Thread.sleep(1000);
-                                                                ToastUtils.showCommonToast(OrderDetailActivity.this, e.getMessage() + "  " + Const.MessageTag.ERROR);
-                                                                nfCdialog.dismiss();
-                                                            } catch (InterruptedException e1) {
-                                                                e1.printStackTrace();
-                                                            }
-                                                        }
-                                                    });
-                                                }
-                                                processingUnLock();
-                                            }
-                                        }
-                                    }).start();
-                                } else {
-                                    ToastUtils.showCommonToast(OrderDetailActivity.this, "退料过多");
-                                }
-                            }
-                        }, linesBean.getProduct_id(), position, resDataBean)
-                        .changeTitle("输入 " + linesBean.getProduct_id() + " 的退料数量");
-                insertNumDialog.show();
-            }
-        });
     }
 
     //显示nfc的dialog
@@ -1319,7 +1192,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             MyLog.e("OrderDetailActivity", "连接成功");
         } catch (Exception e) {
             e.printStackTrace();
-            ToastUtils.showCommonToast(OrderDetailActivity.this, "链接异常,请检查设备或重新连接.." + e);
+           // ToastUtils.showCommonToast(OrderDetailActivity.this, "链接异常,请检查设备或重新连接.." + e);
         }
         rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
     }

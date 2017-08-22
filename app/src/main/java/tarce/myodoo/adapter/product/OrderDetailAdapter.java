@@ -30,15 +30,6 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
 
     private OrderDetailBean.ResultBean result;
     private boolean gray_bac;
-    private boolean notView;
-
-    public boolean isNotView() {
-        return notView;
-    }
-
-    public void setNotView(boolean notView) {
-        this.notView = notView;
-    }
 
     public boolean isGray_bac() {
         return gray_bac;
@@ -116,12 +107,6 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                     holder.tv_id_order.setTextColor(Color.BLACK);
                     holder.tv_id_product.setTextColor(Color.BLACK);
                     holder.tv_advice_order.setTextColor(Color.BLACK);
-                }
-                if (isNotView()){
-                    holder.tv_feedback.setText("退料："+list.get(position-1).getReturn_qty());
-                    holder.tv_feedback.setVisibility(View.VISIBLE);
-                }else {
-                    holder.tv_feedback.setVisibility(View.INVISIBLE);
                 }
               //  holder.itemView.setTag(list.get(position-1));
                 holder.itemView.setTag(R.id.tag_first,list.get(position-1));

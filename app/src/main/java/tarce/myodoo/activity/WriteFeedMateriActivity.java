@@ -2,35 +2,63 @@ package tarce.myodoo.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.newland.me.ConnUtils;
+import com.newland.me.DeviceManager;
+import com.newland.mtype.ConnectionCloseEvent;
+import com.newland.mtype.ModuleType;
+import com.newland.mtype.event.DeviceEventListener;
+import com.newland.mtype.module.common.rfcard.RFCardModule;
+import com.newland.mtype.module.common.rfcard.RFResult;
+import com.newland.mtype.util.ISOUtils;
+import com.newland.mtypex.nseries.NSConnV100ConnParams;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import tarce.api.MyCallback;
+import tarce.api.OKHttpFactory;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.GetReturnMaterBean;
+import tarce.model.inventory.NfcOrderBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.salesout.SalesDetailActivity;
 import tarce.myodoo.adapter.product.WriteFeedAdapter;
 import tarce.myodoo.adapter.product.WriteFeedbackNumAdapter;
+import tarce.myodoo.device.Const;
+import tarce.myodoo.uiutil.DialogIsSave;
 import tarce.myodoo.uiutil.InsertNumDialog;
+import tarce.myodoo.uiutil.NFCdialog;
 import tarce.support.AlertAialogUtils;
+import tarce.support.MyLog;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
+
+import static tarce.api.RetrofitClient.Url;
 
 /**
  * Created by rose.zou on 2017/6/5.
@@ -38,6 +66,7 @@ import tarce.support.ToolBarActivity;
  */
 
 public class WriteFeedMateriActivity extends ToolBarActivity {
+    private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     @InjectView(R.id.recycler_feed_material)
     RecyclerView recyclerFeedMaterial;
     @InjectView(R.id.tv_commit_feednum)
@@ -50,6 +79,10 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
     private String from;
     private WriteFeedAdapter feedAdapter;
     private List<GetReturnMaterBean.ResultBean.ResDataBean> res_data;
+    private DeviceManager deviceManager;
+    private RFCardModule rfCardModule;
+    private NFCdialog nfCdialog;
+    private Retrofit retrofit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +91,15 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
         ButterKnife.inject(this);
 
         setRecyclerview(recyclerFeedMaterial);
+        retrofit = new Retrofit.Builder()
+                //设置OKHttpClient
+                .client(new OKHttpFactory(WriteFeedMateriActivity.this).getOkHttpClient())
+                .baseUrl(Url+"/linkloving_user_auth/")
+                //gson转化器
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+        Url = RetrofitClient.Url;
         Intent intent = getIntent();
         resDataBean = (OrderDetailBean.ResultBean.ResDataBean) intent.getSerializableExtra("recycler_data");
         order_id = intent.getIntExtra("order_id", 1);
@@ -146,7 +188,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                             public double beiNum;//备料数量
 
                             @Override
-                            public void OnSendCommonClick(int num) {
+                            public void OnSendCommonClick(final int num) {
                                 if (resDataBean.getState().equals("waiting_material")
                                         || resDataBean.getState().equals("prepare_material_ing")
                                         || resDataBean.getState().equals("finish_prepare_material")) {
@@ -157,8 +199,90 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                 // TODO: 2017/6/8 生产num/需求num*item的需求num
                                 double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(position).getProduct_uom_qty();
                                 if (num <= (beiNum - v)) {
-                                    res_data.get(position).setReturn_qty(num);
-                                    adapter.notifyDataSetChanged();
+                                    String product_type = resDataBean.getStock_move_lines().get(position).getProduct_type();
+                                    if (product_type.equals("material") || product_type.equals("real_semi_finished")){
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                initDevice();
+                                                processingLock();
+                                                showNfcDialog();
+                                                try {
+                                                    final RFResult qPResult = rfCardModule.powerOn(null, 10, TimeUnit.SECONDS);
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            if (qPResult.getCardSerialNo() == null) {
+                                                                ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "不能识别序列号：" + Const.MessageTag.DATA);
+                                                            } else {
+                                                                showDefultProgressDialog();
+                                                                String NFC_Number = ISOUtils.hexString(qPResult.getCardSerialNo());
+                                                                InventoryApi inventory = retrofit.create(InventoryApi.class);
+                                                                HashMap<Object, Object> hashMap = new HashMap<>();
+                                                                hashMap.put("card_num", NFC_Number);
+                                                                Call<NfcOrderBean> objectCall = inventory.authWarehouse(hashMap);
+                                                                objectCall.enqueue(new Callback<NfcOrderBean>() {
+                                                                    @Override
+                                                                    public void onResponse(Call<NfcOrderBean> call, Response<NfcOrderBean> response) {
+                                                                        dismissDefultProgressDialog();
+                                                                        if (response.body() == null) return;
+                                                                        if (response.body().getError() != null) {
+                                                                            nfCdialog.setHeaderImage(R.drawable.warning)
+                                                                                    .setTip(response.body().getError().getData().getMessage())
+                                                                                    .setCancelVisi().show();
+                                                                            threadDismiss(nfCdialog);
+                                                                        } else if (response.body().getResult() != null && response.body().getResult().getRes_code() == -1) {
+                                                                            nfCdialog.setHeaderImage(R.drawable.warning)
+                                                                                    .setTip(response.body().getResult().getRes_data().getErrorX())
+                                                                                    .setCancelVisi().show();
+                                                                            threadDismiss(nfCdialog);
+                                                                        } else if (response.body().getResult() != null && response.body().getResult().getRes_code() == 1) {
+                                                                            final NfcOrderBean.ResultBean.ResDataBean res_dataNfc = response.body().getResult().getRes_data();
+                                                                            nfCdialog.setHeaderImage(R.drawable.defaultimage)
+                                                                                    .setTip(res_dataNfc.getName() + res_dataNfc.getEmployee_id() + "\n" + res_dataNfc.getWork_email()
+                                                                                            + "\n\n" + "打卡成功")
+                                                                                    .setCancelVisi().show();
+                                                                            threadDismiss(nfCdialog);
+                                                                            res_data.get(position).setReturn_qty(num);
+                                                                            res_data.get(position).setNfc(true);
+                                                                            adapter.notifyDataSetChanged();
+                                                                        }
+                                                                    }
+                                                                    @Override
+                                                                    public void onFailure(Call<NfcOrderBean> call, Throwable t) {
+                                                                        dismissDefultProgressDialog();
+                                                                        Log.e("zws", t.toString());
+                                                                    }
+                                                                });
+                                                            }
+                                                            processingUnLock();
+                                                        }
+                                                    });
+                                                } catch (final Exception e) {
+                                                    e.fillInStackTrace();
+                                                    if (e.getMessage().equals("device invoke timeout!7")) {
+                                                        runOnUiThread(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                try {
+                                                                    Thread.sleep(1000);
+                                                                    ToastUtils.showCommonToast(WriteFeedMateriActivity.this, e.getMessage() + "  " + Const.MessageTag.ERROR);
+                                                                    nfCdialog.dismiss();
+                                                                } catch (InterruptedException e1) {
+                                                                    e1.printStackTrace();
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                    processingUnLock();
+                                                }
+                                            }
+                                        }).start();
+                                    }else {
+                                        res_data.get(position).setReturn_qty(num);
+                                        res_data.get(position).setNfc(true);
+                                        adapter.notifyDataSetChanged();
+                                    }
                                 } else {
                                     ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料过多");
                                 }
@@ -168,6 +292,34 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                 insertNumDialog.show();
             }
         });
+    }
+
+    //显示nfc的dialog
+    private void showNfcDialog() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                nfCdialog = new NFCdialog(WriteFeedMateriActivity.this);
+                nfCdialog.setCancel(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        processingUnLock();
+                        nfCdialog.dismiss();
+                        return;
+                    }
+                }).show();
+            }
+        });
+    }
+
+    //关闭dialog
+    private void threadDismiss(final NFCdialog dialog) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dialog.dismiss();
+            }
+        }, 1000);
     }
 
     @OnClick(R.id.tv_commit_feednum)
@@ -228,6 +380,17 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                         }
                     }).show();
         } else {
+            boolean pass = false;
+            for (int i = 0; i < res_data.size(); i++) {
+                if (!res_data.get(i).isNfc()){
+                    pass = true;
+                    break;
+                }
+            }
+            if (pass){
+                ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "有未确认的退料");
+                return;
+            }
             AlertAialogUtils.getCommonDialog(WriteFeedMateriActivity.this, "是否确定提交")
                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
@@ -281,5 +444,124 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                         }
                     }).show();
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO Auto-generated method stub
+        if (from.equals("look") && res_data!=null) {
+            if (item.getItemId() == android.R.id.home) {
+                boolean isBack = false;
+                for (int i = 0; i < res_data.size(); i++) {
+                    if (res_data.get(i).isNfc()) {
+                        isBack = true;
+                        break;
+                    }
+                }
+                if (isBack) {
+                    isBack = false;
+                    AlertAialogUtils.getCommonDialog(WriteFeedMateriActivity.this, "已经有确认过的退料了，是否确认返回？")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            }).show();
+                }else {
+                    finish();
+                }
+                return isBack;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * 返回按钮
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (from.equals("look") && res_data!=null) {
+            if (keyCode == KeyEvent.KEYCODE_BACK) { //监控/拦截/屏蔽返回键
+                boolean isBack = false;
+                for (int i = 0; i < res_data.size(); i++) {
+                    if (res_data.get(i).isNfc()) {
+                        isBack = true;
+                        break;
+                    }
+                }
+                if (isBack) {
+                    isBack = false;
+                    AlertAialogUtils.getCommonDialog(WriteFeedMateriActivity.this, "已经有确认过的退料了，是否确认返回？")
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    finish();
+                                }
+                            }).show();
+                }else {
+                    finish();
+                }
+                return isBack;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    /**
+     * 连接设备打印机
+     */
+    private void initDevice() {
+        deviceManager = ConnUtils.getDeviceManager();
+        try {
+            deviceManager.init(WriteFeedMateriActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
+                @Override
+                public void onEvent(ConnectionCloseEvent connectionCloseEvent, Handler handler) {
+                    if (connectionCloseEvent.isSuccess()) {
+                        ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "设备被客户主动断开！");
+                    }
+                    if (connectionCloseEvent.isFailed()) {
+                        ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "设备链接异常断开！");
+                    }
+                }
+
+                @Override
+                public Handler getUIHandler() {
+                    return null;
+                }
+            });
+            deviceManager.connect();
+            MyLog.e("OrderDetailActivity", "连接成功");
+        } catch (Exception e) {
+            e.printStackTrace();
+            ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "链接异常,请检查设备或重新连接.." + e);
+        }
+        rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
+    }
+
+    public void processingLock() {
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                SharedPreferences setting = getSharedPreferences("setting", 0);
+                SharedPreferences.Editor editor = setting.edit();
+                editor.putBoolean("PBOC_LOCK", true);
+                editor.commit();
+            }
+        });
+
+    }
+
+    public void processingUnLock() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences setting = getSharedPreferences("setting", 0);
+                SharedPreferences.Editor editor = setting.edit();
+                editor.putBoolean("PBOC_LOCK", false);
+                editor.commit();
+            }
+        });
+
     }
 }

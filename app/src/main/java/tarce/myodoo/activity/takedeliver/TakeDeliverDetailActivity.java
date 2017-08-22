@@ -288,121 +288,53 @@ public class TakeDeliverDetailActivity extends BaseActivity {
             case "waiting_in":
                 buttomButton1.setText("入库");
                 showLinThreeCang();//根据权限判断
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        initDevice();
-                        processingLock();
-                        showNfcDialog();
-                        try {
-                            final RFResult qPResult = rfCardModule.powerOn(null, 10, TimeUnit.SECONDS);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if (qPResult.getCardSerialNo() == null){
-                                        ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "不能识别序列号："+ Const.MessageTag.DATA);
-                                    }else {
-                                        showDefultProgressDialog();
-                                        String NFC_Number = ISOUtils.hexString(qPResult.getCardSerialNo());
-                                        InventoryApi inventory = retrofit.create(InventoryApi.class);
-                                        HashMap<Object, Object> hashMap = new HashMap<>();
-                                        hashMap.put("card_num", NFC_Number);
-                                        final Call<NfcOrderBean> objectCall = inventory.authWarehouse(hashMap);
-                                        objectCall.enqueue(new Callback<NfcOrderBean>() {
-                                            @Override
-                                            public void onResponse(Call<NfcOrderBean> call, Response<NfcOrderBean> response) {
-                                                dismissDefultProgressDialog();
-                                                if (response.body() == null)return;
-                                                if (response.body().getError()!=null){
-                                                    nfCdialog.setHeaderImage(R.drawable.warning)
-                                                            .setTip(response.body().getError().getData().getMessage())
-                                                            .setCancelVisi().show();
-                                                    threadDismiss(nfCdialog);
-                                                }else if (response.body().getResult()!=null && response.body().getResult().getRes_code() == -1){
-                                                    nfCdialog.setHeaderImage(R.drawable.warning)
-                                                            .setTip(response.body().getResult().getRes_data().getErrorX())
-                                                            .setCancelVisi().show();
-                                                    threadDismiss(nfCdialog);
-                                                }else if (response.body().getResult()!=null && response.body().getResult().getRes_code() == 1){
-                                                    final NfcOrderBean.ResultBean.ResDataBean res_data = response.body().getResult().getRes_data();
-                                                    nfCdialog.setHeaderImage(R.drawable.defaultimage)
-                                                            .setTip(res_data.getName()+res_data.getEmployee_id()+"\n"+res_data.getWork_email()
-                                                                    +"\n\n"+"打卡成功")
-                                                            .setCancelVisi().show();
-                                                    threadDismiss(nfCdialog);
-                                                    showDefultProgressDialog();
-                                                    HashMap<Object, Object> hashMap = new HashMap<>();
-                                                    hashMap.put("state", "transfer");
-                                                    hashMap.put("picking_id", resDataBean.getPicking_id());
-                                                    List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> ids = resDataBean.getPack_operation_product_ids();
-                                                    List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> sub_ids = new ArrayList<>();
-                                                    for (int i = 0; i < ids.size(); i++) {
-                                                        if (ids.get(i).getPack_id() == -1) {
-                                                            sub_ids.add(ids.get(i));
-                                                        }
-                                                    }
-                                                    ids.removeAll(sub_ids);
-                                                    int size = ids.size();
-                                                    Map[] maps = new Map[size];
-                                                    for (int i = 0; i < size; i++) {
-                                                        Map<Object, Object> map = new HashMap<>();
-                                                        map.put("pack_id", ids.get(i).getPack_id());
-                                                        map.put("qty_done", StringUtils.doubleToInt(ids.get(i).getQty_done()));
-                                                        maps[i] = map;
-                                                    }
-                                                    hashMap.put("pack_operation_product_ids", maps);
-                                                    Call<TakeDeAreaBean> objectCall = inventoryApi.ruKu(hashMap);
-                                                    objectCall.enqueue(new MyCallback<TakeDeAreaBean>() {
-                                                        @Override
-                                                        public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
-                                                            dismissDefultProgressDialog();
-                                                            if (response.body() == null || response.body().getResult() == null)
-                                                                return;
-                                                            if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
-                                                                ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "入库完成");
-                                                                finish();
-                                                            } else {
-                                                                ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "some error");
-                                                            }
-                                                        }
-                                                        @Override
-                                                        public void onFailure(Call<TakeDeAreaBean> call, Throwable t) {
-                                                            dismissDefultProgressDialog();
-                                                            ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, t.toString());
-                                                        }
-                                                    });
-                                                }
-                                            }
-                                            @Override
-                                            public void onFailure(Call<NfcOrderBean> call, Throwable t) {
-                                                dismissDefultProgressDialog();
-                                                Log.e("zws", t.toString());
-                                            }
-                                        });
+                AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "确定入库？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                showDefultProgressDialog();
+                                HashMap<Object, Object> hashMap = new HashMap<>();
+                                hashMap.put("state", "transfer");
+                                hashMap.put("picking_id", resDataBean.getPicking_id());
+                                List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> ids = resDataBean.getPack_operation_product_ids();
+                                List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> sub_ids = new ArrayList<>();
+                                for (int i = 0; i < ids.size(); i++) {
+                                    if (ids.get(i).getPack_id() == -1) {
+                                        sub_ids.add(ids.get(i));
                                     }
-                                    processingUnLock();
                                 }
-                            });
-                        }catch (final Exception e){
-                            e.fillInStackTrace();
-                            if (e.getMessage().equals("device invoke timeout!7")){
-                                runOnUiThread(new Runnable(){
+                                ids.removeAll(sub_ids);
+                                int size = ids.size();
+                                Map[] maps = new Map[size];
+                                for (int i = 0; i < size; i++) {
+                                    Map<Object, Object> map = new HashMap<>();
+                                    map.put("pack_id", ids.get(i).getPack_id());
+                                    map.put("qty_done", StringUtils.doubleToInt(ids.get(i).getQty_done()));
+                                    maps[i] = map;
+                                }
+                                hashMap.put("pack_operation_product_ids", maps);
+                                Call<TakeDeAreaBean> objectCall = inventoryApi.ruKu(hashMap);
+                                objectCall.enqueue(new MyCallback<TakeDeAreaBean>() {
                                     @Override
-                                    public void run() {
-                                        try {
-                                            Thread.sleep(1000);
-                                            ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, e.getMessage()+"  "+Const.MessageTag.ERROR);
-                                            nfCdialog.dismiss();
-                                        } catch (InterruptedException e1) {
-                                            e1.printStackTrace();
+                                    public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
+                                        dismissDefultProgressDialog();
+                                        if (response.body() == null || response.body().getResult() == null)
+                                            return;
+                                        if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
+                                            ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "入库完成");
+                                            finish();
+                                        } else {
+                                            ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "some error");
                                         }
+                                    }
+                                    @Override
+                                    public void onFailure(Call<TakeDeAreaBean> call, Throwable t) {
+                                        dismissDefultProgressDialog();
+                                        ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, t.toString());
                                     }
                                 });
                             }
-                            processingUnLock();
-                        }
-                    }
-                }).start();
+                        }).show();
                 break;
             case "done":
                 buttomButton1.setVisibility(View.GONE);

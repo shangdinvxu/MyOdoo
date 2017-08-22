@@ -208,7 +208,7 @@ public class BuGetLiaoActivity extends BaseActivity {
                                                     public void run() {
                                                         try {
                                                             Thread.sleep(1000);
-                                                            ToastUtils.showCommonToast(BuGetLiaoActivity.this, "识别时间超过10秒");
+                                                            ToastUtils.showCommonToast(BuGetLiaoActivity.this, "读卡时间超过10秒");
                                                             nfCdialog.dismiss();
                                                         } catch (InterruptedException e1) {
                                                             e1.printStackTrace();
