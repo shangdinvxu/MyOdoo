@@ -53,17 +53,6 @@
             android:text="打开扫描"
             android:gravity="center"
             android:textSize="12sp"/>
-        <!--<TextView
-            android:id="@+id/tv_print"
-            android:layout_width="80dp"
-            android:layout_height="25dp"
-            android:text="打印"
-            android:textColor="@color/white"
-            android:background="@drawable/bac_tv_order"
-            android:layout_toLeftOf="@+id/tv_show_code"
-            android:layout_marginRight="15dp"
-            android:gravity="center"
-            android:layout_centerVertical="true"/>-->
     </RelativeLayout>
 
     <ScrollView

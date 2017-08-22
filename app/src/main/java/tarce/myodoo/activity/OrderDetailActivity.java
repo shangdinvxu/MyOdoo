@@ -609,7 +609,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                                                                 list_two.add(resDataBean.getStock_move_lines().get(i));
                                                                                             }
                                                                                         }
-                                                                                        Log.e("zws", "值。。。" + position);
                                                                                         switch (type) {
                                                                                             case 1:
                                                                                                 linesBean.setQuantity_ready(list_one.get(position).getQuantity_ready());
@@ -696,7 +695,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                             list_three.add(resDataBean.getStock_move_lines().get(i));
                                                         }
                                                     }
-                                                    Log.e("zws", "值。。。" + position);
                                                     linesBean.setQuantity_ready(list_three.get(position).getQuantity_ready());
                                                     linesBean.setQuantity_done(list_three.get(position).getQuantity_done());
                                                     linesBean.setQty_available(list_three.get(position).getQty_available());
@@ -796,10 +794,13 @@ public class OrderDetailActivity extends ToolBarActivity {
         if (state.equals("waiting_inventory_material") || state.equals("waiting_warehouse_inspection")
                 || state.equals("done")) {
             adapter.setGray_bac(true);
+            adapter.setNotView(true);
             adapter.notifyDataSetChanged();
             adapter_two.setGray_bac(true);
+            adapter_two.setNotView(true);
             adapter_two.notifyDataSetChanged();
             adapter_three.setGray_bac(true);
+            adapter_three.setNotView(true);
             adapter_three.notifyDataSetChanged();
         }
     }
@@ -1147,9 +1148,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (nfCdialog == null) {
-                    nfCdialog = new NFCdialog(OrderDetailActivity.this);
-                }
+                nfCdialog = new NFCdialog(OrderDetailActivity.this);
                 nfCdialog.setCancel(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -1164,17 +1163,12 @@ public class OrderDetailActivity extends ToolBarActivity {
 
     //关闭dialog
     private void threadDismiss(final NFCdialog dialog) {
-        new Thread(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                try {
-                    Thread.sleep(1000);
-                    dialog.dismiss();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                dialog.dismiss();
             }
-        }).start();
+        }, 1000);
     }
 
     /**
