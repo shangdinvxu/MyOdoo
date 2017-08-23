@@ -46,6 +46,7 @@ public class InsertNumDialog extends Dialog {
     private OrderDetailBean.ResultBean.ResDataBean resDataBean;
     private int position;
     private double beiNum;
+    private double return_qty = 0;
 
     public InsertNumDialog(@NonNull Context context) {
         super(context, R.style.MyDialogStyle);
@@ -61,6 +62,20 @@ public class InsertNumDialog extends Dialog {
                            String product_name) {
         super(context, R.style.MyDialogStyle);
 
+        this.product_name = product_name;
+        this.sendCommonClickListener = sendCommonClickListener;
+        this.context = context;
+        inflater = LayoutInflater.from(context);
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        display = windowManager.getDefaultDisplay();
+        initView();
+    }
+
+    public InsertNumDialog(@NonNull Context context, @StyleRes int themeResId, OnSendCommonClickListener sendCommonClickListener,
+                           String product_name, double return_qty) {
+        super(context, R.style.MyDialogStyle);
+
+        this.return_qty = return_qty;
         this.product_name = product_name;
         this.sendCommonClickListener = sendCommonClickListener;
         this.context = context;
@@ -119,6 +134,9 @@ public class InsertNumDialog extends Dialog {
             // TODO: 2017/6/8 生产num/需求num*item的需求num
             double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(position).getProduct_uom_qty();
             eidtOutNum.setText(StringUtils.doubleToString(beiNum-v));
+        }
+        if (return_qty!=0){
+            eidtOutNum.setText(StringUtils.doubleToString(return_qty));
         }
         eidtOutNum.setSelection(eidtOutNum.getText().length());
     }

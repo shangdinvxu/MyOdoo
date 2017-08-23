@@ -89,6 +89,18 @@ public class GetReturnMaterBean {
             private String product_id;
             private double return_qty;
             private boolean isNfc = false;
+            private Object product_type;
+
+            public Object getProduct_type() {
+                if (product_type instanceof Boolean){
+                    product_type = "";
+                }
+                return product_type;
+            }
+
+            public void setProduct_type(Object product_type) {
+                this.product_type = product_type;
+            }
 
             public boolean isNfc() {
                 return isNfc;

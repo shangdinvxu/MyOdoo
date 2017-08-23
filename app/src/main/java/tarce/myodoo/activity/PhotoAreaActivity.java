@@ -98,7 +98,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
     private InventoryApi inventoryApi;
     private AreaMessageAdapter adapter;
     private List<AreaMessageBean.ResultBean.ResDataBean> res_data = new ArrayList<>();
-    ;
+
     private String selectedImagePath = "";
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;//拍照
 

@@ -1,5 +1,7 @@
 package tarce.myodoo.adapter.product;
 
+import android.graphics.Color;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -43,6 +45,25 @@ public class BuGetLiaoAdapter extends BaseQuickAdapter<OrderDetailBean.ResultBea
             helper.setText(R.id.tv_prepare_order, "备料:"+(item.getQuantity_ready()+item.getQuantity_done()));
         }else {
             helper.setText(R.id.tv_prepare_order, "备料:"+item.getQuantity_done());
+        }
+        if (item.isBlue()){
+            helper.setTextColor(R.id.num_position, Color.BLUE);
+            helper.setTextColor(R.id.tv_id_product, Color.BLUE);
+            helper.setTextColor(R.id.tv_out_num, Color.BLUE);
+            helper.setTextColor(R.id.tv_prepare_order, Color.BLUE);
+            helper.setTextColor(R.id.tv_area_order, Color.BLUE);
+            helper.setTextColor(R.id.tv_advice_order, Color.BLUE);
+            helper.setTextColor(R.id.tv_kucun_order, Color.BLUE);
+            helper.setTextColor(R.id.tv_need_order, Color.BLUE);
+        }else {
+            helper.setTextColor(R.id.num_position, Color.BLACK);
+            helper.setTextColor(R.id.tv_id_product, Color.BLACK);
+            helper.setTextColor(R.id.tv_out_num, Color.BLACK);
+            helper.setTextColor(R.id.tv_prepare_order, Color.BLACK);
+            helper.setTextColor(R.id.tv_area_order, Color.BLACK);
+            helper.setTextColor(R.id.tv_advice_order, Color.BLACK);
+            helper.setTextColor(R.id.tv_kucun_order, Color.BLACK);
+            helper.setTextColor(R.id.tv_need_order, Color.BLACK);
         }
         helper.setText(R.id.tv_out_num, "补料数量："+item.getOver_picking_qty());
     }

@@ -46,17 +46,14 @@ import tarce.model.inventory.GetReturnMaterBean;
 import tarce.model.inventory.NfcOrderBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
-import tarce.myodoo.activity.salesout.SalesDetailActivity;
 import tarce.myodoo.adapter.product.WriteFeedAdapter;
 import tarce.myodoo.adapter.product.WriteFeedbackNumAdapter;
 import tarce.myodoo.device.Const;
-import tarce.myodoo.uiutil.DialogIsSave;
 import tarce.myodoo.uiutil.InsertNumDialog;
 import tarce.myodoo.uiutil.NFCdialog;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
-import tarce.support.ToolBarActivity;
 
 import static tarce.api.RetrofitClient.Url;
 
@@ -65,20 +62,35 @@ import static tarce.api.RetrofitClient.Url;
  * 填写退料页面
  */
 
-public class WriteFeedMateriActivity extends ToolBarActivity {
+public class WriteFeedMateriActivity extends BaseActivity {
     private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     @InjectView(R.id.recycler_feed_material)
     RecyclerView recyclerFeedMaterial;
     @InjectView(R.id.tv_commit_feednum)
     TextView tvCommitFeednum;
+    @InjectView(R.id.tv_yuancailiao)
+    TextView tvYuancailiao;
+    @InjectView(R.id.tv_banchengpin)
+    TextView tvBanchengpin;
+    @InjectView(R.id.recycler_semematerial)
+    RecyclerView recyclerSemematerial;
+    @InjectView(R.id.tv_liuzhuanpin)
+    TextView tvLiuzhuanpin;
+    @InjectView(R.id.recycler_liuzhuan)
+    RecyclerView recyclerLiuzhuan;
     private OrderDetailBean.ResultBean.ResDataBean resDataBean;
     private WriteFeedbackNumAdapter adapter;
+    private WriteFeedbackNumAdapter adapter_two;
+    private WriteFeedbackNumAdapter adapter_three;
     private InsertNumDialog insertNumDialog;
     private InventoryApi inventoryApi;
     private int order_id;
     private String from;
     private WriteFeedAdapter feedAdapter;
     private List<GetReturnMaterBean.ResultBean.ResDataBean> res_data;
+    private List<GetReturnMaterBean.ResultBean.ResDataBean> list_one;
+    private List<GetReturnMaterBean.ResultBean.ResDataBean> list_two;
+    private List<GetReturnMaterBean.ResultBean.ResDataBean> list_three;
     private DeviceManager deviceManager;
     private RFCardModule rfCardModule;
     private NFCdialog nfCdialog;
@@ -91,10 +103,12 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
         ButterKnife.inject(this);
 
         setRecyclerview(recyclerFeedMaterial);
+        setRecyclerview(recyclerSemematerial);
+        setRecyclerview(recyclerLiuzhuan);
         retrofit = new Retrofit.Builder()
                 //设置OKHttpClient
                 .client(new OKHttpFactory(WriteFeedMateriActivity.this).getOkHttpClient())
-                .baseUrl(Url+"/linkloving_user_auth/")
+                .baseUrl(Url + "/linkloving_user_auth/")
                 //gson转化器
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
@@ -161,11 +175,41 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                     if (response.body() == null || response.body().getResult() == null) return;
                     if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                         res_data = response.body().getResult().getRes_data();
-                        adapter = new WriteFeedbackNumAdapter(R.layout.adapter_write_feednum, response.body().getResult().getRes_data());
+                        for (int i = 0; i < res_data.size(); i++) {
+                            if (res_data.get(i).getReturn_qty() == 0){
+                                res_data.get(i).setNfc(true);
+                            }
+                        }
+                        list_one = new ArrayList<>();
+                        list_two = new ArrayList<>();
+                        list_three = new ArrayList<>();
+                        for (int i = 0; i < res_data.size(); i++) {
+                            String s = String.valueOf(res_data.get(i).getProduct_type());
+                            if (s.equals("material")){
+                                list_one.add(res_data.get(i));
+                            }else if (s.equals("real_semi_finished")){
+                                list_two.add(res_data.get(i));
+                            }else if (s.equals("semi-finished")){
+                                list_three.add(res_data.get(i));
+                            }
+                        }
+                        adapter = new WriteFeedbackNumAdapter(R.layout.adapter_write_feednum, list_one);
+                        adapter_two = new WriteFeedbackNumAdapter(R.layout.adapter_write_feednum, list_two);
+                        adapter_three = new WriteFeedbackNumAdapter(R.layout.adapter_write_feednum, list_three);
                         recyclerFeedMaterial.setAdapter(adapter);
-                        initRecyc();
+                        recyclerSemematerial.setAdapter(adapter_two);
+                        recyclerLiuzhuan.setAdapter(adapter_three);
+                        recyclerSemematerial.setVisibility(View.VISIBLE);
+                        recyclerLiuzhuan.setVisibility(View.VISIBLE);
+                        tvYuancailiao.setVisibility(View.VISIBLE);
+                        tvBanchengpin.setVisibility(View.VISIBLE);
+                        tvLiuzhuanpin.setVisibility(View.VISIBLE);
+                        initRecyc(adapter);
+                        initRecyc(adapter_two);
+                        initRecyc(adapter_three);
                     }
                 }
+
                 @Override
                 public void onFailure(Call<GetReturnMaterBean> call, Throwable t) {
                     dismissDefultProgressDialog();
@@ -178,9 +222,9 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
     /**
      * 设置recycler
      */
-    private void initRecyc() {
+    private void initRecyc(final WriteFeedbackNumAdapter adapter_type) {
 
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        adapter_type.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
                 insertNumDialog = new InsertNumDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle,
@@ -199,8 +243,8 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                 // TODO: 2017/6/8 生产num/需求num*item的需求num
                                 double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(position).getProduct_uom_qty();
                                 if (num <= (beiNum - v)) {
-                                    String product_type = resDataBean.getStock_move_lines().get(position).getProduct_type();
-                                    if (product_type.equals("material") || product_type.equals("real_semi_finished")){
+                                    final String product_type = (String) adapter_type.getData().get(position).getProduct_type();
+                                    if (product_type.equals("material") || product_type.equals("real_semi_finished")) {
                                         new Thread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -225,7 +269,8 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                                                     @Override
                                                                     public void onResponse(Call<NfcOrderBean> call, Response<NfcOrderBean> response) {
                                                                         dismissDefultProgressDialog();
-                                                                        if (response.body() == null) return;
+                                                                        if (response.body() == null)
+                                                                            return;
                                                                         if (response.body().getError() != null) {
                                                                             nfCdialog.setHeaderImage(R.drawable.warning)
                                                                                     .setTip(response.body().getError().getData().getMessage())
@@ -243,11 +288,17 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                                                                             + "\n\n" + "打卡成功")
                                                                                     .setCancelVisi().show();
                                                                             threadDismiss(nfCdialog);
-                                                                            res_data.get(position).setReturn_qty(num);
-                                                                            res_data.get(position).setNfc(true);
-                                                                            adapter.notifyDataSetChanged();
+                                                                            if (product_type.equals("material")){
+                                                                                list_one.get(position).setReturn_qty(num);
+                                                                                list_one.get(position).setNfc(true);
+                                                                            }else if (product_type.equals("real_semi_finished")){
+                                                                                list_two.get(position).setReturn_qty(num);
+                                                                                list_two.get(position).setNfc(true);
+                                                                            }
+                                                                            adapter_type.notifyDataSetChanged();
                                                                         }
                                                                     }
+
                                                                     @Override
                                                                     public void onFailure(Call<NfcOrderBean> call, Throwable t) {
                                                                         dismissDefultProgressDialog();
@@ -278,17 +329,17 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                                 }
                                             }
                                         }).start();
-                                    }else {
-                                        res_data.get(position).setReturn_qty(num);
-                                        res_data.get(position).setNfc(true);
-                                        adapter.notifyDataSetChanged();
+                                    } else {
+                                        list_three.get(position).setReturn_qty(num);
+                                        list_three.get(position).setNfc(true);
+                                        adapter_type.notifyDataSetChanged();
                                     }
                                 } else {
                                     ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料过多");
                                 }
                             }
-                        }, resDataBean.getStock_move_lines().get(position).getProduct_id(), position, resDataBean)
-                        .changeTitle("输入 " + resDataBean.getStock_move_lines().get(position).getProduct_id() + " 的退料数量");
+                        }, adapter_type.getData().get(position).getProduct_id(),adapter_type.getData().get(position).getReturn_qty())
+                        .changeTitle("确认 " + adapter_type.getData().get(position).getProduct_id() + " 的退料数量");
                 insertNumDialog.show();
             }
         });
@@ -347,7 +398,8 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                 @Override
                                 public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                     dismissDefultProgressDialog();
-                                    if (response.body() == null || response.body().getResult() == null) return;
+                                    if (response.body() == null || response.body().getResult() == null)
+                                        return;
                                     if (response.body().getError() != null) {
                                         ToastUtils.showCommonToast(WriteFeedMateriActivity.this, response.body().getError().getMessage());
                                         return;
@@ -363,7 +415,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                         }
                                         startActivity(intent);
                                         finish();
-                                    } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1){
+                                    } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1) {
                                         ToastUtils.showCommonToast(WriteFeedMateriActivity.this, response.body().getResult().getRes_data().getError());
                                     } else {
                                         //ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "数据错误");
@@ -381,13 +433,13 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                     }).show();
         } else {
             boolean pass = false;
-            for (int i = 0; i < res_data.size(); i++) {
-                if (!res_data.get(i).isNfc()){
+            for (int i = 0; i < res_data.size(); i++){
+                if (!res_data.get(i).isNfc() && res_data.get(i).getReturn_qty() != 0) {
                     pass = true;
                     break;
                 }
             }
-            if (pass){
+            if (pass) {
                 ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "有未确认的退料");
                 return;
             }
@@ -403,12 +455,11 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                             } else {
                                 hashMap.put("is_check", 0);
                             }
-                            Map[] maps = new Map[resDataBean.getStock_move_lines().size()];
-                            for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
+                            Map[] maps = new Map[res_data.size()];
+                            for (int i = 0; i < res_data.size(); i++) {
                                 Map<Object, Object> smallMap = new HashMap<>();
-                                smallMap.put("order_id", resDataBean.getStock_move_lines().get(i).getOrder_id());
-                                smallMap.put("product_tmpl_id", resDataBean.getStock_move_lines().get(i).getProduct_tmpl_id());
-                                smallMap.put("return_qty", adapter.getData().get(i).getReturn_qty());
+                                smallMap.put("product_tmpl_id", res_data.get(i).getProduct_tmpl_id());
+                                smallMap.put("return_qty", res_data.get(i).getReturn_qty());
                                 maps[i] = smallMap;
                             }
                             hashMap.put("stock_moves", maps);
@@ -417,7 +468,8 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                 @Override
                                 public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                     dismissDefultProgressDialog();
-                                    if (response.body() == null || response.body().getResult() == null) return;
+                                    if (response.body() == null || response.body().getResult() == null)
+                                        return;
                                     if (response.body().getError() != null) {
                                         ToastUtils.showCommonToast(WriteFeedMateriActivity.this, response.body().getError().getMessage());
                                         return;
@@ -449,7 +501,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // TODO Auto-generated method stub
-        if (from.equals("look") && res_data!=null) {
+        if (from.equals("look") && res_data != null) {
             if (item.getItemId() == android.R.id.home) {
                 boolean isBack = false;
                 for (int i = 0; i < res_data.size(); i++) {
@@ -467,7 +519,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                     finish();
                                 }
                             }).show();
-                }else {
+                } else {
                     finish();
                 }
                 return isBack;
@@ -481,7 +533,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (from.equals("look") && res_data!=null) {
+        if (from.equals("look") && res_data != null) {
             if (keyCode == KeyEvent.KEYCODE_BACK) { //监控/拦截/屏蔽返回键
                 boolean isBack = false;
                 for (int i = 0; i < res_data.size(); i++) {
@@ -499,7 +551,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
                                     finish();
                                 }
                             }).show();
-                }else {
+                } else {
                     finish();
                 }
                 return isBack;
@@ -507,6 +559,7 @@ public class WriteFeedMateriActivity extends ToolBarActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
+
     /**
      * 连接设备打印机
      */

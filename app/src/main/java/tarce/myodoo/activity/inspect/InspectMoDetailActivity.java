@@ -245,7 +245,8 @@ public class InspectMoDetailActivity extends BaseActivity {
                 imgRecycAdapter = new ImgRecycAdapter(InspectMoDetailActivity.this, R.layout.adapter_img_recyc, (List<String>) dataBean.getQc_img());
                 imgGridRecycler.setAdapter(imgRecycAdapter);
                 tvClickFinish.setText("入库");
-                showLinThreeCang();
+             //   showLinThreeCang();
+                showLinThreePro();
                 break;
             case "qc_fail":
                 stateInspectDetail.setText("品检失败");

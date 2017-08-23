@@ -69,11 +69,6 @@ public class WarehouseFragment extends Fragment {
         list.add(new MainItemBean(new MenuBean("采购确认", 0)));
         list.add(new MainItemBean(new MenuBean("采购退货", 0)));
         list.add(new MainItemBean(true, ""));
-        list.add(new MainItemBean(new MenuBean("生产备料", 0)));
-        list.add(new MainItemBean(new MenuBean("生产退料", 0)));
-        list.add(new MainItemBean(new MenuBean("生产入库", 0)));
-        list.add(new MainItemBean(new MenuBean("生产补料", 0)));
-        list.add(new MainItemBean(true, ""));
         list.add(new MainItemBean(new MenuBean("销售出货", 0)));
         list.add(new MainItemBean(new MenuBean("销售退货", 0)));
         list.add(new MainItemBean(true, ""));
@@ -95,7 +90,7 @@ public class WarehouseFragment extends Fragment {
         sectionAdapter = new SectionAdapter(R.layout.mian_list_item, R.layout.adapter_head, list);
         recyclerview.setAdapter(sectionAdapter);
         initListener();
-        refreshLoadAction();
+      //  refreshLoadAction();
         return view;
     }
 
@@ -103,7 +98,7 @@ public class WarehouseFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (res_data ==null){
-            refreshLoadAction();
+          //  refreshLoadAction();
         }
     }
 
@@ -156,10 +151,7 @@ public class WarehouseFragment extends Fragment {
         sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                /*if (position==0 || position==4 || position==7 || position==10 || position==14){
-                    return;
-                }*/
-                if (position==0 || position==4 || position==9 || position==12 || position==15){
+                if (position==0 || position==4 || position==7 || position==10 || position==14){
                     return;
                 }
                 String name = list.get(position).t.getName();
@@ -174,15 +166,6 @@ public class WarehouseFragment extends Fragment {
                         break;
                     case "销售出货":
                         IntentFactory.start_SalesOut_Activity(getActivity());
-                        break;
-                    case "生产备料":
-                        IntentFactory.start_SeProce_Activity(getActivity());
-                        break;
-                    case "生产退料":
-                        IntentFactory.start_ProducLl_Activity(getActivity(), "生产退料", "waiting_warehouse_inspection");
-                        break;
-                    case "生产入库":
-                        IntentFactory.start_WaitRework_Activity(getActivity(),"生产入库", "qc_success");
                         break;
                     case "零售出货":
                         IntentFactory.start_RetailSub_Activity(getActivity());

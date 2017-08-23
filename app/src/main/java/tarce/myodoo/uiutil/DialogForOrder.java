@@ -94,18 +94,13 @@ public class DialogForOrder extends Dialog {
         tvKucunNum.setText(StringUtils.doubleToString(linesBean.getQty_available()));
         dialogNeedNum.setText(StringUtils.doubleToString(linesBean.getProduct_uom_qty()));
         dialogAdviceNum.setText(StringUtils.doubleToString(linesBean.getSuggest_qty()));
-        if (linesBean.getQty_available()>=linesBean.getProduct_uom_qty()){
-            double v = linesBean.getProduct_uom_qty() - linesBean.getQuantity_done() - linesBean.getQuantity_ready();
-            if (v<0){
-                v = 0;
-            }
-            tvPrepareNum.setText(StringUtils.doubleToString(v));
-        }else {
-            double v = linesBean.getQty_available() - linesBean.getQuantity_done() - linesBean.getQuantity_ready();
-            if (v<0){
-                v = 0;
-            }
-            tvPrepareNum.setText(StringUtils.doubleToString(v));
+        double v1 = linesBean.getProduct_uom_qty() - linesBean.getQuantity_ready() - linesBean.getQuantity_done();
+        if (v1<0){
+            tvPrepareNum.setText("0");
+        } else if (v1>linesBean.getQty_available()){
+            tvPrepareNum.setText(StringUtils.doubleToString(linesBean.getQty_available()));
+        }else if (v1<linesBean.getQty_available()){
+            tvPrepareNum.setText(StringUtils.doubleToString(v1));
         }
         tvPrepareNum.setSelection(tvPrepareNum.getText().length());
     }

@@ -384,7 +384,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                 tvStartProduce.setText("开始备料");
                 click_check = STATE_WAIT_WATERIAL;
                 tvShowCode.setVisibility(View.GONE);
-                showLinThreeCang();
+              //  showLinThreeCang();
+                showLinThreePro();
                 break;
             case "prepare_material_ing":
                 tvStateOrder.setText("备料中");
@@ -396,7 +397,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                 up_or_down = false;
                 /*tvAreaLook.setVisibility(View.VISIBLE);
                 tvAreaLook.setText("结束本次备料");*/
-                showLinThreeCang();
+              //  showLinThreeCang();
+                showLinThreePro();
                 break;
             case "finish_prepare_material":
                 tvStateOrder.setText("备料完成");
@@ -448,7 +450,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                 tvShowCode.setVisibility(View.GONE);
                 tvStartProduce.setText("仓库查看退料信息");
                 click_check = LOOK_MESSAGE_FEEDBACK;
-                showLinThreeCang();
+             //   showLinThreeCang();
+                showLinThreePro();
                 break;
             case "waiting_post_inventory":
                 tvStateOrder.setText("等待入库");
@@ -476,7 +479,7 @@ public class OrderDetailActivity extends ToolBarActivity {
     }
 
     /**
-     * 是否显示底部(仓库)
+     * 是否显示底部(仓库)//
      */
     public void showLinThreeCang() {
         try {
@@ -531,6 +534,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                 dialogForOrder = new DialogForOrder(OrderDetailActivity.this, new DialogForOrder.OnSendCommonClickListener() {
                     @Override
                     public void OnSendCommonClick(final int num) {
+                        if (num == 0){
+                            return;
+                        }
                         final int i = StringUtils.doubleToInt(linesBean.getQty_available());
                         //   int i1 = StringUtils.doubleToInt(linesBean.getQuantity_ready());
                         if (num > i) {
@@ -602,7 +608,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                                                         resDataBean = response.body().getResult().getRes_data();
                                                                                         list_one = new ArrayList<>();
                                                                                         list_two = new ArrayList<>();
-                                                                                        list_three = new ArrayList<>();
                                                                                         for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
                                                                                             if (resDataBean.getStock_move_lines().get(i).getProduct_type().equals("material")) {
                                                                                                 list_one.add(resDataBean.getStock_move_lines().get(i));
@@ -610,17 +615,19 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                                                                 list_two.add(resDataBean.getStock_move_lines().get(i));
                                                                                             }
                                                                                         }
-                                                                                        switch (type) {
+                                                                                        switch (type){
                                                                                             case 1:
                                                                                                 linesBean.setQuantity_ready(list_one.get(position).getQuantity_ready());
                                                                                                 linesBean.setQuantity_done(list_one.get(position).getQuantity_done());
                                                                                                 linesBean.setQty_available(list_one.get(position).getQty_available());
+                                                                                                linesBean.setBlue(true);
                                                                                                 adapter.notifyDataSetChanged();
                                                                                                 break;
                                                                                             case 2:
                                                                                                 linesBean.setQuantity_ready(list_two.get(position).getQuantity_ready());
                                                                                                 linesBean.setQuantity_done(list_two.get(position).getQuantity_done());
                                                                                                 linesBean.setQty_available(list_two.get(position).getQty_available());
+                                                                                                linesBean.setBlue(true);
                                                                                                 adapter_two.notifyDataSetChanged();
                                                                                                 break;
                                                                                         }
@@ -699,6 +706,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                     linesBean.setQuantity_ready(list_three.get(position).getQuantity_ready());
                                                     linesBean.setQuantity_done(list_three.get(position).getQuantity_done());
                                                     linesBean.setQty_available(list_three.get(position).getQty_available());
+                                                    linesBean.setBlue(true);
                                                     adapter_three.notifyDataSetChanged();
                                                 }
                                             });
@@ -814,12 +822,8 @@ public class OrderDetailActivity extends ToolBarActivity {
 
     //将listone和listto合并为一个list
     private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> linkOneTwo() {
-        for (int i = 0; i < list_one.size(); i++) {
-            list.add(list_one.get(i));
-        }
-        for (int i = 0; i < list_two.size(); i++) {
-            list.add(list_two.get(i));
-        }
+        list.addAll(adapter.getList());
+        list.addAll(adapter_two.getList());
         return list;
     }
 

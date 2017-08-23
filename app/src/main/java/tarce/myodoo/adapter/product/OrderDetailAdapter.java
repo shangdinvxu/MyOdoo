@@ -53,6 +53,14 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
 
     private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list;
 
+    public List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> getList() {
+        return list;
+    }
+
+    public void setList(List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list) {
+        this.list = list;
+    }
+
     @Override
     public OrderViewhold onCreateViewHolder(ViewGroup parent, int viewType) {
         OrderViewhold viewhold = null;
@@ -99,6 +107,24 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                     holder.tv_id_order.setTextColor(Color.GRAY);
                     holder.tv_id_product.setTextColor(Color.GRAY);
                     holder.tv_advice_order.setTextColor(Color.GRAY);
+                }else {
+                    holder.tv_kucun_order.setTextColor(Color.BLACK);
+                    holder.tv_prepare_order.setTextColor(Color.BLACK);
+                    holder.tv_need_order.setTextColor(Color.BLACK);
+                    holder.tv_area_order.setTextColor(Color.BLACK);
+                    holder.tv_id_order.setTextColor(Color.BLACK);
+                    holder.tv_id_product.setTextColor(Color.BLACK);
+                    holder.tv_advice_order.setTextColor(Color.BLACK);
+                }
+
+                if (list.get(position-1).isBlue()){
+                    holder.tv_kucun_order.setTextColor(Color.BLUE);
+                    holder.tv_prepare_order.setTextColor(Color.BLUE);
+                    holder.tv_need_order.setTextColor(Color.BLUE);
+                    holder.tv_area_order.setTextColor(Color.BLUE);
+                    holder.tv_id_order.setTextColor(Color.BLUE);
+                    holder.tv_id_product.setTextColor(Color.BLUE);
+                    holder.tv_advice_order.setTextColor(Color.BLUE);
                 }else {
                     holder.tv_kucun_order.setTextColor(Color.BLACK);
                     holder.tv_prepare_order.setTextColor(Color.BLACK);

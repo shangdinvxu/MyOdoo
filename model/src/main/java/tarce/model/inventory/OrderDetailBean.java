@@ -542,7 +542,6 @@ public class OrderDetailBean {
                  * id : 74113
                  * over_picking_qty : 0.0
                  */
-
                 private double quantity_ready;
                 private double virtual_available;
                 private String product_id;
@@ -557,6 +556,15 @@ public class OrderDetailBean {
                 private double quantity_done;
                 private int id;
                 private double over_picking_qty;
+                private boolean isBlue = false;
+
+                public boolean isBlue() {
+                    return isBlue;
+                }
+
+                public void setBlue(boolean blue) {
+                    isBlue = blue;
+                }
 
                 public ProductIdBean.AreaIdBean getArea_id() {
                     return area_id;

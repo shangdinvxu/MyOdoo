@@ -153,7 +153,9 @@ public class InspectionSubActivity extends BaseActivity {
                         }
                     }
                     clickItem();
-                }else if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() == null){
+                }else if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() == null
+                        && move!=Load_Move){
+                    swipeTarget.setVisibility(View.GONE);
                     ToastUtils.showCommonToast(InspectionSubActivity.this, "没有更多数据...");
                 }
             }

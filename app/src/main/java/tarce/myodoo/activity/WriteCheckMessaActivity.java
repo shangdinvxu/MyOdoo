@@ -441,7 +441,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
 
     public Uri setImageUri() {
         // Store image in dcim
-        File file = new File(Environment.getExternalStorageDirectory() + "/DCIM/", "image" + new Date().getTime() + ".png");
+        File file = new File(Environment.getExternalStorageDirectory() + "/DCIM/", "imageInspection" + new Date().getTime() + ".png");
         Uri imgUri = Uri.fromFile(file);
         this.imgPath = file.getAbsolutePath();
         return imgUri;
