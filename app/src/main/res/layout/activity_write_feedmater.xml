@@ -36,7 +36,6 @@
             </LinearLayout>
             <TextView
                 android:id="@+id/tv_yuancailiao"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:text="原材料"
@@ -50,14 +49,12 @@
             </android.support.v7.widget.RecyclerView>
             <TextView
                 android:id="@+id/tv_banchengpin"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:text="半成品"
                 android:gravity="center_vertical"
                 android:textColor="@color/black"/>
             <android.support.v7.widget.RecyclerView
-                android:visibility="gone"
                 android:id="@+id/recycler_semematerial"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -65,14 +62,12 @@
             </android.support.v7.widget.RecyclerView>
             <TextView
                 android:id="@+id/tv_liuzhuanpin"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="30dp"
                 android:text="流转品"
                 android:gravity="center_vertical"
                 android:textColor="@color/black"/>
             <android.support.v7.widget.RecyclerView
-                android:visibility="gone"
                 android:id="@+id/recycler_liuzhuan"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"

@@ -584,8 +584,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                                             .setTip(res_data.getName() + res_data.getEmployee_id() + "\n" + res_data.getWork_email()
                                                                                     + "\n\n" + "打卡成功")
                                                                             .setCancelVisi().show();
-                                                                    threadDismiss(nfCdialog);
-                                                                    showDefultProgressDialog();
+                                                                  //  threadDismiss(nfCdialog);
+                                                                   // showDefultProgressDialog();
                                                                     HashMap<Object, Object> hashMap = new HashMap<>();
                                                                     hashMap.put("order_id", order_id);
                                                                     Map<Object, Object> mapSmall = new HashMap<>();
@@ -597,7 +597,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                                     objectCall.enqueue(new Callback<OrderDetailBean>() {
                                                                         @Override
                                                                         public void onResponse(final Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
-                                                                            dismissDefultProgressDialog();
+                                                                            threadDismiss(nfCdialog);
+                                                                         //   dismissDefultProgressDialog();
                                                                             if (response.body() == null || response.body().getResult() == null)
                                                                                 return;
                                                                             if (response.body().getResult().getRes_code() == 1) {
@@ -638,7 +639,8 @@ public class OrderDetailActivity extends ToolBarActivity {
 
                                                                         @Override
                                                                         public void onFailure(Call<OrderDetailBean> call, Throwable t) {
-                                                                            dismissDefultProgressDialog();
+                                                                          //  dismissDefultProgressDialog();
+                                                                            threadDismiss(nfCdialog);
                                                                         }
                                                                     });
                                                                 }

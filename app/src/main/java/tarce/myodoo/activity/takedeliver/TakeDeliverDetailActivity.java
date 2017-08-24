@@ -288,53 +288,58 @@ public class TakeDeliverDetailActivity extends BaseActivity {
             case "waiting_in":
                 buttomButton1.setText("入库");
                 showLinThreeCang();//根据权限判断
-                AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "确定入库？")
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                showDefultProgressDialog();
-                                HashMap<Object, Object> hashMap = new HashMap<>();
-                                hashMap.put("state", "transfer");
-                                hashMap.put("picking_id", resDataBean.getPicking_id());
-                                List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> ids = resDataBean.getPack_operation_product_ids();
-                                List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> sub_ids = new ArrayList<>();
-                                for (int i = 0; i < ids.size(); i++) {
-                                    if (ids.get(i).getPack_id() == -1) {
-                                        sub_ids.add(ids.get(i));
-                                    }
-                                }
-                                ids.removeAll(sub_ids);
-                                int size = ids.size();
-                                Map[] maps = new Map[size];
-                                for (int i = 0; i < size; i++) {
-                                    Map<Object, Object> map = new HashMap<>();
-                                    map.put("pack_id", ids.get(i).getPack_id());
-                                    map.put("qty_done", StringUtils.doubleToInt(ids.get(i).getQty_done()));
-                                    maps[i] = map;
-                                }
-                                hashMap.put("pack_operation_product_ids", maps);
-                                Call<TakeDeAreaBean> objectCall = inventoryApi.ruKu(hashMap);
-                                objectCall.enqueue(new MyCallback<TakeDeAreaBean>() {
+                buttomButton1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "确定入库？")
+                                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
-                                        dismissDefultProgressDialog();
-                                        if (response.body() == null || response.body().getResult() == null)
-                                            return;
-                                        if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
-                                            ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "入库完成");
-                                            finish();
-                                        } else {
-                                            ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "some error");
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        showDefultProgressDialog();
+                                        HashMap<Object, Object> hashMap = new HashMap<>();
+                                        hashMap.put("state", "transfer");
+                                        hashMap.put("picking_id", resDataBean.getPicking_id());
+                                        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> ids = resDataBean.getPack_operation_product_ids();
+                                        List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> sub_ids = new ArrayList<>();
+                                        for (int i = 0; i < ids.size(); i++) {
+                                            if (ids.get(i).getPack_id() == -1) {
+                                                sub_ids.add(ids.get(i));
+                                            }
                                         }
+                                        ids.removeAll(sub_ids);
+                                        int size = ids.size();
+                                        Map[] maps = new Map[size];
+                                        for (int i = 0; i < size; i++) {
+                                            Map<Object, Object> map = new HashMap<>();
+                                            map.put("pack_id", ids.get(i).getPack_id());
+                                            map.put("qty_done", StringUtils.doubleToInt(ids.get(i).getQty_done()));
+                                            maps[i] = map;
+                                        }
+                                        hashMap.put("pack_operation_product_ids", maps);
+                                        Call<TakeDeAreaBean> objectCall = inventoryApi.ruKu(hashMap);
+                                        objectCall.enqueue(new MyCallback<TakeDeAreaBean>() {
+                                            @Override
+                                            public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
+                                                dismissDefultProgressDialog();
+                                                if (response.body() == null || response.body().getResult() == null)
+                                                    return;
+                                                if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
+                                                    ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "入库完成");
+                                                    finish();
+                                                } else {
+                                                    ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "some error");
+                                                }
+                                            }
+                                            @Override
+                                            public void onFailure(Call<TakeDeAreaBean> call, Throwable t) {
+                                                dismissDefultProgressDialog();
+                                                ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, t.toString());
+                                            }
+                                        });
                                     }
-                                    @Override
-                                    public void onFailure(Call<TakeDeAreaBean> call, Throwable t) {
-                                        dismissDefultProgressDialog();
-                                        ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, t.toString());
-                                    }
-                                });
-                            }
-                        }).show();
+                                }).show();
+                    }
+                });
                 break;
             case "done":
                 buttomButton1.setVisibility(View.GONE);

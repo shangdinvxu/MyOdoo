@@ -123,7 +123,7 @@ public class InsertNumDialog extends Dialog {
         });
 
         nameProductDialog.setText("产品名称: " + product_name);
-        if (resDataBean!=null){
+        /*if (resDataBean!=null){
             if (resDataBean.getState().equals("waiting_material")
                     || resDataBean.getState().equals("prepare_material_ing")
                     || resDataBean.getState().equals("finish_prepare_material")){
@@ -134,7 +134,7 @@ public class InsertNumDialog extends Dialog {
             // TODO: 2017/6/8 生产num/需求num*item的需求num
             double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(position).getProduct_uom_qty();
             eidtOutNum.setText(StringUtils.doubleToString(beiNum-v));
-        }
+        }*/
         if (return_qty!=0){
             eidtOutNum.setText(StringUtils.doubleToString(return_qty));
         }

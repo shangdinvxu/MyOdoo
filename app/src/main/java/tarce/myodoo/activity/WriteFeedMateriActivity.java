@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -49,6 +50,7 @@ import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.WriteFeedAdapter;
 import tarce.myodoo.adapter.product.WriteFeedbackNumAdapter;
 import tarce.myodoo.device.Const;
+import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.InsertNumDialog;
 import tarce.myodoo.uiutil.NFCdialog;
 import tarce.support.AlertAialogUtils;
@@ -87,6 +89,8 @@ public class WriteFeedMateriActivity extends BaseActivity {
     private int order_id;
     private String from;
     private WriteFeedAdapter feedAdapter;
+    private WriteFeedAdapter feedAdapter_two;
+    private WriteFeedAdapter feedAdapter_three;
     private List<GetReturnMaterBean.ResultBean.ResDataBean> res_data;
     private List<GetReturnMaterBean.ResultBean.ResDataBean> list_one;
     private List<GetReturnMaterBean.ResultBean.ResDataBean> list_two;
@@ -95,6 +99,10 @@ public class WriteFeedMateriActivity extends BaseActivity {
     private RFCardModule rfCardModule;
     private NFCdialog nfCdialog;
     private Retrofit retrofit;
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_first = new ArrayList<>();
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_second = new ArrayList<>();
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_third = new ArrayList<>();
+    private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> listAll = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,9 +110,18 @@ public class WriteFeedMateriActivity extends BaseActivity {
         setContentView(R.layout.activity_write_feedmater);
         ButterKnife.inject(this);
 
-        setRecyclerview(recyclerFeedMaterial);
-        setRecyclerview(recyclerSemematerial);
-        setRecyclerview(recyclerLiuzhuan);
+        recyclerFeedMaterial.setLayoutManager(new FullyLinearLayoutManager(WriteFeedMateriActivity.this));
+        recyclerFeedMaterial.addItemDecoration(new DividerItemDecoration(WriteFeedMateriActivity.this,
+                DividerItemDecoration.VERTICAL));
+        recyclerSemematerial.setLayoutManager(new FullyLinearLayoutManager(WriteFeedMateriActivity.this));
+        recyclerSemematerial.addItemDecoration(new DividerItemDecoration(WriteFeedMateriActivity.this,
+                DividerItemDecoration.VERTICAL));
+        recyclerLiuzhuan.setLayoutManager(new FullyLinearLayoutManager(WriteFeedMateriActivity.this));
+        recyclerLiuzhuan.addItemDecoration(new DividerItemDecoration(WriteFeedMateriActivity.this,
+                DividerItemDecoration.VERTICAL));
+        recyclerFeedMaterial.setNestedScrollingEnabled(false);
+        recyclerSemematerial.setNestedScrollingEnabled(false);
+        recyclerLiuzhuan.setNestedScrollingEnabled(false);
         retrofit = new Retrofit.Builder()
                 //设置OKHttpClient
                 .client(new OKHttpFactory(WriteFeedMateriActivity.this).getOkHttpClient())
@@ -131,38 +148,25 @@ public class WriteFeedMateriActivity extends BaseActivity {
     private void initData() {
         if (from.equals("write") || from.equals("check")) {
             List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> stock_move_lines = resDataBean.getStock_move_lines();
-            feedAdapter = new WriteFeedAdapter(R.layout.adapter_write_feednum, stock_move_lines);
-            recyclerFeedMaterial.setAdapter(feedAdapter);
-            feedAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
-                    insertNumDialog = new InsertNumDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle,
-                            new InsertNumDialog.OnSendCommonClickListener() {
-                                public double beiNum;//备料数量
-
-                                @Override
-                                public void OnSendCommonClick(int num) {
-                                    if (resDataBean.getState().equals("waiting_material")
-                                            || resDataBean.getState().equals("prepare_material_ing")
-                                            || resDataBean.getState().equals("finish_prepare_material")) {
-                                        beiNum = resDataBean.getStock_move_lines().get(position).getQuantity_ready() + resDataBean.getStock_move_lines().get(position).getQuantity_done();
-                                    } else {
-                                        beiNum = resDataBean.getStock_move_lines().get(position).getQuantity_done();
-                                    }
-                                    // TODO: 2017/6/8 生产num/需求num*item的需求num
-                                    double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(position).getProduct_uom_qty();
-                                    if (num <= (beiNum - v)) {
-                                        resDataBean.getStock_move_lines().get(position).setReturn_qty(num);
-                                        feedAdapter.notifyDataSetChanged();
-                                    } else {
-                                        ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料过多");
-                                    }
-                                }
-                            }, resDataBean.getStock_move_lines().get(position).getProduct_id(), position, resDataBean)
-                            .changeTitle("输入 " + resDataBean.getStock_move_lines().get(position).getProduct_id() + " 的退料数量");
-                    insertNumDialog.show();
+            for (int i = 0; i < stock_move_lines.size(); i++) {
+                String s = String.valueOf(stock_move_lines.get(i).getProduct_type());
+                if (s.equals("material")){
+                    list_first.add(stock_move_lines.get(i));
+                }else if (s.equals("real_semi_finished")){
+                    list_second.add(stock_move_lines.get(i));
+                }else if (s.equals("semi-finished")){
+                    list_third.add(stock_move_lines.get(i));
                 }
-            });
+            }
+            feedAdapter = new WriteFeedAdapter(R.layout.adapter_write_feednum, list_first);
+            recyclerFeedMaterial.setAdapter(feedAdapter);
+            feedAdapter_two = new WriteFeedAdapter(R.layout.adapter_write_feednum, list_second);
+            recyclerSemematerial.setAdapter(feedAdapter_two);
+            feedAdapter_three = new WriteFeedAdapter(R.layout.adapter_write_feednum, list_third);
+            recyclerLiuzhuan.setAdapter(feedAdapter_three);
+            initClickAdapter(feedAdapter);
+            initClickAdapter(feedAdapter_two);
+            initClickAdapter(feedAdapter_three);
         } else {
             showDefultProgressDialog();
             HashMap<Object, Object> hashMap = new HashMap();
@@ -199,11 +203,6 @@ public class WriteFeedMateriActivity extends BaseActivity {
                         recyclerFeedMaterial.setAdapter(adapter);
                         recyclerSemematerial.setAdapter(adapter_two);
                         recyclerLiuzhuan.setAdapter(adapter_three);
-                        recyclerSemematerial.setVisibility(View.VISIBLE);
-                        recyclerLiuzhuan.setVisibility(View.VISIBLE);
-                        tvYuancailiao.setVisibility(View.VISIBLE);
-                        tvBanchengpin.setVisibility(View.VISIBLE);
-                        tvLiuzhuanpin.setVisibility(View.VISIBLE);
                         initRecyc(adapter);
                         initRecyc(adapter_two);
                         initRecyc(adapter_three);
@@ -217,6 +216,41 @@ public class WriteFeedMateriActivity extends BaseActivity {
                 }
             });
         }
+    }
+
+    //写  check时候的点击事件
+    private void initClickAdapter(final WriteFeedAdapter feeadapter) {
+        feeadapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
+                final List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> data = (List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean>)adapter.getData();
+                insertNumDialog = new InsertNumDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle,
+                        new InsertNumDialog.OnSendCommonClickListener() {
+                            public double beiNum;//备料数量
+
+                            @Override
+                            public void OnSendCommonClick(int num) {
+                                if (resDataBean.getState().equals("waiting_material")
+                                        || resDataBean.getState().equals("prepare_material_ing")
+                                        || resDataBean.getState().equals("finish_prepare_material")) {
+                                    beiNum = data.get(position).getQuantity_ready() + data.get(position).getQuantity_done();
+                                } else {
+                                    beiNum = data.get(position).getQuantity_done();
+                                }
+                                // TODO: 2017/6/8 生产num/需求num*item的需求num
+                                double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * data.get(position).getProduct_uom_qty();
+                                if (num <= (beiNum - v)) {
+                                    data.get(position).setReturn_qty(num);
+                                    feeadapter.notifyDataSetChanged();
+                                } else {
+                                    ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料过多");
+                                }
+                            }
+                        }, data.get(position).getProduct_id(), data.get(position).getReturn_qty())
+                        .changeTitle("输入 " + data.get(position).getProduct_id() + " 的退料数量");
+                insertNumDialog.show();
+            }
+        });
     }
 
     /**
@@ -233,16 +267,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
 
                             @Override
                             public void OnSendCommonClick(final int num) {
-                                if (resDataBean.getState().equals("waiting_material")
-                                        || resDataBean.getState().equals("prepare_material_ing")
-                                        || resDataBean.getState().equals("finish_prepare_material")) {
-                                    beiNum = resDataBean.getStock_move_lines().get(position).getQuantity_ready() + resDataBean.getStock_move_lines().get(position).getQuantity_done();
-                                } else {
-                                    beiNum = resDataBean.getStock_move_lines().get(position).getQuantity_done();
-                                }
-                                // TODO: 2017/6/8 生产num/需求num*item的需求num
-                                double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(position).getProduct_uom_qty();
-                                if (num <= (beiNum - v)) {
+                                if (num > 0) {
                                     final String product_type = (String) adapter_type.getData().get(position).getProduct_type();
                                     if (product_type.equals("material") || product_type.equals("real_semi_finished")) {
                                         new Thread(new Runnable() {
@@ -335,7 +360,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                         adapter_type.notifyDataSetChanged();
                                     }
                                 } else {
-                                    ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料过多");
+                                    ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "备料数量大于0");
                                 }
                             }
                         }, adapter_type.getData().get(position).getProduct_id(),adapter_type.getData().get(position).getReturn_qty())
@@ -384,12 +409,15 @@ public class WriteFeedMateriActivity extends BaseActivity {
                             HashMap<Object, Object> hashMap = new HashMap();
                             hashMap.put("order_id", order_id);
                             hashMap.put("is_check", 0);
-                            Map[] maps = new Map[resDataBean.getStock_move_lines().size()];
-                            for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
+                            listAll.addAll(feedAdapter.getData());
+                            listAll.addAll(feedAdapter_two.getData());
+                            listAll.addAll(feedAdapter_three.getData());
+                            Map[] maps = new Map[listAll.size()];
+                            for (int i = 0; i < listAll.size(); i++) {
                                 Map<Object, Object> smallMap = new HashMap<>();
-                                smallMap.put("order_id", resDataBean.getStock_move_lines().get(i).getOrder_id());
-                                smallMap.put("product_tmpl_id", resDataBean.getStock_move_lines().get(i).getProduct_tmpl_id());
-                                smallMap.put("return_qty", feedAdapter.getData().get(i).getReturn_qty());
+                                smallMap.put("order_id", listAll.get(i).getOrder_id());
+                                smallMap.put("product_tmpl_id", listAll.get(i).getProduct_tmpl_id());
+                                smallMap.put("return_qty", listAll.get(i).getReturn_qty());
                                 maps[i] = smallMap;
                             }
                             hashMap.put("stock_moves", maps);
