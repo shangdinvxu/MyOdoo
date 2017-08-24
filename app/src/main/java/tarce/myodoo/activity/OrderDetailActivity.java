@@ -792,8 +792,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                     initDialog(linesBean, position, 2);
                 }
             });
-        }
-        if (state.equals("finish_prepare_material")) {
             adapter_three.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
                 @Override
                 public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean, int position) {
@@ -802,6 +800,15 @@ public class OrderDetailActivity extends ToolBarActivity {
                 }
             });
         }
+        /*if (state.equals("finish_prepare_material")) {
+            adapter_three.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
+                @Override
+                public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean, int position) {
+                    isShowDialog = true;
+                    initDialog(linesBean, position, 3);
+                }
+            });
+        }*/
         if (state.equals("waiting_inventory_material") || state.equals("waiting_warehouse_inspection")
                 || state.equals("done")) {
             adapter.setGray_bac(true);
@@ -870,13 +877,13 @@ public class OrderDetailActivity extends ToolBarActivity {
                         }).show();
                 break;
             case STATE_START_PRODUCT:
-                boolean nextone = true;
+                boolean nextone = false;
                 int indexone = -1;
                 linkOneTwo();
                 try {
                     for (int i = 0; i < list.size(); i++) {
-                        if (StringUtils.doubleToInt(list.get(i).getQuantity_ready() + list.get(i).getQuantity_done()) < 1) {
-                            nextone = false;
+                        if (StringUtils.doubleToInt(list.get(i).getQuantity_ready() + list.get(i).getQuantity_done()) > 0) {
+                            nextone = true;
                             indexone = i;
                             break;
                         }
@@ -887,13 +894,14 @@ public class OrderDetailActivity extends ToolBarActivity {
                 if (nextone) {
                     showNext();
                 } else {
-                    AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "").setMessage(list.get(indexone).getProduct_id() + " 未备料")
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, "产品均未备料");
+                    /*AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "").setMessage(list.get(indexone).getProduct_id() + " 未备料")
                             .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
                                 }
-                            }).show();
+                            }).show();*/
                 }
                 break;
             case STATE_REQUSIT_RIGISTER:

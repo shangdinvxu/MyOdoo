@@ -349,7 +349,9 @@ public class BuGetLiaoActivity extends BaseActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        showDefultProgressDialog();
+                        finish();
+                    }
+                        /*showDefultProgressDialog();
                         HashMap<Object, Object> hashMap = new HashMap<>();
                         hashMap.put("order_id", order_id);
                         list_all.addAll(adapter.getData());
@@ -382,7 +384,7 @@ public class BuGetLiaoActivity extends BaseActivity {
                                 ToastUtils.showCommonToast(BuGetLiaoActivity.this, t.toString());
                             }
                         });
-                    }
+                    }*/
                 }).show();
     }
 
