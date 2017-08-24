@@ -68,6 +68,7 @@ import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.FindProductByConditionResponse;
 import tarce.model.inventory.CommonBean;
+import tarce.model.inventory.FinishPrepareMaBean;
 import tarce.model.inventory.GetFactroyRemarkBean;
 import tarce.model.inventory.NfcOrderBean;
 import tarce.model.inventory.OrderDetailBean;
@@ -82,6 +83,7 @@ import tarce.myodoo.uiutil.InsertFeedbackDial;
 import tarce.myodoo.uiutil.InsertNumDialog;
 import tarce.myodoo.uiutil.NFCdialog;
 import tarce.myodoo.uiutil.TipDialog;
+import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.FileUtil;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
@@ -199,7 +201,15 @@ public class OrderDetailActivity extends ToolBarActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
-
+                    printer.setLineSpace(1);
+                    printer.print("MO单号：" + resDataBean.getDisplay_name() + "\n" + "产品: " + resDataBean.getProduct_name() + "\n" + "时间： " + TimeUtils.utc2Local(resDataBean.getDate_planned_start()) + "\n" +
+                            "负责人: " + resDataBean.getIn_charge_name() + "\n" + "生产数量：" + resDataBean.getQty_produced() + "\n" + "需求数量：" + resDataBean.getProduct_qty()
+                            + "\n" + "规格：" + resDataBean.getProduct_id().getProduct_specs() + "\n" + "工序：" + resDataBean.getProcess_id().getName() + "\n" + "类型：" + resDataBean.getProduction_order_type()
+                            + "\n" + "MO单备注：" + resDataBean.getRemark() + "\n" + "销售单备注：" + resDataBean.getSale_remark() + "\n" + "仓库备注：\n\n" + "品检备注：\n\n", 30, TimeUnit.SECONDS);
+                    Bitmap mBitmap = CodeUtils.createImage(resDataBean.getDisplay_name(), 150, 150, null);
+                    printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+                    printer.print("\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
+                    printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
                     break;
                 case 2:
                     state = "prepare_material_ing";
@@ -420,6 +430,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                 imgUpDown.setImageResource(R.mipmap.up);
                 up_or_down = true;
                 tvStartProduce.setText("开始生产");
+                tvAreaLook.setVisibility(View.VISIBLE);
+                tvAreaLook.setText("补拍物料位置信息");
                 showLinThreePro();
                 break;
             case "planned":
@@ -800,7 +812,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 }
             });
         }
-        /*if (state.equals("finish_prepare_material")) {
+        if (state.equals("finish_prepare_material")) {
             adapter_three.setOnRecyclerViewItemClickListener(new OrderDetailAdapter.OnRecyclerViewItemClickListener() {
                 @Override
                 public void onItemClick(View view, OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean, int position) {
@@ -808,7 +820,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                     initDialog(linesBean, position, 3);
                 }
             });
-        }*/
+        }
         if (state.equals("waiting_inventory_material") || state.equals("waiting_warehouse_inspection")
                 || state.equals("done")) {
             adapter.setGray_bac(true);
@@ -1215,7 +1227,41 @@ public class OrderDetailActivity extends ToolBarActivity {
      * 展示dialog  后续改的  用于等待生产
      */
     private void showNext() {
-        AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否确定完成备料，下一步确认物料位置")
+            HashMap<Object, Object> hashMap = new HashMap();
+            hashMap.put("order_id", order_id);
+            Call<FinishPrepareMaBean> objectCall = inventoryApi.newfinishPrepareMa(hashMap);
+            objectCall.enqueue(new MyCallback<FinishPrepareMaBean>() {
+                @Override
+                public void onResponse(Call<FinishPrepareMaBean> call, Response<FinishPrepareMaBean> response) {
+                    dismissDefultProgressDialog();
+                    if (response.body() == null || response.body().getResult() == null) return;
+                    if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
+                        new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, "备料成功,点击确定将打印MO单，请等待")
+                                .setTrue(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Message message = new Message();
+                                        message.what = 1;
+                                        mHandler.sendMessage(message);
+
+                                        Intent intent = new Intent(OrderDetailActivity.this, MaterialDetailActivity.class);
+                                        intent.putExtra("limit", limit);
+                                        intent.putExtra("process_id", process_id);
+                                        intent.putExtra("state", delay_state);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<FinishPrepareMaBean> call, Throwable t) {
+                    dismissDefultProgressDialog();
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, t.toString());
+                }
+            });
+        /*AlertAialogUtils.getCommonDialog(OrderDetailActivity.this, "是否确定完成备料，下一步确认物料位置")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -1235,7 +1281,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                             ToastUtils.showCommonToast(OrderDetailActivity.this, "It is exception for this activity,please connect manager");
                         }
                     }
-                }).show();
+                }).show();*/
     }
 
     @Override

@@ -128,9 +128,6 @@ public class TakeDeliverDetailActivity extends BaseActivity {
     private LoginResponse userInfoBean;
     private String notneed;
     private String from;
-    private RFCardModule rfCardModule;
-    private Retrofit retrofit;
-    private NFCdialog nfCdialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,15 +135,6 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_takedelie_detail);
         ButterKnife.inject(this);
 
-        retrofit = new Retrofit.Builder()
-                //设置OKHttpClient
-                .client(new OKHttpFactory(TakeDeliverDetailActivity.this).getOkHttpClient())
-                .baseUrl(Url+"/linkloving_user_auth/")
-                //gson转化器
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
-        Url = RetrofitClient.Url;
         Intent intent = getIntent();
         type_code = intent.getStringExtra("type_code");
         state = intent.getStringExtra("state");
@@ -346,37 +334,6 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 break;
         }
     }
-    //显示nfc的dialog
-    private void showNfcDialog() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                nfCdialog = new NFCdialog(TakeDeliverDetailActivity.this);
-                nfCdialog.setCancel(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        processingUnLock();
-                        nfCdialog.dismiss();
-                        return;
-                    }
-                }).show();
-            }
-        });
-    }
-    //关闭dialog
-    private void threadDismiss(final NFCdialog dialog) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                    dialog.dismiss();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
 
     //adapter的另一个点击事件
     private void initRejectAdapter() {
@@ -443,15 +400,6 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                 takedAdapter.notifyDataSetChanged();
                             }
                         }).show();
-            }
-        });
-    }
-
-    private void initNongoodListen() {
-        takedAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-
             }
         });
     }
@@ -560,32 +508,5 @@ public class TakeDeliverDetailActivity extends BaseActivity {
             e.printStackTrace();
             ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "链接异常,请检查设备或重新连接.." + e);
         }
-    }
-
-    public void processingLock() {
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                SharedPreferences setting = getSharedPreferences("setting", 0);
-                SharedPreferences.Editor editor = setting.edit();
-                editor.putBoolean("PBOC_LOCK", true);
-                editor.commit();
-            }
-        });
-
-    }
-
-    public void processingUnLock() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences setting = getSharedPreferences("setting", 0);
-                SharedPreferences.Editor editor = setting.edit();
-                editor.putBoolean("PBOC_LOCK", false);
-                editor.commit();
-            }
-        });
-
     }
 }

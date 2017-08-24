@@ -53,6 +53,7 @@ import tarce.myodoo.device.Const;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.InsertNumDialog;
 import tarce.myodoo.uiutil.NFCdialog;
+import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
@@ -150,11 +151,11 @@ public class WriteFeedMateriActivity extends BaseActivity {
             List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> stock_move_lines = resDataBean.getStock_move_lines();
             for (int i = 0; i < stock_move_lines.size(); i++) {
                 String s = String.valueOf(stock_move_lines.get(i).getProduct_type());
-                if (s.equals("material")){
+                if (s.equals("material")) {
                     list_first.add(stock_move_lines.get(i));
-                }else if (s.equals("real_semi_finished")){
+                } else if (s.equals("real_semi_finished")) {
                     list_second.add(stock_move_lines.get(i));
-                }else if (s.equals("semi-finished")){
+                } else if (s.equals("semi-finished")) {
                     list_third.add(stock_move_lines.get(i));
                 }
             }
@@ -180,7 +181,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
                     if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                         res_data = response.body().getResult().getRes_data();
                         for (int i = 0; i < res_data.size(); i++) {
-                            if (res_data.get(i).getReturn_qty() == 0){
+                            if (res_data.get(i).getReturn_qty() == 0) {
                                 res_data.get(i).setNfc(true);
                             }
                         }
@@ -189,11 +190,11 @@ public class WriteFeedMateriActivity extends BaseActivity {
                         list_three = new ArrayList<>();
                         for (int i = 0; i < res_data.size(); i++) {
                             String s = String.valueOf(res_data.get(i).getProduct_type());
-                            if (s.equals("material")){
+                            if (s.equals("material")) {
                                 list_one.add(res_data.get(i));
-                            }else if (s.equals("real_semi_finished")){
+                            } else if (s.equals("real_semi_finished")) {
                                 list_two.add(res_data.get(i));
-                            }else if (s.equals("semi-finished")){
+                            } else if (s.equals("semi-finished")) {
                                 list_three.add(res_data.get(i));
                             }
                         }
@@ -223,7 +224,18 @@ public class WriteFeedMateriActivity extends BaseActivity {
         feeadapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
-                final List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> data = (List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean>)adapter.getData();
+                final List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> data = (List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean>) adapter.getData();
+                double beiNum;
+                if (resDataBean.getState().equals("waiting_material")
+                        || resDataBean.getState().equals("prepare_material_ing")
+                        || resDataBean.getState().equals("finish_prepare_material")) {
+                    beiNum = data.get(position).getQuantity_ready() + data.get(position).getQuantity_done();
+                } else {
+                    beiNum = data.get(position).getQuantity_done();
+                }
+                // TODO: 2017/6/8 生产num/需求num*item的需求num
+                double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * data.get(position).getProduct_uom_qty();
+                Log.e("zws", "备料数量"+(beiNum-v));
                 insertNumDialog = new InsertNumDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle,
                         new InsertNumDialog.OnSendCommonClickListener() {
                             public double beiNum;//备料数量
@@ -246,7 +258,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                     ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料过多");
                                 }
                             }
-                        }, data.get(position).getProduct_id(), data.get(position).getReturn_qty())
+                        }, data.get(position).getProduct_id(), (beiNum-v))
                         .changeTitle("输入 " + data.get(position).getProduct_id() + " 的退料数量");
                 insertNumDialog.show();
             }
@@ -263,8 +275,6 @@ public class WriteFeedMateriActivity extends BaseActivity {
             public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
                 insertNumDialog = new InsertNumDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle,
                         new InsertNumDialog.OnSendCommonClickListener() {
-                            public double beiNum;//备料数量
-
                             @Override
                             public void OnSendCommonClick(final int num) {
                                 if (num > 0) {
@@ -313,10 +323,10 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                                                                             + "\n\n" + "打卡成功")
                                                                                     .setCancelVisi().show();
                                                                             threadDismiss(nfCdialog);
-                                                                            if (product_type.equals("material")){
+                                                                            if (product_type.equals("material")) {
                                                                                 list_one.get(position).setReturn_qty(num);
                                                                                 list_one.get(position).setNfc(true);
-                                                                            }else if (product_type.equals("real_semi_finished")){
+                                                                            } else if (product_type.equals("real_semi_finished")) {
                                                                                 list_two.get(position).setReturn_qty(num);
                                                                                 list_two.get(position).setNfc(true);
                                                                             }
@@ -363,7 +373,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                     ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "备料数量大于0");
                                 }
                             }
-                        }, adapter_type.getData().get(position).getProduct_id(),adapter_type.getData().get(position).getReturn_qty())
+                        }, adapter_type.getData().get(position).getProduct_id(), adapter_type.getData().get(position).getReturn_qty())
                         .changeTitle("确认 " + adapter_type.getData().get(position).getProduct_id() + " 的退料数量");
                 insertNumDialog.show();
             }
@@ -461,7 +471,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
                     }).show();
         } else {
             boolean pass = false;
-            for (int i = 0; i < res_data.size(); i++){
+            for (int i = 0; i < res_data.size(); i++) {
                 if (!res_data.get(i).isNfc() && res_data.get(i).getReturn_qty() != 0) {
                     pass = true;
                     break;

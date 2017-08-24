@@ -137,6 +137,8 @@ public class InsertNumDialog extends Dialog {
         }*/
         if (return_qty!=0){
             eidtOutNum.setText(StringUtils.doubleToString(return_qty));
+        }else {
+            eidtOutNum.setText("0");
         }
         eidtOutNum.setSelection(eidtOutNum.getText().length());
     }
