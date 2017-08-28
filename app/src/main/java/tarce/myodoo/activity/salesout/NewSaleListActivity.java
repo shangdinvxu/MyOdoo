@@ -100,6 +100,7 @@ public class NewSaleListActivity extends BaseActivity {
         if ("fistPage".equals(from)) {
             danhao = intent.getStringExtra("danhao");
             setTitle(danhao + "搜索结果");
+            showDefultProgressDialog();
             getSearch(danhao);
             allDone.setVisibility(View.GONE);
             canRadioDan.setVisibility(View.GONE);
@@ -119,7 +120,6 @@ public class NewSaleListActivity extends BaseActivity {
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("order_name", danhao);
         Call<NewSaleListBean> getSaleListByNumberResponseCall = inventoryApi.getPickby(objectObjectHashMap);
-        showDefultProgressDialog();
         getSaleListByNumberResponseCall.enqueue(new Callback<NewSaleListBean>() {
             @Override
             public void onResponse(Call<NewSaleListBean> call, Response<NewSaleListBean> response) {

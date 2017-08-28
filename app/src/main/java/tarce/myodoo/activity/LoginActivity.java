@@ -125,7 +125,7 @@ public class LoginActivity extends Activity {
         initEmailAdapter();
         initListener();
         httpUrl.setSelection(httpUrl.getText().length());
-        initDevice();
+      //  initDevice();
     }
 
     @OnClick(R.id.img_delete)

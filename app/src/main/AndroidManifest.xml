@@ -112,7 +112,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.WaitProdListActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".activity.ProcessOfPersonActivity"
             android:screenOrientation="portrait" />
@@ -185,7 +186,6 @@
         <activity
             android:name=".activity.salesout.NewSaleListActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.FirstKotActivity"></activity>
     </application>
 
 </manifest>

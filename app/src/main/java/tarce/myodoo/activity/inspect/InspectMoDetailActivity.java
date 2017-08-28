@@ -358,7 +358,10 @@ public class InspectMoDetailActivity extends BaseActivity {
                         }).show();
                 break;
             case "入库":
-                tvClickFinish.setClickable(false);
+                if (nfCdialog!=null && nfCdialog.isShowing()){
+                    tvClickFinish.setClickable(false);
+                    return;
+                }
                 new Thread(new Runnable() {
                     @Override
                     public void run() {

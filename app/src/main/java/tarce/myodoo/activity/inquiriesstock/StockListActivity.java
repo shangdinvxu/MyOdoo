@@ -33,6 +33,7 @@ import tarce.support.ToastUtils;
 
 /**
  * Created by zouzou on 2017/7/5.
+ * 库存查询页面
  */
 
 public class StockListActivity extends BaseActivity {
@@ -153,6 +154,8 @@ public class StockListActivity extends BaseActivity {
             }
         });
     }
+
+    //搜索框的点击
     @OnClick(R.id.search_stock)
     void searchLin(View view){
         Intent intent = new Intent(StockListActivity.this, SearchForActivity.class);

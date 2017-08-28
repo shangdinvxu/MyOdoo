@@ -305,9 +305,16 @@ public class PhotoAreaActivity extends ToolBarActivity {
                     if (response.body() == null) return;
 
                     if (response.body().getResult().getRes_code() == 1) {
-                        showDefultProgressDialog();
+                        new TipDialog(PhotoAreaActivity.this, R.style.MyDialogStyle, "提交物料信息成功，点击返回")
+                                .setTrue(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        finish();
+                                    }
+                                }).show();
+                       // showDefultProgressDialog();
                         //提交备料
-                        commitBeiliao();
+                       // commitBeiliao();
                     } else if (response.body().getResult().getRes_code() == -1 && response.body().getResult().getRes_data() != null) {
                         ToastUtils.showCommonToast(PhotoAreaActivity.this, response.body().getResult().getRes_data().getError());
                     }
