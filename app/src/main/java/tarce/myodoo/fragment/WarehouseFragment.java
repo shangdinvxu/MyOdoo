@@ -32,8 +32,10 @@ import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.ConfirmPurchaseActivity;
 import tarce.myodoo.activity.MainActivity;
+import tarce.myodoo.activity.engineer.ProjectActivity;
 import tarce.myodoo.activity.incentroy.InventroyActivity;
 import tarce.myodoo.activity.inquiriesstock.StockListActivity;
+import tarce.myodoo.activity.inquiriesstock.StockMoveListActivity;
 import tarce.myodoo.activity.takedeliver.TakeDeliverActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
@@ -72,6 +74,8 @@ public class WarehouseFragment extends Fragment {
         list.add(new MainItemBean(new MenuBean("销售出货", 0)));
         list.add(new MainItemBean(new MenuBean("销售退货", 0)));
         list.add(new MainItemBean(true, ""));
+//        list.add(new MainItemBean(new MenuBean("工程领料", 0)));
+//        list.add(new MainItemBean(true, ""));
         list.add(new MainItemBean(new MenuBean("零售出货", 0)));
         list.add(new MainItemBean(new MenuBean("零售退货", 0)));
         list.add(new MainItemBean(true, ""));
@@ -180,6 +184,10 @@ public class WarehouseFragment extends Fragment {
                     case "库存查询":
                         Intent intent3 = new Intent(getActivity(), StockListActivity.class);
                         startActivity(intent3);
+                        break;
+                    case "工程领料":
+                        Intent intent4 = new Intent(getActivity(), ProjectActivity.class);
+                        startActivity(intent4);
                         break;
                 }
             }

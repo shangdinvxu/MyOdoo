@@ -186,6 +186,12 @@
         <activity
             android:name=".activity.salesout.NewSaleListActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity android:name=".activity.engineer.ProjectActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".activity.incentroy.AddCuActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".activity.incentroy.SaveChangeActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
     </application>
 
 </manifest>

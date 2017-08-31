@@ -21,11 +21,13 @@ import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.BomFramworkBean;
 import tarce.model.inventory.BomSubBean;
+import tarce.model.inventory.SevenBomBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.expand.CompanyItem;
 import tarce.myodoo.adapter.expand.DepartmentItem;
 import tarce.myodoo.adapter.expand.EmployeeItem;
 import tarce.myodoo.adapter.expand.LastItem;
+import tarce.myodoo.adapter.expand.SevenItem;
 import tarce.myodoo.adapter.expand.SixItem;
 import tarce.myodoo.adapter.expand.WorkerItem;
 import tarce.support.MyLog;
@@ -49,6 +51,7 @@ public class BomFramworkActivity extends BaseActivity {
     private final int ITEM_TYPE_WORKER = 4;
     private final int ITEM_TYPE_LAST = 5;
     private final int ITEM_TYPE_SIX = 6;
+    private final int ITEM_TYPE_SEVEN = 7;
     private List<Object> mCompanylist;
 
     @Override
@@ -74,7 +77,7 @@ public class BomFramworkActivity extends BaseActivity {
         Call<BomFramworkBean> bomDetail = inventoryApi.getBomDetail(hashMap);
         bomDetail.enqueue(new MyCallback<BomFramworkBean>(){
             @Override
-            public void onResponse(Call<BomFramworkBean> call, Response<BomFramworkBean> response) {
+            public void onResponse(final Call<BomFramworkBean> call, Response<BomFramworkBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null || response.body().getResult() == null)return;
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
@@ -99,6 +102,8 @@ public class BomFramworkActivity extends BaseActivity {
                                     return new LastItem(BomFramworkActivity.this);
                                 case ITEM_TYPE_SIX:
                                     return new SixItem(BomFramworkActivity.this);
+                                case ITEM_TYPE_SEVEN:
+                                    return new SevenItem(BomFramworkActivity.this);
                             }
                             return null;
                         }
@@ -117,6 +122,8 @@ public class BomFramworkActivity extends BaseActivity {
                                 return ITEM_TYPE_LAST;
                             else if (t instanceof BomSubBean.BomBottomBean.SixBomBottomBean)
                                 return ITEM_TYPE_SIX;
+                            else if (t instanceof SevenBomBean)
+                                return ITEM_TYPE_SEVEN;
                             return -1;
                         }
                     };
@@ -195,6 +202,21 @@ public class BomFramworkActivity extends BaseActivity {
                                             bean.product_specs = bean1.getProduct_specs();
                                             bean.process_id = bean1.getProcess_id();
                                             bean.qty = bean1.getQty();
+                                            if (bean1.getBom_ids().size()>0){
+                                                bean.setExpanded(false);
+                                                List<SevenBomBean> sevenBomBeen = new ArrayList<>();
+                                                for (int n = 0; n < bean1.getBom_ids().size(); n++) {
+                                                    SevenBomBean sevenBom = new SevenBomBean();
+                                                    SevenBomBean sevenBom1 = new SevenBomBean();
+                                                    sevenBom.name = sevenBom1.getName();
+                                                    sevenBom.code = sevenBom1.getCode();
+                                                    sevenBom.product_specs = sevenBom1.getProduct_specs();
+                                                    sevenBom.process_id = sevenBom1.getProcess_id();
+                                                    sevenBom.qty = sevenBom1.getQty();
+                                                    sevenBomBeen.add(sevenBom);
+                                                }
+                                                bean.bom_ids = sevenBomBeen;
+                                            }
                                             sixBomBottomBeen.add(bean);
                                         }
                                         bottomBean.bom_ids = sixBomBottomBeen;

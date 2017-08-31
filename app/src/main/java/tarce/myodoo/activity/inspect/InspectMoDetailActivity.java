@@ -414,6 +414,7 @@ public class InspectMoDetailActivity extends BaseActivity {
                                                     showDefultProgressDialog();
                                                     HashMap<Object, Object> doneHashmap = new HashMap<>();
                                                     doneHashmap.put("feedback_id", dataBean.getFeedback_id());
+                                                    doneHashmap.put("employee_id",res_dataNfc.getEmployee_id());
                                                     Call<RukuBean> objectCall1 = inventoryApi.produceDone(doneHashmap);
                                                     objectCall1.enqueue(new MyCallback<RukuBean>() {
                                                         @Override

@@ -93,6 +93,51 @@ public class StockMoveListBean {
             private String location;
             private String location_dest;
             private ProductIdBean product_id;
+            private String write_uid;
+            private String write_date;
+            private String move_order_type;
+            private String picking_id;
+            private double quantity_adjusted_qty;
+
+            public String getPicking_id() {
+                return picking_id;
+            }
+
+            public void setPicking_id(String picking_id) {
+                this.picking_id = picking_id;
+            }
+
+            public double getQuantity_adjusted_qty() {
+                return quantity_adjusted_qty;
+            }
+
+            public void setQuantity_adjusted_qty(double quantity_adjusted_qty) {
+                this.quantity_adjusted_qty = quantity_adjusted_qty;
+            }
+
+            public String getWrite_uid() {
+                return write_uid;
+            }
+
+            public void setWrite_uid(String write_uid) {
+                this.write_uid = write_uid;
+            }
+
+            public String getWrite_date() {
+                return write_date;
+            }
+
+            public void setWrite_date(String write_date) {
+                this.write_date = write_date;
+            }
+
+            public String getMove_order_type() {
+                return move_order_type;
+            }
+
+            public void setMove_order_type(String move_order_type) {
+                this.move_order_type = move_order_type;
+            }
 
             public String getName() {
                 return name;

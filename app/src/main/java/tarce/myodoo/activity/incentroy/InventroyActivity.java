@@ -1,5 +1,6 @@
 package tarce.myodoo.activity.incentroy;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Response;
 import tarce.api.MyCallback;
@@ -43,6 +45,7 @@ public class InventroyActivity extends AppCompatActivity {
     private InventoryApi inventoryApi;
     private InventroyAdapter inventroyAdapter;
     private List<InventroyResultBean.ResultBean.ResDataBean> res_data;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,9 @@ public class InventroyActivity extends AppCompatActivity {
         recyclerInventroy.addItemDecoration(new DividerItemDecoration(InventroyActivity.this,
                 DividerItemDecoration.VERTICAL));
         inventoryApi = RetrofitClient.getInstance(InventroyActivity.this).create(InventoryApi.class);
+        progressDialog = new ProgressDialog(InventroyActivity.this);
+        progressDialog.setMessage("加载中");
+        progressDialog.show();
         initData(0, 80);
         swipeRe();
     }
@@ -79,6 +85,7 @@ public class InventroyActivity extends AppCompatActivity {
         stockInvenList.enqueue(new MyCallback<InventroyResultBean>() {
             @Override
             public void onResponse(Call<InventroyResultBean> call, Response<InventroyResultBean> response) {
+                progressDialog.dismiss();
                 if (response.body() == null) return;
                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                     res_data = response.body().getResult().getRes_data();
@@ -90,6 +97,7 @@ public class InventroyActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<InventroyResultBean> call, Throwable t) {
+                progressDialog.dismiss();
                 MyLog.e("Inventroy", t.toString());
             }
         });
@@ -109,5 +117,11 @@ public class InventroyActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @OnClick(R.id.image_inven)
+    void addkucun(View view){
+        Intent intent = new Intent(InventroyActivity.this, AddCuActivity.class);
+        startActivity(intent);
     }
 }

@@ -626,7 +626,11 @@ public class WriteFeedMateriActivity extends BaseActivity {
             e.printStackTrace();
             ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "链接异常,请检查设备或重新连接.." + e);
         }
-        rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
+        try {
+            rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
+        }catch (Exception e){
+            Log.e("zws", "error");
+        }
     }
 
     public void processingLock() {

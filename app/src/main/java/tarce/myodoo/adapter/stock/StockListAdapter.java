@@ -31,6 +31,7 @@ public class StockListAdapter extends BaseQuickAdapter<StockListBean.ResultBean.
 
     @Override
     protected void convert(BaseViewHolder helper, StockListBean.ResultBean.ResDataBean item) {
+        helper.setText(R.id.tv_num, (helper.getPosition()+1)+".");
         helper.setText(R.id.product, "["+item.getDefault_code()+"]"+item.getProduct_name())
                 .setText(R.id.need_in, item.getCateg_id())
                 .setText(R.id.need_out, StringUtils.doubleToString(item.getQty_available()))

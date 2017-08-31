@@ -63,7 +63,7 @@ public class BaseActivity extends AppCompatActivity {
         /*把 toolbar 设置到Activity 中*/
         setSupportActionBar(toolbar);
         /*自定义的一些操作*/
-        onCreateCustomToolBar(toolbar) ;
+        onCreateCustomToolBar(toolbar);
     }
 
     public void onCreateCustomToolBar(Toolbar toolbar){

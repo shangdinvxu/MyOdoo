@@ -435,7 +435,6 @@ public class PhotoAreaActivity extends ToolBarActivity {
                 super.onActivityResult(requestCode, resultCode, data);
             }
         }
-
     }
 
     public String getAbsolutePath(Uri uri) {

@@ -554,7 +554,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                     processingLock();
                                     showNfcDialog();
                                     try {
-                                        final RFResult qPResult = rfCardModule.powerOn(null, 10, TimeUnit.SECONDS);
+                                        final RFResult qPResult = rfCardModule.powerOn(null, 8, TimeUnit.SECONDS);
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -592,6 +592,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                                 // showDefultProgressDialog();
                                                                 HashMap<Object, Object> hashMap = new HashMap<>();
                                                                 hashMap.put("order_id", order_id);
+                                                                hashMap.put("employee_id",res_data.getEmployee_id());
                                                                 Map<Object, Object> mapSmall = new HashMap<>();
                                                                 mapSmall.put("stock_move_lines_id", linesBean.getId());
                                                                 mapSmall.put("quantity_ready", num);
@@ -603,8 +604,11 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                                     public void onResponse(final Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
                                                                         threadDismiss(nfCdialog);
                                                                         //   dismissDefultProgressDialog();
-                                                                        if (response.body() == null || response.body().getResult() == null)
+                                                                        if (response.body() == null ) return;
+                                                                        if (response.body().getError()!=null){
+                                                                            ToastUtils.showCommonToast(OrderDetailActivity.this, response.body().getError().getData().getMessage());
                                                                             return;
+                                                                        }
                                                                         if (response.body().getResult().getRes_code() == 1) {
                                                                             runOnUiThread(new Runnable() {
                                                                                 @Override
@@ -668,7 +672,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                 public void run() {
                                                     try {
                                                         Thread.sleep(1000);
-                                                        ToastUtils.showCommonToast(OrderDetailActivity.this, e.getMessage() + "  " + Const.MessageTag.ERROR);
+                                                       // ToastUtils.showCommonToast(OrderDetailActivity.this, e.getMessage() + "  " + Const.MessageTag.ERROR);
                                                         nfCdialog.dismiss();
                                                     } catch (InterruptedException e1) {
                                                         e1.printStackTrace();
@@ -1057,6 +1061,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                     public void onClick(View v) {
                         processingUnLock();
                         nfCdialog.dismiss();
+                        isShowDialog = true;
                         return;
                     }
                 }).show();
@@ -1235,7 +1240,11 @@ public class OrderDetailActivity extends ToolBarActivity {
             e.printStackTrace();
             // ToastUtils.showCommonToast(OrderDetailActivity.this, "链接异常,请检查设备或重新连接.." + e);
         }
-        rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
+        try {
+            rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
+        }catch (Exception e){
+            Log.e("zws", "error");
+        }
     }
 
     /**

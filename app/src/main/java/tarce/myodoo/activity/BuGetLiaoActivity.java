@@ -170,7 +170,7 @@ public class BuGetLiaoActivity extends BaseActivity {
                                         processingLock();
                                         showNfcDialog();
                                         try {
-                                            final RFResult qPResult = rfCardModule.powerOn(null, 10, TimeUnit.SECONDS);
+                                            final RFResult qPResult = rfCardModule.powerOn(null, 6, TimeUnit.SECONDS);
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -208,6 +208,7 @@ public class BuGetLiaoActivity extends BaseActivity {
                                                                     showDefultProgressDialog();
                                                                     HashMap<Object, Object> hashMap = new HashMap<>();
                                                                     hashMap.put("order_id", order_id);
+                                                                    hashMap.put("employee_id",res_data.getEmployee_id());
                                                                     Map<Object, Object> mapSmall = new HashMap<>();
                                                                     mapSmall.put("stock_move_lines_id", data.get(position).getId());
                                                                     mapSmall.put("quantity_ready", num);
@@ -277,7 +278,7 @@ public class BuGetLiaoActivity extends BaseActivity {
                                                     public void run() {
                                                         try {
                                                             Thread.sleep(1000);
-                                                            ToastUtils.showCommonToast(BuGetLiaoActivity.this, "读卡时间超过10秒");
+                                                            //ToastUtils.showCommonToast(BuGetLiaoActivity.this, "读卡时间超过10秒");
                                                             nfCdialog.dismiss();
                                                         } catch (InterruptedException e1) {
                                                             e1.printStackTrace();
@@ -449,7 +450,11 @@ public class BuGetLiaoActivity extends BaseActivity {
             e.printStackTrace();
             ToastUtils.showCommonToast(BuGetLiaoActivity.this, "链接异常,请检查设备或重新连接.." + e);
         }
-        rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
+        try {
+            rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
+        }catch (Exception e){
+            Log.e("zws", "error");
+        }
     }
 
     public void processingLock() {

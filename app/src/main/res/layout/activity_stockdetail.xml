@@ -1,268 +1,295 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/tv_look_move">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <ImageView
                 android:id="@+id/image_stockdetail"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="20dp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:orientation="horizontal"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:text="产品类型"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:layout_marginLeft="15dp"/>
+                    android:text="产品类型" />
+
                 <TextView
                     android:id="@+id/tv_product_type"
                     android:layout_width="0dp"
-                    android:layout_weight="4"
                     android:layout_height="match_parent"
+                    android:layout_weight="4"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="10dp"/>
+                    android:paddingRight="10dp" />
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@color/status_view"
-                android:layout_marginLeft="15dp"/>
+                android:layout_marginLeft="15dp"
+                android:background="@color/status_view" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:text="内部参考"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:layout_marginLeft="15dp"/>
+                    android:text="内部参考" />
+
                 <TextView
                     android:id="@+id/tv_consult"
                     android:layout_width="0dp"
-                    android:layout_weight="4"
                     android:layout_height="match_parent"
+                    android:layout_weight="4"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="10dp"/>
+                    android:paddingRight="10dp" />
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@color/status_view"
-                android:layout_marginLeft="15dp"/>
+                android:layout_marginLeft="15dp"
+                android:background="@color/status_view" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:text="产品名"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:layout_marginLeft="15dp"/>
+                    android:text="产品名" />
+
                 <TextView
                     android:id="@+id/tv_product_name"
                     android:layout_width="0dp"
-                    android:layout_weight="4"
                     android:layout_height="match_parent"
+                    android:layout_weight="4"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="10dp"/>
+                    android:paddingRight="10dp" />
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@color/status_view"
-                android:layout_marginLeft="15dp"/>
+                android:layout_marginLeft="15dp"
+                android:background="@color/status_view" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:text="在手/预测"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:layout_marginLeft="15dp"/>
+                    android:text="在手/预测" />
+
                 <TextView
                     android:id="@+id/tv_num"
                     android:layout_width="0dp"
-                    android:layout_weight="4"
                     android:layout_height="match_parent"
+                    android:layout_weight="4"
                     android:gravity="center_vertical|right"
                     android:paddingRight="10dp"
                     android:textColor="@color/black"
                     android:textSize="15sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@color/status_view"
-                android:layout_marginLeft="15dp"/>
+                android:layout_marginLeft="15dp"
+                android:background="@color/status_view" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:text="位置"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:layout_marginLeft="15dp"/>
+                    android:text="位置" />
+
                 <TextView
                     android:id="@+id/tv_area"
                     android:layout_width="0dp"
-                    android:layout_weight="4"
                     android:layout_height="match_parent"
+                    android:layout_weight="4"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="10dp"/>
+                    android:paddingRight="10dp" />
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@color/status_view"
-                android:layout_marginLeft="15dp"/>
+                android:layout_marginLeft="15dp"
+                android:background="@color/status_view" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:text="国内简称"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:layout_marginLeft="15dp"/>
+                    android:text="国内简称" />
+
                 <TextView
                     android:id="@+id/tv_shortform"
                     android:layout_width="0dp"
-                    android:layout_weight="4"
                     android:layout_height="match_parent"
+                    android:layout_weight="4"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="10dp"/>
+                    android:paddingRight="10dp" />
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@color/status_view"
-                android:layout_marginLeft="15dp"/>
+                android:layout_marginLeft="15dp"
+                android:background="@color/status_view" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:text="国内类型"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:layout_marginLeft="15dp"/>
+                    android:text="国内类型" />
+
                 <TextView
                     android:id="@+id/tv_type_in"
                     android:layout_width="0dp"
-                    android:layout_weight="4"
                     android:layout_height="match_parent"
+                    android:layout_weight="4"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="10dp"/>
+                    android:paddingRight="10dp" />
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@color/status_view"
-                android:layout_marginLeft="15dp"/>
+                android:layout_marginLeft="15dp"
+                android:background="@color/status_view" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:text="产品规格"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:layout_marginLeft="15dp"/>
+                    android:text="产品规格" />
+
                 <TextView
                     android:id="@+id/tv_guige"
                     android:layout_width="0dp"
-                    android:layout_weight="4"
                     android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:textSize="12sp"
+                    android:textColor="@color/black"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="10dp"/>
+                    android:paddingRight="10dp" />
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@color/status_view"
-                android:layout_marginLeft="15dp"/>
+                android:layout_marginLeft="15dp"
+                android:background="@color/status_view" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:text="内部类别"
+                    android:layout_marginLeft="15dp"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:layout_marginLeft="15dp"/>
+                    android:text="内部类别" />
+
                 <TextView
                     android:id="@+id/tv_in_channel"
                     android:layout_width="0dp"
-                    android:layout_weight="4"
                     android:layout_height="match_parent"
+                    android:layout_weight="4"
                     android:gravity="center_vertical|right"
-                    android:paddingRight="10dp"/>
+                    android:paddingRight="10dp" />
             </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0.5dp"
-                android:background="@color/status_view"
-                android:layout_marginLeft="15dp"/>
-            <LinearLayout
-                android:id="@+id/move_linear"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="4"
-                    android:layout_height="match_parent"
-                    android:text="库存移动"
-                    android:gravity="center_vertical|left"
-                    android:layout_marginLeft="15dp"/>
-                <ImageView
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="20dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/right_icon"
-                    android:paddingRight="10dp"/>
-            </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:background="@color/status_view"
-                android:layout_marginLeft="15dp"/>
+                android:layout_marginLeft="15dp"
+                android:background="@color/status_view" />
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_look_move"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:text="查看库位移动"
+        android:textColor="@color/white"
+        android:background="@color/color_5693f8"/>
+
+</RelativeLayout>

@@ -63,5 +63,30 @@ public class CommonBean {
         public void setRes_code(int res_code) {
             this.res_code = res_code;
         }
+        private ResDataBean res_data;
+
+        public ResDataBean getRes_data() {
+            return res_data;
+        }
+
+        public void setRes_data(ResDataBean res_data) {
+            this.res_data = res_data;
+        }
+
+        public static class ResDataBean {
+            /**
+             * error : 数据提交异常
+             */
+
+            private String error;
+
+            public String getError() {
+                return error;
+            }
+
+            public void setError(String error) {
+                this.error = error;
+            }
+        }
     }
 }

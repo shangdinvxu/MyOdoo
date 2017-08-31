@@ -38,6 +38,36 @@ public class StringUtils {
         }
         return transtring;
     }
+    public static String typeSwitch(String string){
+        String transtring = string ;
+        switch (string){
+            case "procurement_warehousing":
+                transtring = "采购入库";
+                break;
+            case "purchase_return":
+                transtring = "采购退货";
+                break;
+            case "sell_return":
+                transtring = "销售退货";
+                break;
+            case "sell_out":
+                transtring = "销售出库";
+                break;
+            case "manufacturing_orders":
+                transtring = "制造入库";
+                break;
+            case "manufacturing_picking":
+                transtring = "制造领料";
+                break;
+            case "inventory_in":
+                transtring = "盘点入库";
+                break;
+            case "inventory_out":
+                transtring = "盘点出库";
+                break;
+        }
+        return transtring;
+    }
     /**
      * 判断是否为空string
      * */

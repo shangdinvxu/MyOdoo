@@ -97,7 +97,7 @@ public class DialogForOrder extends Dialog {
         double v1 = linesBean.getProduct_uom_qty() - linesBean.getQuantity_ready() - linesBean.getQuantity_done();
         if (v1<0){
             tvPrepareNum.setText("0");
-        } else if (v1>linesBean.getQty_available()){
+        } else if (v1>=linesBean.getQty_available()){
             tvPrepareNum.setText(StringUtils.doubleToString(linesBean.getQty_available()));
         }else if (v1<linesBean.getQty_available()){
             tvPrepareNum.setText(StringUtils.doubleToString(v1));

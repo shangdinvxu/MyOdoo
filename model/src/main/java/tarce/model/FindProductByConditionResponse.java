@@ -122,7 +122,7 @@ public class FindProductByConditionResponse {
                 this.product_qty = product_qty;
             }
 
-            public static class ProductBean {
+            public static class ProductBean implements Serializable{
                 /**
                  * area : {"id":false,"name":false}
                  * image_medium : http://192.168.2.111:8069/linkloving_app_api/get_product_image?product_id=48204
@@ -133,7 +133,25 @@ public class FindProductByConditionResponse {
                 private AreaBean area;
                 private String image_medium;
                 private int id;
+                private int product_id;
                 private String product_name;
+                private String product_spec;
+
+                public int getProduct_id() {
+                    return product_id;
+                }
+
+                public void setProduct_id(int product_id) {
+                    this.product_id = product_id;
+                }
+
+                public String getProduct_spec() {
+                    return product_spec;
+                }
+
+                public void setProduct_spec(String product_spec) {
+                    this.product_spec = product_spec;
+                }
 
                 public AreaBean getArea() {
                     return area;
@@ -167,14 +185,14 @@ public class FindProductByConditionResponse {
                     this.product_name = product_name;
                 }
 
-                public static class AreaBean {
+                public static class AreaBean implements Serializable{
                     /**
                      * id : false
                      * name : false
                      */
 
-                    private Object id;
-                    private Object name;
+                    public Object id;
+                    public Object name;
 
                     public Object getId() {
                         if (id instanceof Boolean){

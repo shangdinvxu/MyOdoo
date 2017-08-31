@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RadioGroup
+        android:id="@+id/radioproject"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/wait_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:background="@drawable/radio_bac"
+            android:layout_height="match_parent"
+            android:text="待处理"
+            android:gravity="center"
+            android:checked="true"
+            android:textColor="@color/white"/>
+        <RadioButton
+            android:id="@+id/can_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:background="@drawable/radio_bac"
+            android:layout_height="match_parent"
+            android:text="可处理"
+            android:gravity="center"
+            android:checked="false"
+            android:textColor="@color/white" />
+        <RadioButton
+            android:id="@+id/done_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:background="@drawable/radio_bac"
+            android:layout_height="match_parent"
+            android:text="已完成"
+            android:gravity="center"
+            android:checked="false"
+            android:textColor="@color/white" />
+    </RadioGroup>
+    <SearchView
+        android:layout_marginTop="15dp"
+        android:id="@+id/search_name"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:focusable="false"
+        android:iconifiedByDefault="false"
+        android:queryHint="请输入客户名称用于搜索"
+        android:background="@drawable/edit_input_bac"/>
+    <SearchView
+        android:layout_marginTop="10dp"
+        android:id="@+id/search_num"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:focusable="false"
+        android:iconifiedByDefault="false"
+        android:queryHint="请输入单号用于搜索"
+        android:background="@drawable/edit_input_bac"/>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_project"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </android.support.v7.widget.RecyclerView>
+</LinearLayout>

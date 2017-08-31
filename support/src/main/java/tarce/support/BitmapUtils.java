@@ -10,11 +10,16 @@ import android.net.Uri;
 import android.util.Base64;
 import android.view.View;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Created by Daniel.Xu on 2017/2/9.
@@ -147,6 +152,34 @@ public class BitmapUtils {
     }
 
 
+    /**
+     * 根据图片的url路径获得Bitmap对象
+     * @param url
+     * @return
+     */
+    public static Bitmap returnBitmap(String url) {
+        URL fileUrl = null;
+        Bitmap bitmap = null;
 
+        try {
+            fileUrl = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            HttpURLConnection conn = (HttpURLConnection) fileUrl
+                    .openConnection();
+            conn.setDoInput(true);
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+
+    }
 
 }

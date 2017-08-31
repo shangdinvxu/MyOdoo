@@ -93,6 +93,7 @@ public class StockMoveListActivity extends BaseActivity {
                     public void run() {
                         loadTime++;
                         initData(20 * loadTime, 20, Load_Move);
+                        if (listAdapter!=null)
                         listAdapter.notifyDataSetChanged();
                         swipeToLoad.setLoadingMore(false);
                     }

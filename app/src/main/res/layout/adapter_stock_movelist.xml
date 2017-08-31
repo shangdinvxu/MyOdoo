@@ -1,8 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="50dp">
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="120dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/position_tv"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="1."
+            android:textSize="12sp"/>
+        <TextView
+            android:id="@+id/tv_type"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="@color/color_5693f8"
+            android:text="hahaha"
+            android:textSize="12sp"
+            android:background="@drawable/back_common_tv"
+            android:layout_marginLeft="10dp"/>
+        <TextView
+            android:id="@+id/name_and_time"
+            android:layout_width="190dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="王小白 2017-8-28 10：00"
+            android:textColor="@color/black"
+            android:textSize="12sp"/>
+        <TextView
+            android:id="@+id/state_tv"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="完成"
+            android:textColor="@color/red"
+            android:textSize="12sp"/>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/tv_argument"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="说明：模板制造公益非比寻常你一定要小心"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="12sp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="33dp"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/origin_tv"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center|left"
+            android:text="源单据"
+            android:paddingLeft="15dp"
+            android:textColor="@color/black"
+            android:textSize="12sp"/>
+        <TextView
+            android:id="@+id/tv_out_in"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="出入库数量"
+            android:textColor="@color/black"
+            android:textSize="12sp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tv_reference"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center|left"
+            android:text="参考"
+            android:paddingLeft="15dp"
+            android:textColor="@color/black"
+            android:textSize="12sp"/>
+        <TextView
+            android:id="@+id/tv_num_now"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="当前库存"
+            android:textColor="@color/black"
+            android:textSize="12sp"/>
+    </LinearLayout>
+    <!--<TextView
+        android:id="@+id/position_tv"
+        android:layout_width="0dp"
+        android:layout_weight="0.5"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="11sp"/>
     <TextView
         android:id="@+id/name_tv"
         android:layout_width="0dp"
@@ -29,5 +130,5 @@
         android:layout_weight="1"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:textSize="12sp"/>
+        android:textSize="12sp"/>-->
 </LinearLayout>
