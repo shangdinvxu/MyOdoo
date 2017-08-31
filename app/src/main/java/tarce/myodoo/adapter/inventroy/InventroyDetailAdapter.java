@@ -1,5 +1,7 @@
 package tarce.myodoo.adapter.inventroy;
 
+import android.view.View;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -24,5 +26,6 @@ public class InventroyDetailAdapter extends BaseQuickAdapter<InventroyDetailBean
             .setText(R.id.need_in, String.valueOf(item.getProduct().getArea().getArea_name()))
             .setText(R.id.need_out, StringUtils.doubleToString(item.getTheoretical_qty()))
             .setText(R.id.done, StringUtils.doubleToString(item.getProduct_qty()));
+        helper.getView(R.id.tv_guige).setVisibility(View.GONE);
     }
 }

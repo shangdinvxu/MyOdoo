@@ -1,5 +1,7 @@
 package tarce.myodoo.adapter;
 
+import android.view.View;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -25,5 +27,6 @@ public class AddCuAdapter extends BaseQuickAdapter<DiyListBean, BaseViewHolder> 
                 .setText(R.id.need_in, item.getProduct().getArea().getArea_name())
                 .setText(R.id.need_out, item.getTheoretical_qty()+"")
                 .setText(R.id.done, item.getProduct_qty()+"");
+        helper.getView(R.id.tv_guige).setVisibility(View.GONE);
     }
 }

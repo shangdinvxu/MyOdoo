@@ -1,5 +1,7 @@
 package tarce.model;
 
+import com.google.zxing.common.StringUtils;
+
 import java.io.Serializable;
 import java.text.DecimalFormat;
 
@@ -193,6 +195,32 @@ public class FindProductByConditionResponse {
 
                     public Object id;
                     public Object name;
+                    private Object area_id;
+                    private Object area_name;
+
+                    public Object getArea_id() {
+                        if (area_id instanceof Boolean){
+                            area_id = 0;
+                        }else if (area_id instanceof Double){
+                            area_id = new Double((Double) area_id).intValue();
+                        }
+                        return area_id;
+                    }
+
+                    public void setArea_id(Object area_id) {
+                        this.area_id = area_id;
+                    }
+
+                    public Object getArea_name() {
+                        if (area_name instanceof Boolean){
+                            area_name = "";
+                        }
+                        return area_name;
+                    }
+
+                    public void setArea_name(Object area_name) {
+                        this.area_name = area_name;
+                    }
 
                     public Object getId() {
                         if (id instanceof Boolean){

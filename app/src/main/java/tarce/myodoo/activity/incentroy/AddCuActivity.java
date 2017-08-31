@@ -87,6 +87,17 @@ public class AddCuActivity extends BaseActivity {
             if (requestCode == REQUESTCODE_ADDCU) {
                 if (data == null) return;
                 DiyListBean bean = (DiyListBean) data.getSerializableExtra("bean");
+                boolean isAdd = false;
+                for (int i = 0; i < listBeen.size(); i++) {
+                    if (listBeen.get(i).getProduct().getProduct_id() == bean.getProduct().getProduct_id()){
+                        isAdd = true;
+                        break;
+                    }
+                }
+                if (isAdd){
+                    ToastUtils.showCommonToast(AddCuActivity.this, "重复添加了产品");
+                    return;
+                }
                 listBeen.add(bean);
                 if (listBeen.size() == 1) {
                     addCuAdapter = new AddCuAdapter(R.layout.adapter_detaildeleive, listBeen);
@@ -117,6 +128,10 @@ public class AddCuActivity extends BaseActivity {
     void commitKucun() {
         if (StringUtils.isNullOrEmpty(editWriteName.getText().toString())) {
             ToastUtils.showCommonToast(AddCuActivity.this, "请输入名字");
+            return;
+        }
+        if (listBeen.size()<1){
+            ToastUtils.showCommonToast(AddCuActivity.this, "没有要提交的内容");
             return;
         }
         showDefultProgressDialog();
@@ -162,7 +177,9 @@ public class AddCuActivity extends BaseActivity {
     //清除全部
     @OnClick(R.id.clear_all)
     void setClearAll(View view){
-        listBeen.clear();
-        addCuAdapter.notifyDataSetChanged();
+        if (listBeen!=null && listBeen.size()>0){
+            listBeen.clear();
+            addCuAdapter.notifyDataSetChanged();
+        }
     }
 }

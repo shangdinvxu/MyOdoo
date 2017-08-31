@@ -165,46 +165,49 @@ public class SaveChangeActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == ADDKUCUN) {
-            if (data != null) {
-                Bundle bundle = data.getExtras();
-                if (bundle == null) {
-                    return;
-                }
-                if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
-                    String string = bundle.getString(CodeUtils.RESULT_STRING);
-                    Log.e("zws", "string = " + string);
-                    dialog.show();
-                    HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-                    objectObjectHashMap.put("default_code", string);
-                    HashMap<Object, Object> objectObjectHashMap1 = new HashMap<>();
-                    objectObjectHashMap1.put("condition", objectObjectHashMap);
-                    Call<FindProductByConditionResponse> productByCondition = inventoryApi.findProductByCondition(objectObjectHashMap1);
-                    productByCondition.enqueue(new Callback<FindProductByConditionResponse>() {
-                        @Override
-                        public void onResponse(Call<FindProductByConditionResponse> call, Response<FindProductByConditionResponse> response) {
-                            dialog.dismiss();
-                            if (response.body() == null) return;
-                            if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
-                                res_data = response.body().getResult().getRes_data();
-                                initView();
-                            } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1) {
-                                ToastUtils.showCommonToast(SaveChangeActivity.this, response.body().getResult().getRes_data().getError());
+        if (resultCode != Activity.RESULT_CANCELED){
+            if (requestCode == ADDKUCUN) {
+                if (data != null) {
+                    Bundle bundle = data.getExtras();
+                    if (bundle == null) {
+                        return;
+                    }
+                    if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
+                        String string = bundle.getString(CodeUtils.RESULT_STRING);
+                        Log.e("zws", "string = " + string);
+                        dialog.show();
+                        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+                        objectObjectHashMap.put("default_code", string);
+                        HashMap<Object, Object> objectObjectHashMap1 = new HashMap<>();
+                        objectObjectHashMap1.put("condition", objectObjectHashMap);
+                        Call<FindProductByConditionResponse> productByCondition = inventoryApi.findProductByCondition(objectObjectHashMap1);
+                        productByCondition.enqueue(new Callback<FindProductByConditionResponse>() {
+                            @Override
+                            public void onResponse(Call<FindProductByConditionResponse> call, Response<FindProductByConditionResponse> response) {
+                                dialog.dismiss();
+                                if (response.body() == null) return;
+                                if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
+                                    res_data = response.body().getResult().getRes_data();
+                                    initView();
+                                } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1) {
+                                    ToastUtils.showCommonToast(SaveChangeActivity.this, response.body().getResult().getRes_data().getError());
+                                }
                             }
-                        }
 
-                        @Override
-                        public void onFailure(Call<FindProductByConditionResponse> call, Throwable t) {
-                            dialog.dismiss();
-                        }
-                    });
+                            @Override
+                            public void onFailure(Call<FindProductByConditionResponse> call, Throwable t) {
+                                dialog.dismiss();
+                            }
+                        });
+                    }
                 }
-            }
-        }else if (resultCode != Activity.RESULT_CANCELED) {
-            if (requestCode == REQUEST_CODE_IMAGE_CAPTURE) {
+            } else if (requestCode == REQUEST_CODE_IMAGE_CAPTURE) {
                 selectedImagePath = getImagePath();
                 Glide.with(SaveChangeActivity.this).load(new File(selectedImagePath)).into(imageInventDetail);
             }
+        }else {
+            if (requestCode == ADDKUCUN)
+            finish();
         }
     }
 
@@ -212,10 +215,14 @@ public class SaveChangeActivity extends AppCompatActivity {
     private void initView() {
         Glide.with(SaveChangeActivity.this).load(res_data.getProduct().getImage_medium()).into(imageInventDetail);
         liaohao.setText(res_data.getProduct().getProduct_name());
-        area.setText(res_data.getProduct().getArea().getName()+"");
+        if (res_data.getProduct().getArea().getArea_name() == null){
+            area.setText("");
+        }else {
+            area.setText(res_data.getProduct().getArea().getArea_name()+"");
+        }
         area.setSelection(area.getText().length());
-        if (res_data.getProduct().getArea().getId()!=null){
-            area_id = (int) res_data.getProduct().getArea().getId();
+        if (res_data.getProduct().getArea().getArea_id()!=null){
+            area_id = (int) res_data.getProduct().getArea().getArea_id();
         }else {
             area_id = 0;
         }

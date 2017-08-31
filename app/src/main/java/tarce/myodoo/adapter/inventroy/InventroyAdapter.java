@@ -7,6 +7,7 @@ import java.util.List;
 
 import tarce.model.inventory.InventroyResultBean;
 import tarce.myodoo.R;
+import tarce.support.TimeUtils;
 
 /**
  * Created by zouzou on 2017/7/4.
@@ -21,7 +22,7 @@ public class InventroyAdapter extends BaseQuickAdapter<InventroyResultBean.Resul
     @Override
     protected void convert(BaseViewHolder helper, InventroyResultBean.ResultBean.ResDataBean item) {
             helper.setText(R.id.tv_name_inv, item.getName())
-                    .setText(R.id.tv_time_inv, item.getDate());
+                    .setText(R.id.tv_time_inv, TimeUtils.utc2Local(item.getDate()));
             if (item.getState().equals("done")){
                helper.setText(R.id.tv_already_check, "已验证");
             }
