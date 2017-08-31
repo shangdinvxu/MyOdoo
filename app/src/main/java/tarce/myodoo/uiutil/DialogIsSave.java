@@ -14,6 +14,7 @@ import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import tarce.myodoo.R;
+import tarce.myodoo.utils.NoDoubleOnClickListeber;
 
 /**
  * Created by rose.zou on 2017/6/20.
@@ -100,24 +101,38 @@ public class DialogIsSave extends Dialog {
     }
 
     public DialogIsSave setSave(final View.OnClickListener listener) {
-        tvSave.setOnClickListener(new View.OnClickListener() {
+        tvSave.setOnClickListener(new NoDoubleOnClickListeber() {
+            @Override
+            public void onNoDoubleClick(View v) {
+                listener.onClick(v);
+                dismiss();
+            }
+        });
+        /*tvSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.onClick(v);
                 dismiss();
             }
-        });
+        });*/
         return this;
     }
 
     public DialogIsSave setNotSave(final View.OnClickListener listener) {
-        tvNotSave.setOnClickListener(new View.OnClickListener() {
+        tvNotSave.setOnClickListener(new NoDoubleOnClickListeber() {
+            @Override
+            public void onNoDoubleClick(View v) {
+                listener.onClick(v);
+                dismiss();
+            }
+        });
+        /*tvNotSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.onClick(v);
                 dismiss();
             }
-        });
+        });*/
         return this;
     }
 
