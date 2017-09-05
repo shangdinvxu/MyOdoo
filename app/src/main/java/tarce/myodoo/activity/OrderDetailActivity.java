@@ -263,6 +263,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         recyclerOrderDetail.setNestedScrollingEnabled(false);
         recycler2OrderDetail.setNestedScrollingEnabled(false);
         recycler3OrderDetail.setNestedScrollingEnabled(false);
+        initDevice();
         getDetail();
     }
 
@@ -550,7 +551,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    initDevice();
                                     processingLock();
                                     showNfcDialog();
                                     try {
@@ -561,7 +561,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                 if (qPResult.getCardSerialNo() == null) {
                                                     ToastUtils.showCommonToast(OrderDetailActivity.this, "不能识别序列号：" + Const.MessageTag.DATA);
                                                 } else {
-                                                    showDefultProgressDialog();
+                                                   // showDefultProgressDialog();
                                                     String NFC_Number = ISOUtils.hexString(qPResult.getCardSerialNo());
                                                     InventoryApi inventory = retrofit.create(InventoryApi.class);
                                                     HashMap<Object, Object> hashMap = new HashMap<>();
@@ -570,7 +570,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                     objectCall.enqueue(new Callback<NfcOrderBean>() {
                                                         @Override
                                                         public void onResponse(Call<NfcOrderBean> call, Response<NfcOrderBean> response) {
-                                                            dismissDefultProgressDialog();
+                                                           // dismissDefultProgressDialog();
                                                             if (response.body() == null) return;
                                                             if (response.body().getError() != null) {
                                                                 nfCdialog.setHeaderImage(R.drawable.warning)
@@ -656,7 +656,7 @@ public class OrderDetailActivity extends ToolBarActivity {
 
                                                         @Override
                                                         public void onFailure(Call<NfcOrderBean> call, Throwable t) {
-                                                            dismissDefultProgressDialog();
+                                                           // dismissDefultProgressDialog();
                                                             Log.e("zws", t.toString());
                                                         }
                                                     });
@@ -864,7 +864,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                                         if (response.body() == null || response.body().getResult() == null)
                                             return;
                                         if (response.body().getError() != null) {
-                                            ToastUtils.showCommonToast(OrderDetailActivity.this, response.body().getError().getMessage());
+                                            new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
+                                                    .show();
                                             return;
                                         }
                                         if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {

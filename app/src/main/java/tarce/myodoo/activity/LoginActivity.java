@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -69,6 +70,7 @@ import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.device.Const;
 import tarce.myodoo.greendaoUtils.UserLoginUtils;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.MyLog;
@@ -318,7 +320,8 @@ public class LoginActivity extends Activity {
                 if (response.body() == null || response.body().getResult() == null)
                     return;
                 if (response.body().getError() != null) {
-                    ToastUtils.showCommonToast(LoginActivity.this, response.body().getError().getMessage());
+                    new TipDialog(LoginActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
+                            .show();
                     return;
                 }
                 if (response.body().getResult().getRes_code() == 1) {
@@ -354,6 +357,7 @@ public class LoginActivity extends Activity {
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 super.onFailure(call, t);
+                Log.e("zws", t.toString());
                 Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
             }
         });

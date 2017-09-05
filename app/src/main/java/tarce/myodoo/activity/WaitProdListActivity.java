@@ -29,6 +29,7 @@ import tarce.myodoo.R;
 import tarce.myodoo.adapter.product.PickingDetailAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.DateTool;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
@@ -142,7 +143,8 @@ public class WaitProdListActivity extends BaseActivity {
                 dismissDefultProgressDialog();
                 if (response.body() == null || response.body().getResult() == null)return;
                 if (response.body().getError() != null){
-                    ToastUtils.showCommonToast(WaitProdListActivity.this, response.body().getError().getMessage());
+                    new TipDialog(WaitProdListActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
+                            .show();
                     return;
                 }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
@@ -161,9 +163,8 @@ public class WaitProdListActivity extends BaseActivity {
                         adapter.setData(dataBeanList);
                     }
                     clickAdapterItem();
-                }else {
-                   // ToastUtils.showCommonToast(WaitProdListActivity.this, "出现错误。请联系开发人员调试");
-                    Log.e("zws", "数据异常");
+                }else if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == -1){
+
                 }
             }
 

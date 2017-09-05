@@ -82,6 +82,7 @@ public class SaveChangeActivity extends AppCompatActivity {
     private int area_id;
     private String scan;
     private DiyListBean diyListBean;
+    private int position;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -94,6 +95,7 @@ public class SaveChangeActivity extends AppCompatActivity {
         scan = intent.getStringExtra("scan");
         if (scan.equals("no")){
             diyListBean = (DiyListBean) intent.getSerializableExtra("bean");
+            position = intent.getIntExtra("position", 1);
             initViewDiy();
         }else {
             Intent intent1 = new Intent(SaveChangeActivity.this, CaptureActivity.class);
@@ -129,11 +131,12 @@ public class SaveChangeActivity extends AppCompatActivity {
     void setSaveTv(View view) {
         Intent intent = new Intent();
         if (scan.equals("no")){
-            diyListBean.setTheoretical_qty(Double.valueOf(lilunNum.getText().toString()));
-            diyListBean.setProduct_qty(Integer.parseInt(actrulNum.getText().toString()));
+            diyListBean.theoretical_qty = Double.valueOf(lilunNum.getText().toString());
+            diyListBean.product_qty = Double.valueOf(actrulNum.getText().toString());
             diyListBean.product.area.area_name = area.getText().toString();
             diyListBean.product.area.area_id = area_id;
             intent.putExtra("bean", diyListBean);
+            intent.putExtra("position", position);
         }else {
             DiyListBean bean = new DiyListBean();
             final DiyListBean.ProductBean productBean = new DiyListBean.ProductBean();

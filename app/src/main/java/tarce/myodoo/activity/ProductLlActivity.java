@@ -24,9 +24,11 @@ import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.salesout.SalesDetailActivity;
 import tarce.myodoo.adapter.product.PickingDetailAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
@@ -153,7 +155,8 @@ public class ProductLlActivity extends BaseActivity {
                 dismissDefultProgressDialog();
                 if (response.body() == null || response.body().getResult() == null) return;
                 if (response.body().getError() != null){
-                    ToastUtils.showCommonToast(ProductLlActivity.this, response.body().getError().getMessage());
+                    new TipDialog(ProductLlActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
+                            .show();
                     return;
                 }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){

@@ -420,9 +420,8 @@ public class InspectMoDetailActivity extends BaseActivity {
                                                         @Override
                                                         public void onResponse(Call<RukuBean> call, Response<RukuBean> response) {
                                                             dismissDefultProgressDialog();
-                                                            if (response.body() == null) return;
-                                                            if (response.body().getResult() == null)return;
-                                                            if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
+                                                            if (response.body() == null || response.body().getResult() == null) return;
+                                                            if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                                                                 new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, "入库成功")
                                                                         .setTrue(new View.OnClickListener() {
                                                                             @Override
@@ -436,7 +435,7 @@ public class InspectMoDetailActivity extends BaseActivity {
                                                             }else if (response.body().getResult().getRes_code() == -1 && response.body().getResult().getRes_data() != null){
                                                                 ToastUtils.showCommonToast(InspectMoDetailActivity.this,  response.body().getResult().getRes_data().getError());
                                                             } else {
-                                                                Log.e("zws", "some error");
+                                                               // ToastUtils.showCommonToast(InspectMoDetailActivity.this, "some error");
                                                             }
                                                         }
 

@@ -53,6 +53,7 @@ import tarce.myodoo.device.Const;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.InsertNumDialog;
 import tarce.myodoo.uiutil.NFCdialog;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
@@ -439,7 +440,8 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                     if (response.body() == null || response.body().getResult() == null)
                                         return;
                                     if (response.body().getError() != null) {
-                                        ToastUtils.showCommonToast(WriteFeedMateriActivity.this, response.body().getError().getMessage());
+                                        new TipDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
+                                                .show();
                                         return;
                                     }
                                     if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
@@ -509,7 +511,8 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                     if (response.body() == null || response.body().getResult() == null)
                                         return;
                                     if (response.body().getError() != null) {
-                                        ToastUtils.showCommonToast(WriteFeedMateriActivity.this, response.body().getError().getMessage());
+                                        new TipDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
+                                                .show();
                                         return;
                                     }
                                     if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {

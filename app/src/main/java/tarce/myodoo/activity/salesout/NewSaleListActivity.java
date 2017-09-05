@@ -44,6 +44,8 @@ import tarce.myodoo.utils.StringUtils;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
 
+import static tarce.myodoo.R.id.parent_radio_dan;
+
 /**
  * Created by zws on 2017/8/9.
  */
@@ -62,7 +64,7 @@ public class NewSaleListActivity extends BaseActivity {
     RadioButton waitRadioDan;
     @InjectView(R.id.can_radio_dan)
     RadioButton canRadioDan;
-    @InjectView(R.id.parent_radio_dan)
+    @InjectView(parent_radio_dan)
     RadioGroup parentRadioDan;
     @InjectView(R.id.search_newsalelist)
     SearchView searchNewsalelist;
@@ -102,8 +104,9 @@ public class NewSaleListActivity extends BaseActivity {
             setTitle(danhao + "搜索结果");
             showDefultProgressDialog();
             getSearch(danhao);
-            allDone.setVisibility(View.GONE);
-            canRadioDan.setVisibility(View.GONE);
+//            allDone.setVisibility(View.GONE);
+//            canRadioDan.setVisibility(View.GONE);
+            parentRadioDan.setVisibility(View.GONE);
         } else {
             partner_id = intent.getIntExtra("partner_id", -1);
             String partner_name = intent.getStringExtra("partner_name");

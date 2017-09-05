@@ -47,6 +47,7 @@ import tarce.support.ToastUtils;
 
 public class AddCuActivity extends BaseActivity {
     private static final int REQUESTCODE_ADDCU = 1;
+    private static final int REQUESTCODE_ADDCU_CHANGE = 2;
     public static final int SETRESULT = 999;
     @InjectView(R.id.scan_tv)
     TextView scanTv;
@@ -106,6 +107,13 @@ public class AddCuActivity extends BaseActivity {
                     addCuAdapter.notifyDataSetChanged();
                 }
                 initListener();
+            }else {
+                if (data == null) return;
+                DiyListBean bean = (DiyListBean) data.getSerializableExtra("bean");
+                int position = data.getIntExtra("position", 1);
+                listBeen.set(position, bean);
+                addCuAdapter.notifyDataSetChanged();
+                initListener();
             }
         }
     }
@@ -118,7 +126,8 @@ public class AddCuActivity extends BaseActivity {
                 Intent intent = new Intent(AddCuActivity.this, SaveChangeActivity.class);
                 intent.putExtra("scan", "no");
                 intent.putExtra("bean", listBeen.get(position));
-                startActivity(intent);
+                intent.putExtra("position", position);
+                startActivityForResult(intent, REQUESTCODE_ADDCU_CHANGE);
             }
         });
     }

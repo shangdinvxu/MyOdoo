@@ -58,10 +58,12 @@ import tarce.model.GetSaleResponse;
 import tarce.model.inventory.DoUnreservBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
+import tarce.myodoo.activity.LoginActivity;
 import tarce.myodoo.adapter.SalesDetailAdapter;
 import tarce.myodoo.uiutil.DialogIsSave;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.ImageUtil;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
@@ -253,91 +255,6 @@ public class SalesDetailActivity extends BaseActivity {
         });
     }
 
-
-    /**
-     * 加载扫描的fragment
-     */
-    private void initFragment() {
-        FragmentManager supportFragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
-        final CaptureFragment captureFragment = new CaptureFragment();
-        CodeUtils.setFragmentArgs(captureFragment, R.layout.my_camera);
-        captureFragment.setAnalyzeCallback(new CodeUtils.AnalyzeCallback() {
-            @Override
-            public void onAnalyzeSuccess(Bitmap mBitmap, String result) {
-                HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-                objectObjectHashMap.put("default_code", result);
-                HashMap<Object, Object> objectObjectHashMap1 = new HashMap<>();
-                objectObjectHashMap1.put("condition", objectObjectHashMap);
-                Call<FindProductByConditionResponse> productByCondition = inventoryApi.findProductByCondition(objectObjectHashMap1);
-                showDefultProgressDialog();
-                productByCondition.enqueue(new Callback<FindProductByConditionResponse>() {
-                    @Override
-                    public void onResponse(Call<FindProductByConditionResponse> call, Response<FindProductByConditionResponse> response) {
-                        dismissDefultProgressDialog();
-                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
-                            String name = response.body().getResult().getRes_data().getProduct().getProduct_name();
-                            List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> data = salesDetailAdapter.getData();
-                            if (data == null) return;
-                            boolean isInit = false;
-                            int index = -1;
-                            for (int i = 0; i < data.size(); i++) {
-                                if (data.get(i).getProduct_id().getName().equals(name)) {
-                                    isInit = true;
-                                    index = i;
-                                }
-                            }
-                            if (isInit) {
-                                final GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids obj = data.get(index);
-                                final EditText editText = new EditText(SalesDetailActivity.this);
-                                final Integer qty_available = obj.getProduct_id().getQty_available();
-                                Integer product_qty = obj.getProduct_qty();
-                                Integer qty = qty_available >= product_qty ? product_qty : qty_available;
-                                editText.setText(qty + "");
-                                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                                AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(SalesDetailActivity.this, "输入" + obj.getProduct_id().getName() + "完成数量");
-                                dialog.setView(editText)
-                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                if (Integer.parseInt(editText.getText().toString()) > qty_available) {
-                                                    Toast.makeText(SalesDetailActivity.this, "库存不足", Toast.LENGTH_SHORT).show();
-                                                    return;
-                                                }
-                                                obj.setQty_done(Integer.parseInt(editText.getText().toString()));
-                                                salesDetailAdapter.notifyDataSetChanged();
-                                            }
-                                        }).show();
-                            } else {
-                                ToastUtils.showCommonToast(SalesDetailActivity.this,
-                                        "该产品不在单据中");
-                            }
-
-
-                        } else {
-                            ToastUtils.showCommonToast(SalesDetailActivity.this,
-                                    response.body().getResult().getRes_data().getError());
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<FindProductByConditionResponse> call, Throwable t) {
-                        dismissDefultProgressDialog();
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void onAnalyzeFailed() {
-
-            }
-        });
-        fragmentTransaction.replace(R.id.framelayout, captureFragment);
-        fragmentTransaction.commit();
-    }
-
     /**
      * 是否显示底部(仓库)
      */
@@ -356,7 +273,11 @@ public class SalesDetailActivity extends BaseActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        printDefaultNum();
+                        if (bundle1.getState().equals("done")){
+                            printTra("留底单");
+                        }else {
+                            printDefaultNum();
+                        }
                     }
                 }).show();
     }
@@ -375,7 +296,7 @@ public class SalesDetailActivity extends BaseActivity {
         initDevice();
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
-        //  printer.setLineSpace(2);
+        printer.setLineSpace(1);
         printer.print("              留底\n      --------------------\n"+"销售订单备注: " + bundle1.getSale_note() + "\n\n\n" + "出货单号：" + bundle1.getName() + "\n" + "源单据: " + bundle1.getOrigin() + "\n" + "合作伙伴： " +
                 bundle1.getParnter_id() + "\n" +
                 "收货人联系电话: " + bundle1.getPhone() + "\n--------------------------\n", 30, TimeUnit.SECONDS);
@@ -386,18 +307,18 @@ public class SalesDetailActivity extends BaseActivity {
             if (productIds.getPack_id() != -1) {
                 Integer qty = productIds.getProduct_id().getQty_available() >= productIds.getProduct_qty() ? productIds.getProduct_qty() : productIds.getProduct_id().getQty_available();
                 String name = productIds.getProduct_id().getName();
-                if (name.length() > 16) {
-                    printer.print(name.substring(0, 14) + "       " +
+                if (name.length() > 17) {
+                    printer.print(name.substring(0, 15) + "       " +
                             qty
-                            + "\n" + name.substring(14, name.length()) + "\n", 30, TimeUnit.SECONDS);
+                            + "\n" + name.substring(15, name.length()) + "\n\n", 30, TimeUnit.SECONDS);
                 } else {
                     printer.print(name + "      " +
                             qty
-                            + "\n", 30, TimeUnit.SECONDS);
+                            + "\n\n", 30, TimeUnit.SECONDS);
                 }
             }
         }
-        printer.print("\n" + "打印时间：" + DateTool.getDateTime()+"\n\n\n\n\n", 30, TimeUnit.SECONDS);
+        printer.print("打印时间：" + DateTool.getDateTime()+"\n\n\n\n\n", 30, TimeUnit.SECONDS);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -509,7 +430,8 @@ public class SalesDetailActivity extends BaseActivity {
                                                 if (response.body() == null || response.body().getResult() == null)
                                                     return;
                                                 if (response.body().getError() != null) {
-                                                    ToastUtils.showCommonToast(SalesDetailActivity.this, response.body().getError().getMessage());
+                                                    new TipDialog(SalesDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
+                                                            .show();
                                                     return;
                                                 }
                                                 if (response.body().getResult().getRes_code() == 1) {
@@ -529,7 +451,7 @@ public class SalesDetailActivity extends BaseActivity {
                                                             }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                                         @Override
                                                         public void onClick(DialogInterface dialog, int which) {
-                                                            Toast.makeText(SalesDetailActivity.this, "由于未执行打印操作，将自动打印此单据，请等待", Toast.LENGTH_LONG).show();
+                                                            Toast.makeText(SalesDetailActivity.this, "将自动打印此单据，请等待", Toast.LENGTH_LONG).show();
                                                             for (int i = 0; i < 2; i++) {
                                                                 if (i == 0){
                                                                     printTra("客户联");
@@ -576,6 +498,9 @@ public class SalesDetailActivity extends BaseActivity {
 
                     }
                 });
+                break;
+            case "cancel":
+                buttomButton1.setText("已取消");
                 break;
         }
     }
@@ -801,7 +726,8 @@ public class SalesDetailActivity extends BaseActivity {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getError() != null) {
-                    ToastUtils.showCommonToast(SalesDetailActivity.this, response.body().getError().getMessage());
+                    new TipDialog(SalesDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
+                            .show();
                     return;
                 }
                 if (response.body().getResult().getRes_code() == 1) {
@@ -830,29 +756,29 @@ public class SalesDetailActivity extends BaseActivity {
         initDevice();
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
-        printer.setLineSpace(2);
+        printer.setLineSpace(1);
         printer.print("              "+type+"\n      ----------------\n"+"销售订单备注: " + bundle1.getSale_note() + "\n\n" + "出货单号：" + bundle1.getName() + "\n" + "源单据: " + bundle1.getOrigin() + "\n" + "合作伙伴： " +
                 bundle1.getParnter_id() + "\n" +
                 "收货人联系电话: " + bundle1.getPhone() + "\n--------------------------\n", 30, TimeUnit.SECONDS);
-        printer.print("产品名称        完成数量", 30, TimeUnit.SECONDS);
+        printer.print("产品名称         完成数量", 30, TimeUnit.SECONDS);
 
         for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
             if (bundle1.getPack_operation_product_ids().get(i).getPack_id() != -1) {
                 String name = bundle1.getPack_operation_product_ids().get(i).getProduct_id().getName();
-                if (name.length() > 10) {
-                    printer.print(name.substring(0, 8) + "      " +
+                if (name.length() > 17) {
+                    printer.print(name.substring(0, 15) + "      " +
                             bundle1.getPack_operation_product_ids().get(i).getQty_done()
-                            + "\n" + name.substring(8, name.length()) + "\n", 30, TimeUnit.SECONDS);
+                            + "\n" + name.substring(15, name.length()) + "\n\n", 30, TimeUnit.SECONDS);
                 } else {
                     printer.print(name + "      " +
                             bundle1.getPack_operation_product_ids().get(i).getQty_done()
-                            + "\n", 30, TimeUnit.SECONDS);
+                            + "\n\n", 30, TimeUnit.SECONDS);
                 }
             }
         }
-        printer.print("\n", 30, TimeUnit.SECONDS);
+       // printer.print("\n", 30, TimeUnit.SECONDS);
         // Bitmap mBitmap = CodeUtils.createImage(bundle1.getName()+"&stock.picking&"+bundle1.getPicking_id(), 300, 300, null);
-        Bitmap mBitmap = CodeUtils.createImage(bundle1.getName(), 200, 200, null);
+        Bitmap mBitmap = CodeUtils.createImage(bundle1.getName(), 180, 180, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
         printer.print("\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
         printer.print("\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
@@ -892,5 +818,88 @@ public class SalesDetailActivity extends BaseActivity {
             e.printStackTrace();
             ToastUtils.showCommonToast(SalesDetailActivity.this, "链接异常,请检查设备或重新连接.." + e);
         }
+    }
+    /**
+     * 加载扫描的fragment
+     */
+    private void initFragment() {
+        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
+        final CaptureFragment captureFragment = new CaptureFragment();
+        CodeUtils.setFragmentArgs(captureFragment, R.layout.my_camera);
+        captureFragment.setAnalyzeCallback(new CodeUtils.AnalyzeCallback() {
+            @Override
+            public void onAnalyzeSuccess(Bitmap mBitmap, String result) {
+                HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+                objectObjectHashMap.put("default_code", result);
+                HashMap<Object, Object> objectObjectHashMap1 = new HashMap<>();
+                objectObjectHashMap1.put("condition", objectObjectHashMap);
+                Call<FindProductByConditionResponse> productByCondition = inventoryApi.findProductByCondition(objectObjectHashMap1);
+                showDefultProgressDialog();
+                productByCondition.enqueue(new Callback<FindProductByConditionResponse>() {
+                    @Override
+                    public void onResponse(Call<FindProductByConditionResponse> call, Response<FindProductByConditionResponse> response) {
+                        dismissDefultProgressDialog();
+                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
+                            String name = response.body().getResult().getRes_data().getProduct().getProduct_name();
+                            List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> data = salesDetailAdapter.getData();
+                            if (data == null) return;
+                            boolean isInit = false;
+                            int index = -1;
+                            for (int i = 0; i < data.size(); i++) {
+                                if (data.get(i).getProduct_id().getName().equals(name)) {
+                                    isInit = true;
+                                    index = i;
+                                }
+                            }
+                            if (isInit) {
+                                final GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids obj = data.get(index);
+                                final EditText editText = new EditText(SalesDetailActivity.this);
+                                final Integer qty_available = obj.getProduct_id().getQty_available();
+                                Integer product_qty = obj.getProduct_qty();
+                                Integer qty = qty_available >= product_qty ? product_qty : qty_available;
+                                editText.setText(qty + "");
+                                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                                AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(SalesDetailActivity.this, "输入" + obj.getProduct_id().getName() + "完成数量");
+                                dialog.setView(editText)
+                                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (Integer.parseInt(editText.getText().toString()) > qty_available) {
+                                                    Toast.makeText(SalesDetailActivity.this, "库存不足", Toast.LENGTH_SHORT).show();
+                                                    return;
+                                                }
+                                                obj.setQty_done(Integer.parseInt(editText.getText().toString()));
+                                                salesDetailAdapter.notifyDataSetChanged();
+                                            }
+                                        }).show();
+                            } else {
+                                ToastUtils.showCommonToast(SalesDetailActivity.this,
+                                        "该产品不在单据中");
+                            }
+
+
+                        } else {
+                            ToastUtils.showCommonToast(SalesDetailActivity.this,
+                                    response.body().getResult().getRes_data().getError());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<FindProductByConditionResponse> call, Throwable t) {
+                        dismissDefultProgressDialog();
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onAnalyzeFailed() {
+
+            }
+        });
+        fragmentTransaction.replace(R.id.framelayout, captureFragment);
+        fragmentTransaction.commit();
     }
 }

@@ -50,7 +50,7 @@ public class OKHttpFactory {
 //                .addNetworkInterceptor(new OnOffLineCachedInterceptor())
 
                 //失败重连
-//                .retryOnConnectionFailure(true)
+ //               .retryOnConnectionFailure(true)
                 //time out
                 .readTimeout(TIMEOUT_READ, TimeUnit.SECONDS)
                 .connectTimeout(TIMEOUT_CONNECTION, TimeUnit.SECONDS)

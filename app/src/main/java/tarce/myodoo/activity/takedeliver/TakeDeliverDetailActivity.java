@@ -455,25 +455,25 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         printer.setLineSpace(1);
         printer.print("仓库备注:\n\n\n" + "品检备注:\n\n\n" + "入库单号：" + resDataBean.getName() + "\n" + "源单据: " + resDataBean.getOrigin() + "\n" + "合作伙伴： " + resDataBean.getParnter_id(), 30, TimeUnit.SECONDS);
         if (userInfoBean != null) {
-            printer.print("\n" + "入库人：" + userInfoBean.getResult().getRes_data().getName() + "\n" +
+            printer.print("\n" + "账号：" + userInfoBean.getResult().getRes_data().getName() + "\n" +
                     "--------------------" + "\n", 30, TimeUnit.SECONDS);
         }
-        printer.print("产品名称        完成数量", 30, TimeUnit.SECONDS);
+        printer.print("产品名称         完成数量", 30, TimeUnit.SECONDS);
         for (int i = 0; i < resDataBean.getPack_operation_product_ids().size(); i++) {
             if (resDataBean.getPack_operation_product_ids().get(i).getPack_id() != -1) {
                 String name = resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getName();
-                if (name.length()>10){
-                    printer.print(name.substring(0, 8) + "     " +
+                if (name.length()>17){
+                    printer.print(name.substring(0, 15) + "     " +
                             resDataBean.getPack_operation_product_ids().get(i).getQty_done()
-                            + "\n"+name.substring(8, name.length())+"\n", 30, TimeUnit.SECONDS);
+                            + "\n"+name.substring(15, name.length())+"\n\n", 30, TimeUnit.SECONDS);
                 }else {
                     printer.print(name+ "     " +
                             resDataBean.getPack_operation_product_ids().get(i).getQty_done()
-                            + "\n", 30, TimeUnit.SECONDS);
+                            + "\n\n", 30, TimeUnit.SECONDS);
                 }
             }
         }
-        printer.print("\n", 30, TimeUnit.SECONDS);
+      //  printer.print("\n", 30, TimeUnit.SECONDS);
         Bitmap mBitmap = CodeUtils.createImage(resDataBean.getName(), 150, 150, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
         printer.print("\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
