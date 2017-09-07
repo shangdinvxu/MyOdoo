@@ -192,6 +192,9 @@
             android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity android:name=".activity.incentroy.SaveChangeActivity"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".activity.engineer.EngineerActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.engineer.ProjectDetailActivity"/>
     </application>
 
 </manifest>

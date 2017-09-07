@@ -5,6 +5,8 @@ import com.google.zxing.common.StringUtils;
 import java.io.Serializable;
 import java.util.List;
 
+import tarce.model.ErrorBean;
+
 /**
  * Created by rose.zou on 2017/6/2.
  * 等待品检返回的数据
@@ -20,6 +22,15 @@ public class QcFeedbaskBean {
     private String jsonrpc;
     private Object id;
     private ResultBean result;
+    private ErrorBean error;
+
+    public ErrorBean getError() {
+        return error;
+    }
+
+    public void setError(ErrorBean error) {
+        this.error = error;
+    }
 
     public String getJsonrpc() {
         return jsonrpc;

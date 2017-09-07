@@ -32,6 +32,7 @@ import tarce.model.inventory.GetNumProcess;
 import tarce.model.inventory.ProcessShowBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.ProcessListAdapter;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.AlertAialogUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
@@ -95,7 +96,12 @@ public class SelectProcedureActivity extends BaseActivity {
         processBeanCall.enqueue(new MyCallback<GetProcessBean>() {
             @Override
             public void onResponse(Call<GetProcessBean> call, Response<GetProcessBean> response) {
-                if (response.body() == null || response.body().getResult()==null)return;
+                if (response.body() == null)return;
+                if (response.body().getError()!=null){
+                    new TipDialog(SelectProcedureActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                     listSubBeen = response.body().getResult().getRes_data();
                     for (int i = 0; i < listSubBeen.size(); i++) {

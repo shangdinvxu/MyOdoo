@@ -182,8 +182,89 @@ public class GetNumProcess {
             private List<?> _$16;
             @SerializedName("17")
             private List<?> _$17;
+            @SerializedName("18")
+            private List<?> _$18;
+            @SerializedName("19")
+            private List<?> _$19;
+            @SerializedName("20")
+            private List<?> _$20;
+            @SerializedName("22")
+            private List<?> _$22;
             @SerializedName("23")
             private List<_$23Bean> _$23;
+            @SerializedName("24")
+            private List<_$24Bean> _$24;
+            @SerializedName("25")
+            private List<_$24Bean> _$25;
+            @SerializedName("26")
+            private List<_$24Bean> _$26;
+            @SerializedName("27")
+            private List<_$24Bean> _$27;
+
+            public List<?> get_$18() {
+                return _$18;
+            }
+
+            public void set_$18(List<?> _$18) {
+                this._$18 = _$18;
+            }
+
+            public List<?> get_$19() {
+                return _$19;
+            }
+
+            public void set_$19(List<?> _$19) {
+                this._$19 = _$19;
+            }
+
+            public List<?> get_$20() {
+                return _$20;
+            }
+
+            public void set_$20(List<?> _$20) {
+                this._$20 = _$20;
+            }
+
+
+            public List<?> get_$22() {
+                return _$22;
+            }
+
+            public void set_$22(List<?> _$22) {
+                this._$22 = _$22;
+            }
+
+            public List<_$24Bean> get_$25() {
+                return _$25;
+            }
+
+            public void set_$25(List<_$24Bean> _$25) {
+                this._$25 = _$25;
+            }
+
+            public List<_$24Bean> get_$26() {
+                return _$26;
+            }
+
+            public void set_$26(List<_$24Bean> _$26) {
+                this._$26 = _$26;
+            }
+
+            public List<_$24Bean> get_$27() {
+                return _$27;
+            }
+
+            public void set_$27(List<_$24Bean> _$27) {
+                this._$27 = _$27;
+            }
+
+            public List<_$24Bean> get_$24() {
+                return _$24;
+            }
+
+            public void set_$24(List<_$24Bean> _$24) {
+                this._$24 = _$24;
+            }
 
             public List<_$23Bean> get_$23() {
                 return _$23;
@@ -274,8 +355,209 @@ public class GetNumProcess {
                 this._$17 = _$17;
             }
 
+            public static class _$27Bean {
+                /**
+                 * count : 2
+                 * state : delay
+                 */
 
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$26Bean {
+                /**
+                 * count : 2
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$25Bean {
+                /**
+                 * count : 2
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$22Bean {
+                /**
+                 * count : 2
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
             public static class _$21Bean {
+                /**
+                 * count : 2
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+
+            public static class _$20Bean {
+                /**
+                 * count : 2
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$24Bean {
+                /**
+                 * count : 2
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+
+            public static class _$19Bean {
+                /**
+                 * count : 2
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$18Bean {
                 /**
                  * count : 2
                  * state : delay
@@ -578,6 +860,156 @@ public class GetNumProcess {
                 }
             }
             public static class _$11Bean {
+                /**
+                 * count : 12
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$12Bean {
+                /**
+                 * count : 12
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$13Bean {
+                /**
+                 * count : 12
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$14Bean {
+                /**
+                 * count : 12
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$15Bean {
+                /**
+                 * count : 12
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$16Bean {
+                /**
+                 * count : 12
+                 * state : delay
+                 */
+
+                private int count;
+                private String state;
+
+                public int getCount() {
+                    return count;
+                }
+
+                public void setCount(int count) {
+                    this.count = count;
+                }
+
+                public String getState() {
+                    return state;
+                }
+
+                public void setState(String state) {
+                    this.state = state;
+                }
+            }
+            public static class _$17Bean {
                 /**
                  * count : 12
                  * state : delay

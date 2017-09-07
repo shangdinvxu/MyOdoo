@@ -2,6 +2,8 @@ package tarce.model.inventory;
 
 import java.util.List;
 
+import tarce.model.ErrorBean;
+
 /**
  * Created by rose.zou on 2017/6/7.
  * 提交备料信息

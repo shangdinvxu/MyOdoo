@@ -59,6 +59,7 @@ import tarce.myodoo.adapter.product.WorkPersonAdapter;
 import tarce.myodoo.adapter.product.WorkingPersonAdapter;
 import tarce.myodoo.bean.WorkingStateBean;
 import tarce.myodoo.device.Const;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
@@ -236,8 +237,13 @@ public class AddPersonActivity extends BaseActivity {
             @Override
             public void onResponse(Call<WorkingWorkerBean> call, Response<WorkingWorkerBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null && response.body().getResult().getRes_data() == null)
+                if (response.body() == null)
                     return;
+                if (response.body().getError()!=null){
+                    new TipDialog(AddPersonActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     res_dataTwo = response.body().getResult().getRes_data();
                     for (int i = 0; i < res_dataTwo.size(); i++) {
@@ -284,7 +290,12 @@ public class AddPersonActivity extends BaseActivity {
             @Override
             public void onResponse(Call<FreeWorkBean> call, Response<FreeWorkBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body() == null) return;
+                if(response.body().getError()!=null){
+                    new TipDialog(AddPersonActivity.this, R.style.MyDialogStyle,response.body().getError().getData().getMessage())
+                    .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     res_data = response.body().getResult().getRes_data();
                     map = new HashMap<>();
@@ -409,6 +420,11 @@ public class AddPersonActivity extends BaseActivity {
             public void onResponse(Call<AddworkBean> call, Response<AddworkBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(AddPersonActivity.this, R.style.MyDialogStyle,response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     if (close) {
                         adapterList.clear();
@@ -452,6 +468,11 @@ public class AddPersonActivity extends BaseActivity {
                             public void onResponse(Call<StartProductBean> call, Response<StartProductBean> response) {
                                 dismissDefultProgressDialog();
                                 if (response.body() == null) return;
+                                if (response.body().getError()!=null){
+                                    new TipDialog(AddPersonActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                            .show();
+                                    return;
+                                }
                                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                                     Intent intent = new Intent(AddPersonActivity.this, WaitProdListActivity.class);
                                     intent.putExtra("state_delay", name_activity);
@@ -489,6 +510,11 @@ public class AddPersonActivity extends BaseActivity {
             @Override
             public void onResponse(Call<ChangeStateBean> call, Response<ChangeStateBean> response) {
                 if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(AddPersonActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     adapterList.set(position, new WorkingStateBean(adapterList.get(position).getName(), state));
                     personAdapter.notifyItemChanged(position);

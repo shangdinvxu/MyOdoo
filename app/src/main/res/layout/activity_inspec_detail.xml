@@ -175,7 +175,6 @@
                     android:background="@drawable/bac_inspect_edit"
                     android:gravity="top"
                     android:hint="点击输入品检批注"
-                    android:inputType="text"
                     android:padding="5dp" />
             </LinearLayout>
             <android.support.v7.widget.RecyclerView

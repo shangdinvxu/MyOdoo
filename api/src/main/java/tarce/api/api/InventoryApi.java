@@ -69,6 +69,11 @@ import tarce.model.inventory.WorkingWorkerBean;
 
 public interface InventoryApi {
     /**
+     * 获取工程领料列表
+     * */
+    @POST("get_picking_material_request")
+    Call<NewSaleListBean> getPickrequest(@Body HashMap hashMap);
+    /**
      * 扫描后更改的库存内容提交
      * */
     @POST("create_stock_inventory")

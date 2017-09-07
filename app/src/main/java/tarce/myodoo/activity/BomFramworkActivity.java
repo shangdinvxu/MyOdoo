@@ -30,6 +30,7 @@ import tarce.myodoo.adapter.expand.LastItem;
 import tarce.myodoo.adapter.expand.SevenItem;
 import tarce.myodoo.adapter.expand.SixItem;
 import tarce.myodoo.adapter.expand.WorkerItem;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
@@ -79,7 +80,12 @@ public class BomFramworkActivity extends BaseActivity {
             @Override
             public void onResponse(final Call<BomFramworkBean> call, Response<BomFramworkBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null)return;
+                if (response.body() == null)return;
+                if (response.body().getError()!=null){
+                    new TipDialog(BomFramworkActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                     final BomFramworkBean.ResultBean.ResDataBean res_data = response.body().getResult().getRes_data();
                     mCompanylist = new ArrayList<>();

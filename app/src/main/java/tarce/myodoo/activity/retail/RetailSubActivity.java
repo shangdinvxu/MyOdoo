@@ -19,7 +19,10 @@ import tarce.api.api.InventoryApi;
 import tarce.model.inventory.RetailSubBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
+import tarce.myodoo.activity.inspect.InspectMoDetailActivity;
+import tarce.myodoo.activity.inspect.InspectionSubActivity;
 import tarce.myodoo.adapter.retail.RetailSubAdapter;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.MyLog;
 
 /**
@@ -55,6 +58,11 @@ public class RetailSubActivity extends BaseActivity {
             public void onResponse(Call<RetailSubBean> call, Response<RetailSubBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null)return;
+                if (response.body().getError()!=null){
+                    new TipDialog(RetailSubActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                     res_data = response.body().getResult().getRes_data();
                     subAdapter = new RetailSubAdapter(R.layout.adapter_retailsub, res_data);

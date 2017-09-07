@@ -2,6 +2,8 @@ package tarce.model.inventory;
 
 import java.util.List;
 
+import tarce.model.ErrorBean;
+
 /**
  * Created by rose.zou on 2017/5/18.
  * 当点击某个工序，请求的接口
@@ -18,6 +20,15 @@ public class ProcessDeatilBean{
     private String jsonrpc;
     private Object id;
     private ResultBean result;
+    private ErrorBean error;
+
+    public ErrorBean getError() {
+        return error;
+    }
+
+    public void setError(ErrorBean error) {
+        this.error = error;
+    }
 
     public String getJsonrpc() {
         return jsonrpc;

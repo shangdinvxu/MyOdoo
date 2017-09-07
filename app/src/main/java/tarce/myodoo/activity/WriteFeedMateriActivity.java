@@ -178,7 +178,12 @@ public class WriteFeedMateriActivity extends BaseActivity {
                 @Override
                 public void onResponse(Call<GetReturnMaterBean> call, Response<GetReturnMaterBean> response) {
                     dismissDefultProgressDialog();
-                    if (response.body() == null || response.body().getResult() == null) return;
+                    if (response.body() == null) return;
+                    if (response.body().getError()!=null){
+                        new TipDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                .show();
+                        return;
+                    }
                     if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                         res_data = response.body().getResult().getRes_data();
                         for (int i = 0; i < res_data.size(); i++) {
@@ -312,7 +317,9 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                                                                     .setTip(response.body().getError().getData().getMessage())
                                                                                     .setCancelVisi().show();
                                                                             threadDismiss(nfCdialog);
-                                                                        } else if (response.body().getResult() != null && response.body().getResult().getRes_code() == -1) {
+                                                                            return;
+                                                                        }
+                                                                        if (response.body().getResult() != null && response.body().getResult().getRes_code() == -1) {
                                                                             nfCdialog.setHeaderImage(R.drawable.warning)
                                                                                     .setTip(response.body().getResult().getRes_data().getErrorX())
                                                                                     .setCancelVisi().show();

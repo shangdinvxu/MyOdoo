@@ -22,6 +22,7 @@ import tarce.model.inventory.ProcessDeatilBean;
 import tarce.model.inventory.ProcessShowBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.ProcessDetailAdapter;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.ToolBarActivity;
 
 /**
@@ -53,7 +54,7 @@ public class ShowProcessActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (beanList == null){
+        if (beanList == null) {
             getDetailDelay();
         }
     }
@@ -61,7 +62,7 @@ public class ShowProcessActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (beanList != null){
+        if (beanList != null) {
             beanList = null;
         }
     }
@@ -93,8 +94,13 @@ public class ShowProcessActivity extends BaseActivity {
             @Override
             public void onResponse(Call<ProcessDeatilBean> call, Response<ProcessDeatilBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null) return;
-                if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1) {
+                if (response.body() == null) return;
+                if (response.body().getError() != null) {
+                    new TipDialog(ShowProcessActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
+                if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                     for (int i = 0; i < response.body().getResult().getRes_data().size(); i++) {
                         if (response.body().getResult().getRes_data().get(i).getState().equals("delay")) {
                             beanList.set(0, new ProcessShowBean("延误", response.body().getResult().getRes_data().get(i).getCount()));
@@ -130,7 +136,7 @@ public class ShowProcessActivity extends BaseActivity {
                 }
                 Intent intent = new Intent(ShowProcessActivity.this, MaterialDetailActivity.class);
                 intent.putExtra("process_id", delay_num);
-                intent.putExtra("state",beanList.get(position).getProcess_name());
+                intent.putExtra("state", beanList.get(position).getProcess_name());
                 intent.putExtra("limit", beanList.get(position).getProcess_num());
                 startActivity(intent);
             }

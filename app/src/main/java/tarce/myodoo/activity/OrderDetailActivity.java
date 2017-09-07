@@ -287,7 +287,12 @@ public class OrderDetailActivity extends ToolBarActivity {
             factroyRemark.enqueue(new MyCallback<GetFactroyRemarkBean>() {
                 @Override
                 public void onResponse(Call<GetFactroyRemarkBean> call, Response<GetFactroyRemarkBean> response) {
-                    if (response == null || response.body().getResult() == null) return;
+                    if (response.body() == null) return;
+                    if (response.body().getError()!=null){
+                        new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                .show();
+                        return;
+                    }
                     if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                         String remark = response.body().getResult().getRes_data().getFactory_mark();
                         new InsertFeedbackDial(OrderDetailActivity.this, R.style.MyDialogStyle, new InsertFeedbackDial.OnSendCommonClickListener() {
@@ -509,7 +514,12 @@ public class OrderDetailActivity extends ToolBarActivity {
             @Override
             public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     result = response.body().getResult();
                     resDataBean = response.body().getResult().getRes_data();
@@ -577,7 +587,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                                         .setTip(response.body().getError().getData().getMessage())
                                                                         .setCancelVisi().show();
                                                                 threadDismiss(nfCdialog);
-                                                            } else if (response.body().getResult() != null && response.body().getResult().getRes_code() == -1) {
+                                                                return;
+                                                            }
+                                                            if (response.body().getResult() != null && response.body().getResult().getRes_code() == -1) {
                                                                 nfCdialog.setHeaderImage(R.drawable.warning)
                                                                         .setTip(response.body().getResult().getRes_data().getErrorX())
                                                                         .setCancelVisi().show();
@@ -588,8 +600,13 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                                         .setTip(res_data.getName() + res_data.getEmployee_id() + "\n" + res_data.getWork_email()
                                                                                 + "\n\n" + "打卡成功")
                                                                         .setCancelVisi().show();
-                                                                //  threadDismiss(nfCdialog);
-                                                                // showDefultProgressDialog();
+                                                                new Handler().postDelayed(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        nfCdialog.dismiss();
+                                                                    }
+                                                                }, 500);
+                                                                showDefultProgressDialog();
                                                                 HashMap<Object, Object> hashMap = new HashMap<>();
                                                                 hashMap.put("order_id", order_id);
                                                                 hashMap.put("employee_id",res_data.getEmployee_id());
@@ -602,14 +619,15 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                                 objectCall.enqueue(new Callback<OrderDetailBean>() {
                                                                     @Override
                                                                     public void onResponse(final Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
-                                                                        threadDismiss(nfCdialog);
-                                                                        //   dismissDefultProgressDialog();
+                                                                        //threadDismiss(nfCdialog);
+                                                                        dismissDefultProgressDialog();
                                                                         if (response.body() == null ) return;
                                                                         if (response.body().getError()!=null){
-                                                                            ToastUtils.showCommonToast(OrderDetailActivity.this, response.body().getError().getData().getMessage());
+                                                                            new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                                                                    .show();
                                                                             return;
                                                                         }
-                                                                        if (response.body().getResult().getRes_code() == 1) {
+                                                                        if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1) {
                                                                             runOnUiThread(new Runnable() {
                                                                                 @Override
                                                                                 public void run() {
@@ -642,13 +660,15 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                                                     }
                                                                                 }
                                                                             });
+                                                                        } else if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == -1) {
+                                                                            ToastUtils.showCommonToast(OrderDetailActivity.this, response.body().getResult().getRes_data().getError());
                                                                         }
                                                                     }
 
                                                                     @Override
                                                                     public void onFailure(Call<OrderDetailBean> call, Throwable t) {
-                                                                        //  dismissDefultProgressDialog();
-                                                                        threadDismiss(nfCdialog);
+                                                                          dismissDefultProgressDialog();
+                                                                        //threadDismiss(nfCdialog);
                                                                     }
                                                                 });
                                                             }
@@ -698,8 +718,13 @@ public class OrderDetailActivity extends ToolBarActivity {
                                 @Override
                                 public void onResponse(final Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
                                     dismissDefultProgressDialog();
-                                    if (response.body() == null || response.body().getResult() == null)
+                                    if (response.body() == null)
                                         return;
+                                    if (response.body().getError()!=null){
+                                        new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                                .show();
+                                        return;
+                                    }
                                     if (response.body().getResult().getRes_code() == 1) {
                                         runOnUiThread(new Runnable() {
                                             @Override
@@ -964,8 +989,13 @@ public class OrderDetailActivity extends ToolBarActivity {
                                         @Override
                                         public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                             dismissDefultProgressDialog();
-                                            if (response.body() == null || response.body().getResult() == null)
+                                            if (response.body() == null)
                                                 return;
+                                            if (response.body().getError()!=null){
+                                                new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                                        .show();
+                                                return;
+                                            }
                                             if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                                                 resDataBean = response.body().getResult().getRes_data();
                                                 initView();
@@ -1262,7 +1292,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getError()!=null){
-                    ToastUtils.showCommonToast(OrderDetailActivity.this, response.body().getError().getData().getMessage());
+                    new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
                     return;
                 }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {

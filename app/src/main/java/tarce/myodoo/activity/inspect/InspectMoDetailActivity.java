@@ -314,8 +314,12 @@ public class InspectMoDetailActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<StartInspectBean> call, Response<StartInspectBean> response) {
                         dismissDefultProgressDialog();
-                        if (response.body() == null || response.body().getResult() == null) return;
-                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() !=null) {
+                        if (response.body() == null) return;
+                        if (response.body().getError()!=null){
+                            ToastUtils.showCommonToast(InspectMoDetailActivity.this, response.body().getError().getData().getMessage());
+                            return;
+                        }
+                        if (response.body().getResult().getRes_data() !=null && response.body().getResult().getRes_code() == 1) {
                             AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "")
                                     .setMessage("该单据状态变为品检中")
                                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -399,7 +403,9 @@ public class InspectMoDetailActivity extends BaseActivity {
                                                             .setTip(response.body().getError().getData().getMessage())
                                                             .setCancelVisi().show();
                                                     threadDismiss(nfCdialog);
-                                                } else if (response.body().getResult() != null && response.body().getResult().getRes_code() == -1) {
+                                                    return;
+                                                }
+                                                if (response.body().getResult() != null && response.body().getResult().getRes_code() == -1) {
                                                     nfCdialog.setHeaderImage(R.drawable.warning)
                                                             .setTip(response.body().getResult().getRes_data().getErrorX())
                                                             .setCancelVisi().show();
@@ -503,7 +509,12 @@ public class InspectMoDetailActivity extends BaseActivity {
                 objectCall2.enqueue(new MyCallback<StartReworkBean>() {
                     @Override
                     public void onResponse(Call<StartReworkBean> call, Response<StartReworkBean> response) {
-                        if (response.body() == null || response.body().getResult()==null) return;
+                        if (response.body() == null) return;
+                        if (response.body().getError()!=null){
+                            new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                    .show();
+                            return;
+                        }
                         if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                             AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "该单据开始返工")
                                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -515,7 +526,7 @@ public class InspectMoDetailActivity extends BaseActivity {
                                             finish();
                                         }
                                     }).show();
-                        } else if (response.body().getResult().getRes_code() == -1) {
+                        } else if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == -1) {
                             ToastUtils.showCommonToast(InspectMoDetailActivity.this, response.body().getResult().getRes_data().getError());
                         }
                     }
@@ -635,7 +646,8 @@ public class InspectMoDetailActivity extends BaseActivity {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getError()!=null){
-                    ToastUtils.showCommonToast(InspectMoDetailActivity.this, "访问出错,或许有安全限制，请联系管理员");
+                    new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
                     return;
                 }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {

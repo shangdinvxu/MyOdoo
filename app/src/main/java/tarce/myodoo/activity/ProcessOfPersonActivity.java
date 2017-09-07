@@ -22,6 +22,7 @@ import tarce.model.inventory.ProcessShowBean;
 import tarce.model.inventory.ProductProcessBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.ProcessListAdapter;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
@@ -78,7 +79,12 @@ public class ProcessOfPersonActivity extends BaseActivity {
             @Override
             public void onResponse(Call<ProductProcessBean> call, Response<ProductProcessBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null)return;
+                if (response.body() == null)return;
+                if (response.body().getError()!=null){
+                    new TipDialog(ProcessOfPersonActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null){
                     res_data = response.body().getResult().getRes_data();
                     for (int i = 0; i < res_data.size(); i++) {

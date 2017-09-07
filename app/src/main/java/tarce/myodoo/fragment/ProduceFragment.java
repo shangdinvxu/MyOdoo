@@ -32,6 +32,7 @@ import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.GetPickNumActivity;
 import tarce.myodoo.activity.ProcessOfPersonActivity;
+import tarce.myodoo.activity.engineer.EngineerActivity;
 import tarce.myodoo.activity.engineer.ProjectActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.adapter.product.ProduceRednumAdapter;
@@ -76,8 +77,6 @@ public class ProduceFragment extends Fragment {
         list.add(new MainItemBean(new MenuBean("等待返工", 0)));
         list.add(new MainItemBean(new MenuBean("返工中", 0)));
         list.add(new MainItemBean(new MenuBean("已完成", 0)));
-        list.add(new MainItemBean(true,""));
-        list.add(new MainItemBean(new MenuBean("工程领料", 0)));
         /*list = new ArrayList<>();
         list.add(new MenuBean("领料", 0));
         list.add(new MenuBean("等待生产", 0));
@@ -207,7 +206,7 @@ public class ProduceFragment extends Fragment {
         sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (position == 3 || position == 11){
+                if (position == 3){
                     return;
                 }
                 String name = list.get(position).t.getName();
@@ -247,9 +246,9 @@ public class ProduceFragment extends Fragment {
                     case "已完成":
                         IntentFactory.start_ProducLl_Activity(getActivity(), "已完成", "done");
                         break;
-                    case "工程领料":
-                        Intent intent4 = new Intent(getActivity(), ProjectActivity.class);
-                        startActivity(intent4);
+//                    case "工程领料":
+//                        Intent intent4 = new Intent(getActivity(), EngineerActivity.class);
+//                        startActivity(intent4);
                 }
             }
         });

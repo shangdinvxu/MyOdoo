@@ -31,6 +31,10 @@ public class TimeUtils {
      * @return
      */
     public static String utc2Local(String utcTime) {
+        if (utcFormater == null)
+        utcFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//UTC时间格式
+        if (localFormater == null)
+        localFormater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//当地时间格式
 
         utcFormater.setTimeZone(TimeZone.getTimeZone("UTC"));
         Date gpsUTCDate = null;

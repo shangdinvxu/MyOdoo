@@ -263,7 +263,12 @@ public class WriteCheckMessaActivity extends BaseActivity {
             @Override
             public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null)return;
+                if (response.body() == null)return;
+                if (response.body().getError()!=null){
+                    new TipDialog(WriteCheckMessaActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1){
                     resDataBean = response.body().getResult().getRes_data();
                     if ("allno".equals(is_all) || "part".equals(is_all)){
@@ -333,7 +338,12 @@ public class WriteCheckMessaActivity extends BaseActivity {
             @Override
             public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(WriteCheckMessaActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                     if (state_for.equals("reject")) {
                         ToastUtils.showCommonToast(WriteCheckMessaActivity.this, "退回成功");
@@ -406,7 +416,12 @@ public class WriteCheckMessaActivity extends BaseActivity {
             @Override
             public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(WriteCheckMessaActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                     if ("qc_ok".equals(state_for)) {
                         new TipDialog(WriteCheckMessaActivity.this, R.style.MyDialogStyle, "品检通过,等待采购检验")

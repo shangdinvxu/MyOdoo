@@ -2,6 +2,8 @@ package tarce.model.inventory;
 
 import java.util.List;
 
+import tarce.model.ErrorBean;
+
 /**
  * Created by zws on 2017/8/10.
  */
@@ -16,6 +18,15 @@ public class NewSaleListBean {
     private String jsonrpc;
     private Object id;
     private ResultBean result;
+    private ErrorBean error;
+
+    public ErrorBean getError() {
+        return error;
+    }
+
+    public void setError(ErrorBean error) {
+        this.error = error;
+    }
 
     public String getJsonrpc() {
         return jsonrpc;
@@ -171,6 +182,15 @@ public class NewSaleListBean {
                 private Object delivery_rule;
                 private int picking_id;
                 private List<PackOperationProductIdsBean> pack_operation_product_ids;
+                private String partner_id;
+
+                public String getPartner_id() {
+                    return partner_id;
+                }
+
+                public void setPartner_id(String partner_id) {
+                    this.partner_id = partner_id;
+                }
 
                 public Object getDelivery_rule() {
                     if (delivery_rule == null){

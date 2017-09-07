@@ -21,6 +21,7 @@ import tarce.model.inventory.InventroyDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
 import tarce.myodoo.adapter.inventroy.InventroyDetailAdapter;
+import tarce.support.ToastUtils;
 
 /**
  * Created by zouzou on 2017/7/4.
@@ -58,7 +59,11 @@ public class InventroyListActivity extends BaseActivity {
             @Override
             public void onResponse(Call<InventroyDetailBean> call, Response<InventroyDetailBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult()== null)return;
+                if (response.body() == null)return;
+                if (response.body().getError()!=null){
+                    ToastUtils.showCommonToast(InventroyListActivity.this, response.body().getError().getData().getMessage());
+                    return;
+                }
                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                     List<InventroyDetailBean.ResultBean.ResDataBean.LineIdsBean> line_ids = response.body().getResult().getRes_data().getLine_ids();
                     detailAdapter = new InventroyDetailAdapter(R.layout.adapter_detaildeleive, line_ids);

@@ -22,6 +22,7 @@ import tarce.model.inventory.ProcessDeatilBean;
 import tarce.model.inventory.ProcessShowBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.ProcessDetailAdapter;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
@@ -70,7 +71,12 @@ public class GetPickNumActivity extends BaseActivity {
             @Override
             public void onResponse(Call<ProcessDeatilBean> call, Response<ProcessDeatilBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(GetPickNumActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null) {
                     for (int i = 0; i < response.body().getResult().getRes_data().size(); i++) {
                         if (response.body().getResult().getRes_data().get(i).getState().equals("delay")) {

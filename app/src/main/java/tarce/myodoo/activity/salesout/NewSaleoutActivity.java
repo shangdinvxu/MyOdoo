@@ -27,6 +27,7 @@ import tarce.myodoo.activity.BaseActivity;
 import tarce.myodoo.adapter.NewSaleCustomAdapter;
 import tarce.myodoo.adapter.SalesStatesAdapter;
 import tarce.myodoo.greendaoUtils.ContactBeanUtils;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ViewUtils;
@@ -106,7 +107,12 @@ public class NewSaleoutActivity extends BaseActivity {
             @Override
             public void onResponse (Call < NewSaleBean > call, Response< NewSaleBean > response){
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(NewSaleoutActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1){
                     beanList = response.body().getResult().getRes_data();
                     salesStatesAdapter = new SalesStatesAdapter(R.layout.item_sale_new, beanList);

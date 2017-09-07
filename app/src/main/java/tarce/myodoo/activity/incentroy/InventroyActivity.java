@@ -30,6 +30,7 @@ import tarce.model.inventory.InventroyResultBean;
 import tarce.myodoo.R;
 import tarce.myodoo.adapter.inventroy.InventroyAdapter;
 import tarce.support.MyLog;
+import tarce.support.ToastUtils;
 
 /**
  * Created by zouzou on 2017/7/4.
@@ -87,6 +88,10 @@ public class InventroyActivity extends AppCompatActivity {
             public void onResponse(Call<InventroyResultBean> call, Response<InventroyResultBean> response) {
                 progressDialog.dismiss();
                 if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    ToastUtils.showCommonToast(InventroyActivity.this, response.body().getError().getData().getMessage());
+                    return;
+                }
                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                     res_data = response.body().getResult().getRes_data();
                     inventroyAdapter = new InventroyAdapter(R.layout.adapter_inventroy, res_data);

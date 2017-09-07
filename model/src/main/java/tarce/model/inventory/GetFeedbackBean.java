@@ -2,6 +2,8 @@ package tarce.model.inventory;
 
 import java.util.List;
 
+import tarce.model.ErrorBean;
+
 /**
  * Created by zouzou on 2017/6/22.
  * 获取备料反馈原因
@@ -17,6 +19,15 @@ public class GetFeedbackBean {
     private String jsonrpc;
     private Object id;
     private ResultBean result;
+    private ErrorBean error;
+
+    public ErrorBean getError() {
+        return error;
+    }
+
+    public void setError(ErrorBean error) {
+        this.error = error;
+    }
 
     public String getJsonrpc() {
         return jsonrpc;

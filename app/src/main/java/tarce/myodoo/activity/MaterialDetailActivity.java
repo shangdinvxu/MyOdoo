@@ -28,6 +28,7 @@ import tarce.myodoo.R;
 import tarce.myodoo.adapter.processproduct.PrepareMdAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.DateTool;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
@@ -129,12 +130,17 @@ public class MaterialDetailActivity extends BaseActivity {
         dataBeanList = new ArrayList<>();
         mainMdBeen = new ArrayList<>();
         inventoryApi = RetrofitClient.getInstance(MaterialDetailActivity.this).create(InventoryApi.class);
-        Call<MaterialDetailBean> recentOr = inventoryApi.getRecentOr(hashMap);
+        final Call<MaterialDetailBean> recentOr = inventoryApi.getRecentOr(hashMap);
         recentOr.enqueue(new MyCallback<MaterialDetailBean>() {
             @Override
             public void onResponse(Call<MaterialDetailBean> call, Response<MaterialDetailBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult()==null) return;
+                if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(MaterialDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1) {
                     dataBeanList = response.body().getResult().getRes_data();
                     mainMdBeen.add(new MainMdBean(true, ""));

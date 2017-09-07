@@ -190,8 +190,9 @@ public class PhotoAreaActivity extends ToolBarActivity {
                         @Override
                         public void onResponse(Call<AreaMessageBean> call, Response<AreaMessageBean> response) {
                             if (response.body() == null) return;
-                            if (response.body().getResult() == null) {
-                                ToastUtils.showCommonToast(PhotoAreaActivity.this, "没有返回数据");
+                            if (response.body().getError() != null) {
+                                new TipDialog(PhotoAreaActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                        .show();
                                 return;
                             }
                             if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
@@ -377,7 +378,12 @@ public class PhotoAreaActivity extends ToolBarActivity {
             public void onResponse(Call<FinishPrepareMaBean> call, Response<FinishPrepareMaBean> response) {
                 tvFinishOrder.setEnabled(true);
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(PhotoAreaActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     new TipDialog(PhotoAreaActivity.this, R.style.MyDialogStyle, "提交位置信息成功,点击确定将打印MO单，请等待")
                             .setTrue(new View.OnClickListener() {

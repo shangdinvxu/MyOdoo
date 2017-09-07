@@ -50,6 +50,7 @@ import tarce.myodoo.device.Const;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.InsertNumDialog;
 import tarce.myodoo.uiutil.NFCdialog;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
@@ -193,7 +194,9 @@ public class BuGetLiaoActivity extends BaseActivity {
                                                                             .setTip(response.body().getError().getData().getMessage())
                                                                             .setCancelVisi().show();
                                                                     threadDismiss(nfCdialog);
-                                                                } else if (response.body().getResult() != null && response.body().getResult().getRes_code() == -1) {
+                                                                    return;
+                                                                }
+                                                                if (response.body().getResult() != null && response.body().getResult().getRes_code() == -1) {
                                                                     nfCdialog.setHeaderImage(R.drawable.warning)
                                                                             .setTip(response.body().getResult().getRes_data().getErrorX())
                                                                             .setCancelVisi().show();
@@ -304,8 +307,13 @@ public class BuGetLiaoActivity extends BaseActivity {
                                     @Override
                                     public void onResponse(Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
                                         dismissDefultProgressDialog();
-                                        if (response.body() == null || response.body().getResult() == null)
+                                        if (response.body() == null)
                                             return;
+                                        if (response.body().getError()!=null){
+                                            new TipDialog(BuGetLiaoActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                            .show();
+                                            return;
+                                        }
                                         if (response.body().getResult().getRes_code() == 1) {
                                             runOnUiThread(new Runnable() {
                                                 @Override

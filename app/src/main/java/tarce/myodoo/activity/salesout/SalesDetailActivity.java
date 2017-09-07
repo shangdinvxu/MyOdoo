@@ -211,7 +211,7 @@ public class SalesDetailActivity extends BaseActivity {
         for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
             GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids productIds = bundle1.getPack_operation_product_ids().get(i);
             if (productIds.getPack_id() != -1) {
-                Integer qty = productIds.getProduct_id().getQty_available() >= productIds.getProduct_qty() ? productIds.getProduct_qty() : productIds.getProduct_id().getQty_available();
+                Integer qty = productIds.getProduct_id().getQty_available() >= productIds.getProduct_qty() ? productIds.getProduct_qty() : StringUtils.doubleToInt(productIds.getProduct_id().getQty_available());
                 productIds.setQty_done(qty );
                 salesDetailAdapter.notifyDataSetChanged();
             }
@@ -226,7 +226,7 @@ public class SalesDetailActivity extends BaseActivity {
                         (GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids) adapter.getData().get(position);
                 if (obj.getPack_id() == -1) return;
                 final EditText editText = new EditText(SalesDetailActivity.this);
-                final Integer qty_available = obj.getProduct_id().getQty_available();
+                final Integer qty_available = StringUtils.doubleToInt(obj.getProduct_id().getQty_available());
                 Integer product_qty = obj.getProduct_qty();
                 Integer qty = qty_available >= product_qty ? product_qty : qty_available;
                 editText.setText(qty + "");
@@ -239,9 +239,9 @@ public class SalesDetailActivity extends BaseActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 int keyong;
                                 if (bundle1.getState().equals("done") || bundle1.getState().equals("cancel")) {
-                                    keyong = obj.getProduct_id().getQty_available()-StringUtils.doubleToInt(obj.getReserved_qty());
+                                    keyong = StringUtils.doubleToInt(obj.getProduct_id().getQty_available())-StringUtils.doubleToInt(obj.getReserved_qty());
                                 } else {
-                                    keyong = obj.getProduct_id().getQty_available()-StringUtils.doubleToInt(obj.getReserved_qty())-obj.getQty_done();
+                                    keyong = StringUtils.doubleToInt(obj.getProduct_id().getQty_available())-StringUtils.doubleToInt(obj.getReserved_qty())-obj.getQty_done();
                                 }
                                 if (Integer.parseInt(editText.getText().toString()) > keyong) {
                                     Toast.makeText(SalesDetailActivity.this, "库存不足", Toast.LENGTH_SHORT).show();
@@ -305,7 +305,7 @@ public class SalesDetailActivity extends BaseActivity {
         for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
             GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids productIds = bundle1.getPack_operation_product_ids().get(i);
             if (productIds.getPack_id() != -1) {
-                Integer qty = productIds.getProduct_id().getQty_available() >= productIds.getProduct_qty() ? productIds.getProduct_qty() : productIds.getProduct_id().getQty_available();
+                Integer qty = productIds.getProduct_id().getQty_available() >= productIds.getProduct_qty() ? productIds.getProduct_qty() : StringUtils.doubleToInt(productIds.getProduct_id().getQty_available());
                 String name = productIds.getProduct_id().getName();
                 if (name.length() > 17) {
                     printer.print(name.substring(0, 15) + "       " +
@@ -544,8 +544,13 @@ public class SalesDetailActivity extends BaseActivity {
                         @Override
                         public void onResponse(Call<GetSaleResponse> call, Response<GetSaleResponse> response) {
                             dismissDefultProgressDialog();
-                            if (response.body() == null || response.body().getResult() == null)
+                            if (response.body() == null)
                                 return;
+                            if (response.body().getError()!=null){
+                                new TipDialog(SalesDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                        .show();
+                                return;
+                            }
                             if (response.body().getResult().getRes_code() == 1) {
                                 Toast.makeText(SalesDetailActivity.this, "物流信息上传成功!", Toast.LENGTH_LONG).show();
                             } else {
@@ -855,7 +860,7 @@ public class SalesDetailActivity extends BaseActivity {
                             if (isInit) {
                                 final GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids obj = data.get(index);
                                 final EditText editText = new EditText(SalesDetailActivity.this);
-                                final Integer qty_available = obj.getProduct_id().getQty_available();
+                                final Integer qty_available = StringUtils.doubleToInt(obj.getProduct_id().getQty_available());
                                 Integer product_qty = obj.getProduct_qty();
                                 Integer qty = qty_available >= product_qty ? product_qty : qty_available;
                                 editText.setText(qty + "");

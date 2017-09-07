@@ -31,9 +31,11 @@ import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.CustomerSaleBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.engineer.ProjectActivity;
 import tarce.myodoo.adapter.NewSaleCustomAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ViewUtils;
@@ -158,7 +160,12 @@ public class NewSaleActivity extends Activity {
             @Override
             public void onResponse(Call<CustomerSaleBean> call, Response<CustomerSaleBean> response) {
                 progressDialog.dismiss();
-                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(NewSaleActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1) {
                     res_data = response.body().getResult().getRes_data();
                 /*if (move == Refresh_Move){
@@ -223,7 +230,12 @@ public class NewSaleActivity extends Activity {
             @Override
             public void onResponse(Call<CustomerSaleBean> call, Response<CustomerSaleBean> response) {
                 progressDialog.dismiss();
-                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(NewSaleActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1) {
                     final List<CustomerSaleBean.ResultBean.ResDataBean> data = response.body().getResult().getRes_data();
                     if (newSaleCustomAdapter != null) {

@@ -5,6 +5,8 @@ import com.zaihuishou.expandablerecycleradapter.model.ExpandableListItem;
 
 import java.util.List;
 
+import tarce.model.ErrorBean;
+
 /**
  * Created by rose.zou on 2017/6/6.
  * bom结构数据
@@ -20,6 +22,15 @@ public class BomFramworkBean{
     private String jsonrpc;
     private Object id;
     private ResultBean result;
+    private ErrorBean error;
+
+    public ErrorBean getError() {
+        return error;
+    }
+
+    public void setError(ErrorBean error) {
+        this.error = error;
+    }
 
     public String getJsonrpc(){
         return jsonrpc;

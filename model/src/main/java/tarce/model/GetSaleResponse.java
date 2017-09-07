@@ -82,7 +82,7 @@ public class GetSaleResponse implements Serializable{
                     }
                     private	Integer	id;	/*49457*/
                     private	TArea_id	area_id;	/*TArea_id*/
-                    private	Integer	qty_available;	/*280*/
+                    private	double	qty_available;	/*280*/
                     private	String	name;	/*[47.1PZ005.000] PZ1005-三角彩盒(世界地图)-RT-CN*/
                     private	String	default_code;	/*47.1PZ005.000*/
 
@@ -100,10 +100,11 @@ public class GetSaleResponse implements Serializable{
                         return this.area_id;
                     }
 
-                    public void setQty_available(Integer value){
+                    public void setQty_available(double value){
                         this.qty_available = value;
                     }
-                    public Integer getQty_available(){
+                    public double getQty_available(){
+
                         return this.qty_available;
                     }
 

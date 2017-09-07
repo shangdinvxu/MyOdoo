@@ -20,8 +20,13 @@
             android:layout_height="20dp"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="15dp"
-            android:src="@drawable/right_icon"/>
+            android:src="@drawable/right_icon" />
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:background="@color/color_b7b7b7"
+        android:layout_marginLeft="15dp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"

@@ -1,5 +1,6 @@
 package tarce.myodoo.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -68,6 +69,8 @@ public class MeFragment extends Fragment {
     @InjectView(R.id.distance_name)
     TextView distanceName;
     private Retrofit retrofit;
+    private LoginResponse userInfoBean;
+    private ProgressDialog progressDialog;
 
     @Nullable
     @Override
@@ -84,6 +87,8 @@ public class MeFragment extends Fragment {
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
         Url = RetrofitClient.Url;
+        progressDialog = new ProgressDialog(getActivity());
+        progressDialog.setMessage("加载中。。。");
         initData();
         return view;
     }
@@ -112,7 +117,7 @@ public class MeFragment extends Fragment {
         } catch (Exception e) {
             Log.e("MeFragment", "权限问题");
         }
-        LoginResponse userInfoBean = UserManager.getSingleton().getUserInfoBean();
+        userInfoBean = UserManager.getSingleton().getUserInfoBean();
         if (userInfoBean != null) {
             distanceName.setText(userInfoBean.getResult().getRes_data().getCompany());
         }
@@ -121,6 +126,7 @@ public class MeFragment extends Fragment {
     @OnClick(R.id.distance_name)
     void changeDistance(View view){
         final InventoryApi inventoryApi = retrofit.create(InventoryApi.class);
+        progressDialog.show();
         HashMap<Object, Object> hashMap = new HashMap<>();
         final int user_id = SharePreferenceUtils.getInt("user_id", 1, getActivity());
         hashMap.put("user_id", user_id);
@@ -128,13 +134,14 @@ public class MeFragment extends Fragment {
         componyQueryBeanCall.enqueue(new Callback<ComponyQueryBean>() {
             @Override
             public void onResponse(Call<ComponyQueryBean> call, Response<ComponyQueryBean> response) {
+                progressDialog.dismiss();
                     if (response.body() == null || response.body().getResult() == null)return;
                 List<ComponyQueryBean.ResultBean.ResDataBean> result = response.body().getResult().getRes_data();
                 CompanyDialog dialog = new CompanyDialog(getActivity(), result);
                 dialog.show();
                 dialog.sendNameCompany(new CompanyDialog.GetCompany() {
                     @Override
-                    public void getCompanyName(String name, int companyId) {
+                    public void getCompanyName(final String name, int companyId) {
                         distanceName.setText(name);
                         HashMap<Object, Object> hashMap = new HashMap<>();
                         hashMap.put("id", companyId);
@@ -147,6 +154,7 @@ public class MeFragment extends Fragment {
                                 if (response.body().getResult().getRes_code() == 1){
                                     if (response.body().getResult().getRes_data().getSuccess() == 1){
                                         ToastUtils.showCommonToast(getActivity(), "切换成功");
+                                        userInfoBean.getResult().getRes_data().setCompany(name);
                                     }
                                 }
                             }
@@ -162,6 +170,7 @@ public class MeFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ComponyQueryBean> call, Throwable t) {
+                progressDialog.dismiss();
                 Log.e("zws", t.toString());
             }
         });

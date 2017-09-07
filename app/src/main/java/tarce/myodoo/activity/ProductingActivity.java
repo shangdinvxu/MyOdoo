@@ -268,6 +268,11 @@ public class ProductingActivity extends ToolBarActivity {
             public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(ProductingActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                     result = response.body().getResult();
                     resDataBean = response.body().getResult().getRes_data();
@@ -392,16 +397,24 @@ public class ProductingActivity extends ToolBarActivity {
                                     public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                         dismissDefultProgressDialog();
                                         if (response.body() == null) return;
+                                        if (response.body().getError()!=null){
+                                            new TipDialog(ProductingActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                                    .show();
+                                            return;
+                                        }
                                         if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                                             resDataBean = response.body().getResult().getRes_data();
                                             tvStartProduce.setVisibility(View.VISIBLE);
                                             tvNumProduct.setText(StringUtils.doubleToString(response.body().getResult().getRes_data()
                                                     .getQty_produced()));
+                                        }else if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == -1){
+                                            ToastUtils.showCommonToast(ProductingActivity.this, response.body().getResult().getRes_data().getError());
                                         }
                                     }
 
                                     @Override
                                     public void onFailure(Call<OrderDetailBean> call, Throwable t) {
+                                      //  ToastUtils.showCommonToast(ProductingActivity.this, t.toString());
                                         dismissDefultProgressDialog();
                                     }
                                 });
@@ -496,6 +509,11 @@ public class ProductingActivity extends ToolBarActivity {
             public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(ProductingActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                     if (product_line) {
                         tvLineStop.setText("恢复产线");
@@ -536,7 +554,12 @@ public class ProductingActivity extends ToolBarActivity {
                             @Override
                             public void onResponse(Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
                                 dismissDefultProgressDialog();
-                                if (response.body() == null || response.body().getResult() == null) return;
+                                if (response.body() == null) return;
+                                if (response.body().getError()!=null){
+                                    new TipDialog(ProductingActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                            .show();
+                                    return;
+                                }
                                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
                                     new Thread(new Runnable() {
                                         @Override

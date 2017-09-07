@@ -1,5 +1,7 @@
 package tarce.model.inventory;
 
+import tarce.model.ErrorBean;
+
 /**
  * Created by rose.zou on 2017/6/19.
  * 获取反馈的接口
@@ -15,6 +17,15 @@ public class GetFactroyRemarkBean {
     private String jsonrpc;
     private Object id;
     private ResultBean result;
+    private ErrorBean error;
+
+    public ErrorBean getError() {
+        return error;
+    }
+
+    public void setError(ErrorBean error) {
+        this.error = error;
+    }
 
     public String getJsonrpc() {
         return jsonrpc;

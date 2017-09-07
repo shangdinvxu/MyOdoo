@@ -41,8 +41,15 @@ public class GetProcessBean {
     }
 
     private TestRSubBean result;
+    private ErrorBean error;
 
+    public ErrorBean getError() {
+        return error;
+    }
 
+    public void setError(ErrorBean error) {
+        this.error = error;
+    }
 
     public static class TestRSubBean{
         private List<ListSubBean> res_data;

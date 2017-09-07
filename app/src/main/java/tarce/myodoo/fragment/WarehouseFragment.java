@@ -32,6 +32,7 @@ import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.ConfirmPurchaseActivity;
 import tarce.myodoo.activity.MainActivity;
+import tarce.myodoo.activity.engineer.EngineerActivity;
 import tarce.myodoo.activity.engineer.ProjectActivity;
 import tarce.myodoo.activity.incentroy.InventroyActivity;
 import tarce.myodoo.activity.inquiriesstock.StockListActivity;
@@ -158,6 +159,9 @@ public class WarehouseFragment extends Fragment {
                 if (position==0 || position==4 || position==7 || position==10 || position==14){
                     return;
                 }
+//                if (position==0 || position==4 || position==7 || position==9 || position==12){
+//                    return;
+//                }
                 String name = list.get(position).t.getName();
                 switch (name){
                     case "收货":
@@ -186,7 +190,7 @@ public class WarehouseFragment extends Fragment {
                         startActivity(intent3);
                         break;
                     case "工程领料":
-                        Intent intent4 = new Intent(getActivity(), ProjectActivity.class);
+                        Intent intent4 = new Intent(getActivity(), EngineerActivity.class);
                         startActivity(intent4);
                         break;
                 }
