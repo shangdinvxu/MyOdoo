@@ -1,34 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="40dp">
+    android:layout_height="60dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="25dp"
         android:orientation="horizontal">
         <TextView
-            android:id="@+id/tv_circle_red"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:background="@drawable/red_point"
-            android:layout_alignParentRight="true"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="15dp"/>
-        <TextView
             android:id="@+id/tv_product_name"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="WH394298634928"
             android:textColor="@color/black"
-            android:layout_marginLeft="10dp"/>
+            android:textSize="12sp"
+            android:layout_marginLeft="15dp"/>
+        <TextView
+            android:id="@+id/note_date"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="单据日期"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:orientation="horizontal">
         <TextView
             android:id="@+id/tv_name_customer"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="王小白"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:layout_marginLeft="15dp"/>
+        <TextView
+            android:id="@+id/put_date"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="交货日期"
+            android:textSize="12sp"
             android:textColor="@color/black"
             android:layout_marginLeft="15dp"/>
     </LinearLayout>

@@ -9,6 +9,7 @@ import retrofit2.http.POST;
 import rx.Observable;
 import tarce.model.AddworkBean;
 import tarce.model.BuLlBean;
+import tarce.model.ChangeProjectBean;
 import tarce.model.ChangeStateBean;
 import tarce.model.CompanyTwoBean;
 import tarce.model.ComponyQueryBean;
@@ -18,6 +19,8 @@ import tarce.model.GetProcessBean;
 import tarce.model.GetSaleResponse;
 import tarce.model.LoadActionBean;
 import tarce.model.OutgoingStockpickingBean;
+import tarce.model.ProjectBean;
+import tarce.model.ProjectDetailBean;
 import tarce.model.RequestBindUserBean;
 import tarce.model.SearchSupplierResponse;
 import tarce.model.inventory.AreaMessageBean;
@@ -69,10 +72,20 @@ import tarce.model.inventory.WorkingWorkerBean;
 
 public interface InventoryApi {
     /**
+     * 工程领料状态改变
+     * */
+    @POST("change_material_request_state")
+    Call<ChangeProjectBean> packOperIds(@Body HashMap hashMap);
+    /**
+     * 获取工程领料详情
+     * */
+    @POST("get_one_material_request_show")
+    Call<ProjectDetailBean> getOneMaterShow(@Body HashMap hashMap);
+    /**
      * 获取工程领料列表
      * */
-    @POST("get_picking_material_request")
-    Call<NewSaleListBean> getPickrequest(@Body HashMap hashMap);
+    @POST("get_all_material_request_show")
+    Call<ProjectBean> getPickrequest(@Body HashMap hashMap);
     /**
      * 扫描后更改的库存内容提交
      * */

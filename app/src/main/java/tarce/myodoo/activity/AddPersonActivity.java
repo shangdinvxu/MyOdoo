@@ -70,7 +70,6 @@ import tarce.support.ToastUtils;
  */
 
 public class AddPersonActivity extends BaseActivity {
-    private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     private static final String TAG = "AddPersonActivity";
     @InjectView(R.id.fragment_scan)
     FrameLayout fragmentScan;
@@ -109,8 +108,6 @@ public class AddPersonActivity extends BaseActivity {
     private String name_activity;
     private boolean close;
     private boolean showScan = false;
-    private DeviceManager deviceManager;
-    private RFCardModule rfCardModule;
     private Dialog alertDialog;
     private TimeCount time;//时间计时类
 
@@ -545,63 +542,6 @@ public class AddPersonActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 连接设备打印机
-     */
-    private void initDevice() {
-        deviceManager = ConnUtils.getDeviceManager();
-        try {
-            deviceManager.init(AddPersonActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
-                @Override
-                public void onEvent(ConnectionCloseEvent connectionCloseEvent, Handler handler) {
-                    if (connectionCloseEvent.isSuccess()) {
-                        ToastUtils.showCommonToast(AddPersonActivity.this, "设备被客户主动断开！");
-                    }
-                    if (connectionCloseEvent.isFailed()) {
-                        ToastUtils.showCommonToast(AddPersonActivity.this, "设备链接异常断开！");
-                    }
-                }
-
-                @Override
-                public Handler getUIHandler() {
-                    return null;
-                }
-            });
-            deviceManager.connect();
-            MyLog.e("ProductingActivity", "连接成功");
-        } catch (Exception e) {
-            e.printStackTrace();
-            ToastUtils.showCommonToast(AddPersonActivity.this, "链接异常,请检查设备或重新连接.." + e);
-        }
-
-        rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
-    }
-
-    public void processingLock() {
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                SharedPreferences setting = getSharedPreferences("setting", 0);
-                SharedPreferences.Editor editor = setting.edit();
-                editor.putBoolean("PBOC_LOCK", true);
-                editor.commit();
-            }
-        });
-
-    }
-
-    public void processingUnLock() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences setting = getSharedPreferences("setting", 0);
-                SharedPreferences.Editor editor = setting.edit();
-                editor.putBoolean("PBOC_LOCK", false);
-                editor.commit();
-            }
-        });
-    }
     /**
      * 获取验证码倒计时实现类
      */

@@ -87,7 +87,6 @@ import static tarce.api.RetrofitClient.Url;
  */
 
 public class InspectMoDetailActivity extends BaseActivity {
-    private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;//拍照
     @InjectView(R.id.state_inspect_detail)
     TextView stateInspectDetail;
@@ -119,9 +118,6 @@ public class InspectMoDetailActivity extends BaseActivity {
     RecyclerView imgGridRecycler;
     private QcFeedbaskBean.ResultBean.ResDataBean dataBean;
     private InventoryApi inventoryApi;
-    private DeviceManager deviceManager;
-    private RFCardModule rfCardModule;
-    private NFCdialog nfCdialog;
     private Retrofit retrofit;
     private TextWatcher mEditnumSample = new TextWatcher() {
         private CharSequence temp;
@@ -316,7 +312,8 @@ public class InspectMoDetailActivity extends BaseActivity {
                         dismissDefultProgressDialog();
                         if (response.body() == null) return;
                         if (response.body().getError()!=null){
-                            ToastUtils.showCommonToast(InspectMoDetailActivity.this, response.body().getError().getData().getMessage());
+                            new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                    .show();
                             return;
                         }
                         if (response.body().getResult().getRes_data() !=null && response.body().getResult().getRes_code() == 1) {
@@ -381,7 +378,6 @@ public class InspectMoDetailActivity extends BaseActivity {
                                         ToastUtils.showCommonToast(InspectMoDetailActivity.this, "不能识别序列号：" + Const.MessageTag.DATA);
                                         tvClickFinish.setClickable(true);
                                     } else {
-                                        showDefultProgressDialog();
                                         String NFC_Number = ISOUtils.hexString(qPResult.getCardSerialNo());
                                         if (Url!=null){
                                             inventory = retrofit.create(InventoryApi.class);
@@ -395,7 +391,6 @@ public class InspectMoDetailActivity extends BaseActivity {
                                         objectCall.enqueue(new Callback<NfcOrderBean>() {
                                             @Override
                                             public void onResponse(Call<NfcOrderBean> call, Response<NfcOrderBean> response) {
-                                                dismissDefultProgressDialog();
                                                 tvClickFinish.setClickable(true);
                                                 if (response.body() == null) return;
                                                 if (response.body().getError() != null) {
@@ -416,7 +411,12 @@ public class InspectMoDetailActivity extends BaseActivity {
                                                             .setTip(res_dataNfc.getName() + res_dataNfc.getEmployee_id() + "\n" + res_dataNfc.getWork_email()
                                                                     + "\n\n" + "打卡成功")
                                                             .setCancelVisi().show();
-                                                    threadDismiss(nfCdialog);
+                                                    new Handler().postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            nfCdialog.dismiss();
+                                                        }
+                                                    }, 1000);
                                                     showDefultProgressDialog();
                                                     HashMap<Object, Object> doneHashmap = new HashMap<>();
                                                     doneHashmap.put("feedback_id", dataBean.getFeedback_id());
@@ -426,7 +426,12 @@ public class InspectMoDetailActivity extends BaseActivity {
                                                         @Override
                                                         public void onResponse(Call<RukuBean> call, Response<RukuBean> response) {
                                                             dismissDefultProgressDialog();
-                                                            if (response.body() == null || response.body().getResult() == null) return;
+                                                            if (response.body() == null) return;
+                                                            if (response.body().getError()!=null){
+                                                                new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                                                        .show();
+                                                                return;
+                                                            }
                                                             if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                                                                 new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, "入库成功")
                                                                         .setTrue(new View.OnClickListener() {
@@ -439,23 +444,26 @@ public class InspectMoDetailActivity extends BaseActivity {
                                                                             }
                                                                         }).show();
                                                             }else if (response.body().getResult().getRes_code() == -1 && response.body().getResult().getRes_data() != null){
-                                                                ToastUtils.showCommonToast(InspectMoDetailActivity.this,  response.body().getResult().getRes_data().getError());
-                                                            } else {
-                                                               // ToastUtils.showCommonToast(InspectMoDetailActivity.this, "some error");
+                                                                new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, response.body().getResult().getRes_data().getError())
+                                                                        .show();
                                                             }
                                                         }
 
                                                         @Override
                                                         public void onFailure(Call<RukuBean> call, Throwable t) {
                                                             dismissDefultProgressDialog();
-                                                            ToastUtils.showCommonToast(InspectMoDetailActivity.this, t.toString());
+                                                            new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, t.toString())
+                                                                    .show();
+                                                          //  Log.e("zws", t.toString());
                                                         }
                                                     });
                                                 }
                                             }
                                             @Override
                                             public void onFailure(Call<NfcOrderBean> call, Throwable t) {
-                                                dismissDefultProgressDialog();
+                                               // dismissDefultProgressDialog();
+                                                new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, t.toString())
+                                                        .show();
                                                 Log.e("zws", t.toString());
                                             }
                                         });
@@ -538,33 +546,6 @@ public class InspectMoDetailActivity extends BaseActivity {
                 });
                 break;
         }
-    }
-
-    //显示nfc的dialog
-    private void showNfcDialog() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                nfCdialog = new NFCdialog(InspectMoDetailActivity.this);
-                nfCdialog.setCancel(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        nfCdialog.dismiss();
-                        tvClickFinish.setClickable(true);
-                    }
-                }).show();
-            }
-        });
-    }
-
-    //关闭dialog
-    private void threadDismiss(final NFCdialog dialog) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dialog.dismiss();
-            }
-        }, 1000);
     }
     /**
      * 查看bom结构
@@ -750,64 +731,5 @@ public class InspectMoDetailActivity extends BaseActivity {
         } else
             return null;
     }
-    /**
-     * 连接设备打印机
-     */
-    private void initDevice() {
-        deviceManager = ConnUtils.getDeviceManager();
-        try {
-            deviceManager.init(InspectMoDetailActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
-                @Override
-                public void onEvent(ConnectionCloseEvent connectionCloseEvent, Handler handler) {
-                    if (connectionCloseEvent.isSuccess()) {
-                        ToastUtils.showCommonToast(InspectMoDetailActivity.this, "设备被客户主动断开！");
-                    }
-                    if (connectionCloseEvent.isFailed()) {
-                        ToastUtils.showCommonToast(InspectMoDetailActivity.this, "设备链接异常断开！");
-                    }
-                }
 
-                @Override
-                public Handler getUIHandler() {
-                    return null;
-                }
-            });
-            deviceManager.connect();
-            MyLog.e("OrderDetailActivity", "连接成功");
-        } catch (Exception e) {
-            e.printStackTrace();
-            MyLog.e("OrderDetailActivity", "链接异常,请检查设备或重新连接..");
-            //ToastUtils.showCommonToast(InspectMoDetailActivity.this, "链接异常,请检查设备或重新连接.." + e);
-            return;
-        }
-        if (deviceManager!=null)
-        rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
-    }
-
-    public void processingLock() {
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                SharedPreferences setting = getSharedPreferences("setting", 0);
-                SharedPreferences.Editor editor = setting.edit();
-                editor.putBoolean("PBOC_LOCK", true);
-                editor.commit();
-            }
-        });
-
-    }
-
-    public void processingUnLock() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences setting = getSharedPreferences("setting", 0);
-                SharedPreferences.Editor editor = setting.edit();
-                editor.putBoolean("PBOC_LOCK", false);
-                editor.commit();
-            }
-        });
-
-    }
 }

@@ -2,6 +2,8 @@ package tarce.model.inventory;
 
 import java.util.List;
 
+import tarce.model.ErrorBean;
+
 /**
  * Created by rose.zou on 2017/6/2.
  * 点击入库 返回数据
@@ -17,6 +19,15 @@ public class RukuBean {
     private String jsonrpc;
     private Object id;
     private ResultBean result;
+    private ErrorBean error;
+
+    public ErrorBean getError() {
+        return error;
+    }
+
+    public void setError(ErrorBean error) {
+        this.error = error;
+    }
 
     public String getJsonrpc() {
         return jsonrpc;
@@ -107,7 +118,7 @@ public class RukuBean {
             private double qc_rate;
             private String name;
             private double qc_fail_qty;
-            private int feedback_id;
+            private Integer feedback_id;
             private String qc_note;
             private String state;
             private ProductionIdBean production_id;
@@ -161,11 +172,11 @@ public class RukuBean {
                 this.qc_fail_qty = qc_fail_qty;
             }
 
-            public int getFeedback_id() {
+            public Integer getFeedback_id() {
                 return feedback_id;
             }
 
-            public void setFeedback_id(int feedback_id) {
+            public void setFeedback_id(Integer feedback_id) {
                 this.feedback_id = feedback_id;
             }
 

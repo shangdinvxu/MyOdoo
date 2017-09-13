@@ -188,14 +188,14 @@ public class MaterialDetailBean {
                  * name : 动态包装
                  */
 
-                private int process_id;
+                private Integer process_id;
                 private String name;
 
-                public int getProcess_id() {
+                public Integer getProcess_id() {
                     return process_id;
                 }
 
-                public void setProcess_id(int process_id) {
+                public void setProcess_id(Integer process_id) {
                     this.process_id = process_id;
                 }
 

@@ -160,7 +160,7 @@ public class MaterialDetailActivity extends BaseActivity {
             @Override
             public void onFailure(Call<MaterialDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
-                ToastUtils.showCommonToast(MaterialDetailActivity.this, t.toString());
+               // ToastUtils.showCommonToast(MaterialDetailActivity.this, t.toString());
             }
         });
     }

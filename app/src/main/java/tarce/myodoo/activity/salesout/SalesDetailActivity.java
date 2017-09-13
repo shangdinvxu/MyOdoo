@@ -80,7 +80,6 @@ import tarce.support.ViewUtils;
  */
 
 public class SalesDetailActivity extends BaseActivity {
-    private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     private static String TAG = SalesDetailActivity.class.getSimpleName();
     @InjectView(R.id.partner)
     TextView partner;
@@ -131,7 +130,6 @@ public class SalesDetailActivity extends BaseActivity {
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;//拍照
     private String saleName;
     private String model_state = "";
-    private DeviceManager deviceManager;
     private Printer printer;
 
     @Override
@@ -795,35 +793,6 @@ public class SalesDetailActivity extends BaseActivity {
         });
     }
 
-    /**
-     * 连接设备打印机
-     */
-    private void initDevice() {
-        deviceManager = ConnUtils.getDeviceManager();
-        try {
-            deviceManager.init(SalesDetailActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
-                @Override
-                public void onEvent(ConnectionCloseEvent connectionCloseEvent, Handler handler) {
-                    if (connectionCloseEvent.isSuccess()) {
-                        ToastUtils.showCommonToast(SalesDetailActivity.this, "设备被客户主动断开！");
-                    }
-                    if (connectionCloseEvent.isFailed()) {
-                        ToastUtils.showCommonToast(SalesDetailActivity.this, "设备链接异常断开！");
-                    }
-                }
-
-                @Override
-                public Handler getUIHandler() {
-                    return null;
-                }
-            });
-            deviceManager.connect();
-            MyLog.e("ProductingActivity", "连接成功");
-        } catch (Exception e) {
-            e.printStackTrace();
-            ToastUtils.showCommonToast(SalesDetailActivity.this, "链接异常,请检查设备或重新连接.." + e);
-        }
-    }
     /**
      * 加载扫描的fragment
      */

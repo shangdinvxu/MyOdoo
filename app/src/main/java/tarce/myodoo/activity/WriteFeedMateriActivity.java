@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -67,7 +68,6 @@ import static tarce.api.RetrofitClient.Url;
  */
 
 public class WriteFeedMateriActivity extends BaseActivity {
-    private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     @InjectView(R.id.recycler_feed_material)
     RecyclerView recyclerFeedMaterial;
     @InjectView(R.id.tv_commit_feednum)
@@ -97,14 +97,33 @@ public class WriteFeedMateriActivity extends BaseActivity {
     private List<GetReturnMaterBean.ResultBean.ResDataBean> list_one;
     private List<GetReturnMaterBean.ResultBean.ResDataBean> list_two;
     private List<GetReturnMaterBean.ResultBean.ResDataBean> list_three;
-    private DeviceManager deviceManager;
-    private RFCardModule rfCardModule;
-    private NFCdialog nfCdialog;
     private Retrofit retrofit;
     private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_first = new ArrayList<>();
     private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_second = new ArrayList<>();
     private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> list_third = new ArrayList<>();
     private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> listAll = new ArrayList<>();
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case 1:
+                    if (handlerType.equals("material")) {
+                        list_one.get(handlerPosition).setReturn_qty(handlerNum);
+                        list_one.get(handlerPosition).setNfc(true);
+                    } else if (handlerType.equals("real_semi_finished")) {
+                        list_two.get(handlerPosition).setReturn_qty(handlerNum);
+                        list_two.get(handlerPosition).setNfc(true);
+                    }
+                    handlerAdapter.notifyDataSetChanged();
+                    break;
+            }
+        }
+    };
+    private String handlerType;
+    private int handlerNum;
+    private int handlerPosition;
+    private WriteFeedbackNumAdapter handlerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -286,6 +305,10 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                 if (num > 0) {
                                     final String product_type = (String) adapter_type.getData().get(position).getProduct_type();
                                     if (product_type.equals("material") || product_type.equals("real_semi_finished")) {
+                                        handlerType = product_type;
+                                        handlerNum = num;
+                                        handlerPosition = position;
+                                        handlerAdapter = adapter_type;
                                         new Thread(new Runnable() {
                                             @Override
                                             public void run() {
@@ -300,7 +323,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                                             if (qPResult.getCardSerialNo() == null) {
                                                                 ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "不能识别序列号：" + Const.MessageTag.DATA);
                                                             } else {
-                                                                showDefultProgressDialog();
+                                                             //   showDefultProgressDialog();
                                                                 String NFC_Number = ISOUtils.hexString(qPResult.getCardSerialNo());
                                                                 InventoryApi inventory = retrofit.create(InventoryApi.class);
                                                                 HashMap<Object, Object> hashMap = new HashMap<>();
@@ -309,7 +332,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                                                 objectCall.enqueue(new Callback<NfcOrderBean>() {
                                                                     @Override
                                                                     public void onResponse(Call<NfcOrderBean> call, Response<NfcOrderBean> response) {
-                                                                        dismissDefultProgressDialog();
+                                                                       // dismissDefultProgressDialog();
                                                                         if (response.body() == null)
                                                                             return;
                                                                         if (response.body().getError() != null) {
@@ -331,20 +354,15 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                                                                             + "\n\n" + "打卡成功")
                                                                                     .setCancelVisi().show();
                                                                             threadDismiss(nfCdialog);
-                                                                            if (product_type.equals("material")) {
-                                                                                list_one.get(position).setReturn_qty(num);
-                                                                                list_one.get(position).setNfc(true);
-                                                                            } else if (product_type.equals("real_semi_finished")) {
-                                                                                list_two.get(position).setReturn_qty(num);
-                                                                                list_two.get(position).setNfc(true);
-                                                                            }
-                                                                            adapter_type.notifyDataSetChanged();
+                                                                            Message message = new Message();
+                                                                            message.what = 1;
+                                                                            handler.sendMessage(message);
                                                                         }
                                                                     }
 
                                                                     @Override
                                                                     public void onFailure(Call<NfcOrderBean> call, Throwable t) {
-                                                                        dismissDefultProgressDialog();
+                                                                       // dismissDefultProgressDialog();
                                                                         Log.e("zws", t.toString());
                                                                     }
                                                                 });
@@ -388,33 +406,6 @@ public class WriteFeedMateriActivity extends BaseActivity {
         });
     }
 
-    //显示nfc的dialog
-    private void showNfcDialog() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                nfCdialog = new NFCdialog(WriteFeedMateriActivity.this);
-                nfCdialog.setCancel(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        processingUnLock();
-                        nfCdialog.dismiss();
-                        return;
-                    }
-                }).show();
-            }
-        });
-    }
-
-    //关闭dialog
-    private void threadDismiss(final NFCdialog dialog) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                dialog.dismiss();
-            }
-        }, 1000);
-    }
 
     @OnClick(R.id.tv_commit_feednum)
     void commitNum(View view) {
@@ -473,7 +464,9 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                 @Override
                                 public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                                     dismissDefultProgressDialog();
-                                    ToastUtils.showCommonToast(WriteFeedMateriActivity.this, t.toString());
+//                                    new TipDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle, t.toString())
+//                                    .show();
+                                   // ToastUtils.showCommonToast(WriteFeedMateriActivity.this, t.toString());
                                 }
                             });
                         }
@@ -606,67 +599,5 @@ public class WriteFeedMateriActivity extends BaseActivity {
             }
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    /**
-     * 连接设备打印机
-     */
-    private void initDevice() {
-        deviceManager = ConnUtils.getDeviceManager();
-        try {
-            deviceManager.init(WriteFeedMateriActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
-                @Override
-                public void onEvent(ConnectionCloseEvent connectionCloseEvent, Handler handler) {
-                    if (connectionCloseEvent.isSuccess()) {
-                        ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "设备被客户主动断开！");
-                    }
-                    if (connectionCloseEvent.isFailed()) {
-                        ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "设备链接异常断开！");
-                    }
-                }
-
-                @Override
-                public Handler getUIHandler() {
-                    return null;
-                }
-            });
-            deviceManager.connect();
-            MyLog.e("OrderDetailActivity", "连接成功");
-        } catch (Exception e) {
-            e.printStackTrace();
-            ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "链接异常,请检查设备或重新连接.." + e);
-        }
-        try {
-            rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
-        }catch (Exception e){
-            Log.e("zws", "error");
-        }
-    }
-
-    public void processingLock() {
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                SharedPreferences setting = getSharedPreferences("setting", 0);
-                SharedPreferences.Editor editor = setting.edit();
-                editor.putBoolean("PBOC_LOCK", true);
-                editor.commit();
-            }
-        });
-
-    }
-
-    public void processingUnLock() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences setting = getSharedPreferences("setting", 0);
-                SharedPreferences.Editor editor = setting.edit();
-                editor.putBoolean("PBOC_LOCK", false);
-                editor.commit();
-            }
-        });
-
     }
 }

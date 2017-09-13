@@ -5,7 +5,7 @@
     <RadioGroup
         android:id="@+id/radioproject"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="30dp"
         android:orientation="horizontal">
         <RadioButton
             android:id="@+id/wait_radio"
@@ -18,17 +18,7 @@
             android:gravity="center"
             android:checked="true"
             android:textColor="@color/white"/>
-        <RadioButton
-            android:id="@+id/can_radio"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:button="@null"
-            android:background="@drawable/radio_bac"
-            android:layout_height="match_parent"
-            android:text="可处理"
-            android:gravity="center"
-            android:checked="false"
-            android:textColor="@color/white" />
+
         <RadioButton
             android:id="@+id/done_radio"
             android:layout_width="0dp"
@@ -50,7 +40,7 @@
         android:layout_marginRight="15dp"
         android:focusable="false"
         android:iconifiedByDefault="false"
-        android:queryHint="请输入客户名称用于搜索"
+        android:queryHint="请输入申请人用于搜索"
         android:background="@drawable/edit_input_bac"/>
     <SearchView
         android:layout_marginTop="10dp"

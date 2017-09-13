@@ -21,9 +21,10 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical|left"
             android:text="产品"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:lines="1"
             android:ellipsize="end"
+            android:textColor="@color/black"
             android:id="@+id/product"
             android:layout_weight="2"
             android:layout_marginLeft="10dp"/>
@@ -39,7 +40,8 @@
             android:layout_height="match_parent"
             android:gravity="left|center_vertical"
             android:text="位置"
-            android:textSize="14sp"
+            android:textSize="13sp"
+            android:textColor="@color/black"
             android:id="@+id/need_in"
             android:layout_weight="1"/>
         <TextView
@@ -47,17 +49,19 @@
             android:layout_height="match_parent"
             android:gravity="left|center_vertical"
             android:text="可用"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:id="@+id/inventory"
+            android:textColor="@color/black"
             android:layout_weight="1"/>
         <TextView
+            android:id="@+id/origin_qty"
             android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:gravity="left|center_vertical"
-            android:text="待出库"
-            android:textSize="14sp"
-            android:id="@+id/need_out"
-            android:layout_weight="1"/>
+            android:text="初始需求"
+            android:textSize="13sp"
+            android:textColor="@color/black"
+            android:gravity="left|center_vertical"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -66,28 +70,29 @@
         android:orientation="horizontal"
         android:layout_marginLeft="10dp">
         <TextView
-            android:id="@+id/origin_qty"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="初始需求"
-            android:textSize="14sp"
-            android:gravity="left|center_vertical"/>
+            android:gravity="left|center_vertical"
+            android:text="完成"
+            android:textSize="13sp"
+            android:id="@+id/done"
+            android:textColor="@color/black"
+            android:layout_weight="1"/>
         <TextView
             android:id="@+id/baoliu"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="left|center_vertical"
             android:text="保留"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:layout_weight="1"/>
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="left|center_vertical"
-            android:text="完成"
-            android:textSize="14sp"
-            android:id="@+id/done"
+            android:textSize="13sp"
+            android:textColor="@color/black"
+            android:id="@+id/need_out"
             android:layout_weight="1"/>
     </LinearLayout>
 </LinearLayout>

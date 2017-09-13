@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/linear_bottom">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:orientation="horizontal"
+                    android:background="@color/result_view">
+                    <TextView
+                        android:visibility="invisible"
+                        android:id="@+id/tv_auto_num"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:background="@drawable/bac_tv_order"
+                        android:text="一键填写"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="center"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:id="@+id/top_imageview"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@mipmap/down"
+                        android:layout_marginLeft="30dp"/>
+                    <TextView
+                        android:id="@+id/tv_print"
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:background="@drawable/bac_tv_order"
+                        android:layout_marginLeft="40dp"
+                        android:text="打印"
+                        android:gravity="center"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:background="@color/bg_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp">
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="申请人" />
+
+                    <TextView
+                        android:id="@+id/partner"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:background="@color/bg_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp">
+
+                    <TextView
+                        android:layout_width="70dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="单据日期" />
+
+                    <TextView
+                        android:id="@+id/time"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
+
+
+
+                <LinearLayout
+                    android:background="@color/bg_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="交货日期" />
+
+                    <TextView
+                        android:id="@+id/jiaohuo_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="12sp"
+                        android:textColor="@color/black"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:background="@color/bg_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="领料原因" />
+
+                    <TextView
+                        android:id="@+id/lingliao_yuanyin"
+                        android:textColor="@color/viewfinder_laser"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:background="@color/bg_color"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp">
+
+                    <TextView
+                        android:layout_width="100dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:text="备注" />
+
+                    <EditText
+                        android:id="@+id/remarks"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bac_inspect_edit"
+                        android:focusable="false"
+                        android:textSize="12sp"/>
+                </LinearLayout>
+                <FrameLayout
+                    android:id="@+id/framelayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:visibility="gone">
+                </FrameLayout>
+                <LinearLayout
+                    android:id="@+id/camera_buttom_linearlayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/cc">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:gravity="left|center_vertical"
+                        android:text="产品"
+                        android:paddingLeft="10dp"/>
+
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:background="@color/bg_color"
+                    android:id="@+id/recyclerview"
+                    android:focusable="false"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+        </ScrollView>
+        <LinearLayout
+            android:id="@+id/linear_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_alignParentBottom="true">
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:background="@color/cc"
+                android:id="@+id/buttom_button1"
+                android:textColor="@color/white"
+                android:layout_height="match_parent" />
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:id="@+id/buttom_button2"
+                android:background="@color/cc"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:id="@+id/buttom_button3"
+                android:background="@color/cc"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+            <Button
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:id="@+id/buttom_button4"
+                android:background="@color/cc"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </RelativeLayout>

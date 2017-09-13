@@ -75,8 +75,6 @@ public class WarehouseFragment extends Fragment {
         list.add(new MainItemBean(new MenuBean("销售出货", 0)));
         list.add(new MainItemBean(new MenuBean("销售退货", 0)));
         list.add(new MainItemBean(true, ""));
-//        list.add(new MainItemBean(new MenuBean("工程领料", 0)));
-//        list.add(new MainItemBean(true, ""));
         list.add(new MainItemBean(new MenuBean("零售出货", 0)));
         list.add(new MainItemBean(new MenuBean("零售退货", 0)));
         list.add(new MainItemBean(true, ""));
@@ -159,9 +157,6 @@ public class WarehouseFragment extends Fragment {
                 if (position==0 || position==4 || position==7 || position==10 || position==14){
                     return;
                 }
-//                if (position==0 || position==4 || position==7 || position==9 || position==12){
-//                    return;
-//                }
                 String name = list.get(position).t.getName();
                 switch (name){
                     case "收货":
@@ -188,10 +183,6 @@ public class WarehouseFragment extends Fragment {
                     case "库存查询":
                         Intent intent3 = new Intent(getActivity(), StockListActivity.class);
                         startActivity(intent3);
-                        break;
-                    case "工程领料":
-                        Intent intent4 = new Intent(getActivity(), EngineerActivity.class);
-                        startActivity(intent4);
                         break;
                 }
             }

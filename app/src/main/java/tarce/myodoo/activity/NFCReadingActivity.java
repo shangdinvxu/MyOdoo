@@ -62,7 +62,6 @@ import tarce.support.ToastUtils;
 
 public class NFCReadingActivity extends BaseActivity {
 
-    private static final String K21_DRIVER_NAME = "com.newland.me.K21Driver";
     @InjectView(R.id.search_name)
     SearchView searchName;
     @InjectView(R.id.recyclerview)
@@ -72,8 +71,6 @@ public class NFCReadingActivity extends BaseActivity {
     private InventoryApi inventoryApi;
     private List<NFCUserBean.ResultBean.ResDataBean> res_data;
     private LayoutInflater layoutInflater;
-    private DeviceManager deviceManager;
-    private RFCardModule rfCardModule;
     private NFCUseradapter nfcUseradapter;
     private List<NFCUserBean.ResultBean.ResDataBean> allList = new ArrayList<>();
 
@@ -294,64 +291,5 @@ public class NFCReadingActivity extends BaseActivity {
                 return false;
             }
         });
-    }
-
-    /**
-     * 连接设备打印机
-     */
-    private void initDevice() {
-        deviceManager = ConnUtils.getDeviceManager();
-        try {
-            deviceManager.init(NFCReadingActivity.this, K21_DRIVER_NAME, new NSConnV100ConnParams(), new DeviceEventListener<ConnectionCloseEvent>() {
-                @Override
-                public void onEvent(ConnectionCloseEvent connectionCloseEvent, Handler handler) {
-                    if (connectionCloseEvent.isSuccess()) {
-                        ToastUtils.showCommonToast(NFCReadingActivity.this, "设备被客户主动断开！");
-                    }
-                    if (connectionCloseEvent.isFailed()) {
-                        ToastUtils.showCommonToast(NFCReadingActivity.this, "设备链接异常断开！");
-                    }
-                }
-
-                @Override
-                public Handler getUIHandler() {
-                    return null;
-                }
-            });
-            deviceManager.connect();
-            MyLog.e("ProductingActivity", "连接成功");
-        } catch (Exception e) {
-            e.printStackTrace();
-            ToastUtils.showCommonToast(NFCReadingActivity.this, "链接异常,请检查设备或重新连接.." + e);
-        }
-
-        rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
-    }
-
-    public void processingLock() {
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                SharedPreferences setting = getSharedPreferences("setting", 0);
-                SharedPreferences.Editor editor = setting.edit();
-                editor.putBoolean("PBOC_LOCK", true);
-                editor.commit();
-            }
-        });
-
-    }
-
-    public void processingUnLock() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences setting = getSharedPreferences("setting", 0);
-                SharedPreferences.Editor editor = setting.edit();
-                editor.putBoolean("PBOC_LOCK", false);
-                editor.commit();
-            }
-        });
-
     }
 }

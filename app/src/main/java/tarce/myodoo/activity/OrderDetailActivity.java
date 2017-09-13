@@ -216,13 +216,22 @@ public class OrderDetailActivity extends ToolBarActivity {
                 case DOWNLOAD_ERROR:
                     ToastUtils.showCommonToast(OrderDetailActivity.this, "下载失败");
                     break;
+                case 5:
+                    changeShowAfterNfc();
+                    break;
             }
         }
     };
+
     private RFCardModule rfCardModule;
     private Retrofit retrofit;
     private NFCdialog nfCdialog;
     private InsertNumDialog insertNumDialog;
+    private OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean handlerBean;
+    private int handlerPosition;
+    private int handlerNum;
+    private int employee_id;
+    private int handlerType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -386,7 +395,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 tvStateOrder.setText("已排产");
                 break;
             case "waiting_material":
-                initDevice();
+                //initDevice();
                 tvStateOrder.setText("等待备料");
                 // tvStartProduce.setText("打开NFC,请仓库打卡备料");
                 tvStartProduce.setText("开始备料");
@@ -538,6 +547,76 @@ public class OrderDetailActivity extends ToolBarActivity {
     }
 
     /**
+     * 扫NFC之后刷新试图
+     * */
+    private void changeShowAfterNfc() {
+        showDefultProgressDialog();
+        HashMap<Object, Object> hashMap = new HashMap<>();
+        hashMap.put("order_id", order_id);
+        hashMap.put("employee_id",employee_id);
+        Map<Object, Object> mapSmall = new HashMap<>();
+        mapSmall.put("stock_move_lines_id", handlerBean.getId());
+        mapSmall.put("quantity_ready", handlerNum);
+        mapSmall.put("order_id", handlerBean.getOrder_id());
+        hashMap.put("stock_move", mapSmall);
+        Call<OrderDetailBean> objectCall = inventoryApi.newPrepareMater(hashMap);
+        objectCall.enqueue(new retrofit2.Callback<OrderDetailBean>() {
+            @Override
+            public void onResponse(final Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
+                //threadDismiss(nfCdialog);
+                dismissDefultProgressDialog();
+                if (response.body() == null ) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
+                if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            result = response.body().getResult();
+                            resDataBean = response.body().getResult().getRes_data();
+                            list_one = new ArrayList<>();
+                            list_two = new ArrayList<>();
+                            for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
+                                if (resDataBean.getStock_move_lines().get(i).getProduct_type().equals("material")) {
+                                    list_one.add(resDataBean.getStock_move_lines().get(i));
+                                } else if (resDataBean.getStock_move_lines().get(i).getProduct_type().equals("real_semi_finished")) {
+                                    list_two.add(resDataBean.getStock_move_lines().get(i));
+                                }
+                            }
+                            switch (handlerType) {
+                                case 1:
+                                    handlerBean.setQuantity_ready(list_one.get(handlerPosition).getQuantity_ready());
+                                    handlerBean.setQuantity_done(list_one.get(handlerPosition).getQuantity_done());
+                                    handlerBean.setQty_available(list_one.get(handlerPosition).getQty_available());
+                                    handlerBean.setBlue(true);
+                                    adapter.notifyDataSetChanged();
+                                    break;
+                                case 2:
+                                    handlerBean.setQuantity_ready(list_two.get(handlerPosition).getQuantity_ready());
+                                    handlerBean.setQuantity_done(list_two.get(handlerPosition).getQuantity_done());
+                                    handlerBean.setQty_available(list_two.get(handlerPosition).getQty_available());
+                                    handlerBean.setBlue(true);
+                                    adapter_two.notifyDataSetChanged();
+                                    break;
+                            }
+                        }
+                    });
+                } else if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == -1) {
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, response.body().getResult().getRes_data().getError());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OrderDetailBean> call, Throwable t) {
+                dismissDefultProgressDialog();
+                //threadDismiss(nfCdialog);
+            }
+        });
+    }
+    /**
      * 初始化dialog并进行相关后续操作
      *
      * @param linesBean
@@ -558,6 +637,10 @@ public class OrderDetailActivity extends ToolBarActivity {
                         ToastUtils.showCommonToast(OrderDetailActivity.this, "该产品库存不足");
                     } else {
                         if (type != 3) {
+                            handlerBean = linesBean;
+                            handlerPosition = position;
+                            handlerNum = num;
+                            handlerType = type;
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -606,71 +689,10 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                                         nfCdialog.dismiss();
                                                                     }
                                                                 }, 500);
-                                                                showDefultProgressDialog();
-                                                                HashMap<Object, Object> hashMap = new HashMap<>();
-                                                                hashMap.put("order_id", order_id);
-                                                                hashMap.put("employee_id",res_data.getEmployee_id());
-                                                                Map<Object, Object> mapSmall = new HashMap<>();
-                                                                mapSmall.put("stock_move_lines_id", linesBean.getId());
-                                                                mapSmall.put("quantity_ready", num);
-                                                                mapSmall.put("order_id", linesBean.getOrder_id());
-                                                                hashMap.put("stock_move", mapSmall);
-                                                                Call<OrderDetailBean> objectCall = inventoryApi.newPrepareMater(hashMap);
-                                                                objectCall.enqueue(new Callback<OrderDetailBean>() {
-                                                                    @Override
-                                                                    public void onResponse(final Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
-                                                                        //threadDismiss(nfCdialog);
-                                                                        dismissDefultProgressDialog();
-                                                                        if (response.body() == null ) return;
-                                                                        if (response.body().getError()!=null){
-                                                                            new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
-                                                                                    .show();
-                                                                            return;
-                                                                        }
-                                                                        if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1) {
-                                                                            runOnUiThread(new Runnable() {
-                                                                                @Override
-                                                                                public void run() {
-                                                                                    result = response.body().getResult();
-                                                                                    resDataBean = response.body().getResult().getRes_data();
-                                                                                    list_one = new ArrayList<>();
-                                                                                    list_two = new ArrayList<>();
-                                                                                    for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
-                                                                                        if (resDataBean.getStock_move_lines().get(i).getProduct_type().equals("material")) {
-                                                                                            list_one.add(resDataBean.getStock_move_lines().get(i));
-                                                                                        } else if (resDataBean.getStock_move_lines().get(i).getProduct_type().equals("real_semi_finished")) {
-                                                                                            list_two.add(resDataBean.getStock_move_lines().get(i));
-                                                                                        }
-                                                                                    }
-                                                                                    switch (type) {
-                                                                                        case 1:
-                                                                                            linesBean.setQuantity_ready(list_one.get(position).getQuantity_ready());
-                                                                                            linesBean.setQuantity_done(list_one.get(position).getQuantity_done());
-                                                                                            linesBean.setQty_available(list_one.get(position).getQty_available());
-                                                                                            linesBean.setBlue(true);
-                                                                                            adapter.notifyDataSetChanged();
-                                                                                            break;
-                                                                                        case 2:
-                                                                                            linesBean.setQuantity_ready(list_two.get(position).getQuantity_ready());
-                                                                                            linesBean.setQuantity_done(list_two.get(position).getQuantity_done());
-                                                                                            linesBean.setQty_available(list_two.get(position).getQty_available());
-                                                                                            linesBean.setBlue(true);
-                                                                                            adapter_two.notifyDataSetChanged();
-                                                                                            break;
-                                                                                    }
-                                                                                }
-                                                                            });
-                                                                        } else if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == -1) {
-                                                                            ToastUtils.showCommonToast(OrderDetailActivity.this, response.body().getResult().getRes_data().getError());
-                                                                        }
-                                                                    }
-
-                                                                    @Override
-                                                                    public void onFailure(Call<OrderDetailBean> call, Throwable t) {
-                                                                          dismissDefultProgressDialog();
-                                                                        //threadDismiss(nfCdialog);
-                                                                    }
-                                                                });
+                                                                employee_id = res_data.getEmployee_id();
+                                                                Message message = new Message();
+                                                                message.what = 5;
+                                                                mHandler.sendMessage(message);
                                                             }
                                                         }
 
@@ -770,8 +792,8 @@ public class OrderDetailActivity extends ToolBarActivity {
     private void initView() {
         tvNameProduct.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         tvNameProduct.setText(resDataBean.getProduct_name());
-        tvNumProduct.setText(StringUtils.doubleToString(resDataBean.getQty_produced()));
-        tvNeedNum.setText(StringUtils.doubleToString(resDataBean.getProduct_qty()));
+        tvNumProduct.setText(resDataBean.getQty_produced()+"");
+        tvNeedNum.setText(resDataBean.getProduct_qty()+"");
         tvTimeProduct.setText(TimeUtils.utc2Local(resDataBean.getDate_planned_start()));
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
         tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));
@@ -1435,30 +1457,4 @@ public class OrderDetailActivity extends ToolBarActivity {
         printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
     }
 
-    public void processingLock() {
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                SharedPreferences setting = getSharedPreferences("setting", 0);
-                SharedPreferences.Editor editor = setting.edit();
-                editor.putBoolean("PBOC_LOCK", true);
-                editor.commit();
-            }
-        });
-
-    }
-
-    public void processingUnLock() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences setting = getSharedPreferences("setting", 0);
-                SharedPreferences.Editor editor = setting.edit();
-                editor.putBoolean("PBOC_LOCK", false);
-                editor.commit();
-            }
-        });
-
-    }
 }

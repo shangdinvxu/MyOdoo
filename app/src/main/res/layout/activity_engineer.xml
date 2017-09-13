@@ -15,6 +15,15 @@
             android:text="产线领用"
             android:gravity="center_vertical"
             android:paddingLeft="15dp"/>
+        <TextView
+            android:id="@+id/one_num"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:background="@drawable/red_point"
+            android:layout_gravity="center_vertical"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="20dp"
@@ -39,6 +48,15 @@
             android:text="工程领用"
             android:gravity="center_vertical"
             android:paddingLeft="15dp"/>
+        <TextView
+            android:id="@+id/two_num"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:background="@drawable/red_point"
+            android:layout_gravity="center_vertical"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="20dp"
