@@ -123,6 +123,7 @@ public class MeFragment extends Fragment {
         }
     }
 
+    //点击切换公司
     @OnClick(R.id.distance_name)
     void changeDistance(View view){
         final InventoryApi inventoryApi = retrofit.create(InventoryApi.class);
@@ -135,7 +136,7 @@ public class MeFragment extends Fragment {
             @Override
             public void onResponse(Call<ComponyQueryBean> call, Response<ComponyQueryBean> response) {
                 progressDialog.dismiss();
-                    if (response.body() == null || response.body().getResult() == null)return;
+                if (response.body() == null || response.body().getResult() == null)return;
                 List<ComponyQueryBean.ResultBean.ResDataBean> result = response.body().getResult().getRes_data();
                 CompanyDialog dialog = new CompanyDialog(getActivity(), result);
                 dialog.show();

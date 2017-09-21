@@ -1,14 +1,24 @@
 package tarce.myodoo.activity.inquiriesstock;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
+
+import com.newland.mtype.ModuleType;
+import com.newland.mtype.module.common.printer.Printer;
+import com.uuzuche.lib_zxing.activity.CodeUtils;
+
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.OnClick;
 import tarce.model.inventory.StockMoveListBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
+import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 
 /**
@@ -39,14 +49,14 @@ public class StockSubDetailActivity extends BaseActivity {
 
         Intent intent = getIntent();
         resDataBean = (StockMoveListBean.ResultBean.ResDataBean) intent.getSerializableExtra("bean");
-        if (resDataBean!=null){
+        if (resDataBean != null) {
             initView();
         }
     }
 
     private void initView() {
         tvName.setText(resDataBean.getProduct_id().getProduct_name());
-        switch (resDataBean.getState()){
+        switch (resDataBean.getState()) {
             case "draft":
                 tvState.setText("新建");
                 break;
@@ -71,4 +81,5 @@ public class StockSubDetailActivity extends BaseActivity {
         fromArea.setText(resDataBean.getLocation());
         aimArea.setText(resDataBean.getLocation_dest());
     }
+
 }

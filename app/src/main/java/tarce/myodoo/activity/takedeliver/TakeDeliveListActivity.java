@@ -3,6 +3,7 @@ package tarce.myodoo.activity.takedeliver;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
@@ -67,6 +68,7 @@ public class TakeDeliveListActivity extends BaseActivity {
     private long partner_id;
     private int picking_type_id;
     private boolean isNull = true;
+    private int picking_type_id_2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +99,8 @@ public class TakeDeliveListActivity extends BaseActivity {
             }
         }else {
             picking_type_id = intent.getIntExtra("picking_type_id", 1);
+            picking_type_id_2 = intent.getIntExtra("picking_type_id_2", 10000);
+            Log.e("zws", "picking_type_id = "+picking_type_id);
             type_code = intent.getStringExtra("type_code");
             state = intent.getStringExtra("state");
             showDefultProgressDialog();
@@ -157,7 +161,14 @@ public class TakeDeliveListActivity extends BaseActivity {
             inComingOutgoingList = inventoryApi.getInComingOutgoingList(hashMap);
         }else if ("yes".equals(from)){
             hashMap.put("partner_id", partner_id);
-            hashMap.put("picking_type_id", picking_type_id);
+            if (picking_type_id_2!=10000){
+                List<Integer> integerList = new ArrayList<>();
+                integerList.add(picking_type_id);
+                integerList.add(picking_type_id_2);
+                hashMap.put("picking_type_id", integerList);
+            }else {
+                hashMap.put("picking_type_id", picking_type_id);
+            }
             inComingOutgoingList = inventoryApi.getstockList(hashMap);
         }
         inComingOutgoingList.enqueue(new MyCallback<TakeDelListBean>() {

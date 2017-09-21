@@ -34,10 +34,12 @@ import tarce.model.inventory.TakeDelListBean;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
+import tarce.myodoo.activity.ProductingActivity;
 import tarce.myodoo.adapter.TakeDelievAdapter;
 import tarce.myodoo.adapter.takedeliver.SupplierAdapter;
 import tarce.myodoo.bean.MenuBean;
 import tarce.myodoo.greendaoUtils.SupplierBeanUtils;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
@@ -149,6 +151,11 @@ public class TakeDeliverActivity extends BaseActivity {
             public void onResponse(Call<TakeDelListBean> call, Response<TakeDelListBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null)return;
+                if (response.body().getError()!=null){
+                    new TipDialog(TakeDeliverActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
                     List<TakeDelListBean.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
                     if (res_data != null && res_data.size() > 0) {

@@ -541,6 +541,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             @Override
             public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                Log.e("zws", t.toString());
                 ToastUtils.showCommonToast(OrderDetailActivity.this, t.toString());
             }
         });
@@ -623,6 +624,10 @@ public class OrderDetailActivity extends ToolBarActivity {
      */
     private void initDialog(final OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean, final int position, final int type) {
 
+        if(linesBean.getProduct_uom_qty() == 0  && resDataBean.getProcess_id().getProcess_id()!=10){
+            ToastUtils.showCommonToast(OrderDetailActivity.this, "需求数量为0，不可备料");
+            return;
+        }
         if (isShowDialog) {
             isShowDialog = false;
             dialogForOrder = new DialogForOrder(OrderDetailActivity.this, new DialogForOrder.OnSendCommonClickListener() {

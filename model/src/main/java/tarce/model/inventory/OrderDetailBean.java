@@ -181,7 +181,7 @@ public class OrderDetailBean {
             private Object cur_location;
             private String state;
             private ProcessIdBean process_id;
-            private String bom_name;
+            private Object bom_name;
             private FeedbackOnReworkBean feedback_on_rework;
             private double product_qty;
             private String in_charge_name;
@@ -264,11 +264,14 @@ public class OrderDetailBean {
                 this.process_id = process_id;
             }
 
-            public String getBom_name() {
+            public Object getBom_name() {
+                if (bom_name instanceof Boolean){
+                    bom_name = "";
+                }
                 return bom_name;
             }
 
-            public void setBom_name(String bom_name) {
+            public void setBom_name(Object bom_name) {
                 this.bom_name = bom_name;
             }
 
@@ -378,7 +381,7 @@ public class OrderDetailBean {
 
                 private String product_ll_type;
                 private AreaIdBean area_id;
-                private int product_id;
+                private Object product_id;
                 private String product_name;
                 private Object product_specs;
 
@@ -409,11 +412,14 @@ public class OrderDetailBean {
                     this.area_id = area_id;
                 }
 
-                public int getProduct_id() {
+                public Object getProduct_id() {
+                    if (product_id instanceof Boolean){
+                        product_id = 0;
+                    }
                     return product_id;
                 }
 
-                public void setProduct_id(int product_id) {
+                public void setProduct_id(Object product_id) {
                     this.product_id = product_id;
                 }
 

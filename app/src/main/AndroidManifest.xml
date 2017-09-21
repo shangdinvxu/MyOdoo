@@ -194,7 +194,9 @@
             android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity android:name=".activity.engineer.EngineerActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.engineer.ProjectDetailActivity"/>
+        <activity android:name=".activity.engineer.ProjectDetailActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.device.DeviceSelectActivity"/>
     </application>
 
 </manifest>

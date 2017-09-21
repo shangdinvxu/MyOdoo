@@ -147,16 +147,23 @@ public class InsertNumDialog extends Dialog {
         void OnSendCommonClick(int num);
     }
 
+    //改变产品名称
     public InsertNumDialog changeTitle(String title) {
         nameProductDialog.setText(title);
         return this;
     }
 
+    //控制title消失
     public InsertNumDialog dismissTip() {
         tvTipDialog.setVisibility(View.GONE);
         return this;
     }
 
+    //改变title
+    public InsertNumDialog changeTip(String tip){
+        tvTipDialog.setText(tip);
+        return this;
+    }
 
     @OnClick(R.id.cancel_insert_dialog)
     void cancelAction(View view) {

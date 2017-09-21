@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,9 +34,9 @@ public class EngineerActivity extends BaseActivity {
     @InjectView(R.id.line_engineer)
     LinearLayout lineEngineer;
     @InjectView(R.id.one_num)
-    TextView oneNum;
+    Button oneNum;
     @InjectView(R.id.two_num)
-    TextView twoNum;
+    Button twoNum;
     private InventoryApi inventoryApi;
 
     @Override
@@ -67,7 +68,12 @@ public class EngineerActivity extends BaseActivity {
                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                     ProjectBean.ResultBean.ResDataBean resDataBean = response.body().getResult().getRes_data();
                     int one = resDataBean.getWaiting_data().size();
-                    oneNum.setText(one+"");
+                    if (one<1){
+                        oneNum.setVisibility(View.GONE);
+                    }else {
+                        oneNum.setText(one+"");
+                        oneNum.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
@@ -79,7 +85,7 @@ public class EngineerActivity extends BaseActivity {
         });
         HashMap<Object, Object> hashMap1 = new HashMap<>();
         hashMap1.put("picking_type", "proofing");
-        Call<ProjectBean> bypartner1 = inventoryApi.getPickrequest(hashMap);
+        Call<ProjectBean> bypartner1 = inventoryApi.getPickrequest(hashMap1);
         bypartner1.enqueue(new MyCallback<ProjectBean>() {
             @Override
             public void onResponse(Call<ProjectBean> call, Response<ProjectBean> response) {
@@ -91,9 +97,14 @@ public class EngineerActivity extends BaseActivity {
                     return;
                 }
                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
-                    ProjectBean.ResultBean.ResDataBean resDataBean = response.body().getResult().getRes_data();
-                    int two = resDataBean.getWaiting_data().size();
-                    twoNum.setText(two+"");
+                    ProjectBean.ResultBean.ResDataBean resDataBean1 = response.body().getResult().getRes_data();
+                    int two = resDataBean1.getWaiting_data().size();
+                    if (two<1){
+                        twoNum.setVisibility(View.GONE);
+                    }else {
+                        twoNum.setText(two+"");
+                        twoNum.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 

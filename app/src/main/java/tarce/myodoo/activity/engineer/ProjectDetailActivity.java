@@ -3,6 +3,7 @@ package tarce.myodoo.activity.engineer;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -27,10 +28,12 @@ import com.newland.me.DeviceManager;
 import com.newland.mtype.ConnectionCloseEvent;
 import com.newland.mtype.ModuleType;
 import com.newland.mtype.event.DeviceEventListener;
+import com.newland.mtype.module.common.printer.Printer;
 import com.newland.mtype.module.common.rfcard.RFCardModule;
 import com.newland.mtype.module.common.rfcard.RFResult;
 import com.newland.mtype.util.ISOUtils;
 import com.newland.mtypex.nseries.NSConnV100ConnParams;
+import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +67,7 @@ import tarce.myodoo.device.Const;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.NFCdialog;
 import tarce.myodoo.uiutil.TipDialog;
+import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
@@ -134,6 +138,8 @@ public class ProjectDetailActivity extends BaseActivity {
             }
         }
     };
+    private String type;
+    private Printer printer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,6 +172,7 @@ public class ProjectDetailActivity extends BaseActivity {
         material_id = intent.getIntExtra("material_id", 1);
         saleName = intent.getStringExtra("name");
         state = intent.getStringExtra("state");
+        type = intent.getStringExtra("type");
         setTitle(saleName);
         initData();
         // refreshView(bundle1);
@@ -288,6 +295,7 @@ public class ProjectDetailActivity extends BaseActivity {
                                                 if (response.body() == null)return;
                                                 if (response.body().getResult()!=null && response.body().getResult().getRes_code() == 1){
                                                     ToastUtils.showCommonToast(ProjectDetailActivity.this, "上传成功");
+                                                    printTra();
                                                     finish();
                                                 }
                                             }
@@ -412,5 +420,31 @@ public class ProjectDetailActivity extends BaseActivity {
                         }).show();
             }
         });
+    }
+
+    /**
+     * 打印操作
+     */
+    private void printTra() {
+        initDevice();
+        printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+        printer.init();
+        printer.setLineSpace(1);
+        printer.print(type+"\n单号：" + saleName + "\n申请人: "+res_data.getCreate_uid() + "\n领料原因: " + res_data.getPicking_cause(), 30, TimeUnit.SECONDS);
+        printer.print("产品名称         领料数量", 30, TimeUnit.SECONDS);
+        for (int i = 0; i < detailAdapter.getData().size(); i++) {
+                String name = detailAdapter.getData().get(i).getName();
+                if (name.length()>17){
+                    printer.print(name.substring(0, 15) + "     " +
+                            detailAdapter.getData().get(i).getQuantity_done()
+                            + "\n"+name.substring(15, name.length())+"\n\n", 30, TimeUnit.SECONDS);
+                }else {
+                    printer.print(name+ "     " +
+                            detailAdapter.getData().get(i).getQuantity_done()
+                            + "\n\n", 30, TimeUnit.SECONDS);
+                }
+        }
+        printer.print("\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
+        printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
     }
 }

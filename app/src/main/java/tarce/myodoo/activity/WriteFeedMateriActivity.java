@@ -396,11 +396,12 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                         adapter_type.notifyDataSetChanged();
                                     }
                                 } else {
-                                    ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "备料数量大于0");
+                                    ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料数量必须大于0");
                                 }
                             }
                         }, adapter_type.getData().get(position).getProduct_id(), adapter_type.getData().get(position).getReturn_qty())
-                        .changeTitle("确认 " + adapter_type.getData().get(position).getProduct_id() + " 的退料数量");
+                        .changeTitle("确认 " + adapter_type.getData().get(position).getProduct_id() + " 的退料数量")
+                .changeTip("输入退料数量");
                 insertNumDialog.show();
             }
         });

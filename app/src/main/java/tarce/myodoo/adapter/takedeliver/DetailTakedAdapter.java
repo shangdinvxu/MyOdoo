@@ -53,8 +53,8 @@ public class DetailTakedAdapter extends BaseQuickAdapter<TakeDelListBean.ResultB
                 break;
         }
         helper.setText(R.id.product,item.getProduct_id().getName())
-                .setText(R.id.need_out, StringUtils.doubleToString(item.getProduct_qty()))
-                .setText(R.id.done, StringUtils.doubleToString(item.getQty_done()))
+                .setText(R.id.need_out, item.getProduct_qty()+"")
+                .setText(R.id.done, item.getQty_done()+"")
                 .setText(R.id.tv_num, helper.getPosition()+1+".");
         if (item.getProduct_id().getArea_id().getArea_name() == null){
             helper.setText(R.id.need_in,"");

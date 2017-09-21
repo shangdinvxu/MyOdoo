@@ -138,6 +138,14 @@ public class SaveChangeActivity extends AppCompatActivity {
             intent.putExtra("bean", diyListBean);
             intent.putExtra("position", position);
         }else {
+            if (StringUtils.isNullOrEmpty(actrulNum.getText().toString())){
+                ToastUtils.showCommonToast(SaveChangeActivity.this, "请输入数量");
+                return;
+            }
+            if (StringUtils.isNullOrEmpty(lilunNum.getText().toString())){
+                ToastUtils.showCommonToast(SaveChangeActivity.this, "请输入数量");
+                return;
+            }
             DiyListBean bean = new DiyListBean();
             final DiyListBean.ProductBean productBean = new DiyListBean.ProductBean();
             DiyListBean.ProductBean.ArearBean arearBean = new DiyListBean.ProductBean.ArearBean();
@@ -194,6 +202,7 @@ public class SaveChangeActivity extends AppCompatActivity {
                                     initView();
                                 } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1) {
                                     ToastUtils.showCommonToast(SaveChangeActivity.this, response.body().getResult().getRes_data().getError());
+                                    finish();
                                 }
                             }
 

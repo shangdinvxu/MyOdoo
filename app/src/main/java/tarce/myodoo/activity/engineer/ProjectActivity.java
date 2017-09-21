@@ -188,6 +188,11 @@ public class ProjectActivity extends BaseActivity {
                 intent.putExtra("material_id", projectPickAdapter.getData().get(position).getId());
                 intent.putExtra("name", projectPickAdapter.getData().get(position).getName());
                 intent.putExtra("state", projectPickAdapter.getData().get(position).getPicking_state());
+                if (type.equals("pick_type")){
+                    intent.putExtra("type", "产线领用");
+                }else {
+                    intent.putExtra("type", "工程领用");
+                }
                 startActivity(intent);
             }
         });

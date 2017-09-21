@@ -58,6 +58,7 @@ public class InspectionFragment extends Fragment {
     RecyclerView recyclerview;
     private InventoryApi inventoryApi;
     private LoadInspectionBean.ResultBean.ResDataBean res_data;
+    private List<Integer> type_id;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -94,6 +95,7 @@ public class InspectionFragment extends Fragment {
         recyclerview.setAdapter(sectionAdapter);
 
         initRedNum();
+        initDeliever();
         setOnClick();
         return view;
     }
@@ -127,7 +129,12 @@ public class InspectionFragment extends Fragment {
                         intent2.putExtra("type_code", "");
                         intent2.putExtra("state","qc_check");
                         intent2.putExtra("partner_id", 0);
-                        intent2.putExtra("picking_type_id", 1);
+                        if (type_id.size()>1){
+                            intent2.putExtra("picking_type_id", type_id.get(0));
+                            intent2.putExtra("picking_type_id_2", type_id.get(1));
+                        }else {
+                            intent2.putExtra("picking_type_id", type_id.get(0));
+                        }
                         startActivity(intent2);
                         break;
                 }
@@ -151,6 +158,12 @@ public class InspectionFragment extends Fragment {
                     if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null) {
                         int size = response.body().getResult().getRes_data().size();
                         GetGroupByListresponse.ResultBean.ResDataBean resDataBean = null;
+                        type_id = new ArrayList<Integer>();
+                        for (int i = 0; i < size; i++) {
+                            if (response.body().getResult().getRes_data().get(i).getPicking_type_code().equals("incoming")){
+                                type_id.add(response.body().getResult().getRes_data().get(i).getPicking_type_id());
+                            }
+                        }
                         for (int i = 0; i < size; i++) {
                             if (response.body().getResult().getRes_data().get(i).getPicking_type_code().equals("incoming")){
                                 resDataBean = response.body().getResult().getRes_data().get(i);

@@ -1,12 +1,19 @@
 package tarce.myodoo.activity.inquiriesstock;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.newland.mtype.ModuleType;
+import com.newland.mtype.module.common.printer.Printer;
+import com.uuzuche.lib_zxing.activity.CodeUtils;
+
+import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -14,6 +21,7 @@ import butterknife.OnClick;
 import tarce.model.inventory.StockListBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
+import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 
 /**
@@ -43,7 +51,10 @@ public class StockDetailActivity extends BaseActivity {
     TextView tvInChannel;
     @InjectView(R.id.tv_look_move)
     TextView tvLookMove;
+    @InjectView(R.id.tv_print)
+    TextView tvPrint;
     private StockListBean.ResultBean.ResDataBean resDataBean;
+    private Printer printer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,5 +101,22 @@ public class StockDetailActivity extends BaseActivity {
         intent.putExtra("product_id", resDataBean.getProduct_id());
         intent.putExtra("name", "[" + resDataBean.getDefault_code() + "] " + resDataBean.getProduct_name());
         startActivity(intent);
+    }
+
+    @OnClick(R.id.tv_print)
+    void setTvPrint(View view){
+        initDevice();
+        printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+        printer.init();
+        printer.setLineSpace(1);
+        printer.print("料号: " + resDataBean.getDefault_code()+"\n品名: " + resDataBean.getProduct_name()
+                + "\n位置: " + resDataBean.getArea_id().getArea_name()+"\n", 30, TimeUnit.SECONDS);
+        Bitmap bitmap = CodeUtils.createImage(resDataBean.getDefault_code(), 150, 150, null);
+        printer.print(0, bitmap, 30, TimeUnit.SECONDS);
+        printer.print("\n", 30, TimeUnit.SECONDS);
+        Bitmap mBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.print_img);
+        printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+        printer.print("\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
+        printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
     }
 }
