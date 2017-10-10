@@ -3,11 +3,8 @@ package tarce.myodoo.activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Paint;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -42,15 +39,10 @@ import com.uuzuche.lib_zxing.activity.CodeUtils;
 import com.uuzuche.lib_zxing.camera.CameraManager;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
@@ -74,8 +66,9 @@ import tarce.model.inventory.NfcOrderBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.UpdateMessageBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.moreproduce.MaterialRelationActivity;
+import tarce.myodoo.adapter.DoneAdapter;
 import tarce.myodoo.adapter.product.OrderDetailAdapter;
-import tarce.myodoo.device.AbstractDevice;
 import tarce.myodoo.device.Const;
 import tarce.myodoo.uiutil.DialogForOrder;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
@@ -83,7 +76,6 @@ import tarce.myodoo.uiutil.InsertFeedbackDial;
 import tarce.myodoo.uiutil.InsertNumDialog;
 import tarce.myodoo.uiutil.NFCdialog;
 import tarce.myodoo.uiutil.TipDialog;
-import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.FileUtil;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
@@ -161,6 +153,16 @@ public class OrderDetailActivity extends ToolBarActivity {
     EditText eidtMoNote;
     @InjectView(R.id.edit_sale_note)
     EditText editSaleNote;
+    @InjectView(R.id.recycler_done)
+    RecyclerView recyclerDone;
+    @InjectView(R.id.product_detail)
+    TextView productDetail;
+    @InjectView(R.id.produce_line_id)
+    TextView produceLineId;
+    @InjectView(R.id.tv_second_product)
+    TextView tvSecondProduct;
+    @InjectView(R.id.tv_product_finish)
+    TextView tvProductFinish;
     /*@InjectView(R.id.tv_print)
     TextView tvPrint;*/
     private int click_check;//用于底部的点击事件  根据状态加载不同的点击事件后续
@@ -232,6 +234,7 @@ public class OrderDetailActivity extends ToolBarActivity {
     private int handlerNum;
     private int employee_id;
     private int handlerType;
+    private DoneAdapter doneAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -269,9 +272,13 @@ public class OrderDetailActivity extends ToolBarActivity {
         recycler3OrderDetail.setLayoutManager(new FullyLinearLayoutManager(OrderDetailActivity.this));
         recycler3OrderDetail.addItemDecoration(new DividerItemDecoration(OrderDetailActivity.this,
                 DividerItemDecoration.VERTICAL));
+        recyclerDone.setLayoutManager(new FullyLinearLayoutManager(OrderDetailActivity.this));
+        recyclerDone.addItemDecoration(new DividerItemDecoration(OrderDetailActivity.this,
+                DividerItemDecoration.VERTICAL));
         recyclerOrderDetail.setNestedScrollingEnabled(false);
         recycler2OrderDetail.setNestedScrollingEnabled(false);
         recycler3OrderDetail.setNestedScrollingEnabled(false);
+        recyclerDone.setNestedScrollingEnabled(false);
         initDevice();
         getDetail();
     }
@@ -297,7 +304,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 @Override
                 public void onResponse(Call<GetFactroyRemarkBean> call, Response<GetFactroyRemarkBean> response) {
                     if (response.body() == null) return;
-                    if (response.body().getError()!=null){
+                    if (response.body().getError() != null) {
                         new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                 .show();
                         return;
@@ -524,7 +531,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getError()!=null){
+                if (response.body().getError() != null) {
                     new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                             .show();
                     return;
@@ -549,30 +556,30 @@ public class OrderDetailActivity extends ToolBarActivity {
 
     /**
      * 扫NFC之后刷新试图
-     * */
+     */
     private void changeShowAfterNfc() {
         showDefultProgressDialog();
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("order_id", order_id);
-        hashMap.put("employee_id",employee_id);
+        hashMap.put("employee_id", employee_id);
         Map<Object, Object> mapSmall = new HashMap<>();
         mapSmall.put("stock_move_lines_id", handlerBean.getId());
         mapSmall.put("quantity_ready", handlerNum);
         mapSmall.put("order_id", handlerBean.getOrder_id());
         hashMap.put("stock_move", mapSmall);
         Call<OrderDetailBean> objectCall = inventoryApi.newPrepareMater(hashMap);
-        objectCall.enqueue(new retrofit2.Callback<OrderDetailBean>() {
+        objectCall.enqueue(new Callback<OrderDetailBean>() {
             @Override
             public void onResponse(final Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
                 //threadDismiss(nfCdialog);
                 dismissDefultProgressDialog();
-                if (response.body() == null ) return;
-                if (response.body().getError()!=null){
+                if (response.body() == null) return;
+                if (response.body().getError() != null) {
                     new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                             .show();
                     return;
                 }
-                if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1) {
+                if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -605,7 +612,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                             }
                         }
                     });
-                } else if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == -1) {
+                } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, response.body().getResult().getRes_data().getError());
                 }
             }
@@ -617,6 +624,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             }
         });
     }
+
     /**
      * 初始化dialog并进行相关后续操作
      *
@@ -624,10 +632,11 @@ public class OrderDetailActivity extends ToolBarActivity {
      */
     private void initDialog(final OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean, final int position, final int type) {
 
-        if(linesBean.getProduct_uom_qty() == 0  && resDataBean.getProcess_id().getProcess_id()!=10){
-            ToastUtils.showCommonToast(OrderDetailActivity.this, "需求数量为0，不可备料");
-            return;
-        }
+//        if (linesBean.getProduct_uom_qty() == 0 && !resDataBean.getProcess_id().is_multi_output()
+//                && !resDataBean.getProcess_id().is_random_output()) {
+//            ToastUtils.showCommonToast(OrderDetailActivity.this, "需求数量为0，不可备料");
+//            return;
+//        }
         if (isShowDialog) {
             isShowDialog = false;
             dialogForOrder = new DialogForOrder(OrderDetailActivity.this, new DialogForOrder.OnSendCommonClickListener() {
@@ -659,7 +668,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                 if (qPResult.getCardSerialNo() == null) {
                                                     ToastUtils.showCommonToast(OrderDetailActivity.this, "不能识别序列号：" + Const.MessageTag.DATA);
                                                 } else {
-                                                   // showDefultProgressDialog();
+                                                    // showDefultProgressDialog();
                                                     String NFC_Number = ISOUtils.hexString(qPResult.getCardSerialNo());
                                                     InventoryApi inventory = retrofit.create(InventoryApi.class);
                                                     HashMap<Object, Object> hashMap = new HashMap<>();
@@ -668,7 +677,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                     objectCall.enqueue(new Callback<NfcOrderBean>() {
                                                         @Override
                                                         public void onResponse(Call<NfcOrderBean> call, Response<NfcOrderBean> response) {
-                                                           // dismissDefultProgressDialog();
+                                                            // dismissDefultProgressDialog();
                                                             if (response.body() == null) return;
                                                             if (response.body().getError() != null) {
                                                                 nfCdialog.setHeaderImage(R.drawable.warning)
@@ -703,7 +712,7 @@ public class OrderDetailActivity extends ToolBarActivity {
 
                                                         @Override
                                                         public void onFailure(Call<NfcOrderBean> call, Throwable t) {
-                                                           // dismissDefultProgressDialog();
+                                                            // dismissDefultProgressDialog();
                                                             Log.e("zws", t.toString());
                                                         }
                                                     });
@@ -719,7 +728,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                 public void run() {
                                                     try {
                                                         Thread.sleep(1000);
-                                                       // ToastUtils.showCommonToast(OrderDetailActivity.this, e.getMessage() + "  " + Const.MessageTag.ERROR);
+                                                        // ToastUtils.showCommonToast(OrderDetailActivity.this, e.getMessage() + "  " + Const.MessageTag.ERROR);
                                                         nfCdialog.dismiss();
                                                     } catch (InterruptedException e1) {
                                                         e1.printStackTrace();
@@ -747,7 +756,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                     dismissDefultProgressDialog();
                                     if (response.body() == null)
                                         return;
-                                    if (response.body().getError()!=null){
+                                    if (response.body().getError() != null) {
                                         new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                                 .show();
                                         return;
@@ -795,10 +804,20 @@ public class OrderDetailActivity extends ToolBarActivity {
      * 根据数据赋值显示view
      */
     private void initView() {
+        if (resDataBean.is_secondary_produce()) {
+            tvSecondProduct.setText("二次生产");
+        } else {
+            tvSecondProduct.setVisibility(View.GONE);
+        }
+        if (resDataBean.getProduction_line_id() != null) {
+            produceLineId.setText("产线：" + resDataBean.getProduction_line_id().getName());
+        } else {
+            produceLineId.setText("产线暂无");
+        }
         tvNameProduct.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG);
         tvNameProduct.setText(resDataBean.getProduct_name());
-        tvNumProduct.setText(resDataBean.getQty_produced()+"");
-        tvNeedNum.setText(resDataBean.getProduct_qty()+"");
+        tvNumProduct.setText(resDataBean.getQty_produced() + "");
+        tvNeedNum.setText(resDataBean.getProduct_qty() + "");
         tvTimeProduct.setText(TimeUtils.utc2Local(resDataBean.getDate_planned_start()));
         tvReworkProduct.setText(resDataBean.getIn_charge_name());
         tvStringGuige.setText(String.valueOf(resDataBean.getProduct_id().getProduct_specs()));
@@ -832,6 +851,14 @@ public class OrderDetailActivity extends ToolBarActivity {
         recyclerOrderDetail.setAdapter(adapter);
         recycler2OrderDetail.setAdapter(adapter_two);
         recycler3OrderDetail.setAdapter(adapter_three);
+//        if (resDataBean.getProcess_id().is_multi_output() || resDataBean.getProcess_id().is_random_output()) {
+//            doneAdapter = new DoneAdapter(R.layout.item_done_adapter, resDataBean.getDone_stock_moves(), false);
+//            recyclerDone.setAdapter(doneAdapter);
+//            tvProductFinish.setVisibility(View.VISIBLE);
+//            productDetail.setText("消耗的物料");
+//            tvShowCode.setText("查看物料关系");
+//            tvShowCode.setVisibility(View.VISIBLE);
+//        }
         canClick();
     }
 
@@ -913,7 +940,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                     @Override
                                     public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                         dismissDefultProgressDialog();
-                                        if (response.body() == null || response.body().getResult() == null)
+                                        if (response.body() == null)
                                             return;
                                         if (response.body().getError() != null) {
                                             new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
@@ -1018,7 +1045,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                             dismissDefultProgressDialog();
                                             if (response.body() == null)
                                                 return;
-                                            if (response.body().getError()!=null){
+                                            if (response.body().getError() != null) {
                                                 new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                                         .show();
                                                 return;
@@ -1160,16 +1187,26 @@ public class OrderDetailActivity extends ToolBarActivity {
      */
     @OnClick(R.id.tv_show_code)
     void useCode(View view) {
-        if (camera_or_relative) {
-            initFragment();
-            tvShowCode.setText("关闭扫描");
-            camera_or_relative = false;
-        } else {
-            //  captureFragment.onDestroyView();
-            CameraManager.get().stopPreview();
-            framelayoutProduct.setVisibility(View.GONE);
-            tvShowCode.setText("打开扫描");
-            camera_or_relative = true;
+        switch (tvShowCode.getText().toString()) {
+            case "打开扫描":
+            case "关闭扫描":
+                if (camera_or_relative) {
+                    initFragment();
+                    tvShowCode.setText("关闭扫描");
+                    camera_or_relative = false;
+                } else {
+                    //  captureFragment.onDestroyView();
+                    CameraManager.get().stopPreview();
+                    framelayoutProduct.setVisibility(View.GONE);
+                    tvShowCode.setText("打开扫描");
+                    camera_or_relative = true;
+                }
+                break;
+            case "查看物料关系":
+                Intent intent = new Intent(OrderDetailActivity.this, MaterialRelationActivity.class);
+                intent.putExtra("rule_id", resDataBean.getRule_id());
+                startActivity(intent);
+                break;
         }
     }
 
@@ -1300,7 +1337,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         }
         try {
             rfCardModule = (RFCardModule) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_RFCARDREADER);
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e("zws", "error");
         }
     }
@@ -1318,7 +1355,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             public void onResponse(Call<FinishPrepareMaBean> call, Response<FinishPrepareMaBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getError()!=null){
+                if (response.body().getError() != null) {
                     new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                             .show();
                     return;
@@ -1346,6 +1383,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             @Override
             public void onFailure(Call<FinishPrepareMaBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                Log.e("zws", t.toString());
                 ToastUtils.showCommonToast(OrderDetailActivity.this, t.toString());
             }
         });

@@ -253,14 +253,17 @@ public class RukuBean {
                      * product_name : W120-成品-秘鲁minimudo
                      */
 
-                    private int product_id;
+                    private Object product_id;
                     private String product_name;
 
-                    public int getProduct_id() {
+                    public Object getProduct_id() {
+                        if (product_id instanceof Boolean){
+                            product_id = 0;
+                        }
                         return product_id;
                     }
 
-                    public void setProduct_id(int product_id) {
+                    public void setProduct_id(Object product_id) {
                         this.product_id = product_id;
                     }
 

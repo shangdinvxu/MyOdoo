@@ -92,6 +92,14 @@
             android:layout_height="35dp"
             android:paddingLeft="5dp"
             android:inputType="text"/>
+        <!--<ImageView-->
+            <!--android:id="@+id/delete_email"-->
+            <!--android:layout_width="30dp"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:src="@drawable/delete_channel"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginRight="10dp"/>-->
     </RelativeLayout>
     <TextView
         android:id="@+id/tv_nfc_login"

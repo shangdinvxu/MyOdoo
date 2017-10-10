@@ -197,6 +197,14 @@
         <activity android:name=".activity.engineer.ProjectDetailActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
         <activity android:name=".activity.device.DeviceSelectActivity"/>
+        <activity android:name=".activity.device.DeviceStateActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.moreproduce.MoreProduceActicity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.moreproduce.InquiriessMorePActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.moreproduce.MaterialRelationActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
     </application>
 
 </manifest>

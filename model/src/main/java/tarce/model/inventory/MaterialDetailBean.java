@@ -1,6 +1,7 @@
 package tarce.model.inventory;
 
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -89,6 +90,14 @@ public class MaterialDetailBean {
         }
 
         public static class ResDataBean{
+            public ProduceLineBean getProduction_line_id() {
+                return production_line_id;
+            }
+
+            public void setProduction_line_id(ProduceLineBean production_line_id) {
+                this.production_line_id = production_line_id;
+            }
+
             /**
              * origin : false
              * in_charge_name : 倪春梅
@@ -101,6 +110,7 @@ public class MaterialDetailBean {
              * product_name : [98.0AC401.158] AC401-成品-阿联酋Lifestyle
              */
 
+            private ProduceLineBean production_line_id;
             private Object origin;
             private String in_charge_name;
             private String state;
@@ -182,6 +192,32 @@ public class MaterialDetailBean {
                 this.product_name = product_name;
             }
 
+            public static class ProduceLineBean implements Serializable {
+                private Object name;
+                private Object production_line_id;
+
+                public Object getName() {
+                    if (name instanceof Boolean){
+                        name = "";
+                    }
+                    return name;
+                }
+
+                public void setName(Object name) {
+                    this.name = name;
+                }
+
+                public Object getProduction_line_id() {
+                    if (production_line_id instanceof Boolean){
+                        production_line_id = 0;
+                    }
+                    return production_line_id;
+                }
+
+                public void setProduction_line_id(Object production_line_id) {
+                    this.production_line_id = production_line_id;
+                }
+            }
             public static class ProcessIdBean {
                 /**
                  * process_id : 16

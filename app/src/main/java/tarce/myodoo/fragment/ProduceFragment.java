@@ -96,7 +96,6 @@ public class ProduceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_2, null);
         ButterKnife.inject(this, view);
-     //   sectionAdapter = new SectionAdapter(R.layout.mian_list_item, R.layout.adapter_head,list);
         sectionAdapter = new SectionAdapter(R.layout.mian_list_item, R.layout.adapter_head, list);
         setRecyclerview(recyclerview);
         recyclerview.setAdapter(sectionAdapter);

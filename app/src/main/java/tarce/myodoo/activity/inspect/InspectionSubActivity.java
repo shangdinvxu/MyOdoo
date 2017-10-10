@@ -3,6 +3,7 @@ package tarce.myodoo.activity.inspect;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 
@@ -25,6 +26,7 @@ import tarce.api.api.InventoryApi;
 import tarce.model.inventory.QcFeedbaskBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
+import tarce.myodoo.activity.moreproduce.InquiriessMorePActivity;
 import tarce.myodoo.adapter.InspectionSubAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
@@ -169,6 +171,7 @@ public class InspectionSubActivity extends BaseActivity {
             @Override
             public void onFailure(Call<QcFeedbaskBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                Log.e("zws", t.toString());
                 ToastUtils.showCommonToast(InspectionSubActivity.this, t.toString());
             }
         });
@@ -181,9 +184,17 @@ public class InspectionSubActivity extends BaseActivity {
         subAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                Intent intent = new Intent(InspectionSubActivity.this, InspectMoDetailActivity.class);
-                intent.putExtra("data", for_transform.get(position));
-                startActivity(intent);
+                QcFeedbaskBean.ResultBean.ResDataBean resDataBean = subAdapter.getData().get(position);
+//                if (resDataBean.is_random_output() ||
+//                        resDataBean.is_multi_output()){
+//                    Intent intent = new Intent(InspectionSubActivity.this, InquiriessMorePActivity.class);
+//                    intent.putExtra("data", resDataBean);
+//                    startActivity(intent);
+//                }else {
+                    Intent intent = new Intent(InspectionSubActivity.this, InspectMoDetailActivity.class);
+                    intent.putExtra("data", resDataBean);
+                    startActivity(intent);
+//                }
             }
         });
     }

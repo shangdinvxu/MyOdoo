@@ -1,5 +1,6 @@
 package tarce.model.inventory;
 
+import java.io.Serializable;
 import java.util.List;
 
 import tarce.model.ErrorBean;
@@ -89,6 +90,38 @@ public class StartInspectBean {
         }
 
         public static class ResDataBean {
+            public boolean is_multi_output() {
+                return is_multi_output;
+            }
+
+            public void setIs_multi_output(boolean is_multi_output) {
+                this.is_multi_output = is_multi_output;
+            }
+
+            public boolean is_random_output() {
+                return is_random_output;
+            }
+
+            public void setIs_random_output(boolean is_random_output) {
+                this.is_random_output = is_random_output;
+            }
+
+            public List<LinesBean> getLine_ids() {
+                return line_ids;
+            }
+
+            public void setLine_ids(List<LinesBean> line_ids) {
+                this.line_ids = line_ids;
+            }
+
+            public String getError() {
+                return error;
+            }
+
+            public void setError(String error) {
+                this.error = error;
+            }
+
             /**
              * qc_test_qty : 0.0
              * qc_img : []
@@ -103,6 +136,10 @@ public class StartInspectBean {
              * production_id : {"order_id":43156,"display_name":"MO170507258","product_id":{"product_id":49921,"product_name":"W150成品(RT通用+中文3C贴纸)-RT-CN"}}
              */
 
+            private String error;
+            private boolean is_multi_output;
+            private boolean is_random_output;
+            private List<LinesBean> line_ids;
             private double qc_test_qty;
             private double qc_fail_rate;
             private double qty_produced;
@@ -202,7 +239,74 @@ public class StartInspectBean {
             public void setQc_img(List<?> qc_img) {
                 this.qc_img = qc_img;
             }
+            public static class LinesBean implements Serializable {
+                private int line_id;
+                private int product_id;
+                private double qc_fail_qty;
+                private double qc_test_qty;
+                private double qty_produced;
+                private Object product_name;
+                private double suggest_qty;
 
+                public double getSuggest_qty() {
+                    return suggest_qty;
+                }
+
+                public void setSuggest_qty(double suggest_qty) {
+                    this.suggest_qty = suggest_qty;
+                }
+
+                public Object getProduct_name() {
+                    if (product_name instanceof Boolean){
+                        product_name = "";
+                    }
+                    return product_name;
+                }
+
+                public void setProduct_name(Object product_name) {
+                    this.product_name = product_name;
+                }
+
+                public int getLine_id() {
+                    return line_id;
+                }
+
+                public void setLine_id(int line_id) {
+                    this.line_id = line_id;
+                }
+
+                public int getProduct_id() {
+                    return product_id;
+                }
+
+                public void setProduct_id(int product_id) {
+                    this.product_id = product_id;
+                }
+
+                public double getQc_fail_qty() {
+                    return qc_fail_qty;
+                }
+
+                public void setQc_fail_qty(double qc_fail_qty) {
+                    this.qc_fail_qty = qc_fail_qty;
+                }
+
+                public double getQc_test_qty() {
+                    return qc_test_qty;
+                }
+
+                public void setQc_test_qty(double qc_test_qty) {
+                    this.qc_test_qty = qc_test_qty;
+                }
+
+                public double getQty_produced() {
+                    return qty_produced;
+                }
+
+                public void setQty_produced(double qty_produced) {
+                    this.qty_produced = qty_produced;
+                }
+        }
             public static class ProductionIdBean {
                 /**
                  * order_id : 43156
@@ -244,14 +348,17 @@ public class StartInspectBean {
                      * product_name : W150成品(RT通用+中文3C贴纸)-RT-CN
                      */
 
-                    private int product_id;
+                    private Object product_id;
                     private String product_name;
 
-                    public int getProduct_id() {
+                    public Object getProduct_id() {
+                        if (product_id instanceof Boolean){
+                            product_id = 0;
+                        }
                         return product_id;
                     }
 
-                    public void setProduct_id(int product_id) {
+                    public void setProduct_id(Object product_id) {
                         this.product_id = product_id;
                     }
 

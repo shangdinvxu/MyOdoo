@@ -92,6 +92,38 @@ public class QcFeedbaskBean {
         }
 
         public static class ResDataBean implements Serializable{
+            public boolean is_multi_output() {
+                return is_multi_output;
+            }
+
+            public void setIs_multi_output(boolean is_multi_output) {
+                this.is_multi_output = is_multi_output;
+            }
+
+            public boolean is_random_output() {
+                return is_random_output;
+            }
+
+            public void setIs_random_output(boolean is_random_output) {
+                this.is_random_output = is_random_output;
+            }
+
+            public List<LinesBean> getLine_ids() {
+                return line_ids;
+            }
+
+            public void setLine_ids(List<LinesBean> line_ids) {
+                this.line_ids = line_ids;
+            }
+
+            public Integer getRule_id() {
+                return rule_id;
+            }
+
+            public void setRule_id(Integer rule_id) {
+                this.rule_id = rule_id;
+            }
+
             /**
              * qc_test_qty : 0.0
              * qc_img : []
@@ -106,6 +138,11 @@ public class QcFeedbaskBean {
              * production_id : {"order_id":43156,"display_name":"MO170507258","product_id":{"product_id":49921,"product_name":"W150成品(RT通用+中文3C贴纸)-RT-CN"}}
              */
 
+
+            private Integer rule_id;
+            private List<LinesBean> line_ids;
+            private boolean is_multi_output;
+            private boolean is_random_output;
             private double qc_test_qty;
             private double qc_fail_rate;
             private double qty_produced;
@@ -206,6 +243,102 @@ public class QcFeedbaskBean {
                 this.qc_img = qc_img;
             }
 
+            /**
+             *
+             * line_ids: [{line_id: 53, qc_fail_qty: 0, qty_produced: 100, product_id: 18031, qc_test_qty: 0}]
+             0: {line_id: 53, qc_fail_qty: 0, qty_produced: 100, product_id: 18031, qc_test_qty: 0}
+             line_id: 53
+             product_id: 18031
+             qc_fail_qty: 0
+             qc_test_qty: 0
+             qty_produced: 100
+             */
+            public static class LinesBean implements Serializable{
+                private double suggest_qty;
+                private int line_id;
+                private int product_id;
+                private double qc_fail_qty;
+                private double qc_test_qty;
+                private double qty_produced;
+                private Object product_name;
+                private String qc_note;
+                private boolean isBlue = false;
+
+                public double getSuggest_qty() {
+                    return suggest_qty;
+                }
+
+                public void setSuggest_qty(double suggest_qty) {
+                    this.suggest_qty = suggest_qty;
+                }
+
+                public boolean isBlue() {
+                    return isBlue;
+                }
+
+                public void setBlue(boolean blue) {
+                    isBlue = blue;
+                }
+
+                public String getQc_note() {
+                    return qc_note;
+                }
+
+                public void setQc_note(String qc_note) {
+                    this.qc_note = qc_note;
+                }
+
+                public Object getProduct_name() {
+                    if (product_name instanceof Boolean){
+                        product_name = "";
+                    }
+                    return product_name;
+                }
+
+                public void setProduct_name(Object product_name) {
+                    this.product_name = product_name;
+                }
+
+                public int getLine_id() {
+                    return line_id;
+                }
+
+                public void setLine_id(int line_id) {
+                    this.line_id = line_id;
+                }
+
+                public int getProduct_id() {
+                    return product_id;
+                }
+
+                public void setProduct_id(int product_id) {
+                    this.product_id = product_id;
+                }
+
+                public double getQc_fail_qty() {
+                    return qc_fail_qty;
+                }
+
+                public void setQc_fail_qty(double qc_fail_qty) {
+                    this.qc_fail_qty = qc_fail_qty;
+                }
+
+                public double getQc_test_qty() {
+                    return qc_test_qty;
+                }
+
+                public void setQc_test_qty(double qc_test_qty) {
+                    this.qc_test_qty = qc_test_qty;
+                }
+
+                public double getQty_produced() {
+                    return qty_produced;
+                }
+
+                public void setQty_produced(double qty_produced) {
+                    this.qty_produced = qty_produced;
+                }
+            }
             public static class ProductionIdBean implements Serializable{
                 public Object getOrder_id() {
                     if (order_id instanceof Boolean){

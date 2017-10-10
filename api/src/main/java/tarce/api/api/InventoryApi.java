@@ -18,6 +18,7 @@ import tarce.model.GetGroupByListresponse;
 import tarce.model.GetProcessBean;
 import tarce.model.GetSaleResponse;
 import tarce.model.LoadActionBean;
+import tarce.model.MaterialRelationBean;
 import tarce.model.OutgoingStockpickingBean;
 import tarce.model.ProjectBean;
 import tarce.model.ProjectDetailBean;
@@ -71,6 +72,11 @@ import tarce.model.inventory.WorkingWorkerBean;
  */
 
 public interface InventoryApi {
+    /**
+     * 获取物料关系
+     * */
+    @POST("get_mrp_rule_detail")
+    Call<MaterialRelationBean> getMrpRule(@Body HashMap hashMap);
     /**
      * 工程领料状态改变
      * */
@@ -458,7 +464,9 @@ public interface InventoryApi {
      * 品检通过,品检不通过
      * */
     @POST("inspection_result")
-    Call<RejectResultBean> resultInspec(@Body HashMap hashMap);
+    Call<StartInspectBean> resultInspec(@Body HashMap hashMap);
+    @POST("inspection_result")
+    Call<RejectResultBean> resultInspecFirst(@Body HashMap hashMap);
 
     /**
      * 入库

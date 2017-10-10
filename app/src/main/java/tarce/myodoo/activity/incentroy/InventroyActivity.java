@@ -28,7 +28,9 @@ import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.InventroyResultBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.OrderDetailActivity;
 import tarce.myodoo.adapter.inventroy.InventroyAdapter;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
 
@@ -89,7 +91,8 @@ public class InventroyActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 if (response.body() == null) return;
                 if (response.body().getError()!=null){
-                    ToastUtils.showCommonToast(InventroyActivity.this, response.body().getError().getData().getMessage());
+                    new TipDialog(InventroyActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
                     return;
                 }
                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {

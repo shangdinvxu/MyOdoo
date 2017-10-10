@@ -1,5 +1,7 @@
 package tarce.myodoo.adapter;
 
+import android.view.View;
+
 import com.chad.library.adapter.base.BaseSectionQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 

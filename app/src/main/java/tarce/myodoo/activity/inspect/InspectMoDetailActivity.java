@@ -64,6 +64,7 @@ import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
 import tarce.myodoo.activity.BomFramworkActivity;
 import tarce.myodoo.activity.WriteFeedMateriActivity;
+import tarce.myodoo.activity.moreproduce.InquiriessMorePActivity;
 import tarce.myodoo.adapter.product.ImgRecycAdapter;
 import tarce.myodoo.device.Const;
 import tarce.myodoo.uiutil.FullyGridLayoutManager;
@@ -136,8 +137,23 @@ public class InspectMoDetailActivity extends BaseActivity {
         public void afterTextChanged(Editable s) {
             if (temp.length() > 0) {
                 long input = Integer.parseInt(temp.toString());
-                float num = (float) (input / dataBean.getQty_produced() * 100);
-                tvRateInspecdetail.setText(num + "%");
+//                if (dataBean.is_multi_output() || dataBean.is_random_output()){
+//                    if (input > dataBean.getLine_ids().get(positionMore).getQty_produced()){
+//                        ToastUtils.showCommonToast(InspectMoDetailActivity.this, "品检数量不可大于生产数量");
+//                        numSampleInspecdetail.setText("0");
+//                        return;
+//                    }
+//                    float num = (float) (input / dataBean.getLine_ids().get(positionMore).getQty_produced() * 100);
+//                    tvRateInspecdetail.setText(num + "%");
+//                }else {
+                    if (input>dataBean.getQty_produced()){
+                        ToastUtils.showCommonToast(InspectMoDetailActivity.this, "品检数量不可大于生产数量");
+                        numSampleInspecdetail.setText("0");
+                        return;
+                    }
+                    float num = (float) (input / dataBean.getQty_produced() * 100);
+                    tvRateInspecdetail.setText(num + "%");
+//                }
             }
         }
     };
@@ -161,6 +177,11 @@ public class InspectMoDetailActivity extends BaseActivity {
                 float input = Float.parseFloat(temp.toString());
                 //     long input = Integer.parseInt(temp.toString());
                 float chouyang_num = Float.parseFloat(numSampleInspecdetail.getText().toString());
+                if (input>chouyang_num){
+                    ToastUtils.showCommonToast(InspectMoDetailActivity.this, "不良品数量不可大于抽样数量");
+                    numRejectsInspecdetail.setText("0");
+                    return;
+                }
                 //long chouyang_num = Integer.parseInt(numSampleInspecdetail.getText().toString());
                 float num = input / chouyang_num * 100;
                 numRateRejects.setText(num + "%");
@@ -172,6 +193,7 @@ public class InspectMoDetailActivity extends BaseActivity {
     private List<String> imgList = new ArrayList<>();
     private ImgRecycAdapter imgRecycAdapter;
     private InventoryApi inventory;
+    private int positionMore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,6 +213,9 @@ public class InspectMoDetailActivity extends BaseActivity {
         Url = RetrofitClient.Url;
         Intent intent = getIntent();
         dataBean = (QcFeedbaskBean.ResultBean.ResDataBean) intent.getSerializableExtra("data");
+//        if (dataBean.is_random_output() || dataBean.is_multi_output()){
+//            positionMore = intent.getIntExtra("position", -1);
+//        }
         initRecycler();
         initView();
     }
@@ -218,15 +243,36 @@ public class InspectMoDetailActivity extends BaseActivity {
                 showLinThreePin();
                 break;
             case "qc_ing":
-                stateInspectDetail.setText("品检中");
-                tvPassOr.setVisibility(View.VISIBLE);
-                tvClickFinish.setText("品检通过");
-                numRateRejects.setText("");
-                tvRateInspecdetail.setText("");
-                imgTakePhoto.setVisibility(View.VISIBLE);
-                imgRecycAdapter = new ImgRecycAdapter(InspectMoDetailActivity.this, R.layout.adapter_img_recyc, imgList);
-                imgGridRecycler.setAdapter(imgRecycAdapter);
-                showLinThreePin();
+//                if (dataBean.is_multi_output() || dataBean.is_random_output()){
+//                    stateInspectDetail.setText("品检中");
+//                    tvClickFinish.setText("确定");
+//                    if (positionMore!=-1){
+//                        numSampleInspecdetail.setText(StringUtils.doubleToString(dataBean.getLine_ids().get(positionMore).getQc_test_qty()));
+//                        numRejectsInspecdetail.setText(StringUtils.doubleToString(dataBean.getLine_ids().get(positionMore).getQc_fail_qty()));
+//                        if (!dataBean.getLine_ids().get(positionMore).getQc_note().equals("false"))
+//                        commentsOfInspecdetail.setText(dataBean.getLine_ids().get(positionMore).getQc_note());
+//                        long input = StringUtils.doubleToInt(dataBean.getLine_ids().get(positionMore).getQc_test_qty());
+//                        float num = (float) (input / dataBean.getLine_ids().get(positionMore).getQty_produced() * 100);
+//                        tvRateInspecdetail.setText(num + "%");
+//                        long inputtwo = StringUtils.doubleToInt(dataBean.getLine_ids().get(positionMore).getQc_fail_qty());
+//                        //     long input = Integer.parseInt(temp.toString());
+//                        float chouyang_num = Float.parseFloat(numSampleInspecdetail.getText().toString());
+//                        //long chouyang_num = Integer.parseInt(numSampleInspecdetail.getText().toString());
+//                        float numtwo = inputtwo / chouyang_num * 100;
+//                        numRateRejects.setText(num + "%");
+//                    }
+//                    showLinThreePin();
+//                }else {
+                    stateInspectDetail.setText("品检中");
+                    tvPassOr.setVisibility(View.VISIBLE);
+                    tvClickFinish.setText("品检通过");
+                    numRateRejects.setText("");
+                    tvRateInspecdetail.setText("");
+                    imgTakePhoto.setVisibility(View.VISIBLE);
+                    imgRecycAdapter = new ImgRecycAdapter(InspectMoDetailActivity.this, R.layout.adapter_img_recyc, imgList);
+                    imgGridRecycler.setAdapter(imgRecycAdapter);
+                    showLinThreePin();
+//                }
                 break;
             case "qc_success":
                 stateInspectDetail.setText("等待入库");
@@ -245,6 +291,18 @@ public class InspectMoDetailActivity extends BaseActivity {
                 showLinThreePro();
                 break;
             case "qc_fail":
+//                if (dataBean.is_multi_output() || dataBean.is_random_output()){
+//                    numRateRejects.setText(Math.rint(dataBean.getQc_fail_rate()) + "%");
+//                    tvRateInspecdetail.setText(Math.rint(dataBean.getQc_rate()) + "%");
+//                    numRejectsInspecdetail.setFocusable(false);
+//                    numRejectsInspecdetail.setText(StringUtils.doubleToString(dataBean.getQc_fail_qty()));
+//                    numSampleInspecdetail.setFocusable(false);
+//                    numSampleInspecdetail.setText(StringUtils.doubleToString(dataBean.getQc_test_qty()));
+//                    commentsOfInspecdetail.setFocusable(false);
+//                    commentsOfInspecdetail.setText(dataBean.getQc_note());
+//                    tvClickFinish.setVisibility(View.GONE);
+//                    return;
+//                }
                 stateInspectDetail.setText("品检失败");
                 numRateRejects.setText(Math.rint(dataBean.getQc_fail_rate()) + "%");
                 tvRateInspecdetail.setText(Math.rint(dataBean.getQc_rate()) + "%");
@@ -262,7 +320,12 @@ public class InspectMoDetailActivity extends BaseActivity {
                 showLinThreePro();
                 break;
         }
-        numProductInspecdetail.setText(StringUtils.doubleToString(dataBean.getQty_produced()));
+//        if (dataBean.is_multi_output() || dataBean.is_random_output()){
+//            if (positionMore!=-1)
+//            numProductInspecdetail.setText(dataBean.getLine_ids().get(positionMore).getQty_produced()+"");
+//        }else {
+            numProductInspecdetail.setText(dataBean.getQty_produced()+"");
+//        }
         numSampleInspecdetail.addTextChangedListener(mEditnumSample);
         numRejectsInspecdetail.addTextChangedListener(mEditnumRejects);
     }
@@ -350,7 +413,7 @@ public class InspectMoDetailActivity extends BaseActivity {
                     return;
                 }
                 AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "")
-                        .setMessage("是否确实品检通过")
+                        .setMessage("是否确定品检通过")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -545,6 +608,22 @@ public class InspectMoDetailActivity extends BaseActivity {
                     }
                 });
                 break;
+//            case "确定":
+//                Intent intent = new Intent();
+//                intent.putExtra("qc_note", commentsOfInspecdetail.getText().toString());
+//                if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())) {
+//                    intent.putExtra("qc_fail_qty",0);
+//                } else {
+//                    intent.putExtra("qc_fail_qty",Integer.parseInt(numRejectsInspecdetail.getText().toString()));
+//                }
+//                if (StringUtils.isNullOrEmpty(numSampleInspecdetail.getText().toString())) {
+//                    intent.putExtra("qc_test_qty",0);
+//                } else {
+//                    intent.putExtra("qc_test_qty",Integer.parseInt(numSampleInspecdetail.getText().toString()));
+//                }
+//                setResult(111,intent);
+//                finish();
+//                break;
         }
     }
     /**
@@ -620,7 +699,7 @@ public class InspectMoDetailActivity extends BaseActivity {
                //     String[] img_str = {BitmapUtils.bitmapToBase64(decodeFile(selectedImagePath))};
             resultMap.put("qc_img", img_str);
         }
-        Call<RejectResultBean> objectCall1 = inventoryApi.resultInspec(resultMap);
+        Call<RejectResultBean> objectCall1 = inventoryApi.resultInspecFirst(resultMap);
         objectCall1.enqueue(new MyCallback<RejectResultBean>() {
             @Override
             public void onResponse(Call<RejectResultBean> call, Response<RejectResultBean> response) {

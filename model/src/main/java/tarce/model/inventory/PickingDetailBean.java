@@ -1,5 +1,6 @@
 package tarce.model.inventory;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -100,6 +101,14 @@ public class PickingDetailBean {
                 this.origin = origin;
             }
 
+            public ProduceLineBean getProduction_line_id() {
+                return production_line_id;
+            }
+
+            public void setProduction_line_id(ProduceLineBean production_line_id) {
+                this.production_line_id = production_line_id;
+            }
+
             /**
              * origin : MO170514126:MO170514126
              * in_charge_name : 陈小娟
@@ -111,6 +120,8 @@ public class PickingDetailBean {
              * date_planned_start : 2017-07-13 19:03:26
              * product_name : [QJ.0JP217.001] 全检制程品-JP217-木板(松鼠)-2-1+2
              */
+
+            private ProduceLineBean production_line_id;
             private Object origin;
             private String in_charge_name;
             private String state;
@@ -187,6 +198,32 @@ public class PickingDetailBean {
                 this.product_name = product_name;
             }
 
+            public static class ProduceLineBean implements Serializable {
+                private Object name;
+                private Object production_line_id;
+
+                public Object getName() {
+                    if (name instanceof Boolean){
+                        name = "";
+                    }
+                    return name;
+                }
+
+                public void setName(Object name) {
+                    this.name = name;
+                }
+
+                public Object getProduction_line_id() {
+                    if (production_line_id instanceof Boolean){
+                        production_line_id = 0;
+                    }
+                    return production_line_id;
+                }
+
+                public void setProduction_line_id(Object production_line_id) {
+                    this.production_line_id = production_line_id;
+                }
+            }
             public static class ProcessIdBean {
                 public Object getProcess_id() {
                     if (process_id instanceof Boolean){

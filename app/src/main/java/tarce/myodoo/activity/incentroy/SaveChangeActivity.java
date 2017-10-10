@@ -3,8 +3,6 @@ package tarce.myodoo.activity.incentroy;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -20,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
@@ -42,9 +39,9 @@ import tarce.model.FindProductByConditionResponse;
 import tarce.model.inventory.AreaMessageBean;
 import tarce.model.inventory.DiyListBean;
 import tarce.myodoo.R;
-import tarce.myodoo.activity.PhotoAreaActivity;
-import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.uiutil.Areardialog;
+import tarce.myodoo.uiutil.ImageUtil;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.BitmapUtils;
 import tarce.support.ToastUtils;
@@ -56,6 +53,8 @@ import tarce.support.ViewUtils;
 
 public class SaveChangeActivity extends AppCompatActivity {
     private static final int ADDKUCUN = 100;
+    @InjectView(R.id.tv_takephoto)
+    TextView tvTakephoto;
     private String selectedImagePath = "";
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;//拍照
     private String imgPath;//图片拍照照片的本地路径
@@ -93,11 +92,11 @@ public class SaveChangeActivity extends AppCompatActivity {
         inventoryApi = RetrofitClient.getInstance(SaveChangeActivity.this).create(InventoryApi.class);
         Intent intent = getIntent();
         scan = intent.getStringExtra("scan");
-        if (scan.equals("no")){
+        if (scan.equals("no")) {
             diyListBean = (DiyListBean) intent.getSerializableExtra("bean");
             position = intent.getIntExtra("position", 1);
             initViewDiy();
-        }else {
+        } else {
             Intent intent1 = new Intent(SaveChangeActivity.this, CaptureActivity.class);
             startActivityForResult(intent1, ADDKUCUN);
         }
@@ -107,16 +106,16 @@ public class SaveChangeActivity extends AppCompatActivity {
 
     /**
      * diy的库存条目view初始化
-     * */
+     */
     private void initViewDiy() {
         Glide.with(SaveChangeActivity.this).load(diyListBean.getProduct().getImage_medium()).into(imageInventDetail);
         liaohao.setText(diyListBean.getProduct().getProduct_name());
         area.setText(diyListBean.getProduct().getArea().getArea_name());
         area.setSelection(area.getText().length());
         area_id = diyListBean.getProduct().getArea().getArea_id();
-        lilunNum.setText(diyListBean.getTheoretical_qty()+"");
+        lilunNum.setText(diyListBean.getTheoretical_qty() + "");
         lilunNum.setSelection(lilunNum.getText().length());
-        actrulNum.setText(diyListBean.getProduct_qty()+"");
+        actrulNum.setText(diyListBean.getProduct_qty() + "");
         actrulNum.setSelection(actrulNum.getText().length());
         productGuige.setText(diyListBean.getProduct().getProduct_spec());
         initEzdit();
@@ -130,19 +129,22 @@ public class SaveChangeActivity extends AppCompatActivity {
     @OnClick(R.id.save_tv)
     void setSaveTv(View view) {
         Intent intent = new Intent();
-        if (scan.equals("no")){
+        if (scan.equals("no")) {
+            if (!StringUtils.isNullOrEmpty(selectedImagePath)) {
+                diyListBean.product.image_medium = BitmapUtils.bitmapToBase64(ImageUtil.decodeFile(selectedImagePath));
+            }
             diyListBean.theoretical_qty = Double.valueOf(lilunNum.getText().toString());
             diyListBean.product_qty = Double.valueOf(actrulNum.getText().toString());
             diyListBean.product.area.area_name = area.getText().toString();
             diyListBean.product.area.area_id = area_id;
             intent.putExtra("bean", diyListBean);
             intent.putExtra("position", position);
-        }else {
-            if (StringUtils.isNullOrEmpty(actrulNum.getText().toString())){
+        } else {
+            if (StringUtils.isNullOrEmpty(actrulNum.getText().toString())) {
                 ToastUtils.showCommonToast(SaveChangeActivity.this, "请输入数量");
                 return;
             }
-            if (StringUtils.isNullOrEmpty(lilunNum.getText().toString())){
+            if (StringUtils.isNullOrEmpty(lilunNum.getText().toString())) {
                 ToastUtils.showCommonToast(SaveChangeActivity.this, "请输入数量");
                 return;
             }
@@ -152,7 +154,11 @@ public class SaveChangeActivity extends AppCompatActivity {
             arearBean.area_id = area_id;
             arearBean.area_name = area.getText().toString();
             productBean.area = arearBean;
-            productBean.image_medium = res_data.getProduct().getImage_medium();
+            if (!StringUtils.isNullOrEmpty(selectedImagePath)) {
+                productBean.image_medium = BitmapUtils.bitmapToBase64(ImageUtil.decodeFile(selectedImagePath));
+            } else {
+                productBean.image_medium = res_data.getProduct().getImage_medium();
+            }
             productBean.product_id = res_data.getProduct().getProduct_id();
             productBean.product_name = res_data.getProduct().getProduct_name();
             productBean.product_spec = res_data.getProduct().getProduct_spec();
@@ -176,7 +182,7 @@ public class SaveChangeActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != Activity.RESULT_CANCELED){
+        if (resultCode != Activity.RESULT_CANCELED) {
             if (requestCode == ADDKUCUN) {
                 if (data != null) {
                     Bundle bundle = data.getExtras();
@@ -197,6 +203,11 @@ public class SaveChangeActivity extends AppCompatActivity {
                             public void onResponse(Call<FindProductByConditionResponse> call, Response<FindProductByConditionResponse> response) {
                                 dialog.dismiss();
                                 if (response.body() == null) return;
+                                if (response.body().getError()!=null){
+                                    new TipDialog(SaveChangeActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                            .show();
+                                    return;
+                                }
                                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                                     res_data = response.body().getResult().getRes_data();
                                     initView();
@@ -217,30 +228,34 @@ public class SaveChangeActivity extends AppCompatActivity {
                 selectedImagePath = getImagePath();
                 Glide.with(SaveChangeActivity.this).load(new File(selectedImagePath)).into(imageInventDetail);
             }
-        }else {
+        } else {
             if (requestCode == ADDKUCUN)
-            finish();
+                finish();
         }
     }
 
 
     private void initView() {
-        Glide.with(SaveChangeActivity.this).load(res_data.getProduct().getImage_medium()).into(imageInventDetail);
+        if (StringUtils.isNullOrEmpty(res_data.getProduct().getImage_medium())) {
+            tvTakephoto.setVisibility(View.VISIBLE);
+        } else {
+            Glide.with(SaveChangeActivity.this).load(res_data.getProduct().getImage_medium()).into(imageInventDetail);
+        }
         liaohao.setText(res_data.getProduct().getProduct_name());
-        if (res_data.getProduct().getArea().getArea_name() == null){
+        if (res_data.getProduct().getArea().getArea_name() == null) {
             area.setText("");
-        }else {
-            area.setText(res_data.getProduct().getArea().getArea_name()+"");
+        } else {
+            area.setText(res_data.getProduct().getArea().getArea_name() + "");
         }
         area.setSelection(area.getText().length());
-        if (res_data.getProduct().getArea().getArea_id()!=null){
+        if (res_data.getProduct().getArea().getArea_id() != null) {
             area_id = (int) res_data.getProduct().getArea().getArea_id();
-        }else {
+        } else {
             area_id = 0;
         }
-        lilunNum.setText(res_data.getTheoretical_qty()+"");
+        lilunNum.setText(res_data.getTheoretical_qty() + "");
         lilunNum.setSelection(lilunNum.getText().length());
-        actrulNum.setText(res_data.getProduct_qty()+"");
+        actrulNum.setText(res_data.getProduct_qty() + "");
         actrulNum.setSelection(actrulNum.getText().length());
         productGuige.setText(res_data.getProduct().getProduct_spec());
         initEzdit();
@@ -248,49 +263,49 @@ public class SaveChangeActivity extends AppCompatActivity {
 
     //监听edittext
     private void initEzdit() {
-            area.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                        ViewUtils.collapseSoftInputMethod(SaveChangeActivity.this, area);
-                        dialog.show();
-                        HashMap<Object, Object> hashMap = new HashMap<>();
-                        hashMap.put("condition", area.getText().toString());
-                        Call<AreaMessageBean> areaMessage = inventoryApi.getAreaMessage(hashMap);
-                        areaMessage.enqueue(new MyCallback<AreaMessageBean>() {
-                            @Override
-                            public void onResponse(Call<AreaMessageBean> call, Response<AreaMessageBean> response) {
-                                dialog.dismiss();
-                                if (response.body() == null) return;
-                                if (response.body().getResult() == null) {
-                                    ToastUtils.showCommonToast(SaveChangeActivity.this, "没有返回数据");
-                                    return;
-                                }
-                                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
-                                    List<AreaMessageBean.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
-                                    Areardialog areardialog = new Areardialog(SaveChangeActivity.this, R.style.MyDialogStyle, res_data);
-                                    areardialog.sendNameCompany(new Areardialog.GetCompany() {
-                                        @Override
-                                        public void getCompanyName(String name, int company_id) {
-                                            area.setText(name);
-                                            area_id = company_id;
-                                        }
-                                    });
-                                    areardialog.show();
-                                }
+        area.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+                    ViewUtils.collapseSoftInputMethod(SaveChangeActivity.this, area);
+                    dialog.show();
+                    HashMap<Object, Object> hashMap = new HashMap<>();
+                    hashMap.put("condition", area.getText().toString());
+                    Call<AreaMessageBean> areaMessage = inventoryApi.getAreaMessage(hashMap);
+                    areaMessage.enqueue(new MyCallback<AreaMessageBean>() {
+                        @Override
+                        public void onResponse(Call<AreaMessageBean> call, Response<AreaMessageBean> response) {
+                            dialog.dismiss();
+                            if (response.body() == null) return;
+                            if (response.body().getResult() == null) {
+                                ToastUtils.showCommonToast(SaveChangeActivity.this, "没有返回数据");
+                                return;
                             }
+                            if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
+                                List<AreaMessageBean.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
+                                Areardialog areardialog = new Areardialog(SaveChangeActivity.this, R.style.MyDialogStyle, res_data);
+                                areardialog.sendNameCompany(new Areardialog.GetCompany() {
+                                    @Override
+                                    public void getCompanyName(String name, int company_id) {
+                                        area.setText(name);
+                                        area_id = company_id;
+                                    }
+                                });
+                                areardialog.show();
+                            }
+                        }
 
-                            @Override
-                            public void onFailure(Call<AreaMessageBean> call, Throwable t) {
-                                dialog.dismiss();
+                        @Override
+                        public void onFailure(Call<AreaMessageBean> call, Throwable t) {
+                            dialog.dismiss();
 //                            ToastUtils.showCommonToast(PhotoAreaActivity.this, t.toString());
-                                Log.d("PhotoAreaActivity", t.toString());
-                            }
-                        });
-                        return true;
-                    }
-                    return false;
+                            Log.d("PhotoAreaActivity", t.toString());
+                        }
+                    });
+                    return true;
                 }
-            });
+                return false;
+            }
+        });
     }
 
     public Uri setImageUri() {
@@ -300,6 +315,7 @@ public class SaveChangeActivity extends AppCompatActivity {
         this.imgPath = file.getAbsolutePath();
         return imgUri;
     }
+
     public String getImagePath() {
         return imgPath;
     }

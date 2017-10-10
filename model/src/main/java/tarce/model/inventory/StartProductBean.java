@@ -350,8 +350,30 @@ public class StartProductBean {
 
                 private String product_ll_type;
                 private AreaIdBean area_id;
-                private int product_id;
-                private String product_name;
+                private Object product_id;
+                private Object product_name;
+
+                public Object getProduct_id() {
+                    if (product_id instanceof Boolean){
+                        product_id = 0;
+                    }
+                    return product_id;
+                }
+
+                public void setProduct_id(Object product_id) {
+                    this.product_id = product_id;
+                }
+
+                public Object getProduct_name() {
+                    if (product_name instanceof Boolean){
+                        product_name = "";
+                    }
+                    return product_name;
+                }
+
+                public void setProduct_name(Object product_name) {
+                    this.product_name = product_name;
+                }
 
                 public String getProduct_ll_type() {
                     return product_ll_type;
@@ -369,21 +391,6 @@ public class StartProductBean {
                     this.area_id = area_id;
                 }
 
-                public int getProduct_id() {
-                    return product_id;
-                }
-
-                public void setProduct_id(int product_id) {
-                    this.product_id = product_id;
-                }
-
-                public String getProduct_name() {
-                    return product_name;
-                }
-
-                public void setProduct_name(String product_name) {
-                    this.product_name = product_name;
-                }
 
                 public static class AreaIdBean {
                     public Object getArea_id() {

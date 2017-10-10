@@ -21,6 +21,7 @@ import tarce.model.inventory.InventroyDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
 import tarce.myodoo.adapter.inventroy.InventroyDetailAdapter;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.ToastUtils;
 
 /**
@@ -61,7 +62,8 @@ public class InventroyListActivity extends BaseActivity {
                 dismissDefultProgressDialog();
                 if (response.body() == null)return;
                 if (response.body().getError()!=null){
-                    ToastUtils.showCommonToast(InventroyListActivity.this, response.body().getError().getData().getMessage());
+                    new TipDialog(InventroyListActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
                     return;
                 }
                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){

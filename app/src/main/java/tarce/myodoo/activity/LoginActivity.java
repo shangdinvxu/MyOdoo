@@ -73,6 +73,7 @@ import tarce.myodoo.greendaoUtils.UserLoginUtils;
 import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
+import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
@@ -98,6 +99,8 @@ public class LoginActivity extends Activity {
     TextView tvNfcLogin;
     @InjectView(R.id.img_delete)
     ImageView imgDelete;
+//    @InjectView(R.id.delete_email)
+//    ImageView deleteEmail;
     private String TAG = LoginActivity.class.getSimpleName();
     private int databaseSwitch = 0;
     private LoginApi loginApi;
@@ -131,7 +134,7 @@ public class LoginActivity extends Activity {
     }
 
     @OnClick(R.id.img_delete)
-    void deleteHost(View view){
+    void deleteHost(View view) {
         httpUrl.setText("");
     }
 
@@ -169,9 +172,37 @@ public class LoginActivity extends Activity {
         }
     }
 
+//    /**
+//     * 删除账号信息
+//     * */
+//    @OnClick(R.id.delete_email)
+//    void deleteEmail(View view){
+//        if (StringUtils.isNullOrEmpty(email.getText().toString())){
+//            return;
+//        }
+//        AlertAialogUtils.getCommonDialog(LoginActivity.this, "确定删除账号？")
+//                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        userLogins = new UserLoginUtils().searchAll();
+////                        int index = 0;
+////                        if (userLogins != null && userLogins.size() > 0) {
+////                            for (int j = 0; j < userLogins.size(); j++) {
+////                                if (userLogins.get(j).getUserName().equals(email.getText().toString())){
+////                                    index = j;
+////                                    Log.e("zws", "index = "+index);
+////                                    userLogins.remove(j);
+////                                    break;
+////                                }
+////                            }
+////                            email.setText("");
+////                            password.setText("");
+////                        }
+//                    }
+//                }).show();
+//    }
 
     private void initListener() {
-
         /**
          * 先获取position 再获取位置
          */
@@ -293,22 +324,22 @@ public class LoginActivity extends Activity {
     @OnClick(R.id.to_login)
     void toLogin(View view) {
         String chooseDB = database.getText().toString();
-        if (chooseDB.equals("选择数据库")){
+        if (chooseDB.equals("选择数据库")) {
             ToastUtils.showCommonToast(LoginActivity.this, "请选择数据库");
             return;
         }
-        final String emailString = this.email.getText().toString();
-        if (StringUtils.isNullOrEmpty(emailString)){
+        final String emailString = this.email.getText().toString().trim();
+        if (StringUtils.isNullOrEmpty(emailString)) {
             ToastUtils.showCommonToast(LoginActivity.this, "请输入邮箱");
             return;
         }
-        final String passwordString = password.getText().toString();
-        if (StringUtils.isNullOrEmpty(passwordString)){
+        final String passwordString = password.getText().toString().trim();
+        if (StringUtils.isNullOrEmpty(passwordString)) {
             ToastUtils.showCommonToast(LoginActivity.this, "请输入密码");
             return;
         }
         final String url = httpUrl.getText().toString();
-        if (StringUtils.isNullOrEmpty(url)){
+        if (StringUtils.isNullOrEmpty(url)) {
             ToastUtils.showCommonToast(LoginActivity.this, "请输入url地址");
             return;
         }
@@ -424,10 +455,10 @@ public class LoginActivity extends Activity {
                                 textNfcNum.setText(NFC_Number);
                                 progressDialog.show();
                                 String host = httpUrl.getText().toString();
-                                if (StringUtils.isNullOrEmpty(host)){
+                                if (StringUtils.isNullOrEmpty(host)) {
                                     return;
-                                }else if (!host.contains("http://")){
-                                    host = "http://"+host;
+                                } else if (!host.contains("http://")) {
+                                    host = "http://" + host;
                                 }
                                 retrofit = new Retrofit.Builder()
                                         .client(new OKHttpFactory(LoginActivity.this).getOkHttpClient())
@@ -456,7 +487,7 @@ public class LoginActivity extends Activity {
 
                                                 }
                                             });
-                                        }else if (response.body().getResult().getRes_code() == -1 && response.body().getResult().getRes_data()!=null){
+                                        } else if (response.body().getResult().getRes_code() == -1 && response.body().getResult().getRes_data() != null) {
                                             rfCardModule.powerOff(2);
                                             alertDialog.dismiss();
                                             ToastUtils.showCommonToast(LoginActivity.this, response.body().getResult().getRes_data().getError());

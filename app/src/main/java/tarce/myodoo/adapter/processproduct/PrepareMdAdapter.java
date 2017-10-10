@@ -31,6 +31,11 @@ public class PrepareMdAdapter extends BaseSectionQuickAdapter<MainMdBean, BaseVi
 
     @Override
     protected void convert(BaseViewHolder helper, MainMdBean item) {
+        if (item.t.getProduction_line_id()!=null){
+            helper.setText(R.id.produce_line_name, "产线："+item.t.getProduction_line_id().getName());
+        }else {
+            helper.setText(R.id.produce_line_name, "产线暂无");
+        }
         helper.setText(R.id.tv_name_dan, item.t.getDisplay_name());
         helper.setText(R.id.tv_name_prod, item.t.getProduct_name());
         helper.setText(R.id.tv_num_state, item.t.getProduct_qty()+"");

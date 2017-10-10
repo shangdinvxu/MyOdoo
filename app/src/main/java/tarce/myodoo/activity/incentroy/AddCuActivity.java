@@ -37,6 +37,7 @@ import tarce.model.inventory.DiyListBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
 import tarce.myodoo.adapter.AddCuAdapter;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.BitmapUtils;
 import tarce.support.ToastUtils;
@@ -167,7 +168,12 @@ public class AddCuActivity extends BaseActivity {
             @Override
             public void onResponse(Call<CommonBean> call, Response<CommonBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null ||response.body().getResult() == null) return;
+                if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(AddCuActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1) {
                     ToastUtils.showCommonToast(AddCuActivity.this, "提交成功");
                     finish();

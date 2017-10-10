@@ -169,6 +169,11 @@ public class WriteFeedMateriActivity extends BaseActivity {
     private void initData() {
         if (from.equals("write") || from.equals("check")) {
             List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> stock_move_lines = resDataBean.getStock_move_lines();
+            if (resDataBean.is_secondary_produce()){
+                for (int i = 0; i < stock_move_lines.size(); i++) {
+                    stock_move_lines.get(i).setReturn_qty(0);
+                }
+            }
             for (int i = 0; i < stock_move_lines.size(); i++) {
                 String s = String.valueOf(stock_move_lines.get(i).getProduct_type());
                 if (s.equals("material")) {
@@ -250,6 +255,22 @@ public class WriteFeedMateriActivity extends BaseActivity {
             @Override
             public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
                 final List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> data = (List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean>) adapter.getData();
+                if (resDataBean.is_secondary_produce()
+//                        || resDataBean.getProcess_id().is_random_output()
+//                        || resDataBean.getProcess_id().is_multi_output()
+                        ){
+                    insertNumDialog = new InsertNumDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle,
+                            new InsertNumDialog.OnSendCommonClickListener() {
+                                @Override
+                                public void OnSendCommonClick(int num) {
+                                    data.get(position).setReturn_qty(num);
+                                    feeadapter.notifyDataSetChanged();
+                                }
+                            }, data.get(position).getProduct_id())
+                            .changeTitle("输入 " + data.get(position).getProduct_id() + " 的退料数量");
+                    insertNumDialog.show();
+                    return;
+                }
                 double beiNum;
                 if (resDataBean.getState().equals("waiting_material")
                         || resDataBean.getState().equals("prepare_material_ing")
@@ -436,8 +457,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                 @Override
                                 public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                     dismissDefultProgressDialog();
-                                    if (response.body() == null || response.body().getResult() == null)
-                                        return;
+                                    if (response.body() == null)return;
                                     if (response.body().getError() != null) {
                                         new TipDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
                                                 .show();
@@ -509,8 +529,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                 @Override
                                 public void onResponse(Call<OrderDetailBean> call, Response<OrderDetailBean> response) {
                                     dismissDefultProgressDialog();
-                                    if (response.body() == null || response.body().getResult() == null)
-                                        return;
+                                    if (response.body() == null)return;
                                     if (response.body().getError() != null) {
                                         new TipDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
                                                 .show();

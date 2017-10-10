@@ -236,6 +236,7 @@ public class BuGetLiaoActivity extends BaseActivity {
                 new InsertNumDialog(BuGetLiaoActivity.this, R.style.MyDialogStyle, new InsertNumDialog.OnSendCommonClickListener() {
                     @Override
                     public void OnSendCommonClick(final int num) {
+
                         if (num > data.get(position).getQty_available()) {
                             ToastUtils.showCommonToast(BuGetLiaoActivity.this, "库存不足");
                         } else {

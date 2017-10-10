@@ -25,4 +25,8 @@ public class UserLoginUtils {
         return userLogins;
     }
 
+    public void deleteOne(UserLogin someOne){
+        userLoginDao.delete(someOne);
+    }
+
 }

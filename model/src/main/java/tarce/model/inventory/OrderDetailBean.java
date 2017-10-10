@@ -97,6 +97,38 @@ public class OrderDetailBean {
                 this.error = error;
             }
 
+            public List<DoneStockMovBean> getDone_stock_moves() {
+                return done_stock_moves;
+            }
+
+            public void setDone_stock_moves(List<DoneStockMovBean> done_stock_moves) {
+                this.done_stock_moves = done_stock_moves;
+            }
+
+            public ProduceLineBean getProduction_line_id() {
+                return production_line_id;
+            }
+
+            public void setProduction_line_id(ProduceLineBean production_line_id) {
+                this.production_line_id = production_line_id;
+            }
+
+            public boolean is_secondary_produce() {
+                return is_secondary_produce;
+            }
+
+            public void setIs_secondary_produce(boolean is_secondary_produce) {
+                this.is_secondary_produce = is_secondary_produce;
+            }
+
+            public Integer getRule_id() {
+                return rule_id;
+            }
+
+            public void setRule_id(Integer rule_id) {
+                this.rule_id = rule_id;
+            }
+
             /**
              * origin : MO170514126:MO170514126
              * prepare_material_area_id : {"area_id":false,"area_name":false}
@@ -119,6 +151,10 @@ public class OrderDetailBean {
              * prepare_material_img : http://192.168.88.128:8069/linkloving_app_api/get_worker_image?worker_id=44420&model=mrp.production&field=prepare_material_img
              */
 
+            private Integer rule_id;
+            private boolean is_secondary_produce;
+            private ProduceLineBean production_line_id;
+            private List<DoneStockMovBean> done_stock_moves;
             private String error;
             private String remark;
 
@@ -339,6 +375,32 @@ public class OrderDetailBean {
                 this.stock_move_lines = stock_move_lines;
             }
 
+            public static class ProduceLineBean implements Serializable{
+                private Object name;
+                private Object production_line_id;
+
+                public Object getName() {
+                    if (name instanceof Boolean){
+                        name = "";
+                    }
+                    return name;
+                }
+
+                public void setName(Object name) {
+                    this.name = name;
+                }
+
+                public Object getProduction_line_id() {
+                    if (production_line_id instanceof Boolean){
+                        production_line_id = 0;
+                    }
+                    return production_line_id;
+                }
+
+                public void setProduction_line_id(Object production_line_id) {
+                    this.production_line_id = production_line_id;
+                }
+            }
             public static class PrepareMaterialAreaIdBean implements Serializable{
                 /**
                  * area_id : false
@@ -371,6 +433,62 @@ public class OrderDetailBean {
                 }
             }
 
+            public static class DoneStockMovBean implements  Serializable{
+                private Integer id;
+                private String product_id;
+                private String product_type;
+                private Integer suggest_qty;
+                private double quantity_done_finished;
+                private int now_num=0;
+
+                public int getNow_num() {
+                    return now_num;
+                }
+
+                public void setNow_num(int now_num) {
+                    this.now_num = now_num;
+                }
+
+                public double getQuantity_done_finished() {
+                    return quantity_done_finished;
+                }
+
+                public void setQuantity_done_finished(double quantity_done_finished) {
+                    this.quantity_done_finished = quantity_done_finished;
+                }
+
+                public String getProduct_type() {
+                    return product_type;
+                }
+
+                public void setProduct_type(String product_type) {
+                    this.product_type = product_type;
+                }
+
+                public Integer getSuggest_qty() {
+                    return suggest_qty;
+                }
+
+                public void setSuggest_qty(Integer suggest_qty) {
+                    this.suggest_qty = suggest_qty;
+                }
+
+                public Integer getId() {
+                    return id;
+                }
+
+                public void setId(Integer id) {
+                    this.id = id;
+                }
+
+                public String getProduct_id() {
+                    return product_id;
+                }
+
+                public void setProduct_id(String product_id) {
+                    this.product_id = product_id;
+                }
+            }
             public static class ProductIdBean implements Serializable{
                 /**
                  * product_ll_type : semi-finished
@@ -472,6 +590,24 @@ public class OrderDetailBean {
                 private int process_id;
                 private String name;
                 private boolean is_rework;
+                private boolean is_multi_output;
+                private boolean is_random_output;
+
+                public boolean is_multi_output() {
+                    return is_multi_output;
+                }
+
+                public void setIs_multi_output(boolean is_multi_output) {
+                    this.is_multi_output = is_multi_output;
+                }
+
+                public boolean is_random_output() {
+                    return is_random_output;
+                }
+
+                public void setIs_random_output(boolean is_random_output) {
+                    this.is_random_output = is_random_output;
+                }
 
                 public int getProcess_id() {
                     return process_id;

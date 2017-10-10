@@ -95,7 +95,7 @@ public class InspectionFragment extends Fragment {
         recyclerview.setAdapter(sectionAdapter);
 
         initRedNum();
-        initDeliever();
+     //   initDeliever();
         setOnClick();
         return view;
     }
