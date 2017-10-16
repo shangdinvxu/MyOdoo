@@ -35,9 +35,11 @@ import tarce.model.CompanyTwoBean;
 import tarce.model.ComponyQueryBean;
 import tarce.model.LoginResponse;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.BomFramworkActivity;
 import tarce.myodoo.activity.LoginActivity;
 import tarce.myodoo.activity.NFCReadingActivity;
 import tarce.myodoo.uiutil.CompanyDialog;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
@@ -136,7 +138,12 @@ public class MeFragment extends Fragment {
             @Override
             public void onResponse(Call<ComponyQueryBean> call, Response<ComponyQueryBean> response) {
                 progressDialog.dismiss();
-                if (response.body() == null || response.body().getResult() == null)return;
+                if (response.body() == null)return;
+                if (response.body().getError()!=null){
+                    new TipDialog(getActivity(), R.style.MyDialogStyle, response.body().getError().getMessage())
+                            .show();
+                    return;
+                }
                 List<ComponyQueryBean.ResultBean.ResDataBean> result = response.body().getResult().getRes_data();
                 CompanyDialog dialog = new CompanyDialog(getActivity(), result);
                 dialog.show();

@@ -272,6 +272,11 @@ public class PhotoAreaActivity extends ToolBarActivity {
                                     tvFinishOrder.setEnabled(true);
                                     dismissDefultProgressDialog();
                                     if (response.body() == null) return;
+                                    if (response.body().getError()!=null){
+                                        new TipDialog(PhotoAreaActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                               .show();
+                                        return;
+                                    }
                                     if (response.body().getResult().getRes_code() == 1) {
                                         Intent intent = new Intent(PhotoAreaActivity.this, ProductLlActivity.class);
                                         intent.putExtra("name_activity", "生产中");
@@ -286,7 +291,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
                                     tvFinishOrder.setEnabled(true);
                                     dismissDefultProgressDialog();
 //                                    ToastUtils.showCommonToast(PhotoAreaActivity.this, t.toString());
-                                    Log.d("PhotoAreaActivity", t.toString());
+                                    Log.e("PhotoAreaActivity", t.toString());
                                 }
                             });
                         }
@@ -304,7 +309,11 @@ public class PhotoAreaActivity extends ToolBarActivity {
                 public void onResponse(Call<UpdateMessageBean> call, Response<UpdateMessageBean> response) {
                     dismissDefultProgressDialog();
                     if (response.body() == null) return;
-
+                    if (response.body().getError()!=null){
+                        new TipDialog(PhotoAreaActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                .show();
+                        return;
+                    }
                     if (response.body().getResult().getRes_code() == 1) {
                         new TipDialog(PhotoAreaActivity.this, R.style.MyDialogStyle, "提交物料信息成功，点击返回")
                                 .setTrue(new View.OnClickListener() {
@@ -325,6 +334,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
                 public void onFailure(Call<UpdateMessageBean> call, Throwable t) {
                     tvFinishOrder.setEnabled(true);
                     dismissDefultProgressDialog();
+                    Log.e("PhotoAreaActivity", t.toString());
                 }
             });
         }

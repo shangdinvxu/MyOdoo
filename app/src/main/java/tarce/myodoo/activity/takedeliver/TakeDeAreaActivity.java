@@ -42,6 +42,7 @@ import tarce.model.inventory.TakeDeAreaBean;
 import tarce.model.inventory.TakeDelListBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
+import tarce.myodoo.activity.PhotoAreaActivity;
 import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.uiutil.ImageUtil;
 import tarce.myodoo.uiutil.TipDialog;
@@ -158,7 +159,12 @@ public class TakeDeAreaActivity extends BaseActivity {
                             @Override
                             public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                                 dismissDefultProgressDialog();
-                                if (response.body() == null || response.body().getResult() == null)return;
+                                if (response.body() == null)return;
+                                if (response.body().getError()!=null){
+                                    new TipDialog(TakeDeAreaActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                            .show();
+                                    return;
+                                }
                                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                                     new TipDialog(TakeDeAreaActivity.this, R.style.MyDialogStyle, "提交物料信息成功，等待入库品检")
                                             .setTrue(new View.OnClickListener() {
