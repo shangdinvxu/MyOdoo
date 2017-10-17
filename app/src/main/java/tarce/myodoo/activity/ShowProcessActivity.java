@@ -81,6 +81,7 @@ public class ShowProcessActivity extends BaseActivity {
         beanList.add(new ProcessShowBean("今天", 0));
         beanList.add(new ProcessShowBean("明天", 0));
         beanList.add(new ProcessShowBean("后天", 0));
+        beanList.add(new ProcessShowBean("所有", 0));
 
         detailAdapter = new ProcessDetailAdapter(R.layout.adapter_process_detail, beanList);
         recyclerDetailProcess.setAdapter(detailAdapter);
@@ -110,6 +111,8 @@ public class ShowProcessActivity extends BaseActivity {
                             beanList.set(2, new ProcessShowBean("明天", response.body().getResult().getRes_data().get(i).getCount()));
                         } else if (response.body().getResult().getRes_data().get(i).getState().equals("after")) {
                             beanList.set(3, new ProcessShowBean("后天", response.body().getResult().getRes_data().get(i).getCount()));
+                        }else if (response.body().getResult().getRes_data().get(i).getState().equals("all")) {
+                            beanList.set(4, new ProcessShowBean("所有", response.body().getResult().getRes_data().get(i).getCount()));
                         }
                     }
                     detailAdapter.notifyDataSetChanged();

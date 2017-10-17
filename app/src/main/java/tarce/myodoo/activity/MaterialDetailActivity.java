@@ -125,6 +125,8 @@ public class MaterialDetailActivity extends BaseActivity {
                 break;
             case "后天":
                 hashMap.put("date", DateTool.getDateTime(DateTool.addDays(2), DateTool.DEFAULT_DATE_FORMAT));
+            case "所有":
+                hashMap.put("date", "all");
                 break;
         }
         dataBeanList = new ArrayList<>();
