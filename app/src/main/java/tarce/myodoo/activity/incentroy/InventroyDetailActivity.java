@@ -31,6 +31,8 @@ public class InventroyDetailActivity extends BaseActivity {
     TextView actrulNum;
     @InjectView(R.id.product_guige)
     TextView productGuige;
+    @InjectView(R.id.product_weight)
+    TextView productWeight;
     private InventroyDetailBean.ResultBean.ResDataBean.LineIdsBean bean;
 
     @Override
@@ -45,7 +47,7 @@ public class InventroyDetailActivity extends BaseActivity {
     }
 
     private void initView() {
-        if (!StringUtils.isNullOrEmpty(bean.getProduct().getImage_medium())){
+        if (!StringUtils.isNullOrEmpty(bean.getProduct().getImage_medium())) {
             Glide.with(InventroyDetailActivity.this).load(bean.getProduct().getImage_medium());
         }
         liaohao.setText(bean.getProduct().getProduct_name());
@@ -53,5 +55,6 @@ public class InventroyDetailActivity extends BaseActivity {
         lilunNum.setText(StringUtils.doubleToString(bean.getTheoretical_qty()));
         actrulNum.setText(StringUtils.doubleToString(bean.getProduct_qty()));
         productGuige.setText(bean.getProduct().getProduct_spec());
+        productWeight.setText(bean.getProduct().getWeight()+"");
     }
 }

@@ -155,6 +155,7 @@ public class BomFramworkActivity extends BaseActivity {
         firstCompany.name = resDataBean.getName();
         firstCompany.code = resDataBean.getCode();
         firstCompany.process_id = resDataBean.getProcess_id();
+        firstCompany.product_specs = resDataBean.getProduct_specs();
         List<BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX> departments = new ArrayList<>();
         for (int i = 0; i < resDataBean.getBom_ids().size(); i++){
             BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX department = new BomFramworkBean.ResultBean.ResDataBean.BomIdsBeanX();

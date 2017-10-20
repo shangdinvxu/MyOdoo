@@ -78,6 +78,14 @@ public class StockListBean {
         }
 
         public static class ResDataBean implements Serializable{
+            public double getWeight() {
+                return weight;
+            }
+
+            public void setWeight(double weight) {
+                this.weight = weight;
+            }
+
             /**
              * area_id : {"area_name":false,"area_id":false}
              * product_spec : 印刷和激光都是外加工（分别是不同供应商），来料为半成品由工厂包装，配件：双面胶（工厂用来粘贺卡），彩卡，信封（放彩卡和彩纸中间），彩纸（放产品最后面），以上一起装PE复合自封袋，烫银不干胶标签（贴PE袋外面，产品正面）。30个装一个内箱，客户选3款后再装一个外箱发货。
@@ -94,6 +102,7 @@ public class StockListBean {
              * product_name :   HS310-成品(星夜·追梦人){RT-CN}
              */
 
+            private double weight;
             private AreaIdBean area_id;
             private Object product_spec;
             private int product_product_id;

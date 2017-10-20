@@ -55,6 +55,8 @@ public class SaveChangeActivity extends AppCompatActivity {
     private static final int ADDKUCUN = 100;
     @InjectView(R.id.tv_takephoto)
     TextView tvTakephoto;
+    @InjectView(R.id.product_weight)
+    EditText productWeight;
     private String selectedImagePath = "";
     private static final int REQUEST_CODE_IMAGE_CAPTURE = 1;//拍照
     private String imgPath;//图片拍照照片的本地路径
@@ -118,6 +120,7 @@ public class SaveChangeActivity extends AppCompatActivity {
         actrulNum.setText(diyListBean.getProduct_qty() + "");
         actrulNum.setSelection(actrulNum.getText().length());
         productGuige.setText(diyListBean.getProduct().getProduct_spec());
+        productWeight.setText(diyListBean.getProduct().getWeight() + "");
         initEzdit();
     }
 
@@ -135,6 +138,7 @@ public class SaveChangeActivity extends AppCompatActivity {
             }
             diyListBean.theoretical_qty = Double.valueOf(lilunNum.getText().toString());
             diyListBean.product_qty = Double.valueOf(actrulNum.getText().toString());
+            diyListBean.product.weight = productWeight.getText().toString();
             diyListBean.product.area.area_name = area.getText().toString();
             diyListBean.product.area.area_id = area_id;
             intent.putExtra("bean", diyListBean);
@@ -162,6 +166,7 @@ public class SaveChangeActivity extends AppCompatActivity {
             productBean.product_id = res_data.getProduct().getProduct_id();
             productBean.product_name = res_data.getProduct().getProduct_name();
             productBean.product_spec = res_data.getProduct().getProduct_spec();
+            productBean.weight = productWeight.getText().toString();
             bean.product = productBean;
             bean.product_qty = Integer.parseInt(actrulNum.getText().toString());
             bean.theoretical_qty = Integer.parseInt(lilunNum.getText().toString());
@@ -203,7 +208,7 @@ public class SaveChangeActivity extends AppCompatActivity {
                             public void onResponse(Call<FindProductByConditionResponse> call, Response<FindProductByConditionResponse> response) {
                                 dialog.dismiss();
                                 if (response.body() == null) return;
-                                if (response.body().getError()!=null){
+                                if (response.body().getError() != null) {
                                     new TipDialog(SaveChangeActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                             .show();
                                     return;
@@ -258,6 +263,7 @@ public class SaveChangeActivity extends AppCompatActivity {
         actrulNum.setText(res_data.getProduct_qty() + "");
         actrulNum.setSelection(actrulNum.getText().length());
         productGuige.setText(res_data.getProduct().getProduct_spec());
+        productWeight.setText(res_data.getProduct().getWeight() + "");
         initEzdit();
     }
 

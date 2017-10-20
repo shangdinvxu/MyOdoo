@@ -24,8 +24,10 @@ public class InventroyDetailAdapter extends BaseQuickAdapter<InventroyDetailBean
     protected void convert(BaseViewHolder helper, InventroyDetailBean.ResultBean.ResDataBean.LineIdsBean item) {
             helper.setText(R.id.product, item.getProduct().getProduct_name())
             .setText(R.id.need_in, String.valueOf(item.getProduct().getArea().getArea_name()))
-            .setText(R.id.need_out, StringUtils.doubleToString(item.getTheoretical_qty()))
-            .setText(R.id.done, StringUtils.doubleToString(item.getProduct_qty()));
+            .setText(R.id.need_out, item.getTheoretical_qty()+"")
+            .setText(R.id.done, item.getProduct_qty()+"");
+        helper.setText(R.id.weight, item.getProduct().getWeight()+"");
+        helper.getView(R.id.weight).setVisibility(View.VISIBLE);
         helper.getView(R.id.tv_guige).setVisibility(View.GONE);
     }
 }

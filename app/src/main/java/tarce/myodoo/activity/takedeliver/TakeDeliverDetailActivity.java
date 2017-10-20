@@ -2,15 +2,12 @@ package tarce.myodoo.activity.takedeliver;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,61 +18,39 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.newland.me.ConnUtils;
-import com.newland.me.DeviceManager;
-import com.newland.mtype.ConnectionCloseEvent;
 import com.newland.mtype.ModuleType;
-import com.newland.mtype.event.DeviceEventListener;
 import com.newland.mtype.module.common.printer.Printer;
-import com.newland.mtype.module.common.rfcard.RFCardModule;
-import com.newland.mtype.module.common.rfcard.RFResult;
-import com.newland.mtype.util.ISOUtils;
-import com.newland.mtypex.nseries.NSConnV100ConnParams;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Observable;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Subscriber;
 import tarce.api.MyCallback;
-import tarce.api.OKHttpFactory;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.LoginResponse;
-import tarce.model.inventory.NfcOrderBean;
 import tarce.model.inventory.TakeDeAreaBean;
 import tarce.model.inventory.TakeDelListBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.AreaMessageActivity;
 import tarce.myodoo.activity.BaseActivity;
-import tarce.myodoo.activity.OrderDetailActivity;
 import tarce.myodoo.activity.WriteCheckMessaActivity;
 import tarce.myodoo.adapter.takedeliver.DetailTakedAdapter;
-import tarce.myodoo.device.Const;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
-import tarce.myodoo.uiutil.NFCdialog;
 import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
-import tarce.support.MyLog;
 import tarce.support.TimeUtils;
 import tarce.support.ToastUtils;
-
-import static tarce.api.RetrofitClient.Url;
 
 /**
  * Created by zouzou on 2017/6/23.
@@ -117,6 +92,8 @@ public class TakeDeliverDetailActivity extends BaseActivity {
     TextView tvPrint;
     @InjectView(R.id.tv_false_product)
     TextView tvFalseProduct;
+    @InjectView(R.id.weight_takedeliver)
+    TextView weightTakedeliver;
     private TakeDelListBean.ResultBean.ResDataBean resDataBean;
     private InventoryApi inventoryApi;
     private DetailTakedAdapter takedAdapter;
@@ -173,6 +150,8 @@ public class TakeDeliverDetailActivity extends BaseActivity {
     private void refreshButtom(final String state) {
         switch (state) {
             case "assigned":
+                weightTakedeliver.setVisibility(View.VISIBLE);
+                takedAdapter.setShowNotgood("assigned");
                 buttomButton1.setText("提交入库");
                 showLinThreeCang();//根据权限判断
                 initListenerAdapter();
@@ -217,6 +196,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 });
                 break;
             case "qc_check":
+                weightTakedeliver.setVisibility(View.VISIBLE);
                 takedAdapter.setShowNotgood("qc_check");
                 tvFalseProduct.setVisibility(View.VISIBLE);
                 buttomButton1.setText("查看入库信息");
@@ -248,6 +228,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 });
                 break;
             case "validate":
+                weightTakedeliver.setVisibility(View.VISIBLE);
                 takedAdapter.setShowNotgood("validate");
                 tvFalseProduct.setVisibility(View.VISIBLE);
                 buttomButton1.setText("查看品检结果");
@@ -272,6 +253,8 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 });
                 break;
             case "waiting_in":
+                weightTakedeliver.setVisibility(View.VISIBLE);
+                takedAdapter.setShowNotgood("waiting_in");
                 buttomButton1.setText("入库");
                 showLinThreeCang();//根据权限判断
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
@@ -316,6 +299,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                                     ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "some error");
                                                 }
                                             }
+
                                             @Override
                                             public void onFailure(Call<TakeDeAreaBean> call, Throwable t) {
                                                 dismissDefultProgressDialog();
@@ -347,7 +331,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 // final int qty_available = StringUtils.doubleToInt(bean.getProduct_id().getQty_available());
                 final int product_qty = StringUtils.doubleToInt(bean.getProduct_qty());
                 //final int qty = qty_available >= product_qty ? qty_available:product_qty;
-                editText.setText(bean.getRejects_qty()+"");
+                editText.setText(bean.getRejects_qty() + "");
                 editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText.setSelection(editText.getText().length());
                 AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "请输入 " + bean.getProduct_id().getName() + " 不良品数量");
@@ -356,7 +340,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 int anInt = Integer.parseInt(editText.getText().toString());
-                                if (anInt > bean.getQty_done()){
+                                if (anInt > bean.getQty_done()) {
                                     Toast.makeText(TakeDeliverDetailActivity.this, "不能超过完成数量", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
@@ -460,18 +444,18 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         for (int i = 0; i < resDataBean.getPack_operation_product_ids().size(); i++) {
             if (resDataBean.getPack_operation_product_ids().get(i).getPack_id() != -1) {
                 String name = resDataBean.getPack_operation_product_ids().get(i).getProduct_id().getName();
-                if (name.length()>17){
+                if (name.length() > 17) {
                     printer.print(name.substring(0, 15) + "     " +
                             resDataBean.getPack_operation_product_ids().get(i).getQty_done()
-                            + "\n"+name.substring(15, name.length())+"\n\n", 30, TimeUnit.SECONDS);
-                }else {
-                    printer.print(name+ "     " +
+                            + "\n" + name.substring(15, name.length()) + "\n\n", 30, TimeUnit.SECONDS);
+                } else {
+                    printer.print(name + "     " +
                             resDataBean.getPack_operation_product_ids().get(i).getQty_done()
                             + "\n\n", 30, TimeUnit.SECONDS);
                 }
             }
         }
-      //  printer.print("\n", 30, TimeUnit.SECONDS);
+        //  printer.print("\n", 30, TimeUnit.SECONDS);
         Bitmap mBitmap = CodeUtils.createImage(resDataBean.getName(), 150, 150, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
         printer.print("\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);

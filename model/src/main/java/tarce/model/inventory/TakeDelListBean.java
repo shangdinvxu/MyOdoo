@@ -90,6 +90,14 @@ public class TakeDelListBean {
         }
 
         public static class ResDataBean implements Serializable{
+            public double getWeight() {
+                return weight;
+            }
+
+            public void setWeight(double weight) {
+                this.weight = weight;
+            }
+
             /**
              * origin : PO2017050405266
              * sale_note : false
@@ -109,6 +117,7 @@ public class TakeDelListBean {
              * picking_id : 6140
              */
 
+            private double weight;
             private String origin;
 
             public Object getSale_note() {
@@ -381,6 +390,14 @@ public class TakeDelListBean {
                         this.product_specs = product_specs;
                     }
 
+                    public double getWeight() {
+                        return weight;
+                    }
+
+                    public void setWeight(double weight) {
+                        this.weight = weight;
+                    }
+
                     /**
                      * default_code : 98.DG104A.100
                      * qty_available : 0.0
@@ -389,6 +406,7 @@ public class TakeDelListBean {
                      * name : [98.DG104A.100] DG104A-组装好成品(凯西花房)-RT
                      */
 
+                    private double weight;
                     private String product_specs;
                     private String default_code;
                     private double qty_available;

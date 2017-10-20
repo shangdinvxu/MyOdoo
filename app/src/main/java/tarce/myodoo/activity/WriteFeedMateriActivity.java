@@ -255,7 +255,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
             @Override
             public void onItemClick(final BaseQuickAdapter adapter, View view, final int position) {
                 final List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> data = (List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean>) adapter.getData();
-                if (resDataBean.is_secondary_produce()
+                if (resDataBean.is_secondary_produce() || resDataBean.getProcess_id().isIs_rework()
 //                        || resDataBean.getProcess_id().is_random_output()
 //                        || resDataBean.getProcess_id().is_multi_output()
                         ){

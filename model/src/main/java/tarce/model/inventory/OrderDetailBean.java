@@ -668,6 +668,14 @@ public class OrderDetailBean {
             }
 
             public static class StockMoveLinesBean implements Serializable{
+                public double getWeight() {
+                    return weight;
+                }
+
+                public void setWeight(double weight) {
+                    this.weight = weight;
+                }
+
                 /**
                  * quantity_ready : 1200.0
                  * virtual_available : 0.0
@@ -684,6 +692,8 @@ public class OrderDetailBean {
                  * id : 74113
                  * over_picking_qty : 0.0
                  */
+
+                private double weight;
                 private double quantity_ready;
                 private double virtual_available;
                 private String product_id;

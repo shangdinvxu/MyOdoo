@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.SearchView;
 
 import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
 import com.aspsine.swipetoloadlayout.OnRefreshListener;
@@ -24,14 +25,12 @@ import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.myodoo.R;
-import tarce.myodoo.activity.salesout.SalesDetailActivity;
 import tarce.myodoo.adapter.product.PickingDetailAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
 import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
-import tarce.support.ToolBarActivity;
 
 /**
  * Created by rose.zou on 2017/5/19.
@@ -50,10 +49,11 @@ public class ProductLlActivity extends BaseActivity {
     RecyclerFooterView swipeLoadMoreFooter;
     @InjectView(R.id.swipeToLoad)
     SwipeToLoadLayout swipeToLoad;
+    @InjectView(R.id.search_mo_product)
+    SearchView searchMoProduct;
     private InventoryApi loginApi;
     private List<PickingDetailBean.ResultBean.ResDataBean> beanList = new ArrayList<>();
     private List<PickingDetailBean.ResultBean.ResDataBean> dataBeanList = new ArrayList<>();
-    ;
     private PickingDetailAdapter adapter;
     private int loadTime = 0;
     private String state_activity;//生产状态
@@ -66,12 +66,13 @@ public class ProductLlActivity extends BaseActivity {
         setContentView(R.layout.activity_product_ll);
         ButterKnife.inject(this);
 
+        searchMoProduct.setVisibility(View.GONE);
         setRecyclerview(swipeTarget);
         Intent intent = getIntent();
         name_activity = intent.getStringExtra("name_activity");
         setTitle(name_activity);
         state_activity = intent.getStringExtra("state_product");
-        if ("生产中".equals(name_activity)){
+        if ("生产中".equals(name_activity)) {
             process_id = intent.getIntExtra("process_id", 1000);
         }
 
@@ -81,14 +82,14 @@ public class ProductLlActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
-        if (dataBeanList == null){
+        if (dataBeanList == null) {
             swipeToLoad.setRefreshing(true);
             loadTime = 0;
         }
         super.onResume();
     }
 
-    private void initView(){
+    private void initView() {
         showDefultProgressDialog();
         swipeRefreshHeader.setGravity(Gravity.CENTER);
         swipeLoadMoreFooter.setGravity(Gravity.CENTER);
@@ -100,8 +101,8 @@ public class ProductLlActivity extends BaseActivity {
             public void onRefresh() {
                 showDefultProgressDialog();
                 getPicking(0, 20, Refresh_Move);
-                if (adapter!=null){
-                adapter.notifyDataSetChanged();
+                if (adapter != null) {
+                    adapter.notifyDataSetChanged();
                 }
                 swipeToLoad.setRefreshing(false);
             }
@@ -128,7 +129,7 @@ public class ProductLlActivity extends BaseActivity {
     private void getPicking(final int offset, final int limit, final int move) {
         loginApi = RetrofitClient.getInstance(ProductLlActivity.this).create(InventoryApi.class);
         HashMap<Object, Object> hashMap = new HashMap<>();
-        if (!"rework_ing".equals(state_activity)){
+        if (!"rework_ing".equals(state_activity)) {
             hashMap.put("state", state_activity);
         }
         hashMap.put("offset", offset);
@@ -139,13 +140,13 @@ public class ProductLlActivity extends BaseActivity {
             int partner_id = SharePreferenceUtils.getInt("partner_id", 1000, ProductLlActivity.this);
             hashMap.put("partner_id", partner_id);
         }
-        if (process_id != -1000){
+        if (process_id != -1000) {
             hashMap.put("process_id", process_id);
         }
         Call<PickingDetailBean> stringCall;
-        if ("rework_ing".equals(state_activity)){
+        if ("rework_ing".equals(state_activity)) {
             stringCall = loginApi.reworkIng(hashMap);
-        }else {
+        } else {
             stringCall = loginApi.getPicking(hashMap);
         }
 
@@ -154,19 +155,19 @@ public class ProductLlActivity extends BaseActivity {
             public void onResponse(Call<PickingDetailBean> call, Response<PickingDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getError() != null){
+                if (response.body().getError() != null) {
                     new TipDialog(ProductLlActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                             .show();
                     return;
                 }
-                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     beanList = response.body().getResult().getRes_data();
-                    if (move == Refresh_Move){
+                    if (move == Refresh_Move) {
                         dataBeanList = beanList;
                         adapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, beanList);
                         swipeTarget.setAdapter(adapter);
-                    }else {
-                        if (beanList == null){
+                    } else {
+                        if (beanList == null) {
                             ToastUtils.showCommonToast(ProductLlActivity.this, "没有更多数据...");
                             return;
                         }
@@ -175,8 +176,11 @@ public class ProductLlActivity extends BaseActivity {
                         adapter.setData(dataBeanList);
                     }
                     clickAdapterItem();
-                }else if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() == null
-                        && move!=Load_Move){
+//                    if ("生产中".equals(name_activity)) {
+//                        searchMoProduct.setVisibility(View.VISIBLE);
+//                    }
+                } else if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() == null
+                        && move != Load_Move) {
                     swipeTarget.setVisibility(View.GONE);
                     ToastUtils.showCommonToast(ProductLlActivity.this, "没有更多数据...");
                 }
@@ -196,7 +200,7 @@ public class ProductLlActivity extends BaseActivity {
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (dataBeanList == null)return;
+                if (dataBeanList == null) return;
                 int order_id = dataBeanList.get(position).getOrder_id();
                 if (dataBeanList.get(position).getState().equals("progress")) {
                     Intent intent = new Intent(ProductLlActivity.this, ProductingActivity.class);

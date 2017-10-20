@@ -42,12 +42,24 @@ public class DetailTakedAdapter extends BaseQuickAdapter<TakeDelListBean.ResultB
     @Override
     protected void convert(BaseViewHolder helper, final TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean item) {
         switch (showNotgood){
+            case "waiting_in":
+                helper.setText(R.id.weight, item.getProduct_id().getWeight()*item.getQty_done()+"");
+                helper.getView(R.id.weight).setVisibility(View.VISIBLE);
+                break;
+            case "assigned":
+                helper.setText(R.id.weight, item.getProduct_id().getWeight()*item.getQty_done()+"");
+                helper.getView(R.id.weight).setVisibility(View.VISIBLE);
+                break;
             case "qc_check":
                 helper.setVisible(R.id.nongood, true);
                 helper.setBackgroundColor(R.id.nongood, context.getResources().getColor(R.color.grgray));
                 helper.setText(R.id.nongood, item.getRejects_qty()+"");
+                helper.setText(R.id.weight, item.getProduct_id().getWeight()*item.getQty_done()+"");
+                helper.getView(R.id.weight).setVisibility(View.VISIBLE);
                 break;
             case "validate":
+                helper.setText(R.id.weight, item.getProduct_id().getWeight()*item.getQty_done()+"");
+                helper.getView(R.id.weight).setVisibility(View.VISIBLE);
                 helper.setVisible(R.id.nongood, true);
                 helper.setText(R.id.nongood, item.getRejects_qty()+"");
                 break;
@@ -76,7 +88,6 @@ public class DetailTakedAdapter extends BaseQuickAdapter<TakeDelListBean.ResultB
                     .setTextColor(R.id.tv_num, Color.BLACK)
                     .setTextColor(R.id.nongood, Color.BLACK);
         }
-
         helper.addOnClickListener(R.id.tv_guige);
         helper.getView(R.id.tv_guige).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,6 +1,7 @@
 package tarce.api.api;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -20,6 +21,7 @@ import tarce.model.GetSaleResponse;
 import tarce.model.LoadActionBean;
 import tarce.model.MaterialRelationBean;
 import tarce.model.OutgoingStockpickingBean;
+import tarce.model.ProductLinesBean;
 import tarce.model.ProjectBean;
 import tarce.model.ProjectDetailBean;
 import tarce.model.RequestBindUserBean;
@@ -322,6 +324,11 @@ public interface InventoryApi {
     @POST("get_mrp_production")
     Call<PickingDetailBean> getPicking(@Body HashMap hashMap);
 
+    /**
+     * 产线分类
+     * */
+    @POST("get_production_lines")
+    Call<ProductLinesBean> getProductLines(@Body HashMap hashMap);
     /**
      * 生产订单详情
      * */

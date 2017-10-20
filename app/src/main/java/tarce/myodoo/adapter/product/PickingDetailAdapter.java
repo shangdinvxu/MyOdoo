@@ -1,6 +1,8 @@
 package tarce.myodoo.adapter.product;
 
 
+import android.view.View;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -40,6 +42,11 @@ public class PickingDetailAdapter extends BaseQuickAdapter<PickingDetailBean.Res
             helper.setText(R.id.produce_line_name, "产线："+item.getProduction_line_id().getName());
         }else {
             helper.setText(R.id.produce_line_name, "产线暂无");
+        }
+        if (item.getState().equals("progress")){
+            helper.getView(R.id.produce_line_name).setVisibility(View.GONE);
+        }else {
+            helper.getView(R.id.produce_line_name).setVisibility(View.VISIBLE);
         }
         helper.setText(R.id.id_colum, helper.getPosition()+1+".");
         helper.setText(R.id.tv_display_name, item.getDisplay_name());

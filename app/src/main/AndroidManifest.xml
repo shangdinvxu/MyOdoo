@@ -75,7 +75,8 @@
         <activity
             android:name=".activity.MaterialDetailActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
         <activity
             android:name=".activity.PhotoAreaActivity"
             android:screenOrientation="portrait"
@@ -113,7 +114,8 @@
         <activity
             android:name=".activity.WaitProdListActivity"
             android:screenOrientation="portrait"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity
             android:name=".activity.ProcessOfPersonActivity"
             android:screenOrientation="portrait" />
@@ -204,6 +206,10 @@
         <activity android:name=".activity.moreproduce.InquiriessMorePActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
         <activity android:name=".activity.moreproduce.MaterialRelationActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.LineProductActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.ProductLineListActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
     </application>
 

@@ -23,28 +23,27 @@ import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
-import tarce.model.inventory.MainMdBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.myodoo.R;
-import tarce.myodoo.adapter.processproduct.PrepareMdAdapter;
 import tarce.myodoo.adapter.product.PickingDetailAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
 import tarce.myodoo.uiutil.TipDialog;
-import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ViewUtils;
 
 /**
- * Created by rose.zou on 2017/6/15.
- * 等待生产延误的列表
+ * Created by zouwansheng on 2017/10/18.
  */
 
-public class WaitProdListActivity extends BaseActivity {
+public class ProductLineListActivity extends BaseActivity {
     private static final int Refresh_Move = 1;//下拉动作
     private static final int Load_Move = 2;//上拉动作
+
+    @InjectView(R.id.search_mo_product)
+    SearchView searchMoProduct;
     @InjectView(R.id.swipe_refresh_header)
     RecyclerHeaderView swipeRefreshHeader;
     @InjectView(R.id.swipe_target)
@@ -53,10 +52,10 @@ public class WaitProdListActivity extends BaseActivity {
     RecyclerFooterView swipeLoadMoreFooter;
     @InjectView(R.id.swipeToLoad)
     SwipeToLoadLayout swipeToLoad;
-    @InjectView(R.id.search_mo_product)
-    SearchView searchMoProduct;
-    private String state_delay;
-    private InventoryApi inventoryApi;
+    private int production_line_id;
+    private String state_activity;
+    private int process_id;
+    private InventoryApi loginApi;
     private List<PickingDetailBean.ResultBean.ResDataBean> beanList = new ArrayList<>();
     private List<PickingDetailBean.ResultBean.ResDataBean> dataBeanList = new ArrayList<>();
     private List<PickingDetailBean.ResultBean.ResDataBean> allList = new ArrayList<>();
@@ -69,24 +68,19 @@ public class WaitProdListActivity extends BaseActivity {
         setContentView(R.layout.activity_product_ll);
         ButterKnife.inject(this);
 
+        loginApi = RetrofitClient.getInstance(ProductLineListActivity.this).create(InventoryApi.class);
         setRecyclerview(swipeTarget);
-        Intent intent = getIntent();
-        state_delay = intent.getStringExtra("state_delay");
-        initRecycler();
-        getData(40, 0, Refresh_Move);
-    }
-
-    @Override
-    protected void onResume() {
-        if (dataBeanList == null) {
-            swipeToLoad.setRefreshing(true);
-            loadTime = 0;
-        }
-        super.onResume();
-    }
-
-    private void initRecycler() {
+        initView();
         showDefultProgressDialog();
+        getPicking(0, 40, Refresh_Move);
+    }
+
+    private void initView() {
+        Intent intent = getIntent();
+        production_line_id = intent.getIntExtra("production_line_id", 1000);
+        state_activity = intent.getStringExtra("state_activity");
+        process_id = intent.getIntExtra("process_id", 1000);
+
         swipeRefreshHeader.setGravity(Gravity.CENTER);
         swipeLoadMoreFooter.setGravity(Gravity.CENTER);
         swipeToLoad.setRefreshHeaderView(swipeRefreshHeader);
@@ -96,7 +90,7 @@ public class WaitProdListActivity extends BaseActivity {
             @Override
             public void onRefresh() {
                 showDefultProgressDialog();
-                getData(40, 0, Refresh_Move);
+                getPicking(0, 40, Refresh_Move);
                 if (adapter != null) {
                     adapter.notifyDataSetChanged();
                 }
@@ -110,7 +104,7 @@ public class WaitProdListActivity extends BaseActivity {
                     @Override
                     public void run() {
                         loadTime++;
-                        getData(40, 40 * loadTime, Load_Move);
+                        getPicking(40 * loadTime, 40, Load_Move);
                         adapter.notifyDataSetChanged();
                         swipeToLoad.setLoadingMore(false);
                     }
@@ -119,35 +113,38 @@ public class WaitProdListActivity extends BaseActivity {
         });
     }
 
-    private void getData(int limit, int offset, final int move) {
-        inventoryApi = RetrofitClient.getInstance(WaitProdListActivity.this).create(InventoryApi.class);
-        HashMap<Object, Object> hashMap = new HashMap<>();
-        hashMap.put("limit", limit);
-        hashMap.put("offset", offset);
-        int partner_id = SharePreferenceUtils.getInt("partner_id", 1000, WaitProdListActivity.this);
-        hashMap.put("partner_id", partner_id);
-        switch (state_delay) {
-            case "延误":
-                hashMap.put("date", "delay");
-                break;
-            case "今天":
-                hashMap.put("date", DateTool.getDate());
-                break;
-            case "明天":
-                hashMap.put("date", DateTool.getDateTime(DateTool.addDays(1), DateTool.DEFAULT_DATE_FORMAT));
-                break;
-            case "后天":
-                hashMap.put("date", DateTool.getDateTime(DateTool.addDays(2), DateTool.DEFAULT_DATE_FORMAT));
-                break;
+    @Override
+    protected void onResume() {
+        if (dataBeanList == null) {
+            swipeToLoad.setRefreshing(true);
+            loadTime = 0;
         }
-        Call<PickingDetailBean> listWait = inventoryApi.getListWait(hashMap);
-        listWait.enqueue(new MyCallback<PickingDetailBean>() {
+        super.onResume();
+    }
+    private void getPicking(final int offset, final int limit, final int move) {
+        HashMap<Object, Object> hashMap = new HashMap<>();
+        hashMap.put("state", state_activity);
+        hashMap.put("offset", offset);
+        hashMap.put("limit", limit);
+        int partner_id = SharePreferenceUtils.getInt("partner_id", 1000, ProductLineListActivity.this);
+        hashMap.put("partner_id", partner_id);
+        if (process_id != -1000) {
+            hashMap.put("process_id", process_id);
+        }
+        if (production_line_id == -1000){
+            hashMap.put("production_line_id", false);
+        }else {
+            hashMap.put("production_line_id", production_line_id);
+        }
+       // hashMap.put("production_line_id", production_line_id);
+        Call<PickingDetailBean> picking = loginApi.getPicking(hashMap);
+        picking.enqueue(new MyCallback<PickingDetailBean>() {
             @Override
             public void onResponse(Call<PickingDetailBean> call, Response<PickingDetailBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body() == null) return;
                 if (response.body().getError() != null) {
-                    new TipDialog(WaitProdListActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
+                    new TipDialog(ProductLineListActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                             .show();
                     return;
                 }
@@ -157,28 +154,26 @@ public class WaitProdListActivity extends BaseActivity {
                         dataBeanList = beanList;
                         adapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, beanList);
                         swipeTarget.setAdapter(adapter);
-                        allList = dataBeanList;
                     } else {
                         if (beanList == null) {
-                            ToastUtils.showCommonToast(WaitProdListActivity.this, "没有更多数据...");
+                            ToastUtils.showCommonToast(ProductLineListActivity.this, "没有更多数据...");
                             return;
                         }
                         dataBeanList = adapter.getData();
                         dataBeanList.addAll(beanList);
                         adapter.setData(dataBeanList);
-                        allList = dataBeanList;
                     }
+                    allList = dataBeanList;
                     clickAdapterItem();
                     seach();
-                } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1) {
-
+                } else if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() == null) {
+                    ToastUtils.showCommonToast(ProductLineListActivity.this, "没有更多数据...");
                 }
             }
 
             @Override
             public void onFailure(Call<PickingDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
-                ToastUtils.showCommonToast(WaitProdListActivity.this, t.toString());
             }
         });
     }
@@ -194,7 +189,7 @@ public class WaitProdListActivity extends BaseActivity {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if (StringUtils.isNullOrEmpty(newText)) {
-                    ViewUtils.collapseSoftInputMethod(WaitProdListActivity.this, searchMoProduct);
+                    ViewUtils.collapseSoftInputMethod(ProductLineListActivity.this, searchMoProduct);
                     dataBeanList = allList;
                 } else {
                     List<PickingDetailBean.ResultBean.ResDataBean> filterDateList = new ArrayList<>();
@@ -213,41 +208,41 @@ public class WaitProdListActivity extends BaseActivity {
     }
 
     private void clickAdapterItem() {
-
         adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                try {
-                    int order_id = dataBeanList.get(position).getOrder_id();
-                    if (dataBeanList.get(position).getState().equals("progress")) {
-                        Intent intent = new Intent(WaitProdListActivity.this, ProductingActivity.class);
-                        intent.putExtra("order_name", dataBeanList.get(position).getDisplay_name());
-                        intent.putExtra("order_id", order_id);
-                        intent.putExtra("state", "progress");
-                        intent.putExtra("name_activity", state_delay);
-                        intent.putExtra("state_activity", "already_picking");
-                        startActivity(intent);
-                    } else {
-                        Intent intent = new Intent(WaitProdListActivity.this, OrderDetailActivity.class);
-                        intent.putExtra("order_name", dataBeanList.get(position).getDisplay_name());
-                        intent.putExtra("order_id", order_id);
-                        intent.putExtra("state", dataBeanList.get(position).getState());
-                        intent.putExtra("name_activity", state_delay);
-                        intent.putExtra("state_activity", "already_picking");
-                        startActivity(intent);
-                    }
-                } catch (Exception e) {
-                    ToastUtils.showCommonToast(WaitProdListActivity.this, e.toString());
+                if (dataBeanList == null) return;
+                int order_id = dataBeanList.get(position).getOrder_id();
+                if (dataBeanList.get(position).getState().equals("progress")) {
+                    Intent intent = new Intent(ProductLineListActivity.this, ProductingActivity.class);
+                    intent.putExtra("order_name", dataBeanList.get(position).getDisplay_name());
+                    intent.putExtra("order_id", order_id);
+                    intent.putExtra("state", "progress");
+                    intent.putExtra("name_activity", "生产中");
+                    intent.putExtra("state_activity", state_activity);
+                    intent.putExtra("production_line_id",production_line_id);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(ProductLineListActivity.this, OrderDetailActivity.class);
+                    intent.putExtra("order_name", dataBeanList.get(position).getDisplay_name());
+                    intent.putExtra("order_id", order_id);
+                    intent.putExtra("state", dataBeanList.get(position).getState());
+                   // intent.putExtra("name_activity", name_activity);
+                    intent.putExtra("state_activity", state_activity);
+                    startActivity(intent);
                 }
             }
         });
     }
-
     @Override
     protected void onPause() {
-        if (dataBeanList != null) {
-            dataBeanList = null;
-        }
+        dataBeanList = null;
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        dataBeanList = null;
+        super.onDestroy();
     }
 }

@@ -17,6 +17,15 @@ public class DiyListBean implements Serializable{
         public String image_medium;
         public ArearBean area;
         public String product_spec;
+        public String weight;
+
+        public String getWeight() {
+            return weight;
+        }
+
+        public void setWeight(String weight) {
+            this.weight = weight;
+        }
 
         public int getProduct_id() {
             return product_id;

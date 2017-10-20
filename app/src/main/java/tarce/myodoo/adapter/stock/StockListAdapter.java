@@ -36,5 +36,6 @@ public class StockListAdapter extends BaseQuickAdapter<StockListBean.ResultBean.
                 .setText(R.id.need_in, item.getCateg_id())
                 .setText(R.id.need_out, StringUtils.doubleToString(item.getQty_available()))
                 .setText(R.id.done, StringUtils.doubleToString(item.getVirtual_available()));
+        helper.setText(R.id.weight, item.getWeight()+"");
     }
 }

@@ -199,6 +199,14 @@ public class InventroyDetailBean {
                 }
 
                 public static class ProductBean implements Serializable{
+                    public double getWeight() {
+                        return weight;
+                    }
+
+                    public void setWeight(double weight) {
+                        this.weight = weight;
+                    }
+
                     /**
                      * area : {"area_id":false,"area_name":false}
                      * product_spec : 丝印内容待确认，丝印之前与业务确认
@@ -207,6 +215,8 @@ public class InventroyDetailBean {
                      * product_name : [SY.0JP234.001] 丝印制程品-JP234Y-美国Can you imagine
                      */
 
+
+                    private double weight;
                     private AreaBean area;
                     private String product_spec;
                     private String image_medium;

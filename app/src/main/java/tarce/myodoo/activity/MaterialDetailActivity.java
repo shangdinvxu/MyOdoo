@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.SearchView;
 
 import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
 import com.aspsine.swipetoloadlayout.OnRefreshListener;
@@ -25,13 +26,14 @@ import tarce.api.api.InventoryApi;
 import tarce.model.inventory.MainMdBean;
 import tarce.model.inventory.MaterialDetailBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.salesout.NewSaleoutActivity;
 import tarce.myodoo.adapter.processproduct.PrepareMdAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
 import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.DateTool;
-import tarce.support.ToastUtils;
-import tarce.support.ToolBarActivity;
+import tarce.myodoo.utils.StringUtils;
+import tarce.support.ViewUtils;
 
 /**
  * Created by rose.zou on 2017/5/24.
@@ -49,13 +51,17 @@ public class MaterialDetailActivity extends BaseActivity {
     RecyclerFooterView swipeLoadMoreFooter;
     @InjectView(R.id.swipeToLoad)
     SwipeToLoadLayout swipeToLoad;
+    @InjectView(R.id.search_mo)
+    SearchView searchMo;
     private InventoryApi inventoryApi;
     private String state;
     private int process_id;
     private int limit;
     private PrepareMdAdapter adapter;
     private List<MaterialDetailBean.ResultBean.ResDataBean> dataBeanList;
+    private List<MaterialDetailBean.ResultBean.ResDataBean> allListLike;
     private List<MainMdBean> mainMdBeen;
+    private List<MainMdBean> mainMdBeenQuery = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +73,46 @@ public class MaterialDetailActivity extends BaseActivity {
         initView();
     }
 
+    /**
+     * 搜索
+     * */
+    private void serach() {
+        searchMo.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String newText) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (StringUtils.isNullOrEmpty(newText)) {
+                    ViewUtils.collapseSoftInputMethod(MaterialDetailActivity.this, searchMo);
+                    mainMdBeen = mainMdBeenQuery;
+                } else {
+                    List<MainMdBean> filterDateList = new ArrayList<>();
+                    mainMdBeenQuery.remove(0);
+                    filterDateList.add(new MainMdBean(true, ""));
+                    for (MainMdBean bean : mainMdBeenQuery) {
+                        if (bean.t.getDisplay_name().contains(newText)) {
+                            filterDateList.add(bean);
+                        }
+                    }
+                    mainMdBeenQuery.add(0,new MainMdBean(true, ""));
+                    mainMdBeen = filterDateList;
+                }
+//                adapter.setData(mainMdBeen);
+//                adapter.notifyDataSetChanged();
+                adapter = new PrepareMdAdapter(R.layout.adapter_mater_detail, R.layout.adapter_head_md, mainMdBeen);
+                recyclerMaterdetail.setAdapter(adapter);
+                initListener();
+                return false;
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
-        if (dataBeanList == null){
+        if (dataBeanList == null) {
             adapter.notifyDataSetChanged();
             swipeToLoad.setRefreshing(true);
         }
@@ -138,22 +181,25 @@ public class MaterialDetailActivity extends BaseActivity {
             public void onResponse(Call<MaterialDetailBean> call, Response<MaterialDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getError()!=null){
+                if (response.body().getError() != null) {
                     new TipDialog(MaterialDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                             .show();
                     return;
                 }
-                if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1) {
+                if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                     dataBeanList = response.body().getResult().getRes_data();
+                    allListLike = dataBeanList;
                     mainMdBeen.add(new MainMdBean(true, ""));
                     if (dataBeanList != null) {
                         for (int i = 0; i < dataBeanList.size(); i++) {
                             mainMdBeen.add(new MainMdBean(dataBeanList.get(i)));
                         }
                     }
+                    mainMdBeenQuery = mainMdBeen;
                     adapter = new PrepareMdAdapter(R.layout.adapter_mater_detail, R.layout.adapter_head_md, mainMdBeen);
                     recyclerMaterdetail.setAdapter(adapter);
-                    if (dataBeanList!=null){
+                    if (dataBeanList != null) {
+                        serach();
                         initListener();
                     }
                 }
@@ -162,7 +208,7 @@ public class MaterialDetailActivity extends BaseActivity {
             @Override
             public void onFailure(Call<MaterialDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
-               // ToastUtils.showCommonToast(MaterialDetailActivity.this, t.toString());
+                // ToastUtils.showCommonToast(MaterialDetailActivity.this, t.toString());
             }
         });
     }
@@ -176,10 +222,10 @@ public class MaterialDetailActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
 
-                if (position>(mainMdBeen.size()-1)){
+                if (position > (mainMdBeen.size() - 1)) {
                     return;
                 }
-                if (mainMdBeen == null || position == 0){
+                if (mainMdBeen == null || position == 0) {
                     return;
                 }
                 int order_id = mainMdBeen.get(position).t.getOrder_id();
@@ -197,7 +243,7 @@ public class MaterialDetailActivity extends BaseActivity {
 
     @Override
     protected void onPause() {
-        if (dataBeanList != null){
+        if (dataBeanList != null) {
             dataBeanList = null;
         }
         super.onPause();

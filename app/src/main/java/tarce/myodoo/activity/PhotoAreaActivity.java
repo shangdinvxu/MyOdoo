@@ -137,6 +137,7 @@ public class PhotoAreaActivity extends ToolBarActivity {
             super.handleMessage(msg);
         }
     };
+    private int production_line_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,6 +155,9 @@ public class PhotoAreaActivity extends ToolBarActivity {
         resDataBean = (OrderDetailBean.ResultBean.ResDataBean) intent.getSerializableExtra("bean");
         if (change) {
             tvFinishOrder.setText("提交产品位置信息");
+        }
+        if (type.equals("progress")){
+            production_line_id = intent.getIntExtra("production_line_id", 100);
         }
         setTitle("物料位置信息");
         switch (String.valueOf(resDataBean.getProduction_order_type())) {
@@ -278,9 +282,11 @@ public class PhotoAreaActivity extends ToolBarActivity {
                                         return;
                                     }
                                     if (response.body().getResult().getRes_code() == 1) {
-                                        Intent intent = new Intent(PhotoAreaActivity.this, ProductLlActivity.class);
+                                        Intent intent = new Intent(PhotoAreaActivity.this, ProductLineListActivity.class);
                                         intent.putExtra("name_activity", "生产中");
                                         intent.putExtra("state_product", "progress");
+                                        intent.putExtra("process_id", process_id);
+                                        intent.putExtra("production_line_id", production_line_id);
                                         startActivity(intent);
                                         finish();
                                     }

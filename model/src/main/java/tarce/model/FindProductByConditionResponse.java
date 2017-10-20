@@ -133,6 +133,14 @@ public class FindProductByConditionResponse {
             }
 
             public static class ProductBean implements Serializable{
+                public double getWeight() {
+                    return weight;
+                }
+
+                public void setWeight(double weight) {
+                    this.weight = weight;
+                }
+
                 /**
                  * area : {"id":false,"name":false}
                  * image_medium : http://192.168.2.111:8069/linkloving_app_api/get_product_image?product_id=48204
@@ -140,6 +148,7 @@ public class FindProductByConditionResponse {
                  * product_name :   HS310-成品(星夜·追梦人)-RT-CN
                  */
 
+                private double weight;
                 private AreaBean area;
                 private String image_medium;
                 private int id;

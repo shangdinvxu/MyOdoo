@@ -15,6 +15,7 @@ public class CompanyItem extends AbstractExpandableAdapterItem {
 
     private TextView mName;
     private TextView mProcess;
+    private TextView mGuige;
     private ImageView mArrow;
     private BomFramworkBean.ResultBean.ResDataBean mCompany;
 
@@ -38,6 +39,7 @@ public class CompanyItem extends AbstractExpandableAdapterItem {
         mName = (TextView) root.findViewById(R.id.tv_name);
         mProcess = (TextView) root.findViewById(R.id.tv_process_id);
         mArrow = (ImageView) root.findViewById(R.id.iv_arrow);
+        mGuige = (TextView) root.findViewById(R.id.tv_guige);
     }
 
     @Override
@@ -75,5 +77,6 @@ public class CompanyItem extends AbstractExpandableAdapterItem {
                 mProcess.setText((String)mCompany.process_id.get(1));
             }
         }
+        mGuige.setText(mCompany.product_specs+"");
     }
 }

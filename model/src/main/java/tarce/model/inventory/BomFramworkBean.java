@@ -113,6 +113,15 @@ public class BomFramworkBean{
                 this.process_id = process_id;
             }
 
+            public Object getProduct_specs() {
+                return product_specs;
+            }
+
+            public void setProduct_specs(Object product_specs) {
+                this.product_specs = product_specs;
+            }
+
+            public Object product_specs;
             public List<Object> process_id;
             public String code;
             private String uuid;

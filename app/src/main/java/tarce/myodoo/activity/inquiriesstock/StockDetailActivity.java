@@ -53,6 +53,8 @@ public class StockDetailActivity extends BaseActivity {
     TextView tvLookMove;
     @InjectView(R.id.tv_print)
     TextView tvPrint;
+    @InjectView(R.id.tv_weight)
+    TextView tvWeight;
     private StockListBean.ResultBean.ResDataBean resDataBean;
     private Printer printer;
 
@@ -93,6 +95,7 @@ public class StockDetailActivity extends BaseActivity {
         tvTypeIn.setText(String.valueOf(resDataBean.getInner_spec()));
         tvGuige.setText(String.valueOf(resDataBean.getProduct_spec()));
         tvInChannel.setText(resDataBean.getCateg_id());
+        tvWeight.setText(resDataBean.getWeight()+"");
     }
 
     @OnClick(R.id.tv_look_move)
@@ -104,17 +107,17 @@ public class StockDetailActivity extends BaseActivity {
     }
 
     @OnClick(R.id.tv_print)
-    void setTvPrint(View view){
+    void setTvPrint(View view) {
         initDevice();
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
         printer.setLineSpace(1);
-        printer.print("料号: " + resDataBean.getDefault_code()+"\n品名: " + resDataBean.getProduct_name()
-                + "\n位置: " + resDataBean.getArea_id().getArea_name()+"\n", 30, TimeUnit.SECONDS);
+        printer.print("料号: " + resDataBean.getDefault_code() + "\n品名: " + resDataBean.getProduct_name()
+                + "\n位置: " + resDataBean.getArea_id().getArea_name() + "\n", 30, TimeUnit.SECONDS);
         Bitmap bitmap = CodeUtils.createImage(resDataBean.getDefault_code(), 150, 150, null);
         printer.print(0, bitmap, 30, TimeUnit.SECONDS);
         printer.print("\n", 30, TimeUnit.SECONDS);
-        Bitmap mBitmap = BitmapFactory.decodeResource(getResources(),R.drawable.print_img);
+        Bitmap mBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.print_img);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
         printer.print("\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
         printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);

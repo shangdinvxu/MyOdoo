@@ -153,6 +153,7 @@ public class ProductingActivity extends ToolBarActivity {
     private String order_name;
     private boolean is_rework;
     private DoneAdapter doneAdapter;
+    private int production_line_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +171,9 @@ public class ProductingActivity extends ToolBarActivity {
         process_id = intent.getIntExtra("process_id", 1);
         name_activity = intent.getStringExtra("name_activity");
         state_activity = intent.getStringExtra("state_activity");
+        if (state.equals("progress")){
+            production_line_id = intent.getIntExtra("production_line_id", 100);
+        }
 
         stateView(state);
         recyclerOrderDetail.setLayoutManager(new FullyLinearLayoutManager(ProductingActivity.this));
@@ -452,6 +456,10 @@ public class ProductingActivity extends ToolBarActivity {
                                             }
                                             if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                                                 resDataBean = response.body().getResult().getRes_data();
+                                                new TipDialog(ProductingActivity.this, R.style.MyDialogStyle, "提示\n\n本次产出成功，目前生产结果如下\n\n需求数量："+
+                                                        resDataBean.getProduct_qty()+"\n\n生产数量："+response.body().getResult().getRes_data()
+                                                        .getQty_produced())
+                                                        .show();
                                                 tvStartProduce.setVisibility(View.VISIBLE);
                                                 tvNumProduct.setText(StringUtils.doubleToString(response.body().getResult().getRes_data()
                                                         .getQty_produced()));
@@ -638,17 +646,23 @@ public class ProductingActivity extends ToolBarActivity {
                                                     intent.putExtra("process_id", process_id);
                                                     intent.putExtra("change", true);
                                                     intent.putExtra("bean", response.body().getResult().getRes_data());
+                                                    if (state.equals("progress")){
+                                                        intent.putExtra("production_line_id", production_line_id);
+                                                    }
                                                     startActivity(intent);
                                                 }
                                             })
                                             .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                                 @Override
                                                 public void onClick(DialogInterface dialog, int which) {
-                                                    Intent intent = new Intent(ProductingActivity.this, ProductLlActivity.class);
-                                                    intent.putExtra("name_activity", "生产中");
-                                                    intent.putExtra("state_product", state);
-                                                    intent.putExtra("process_id", process_id);
-                                                    startActivity(intent);
+//                                                    Intent intent = new Intent(ProductingActivity.this, ProductLineListActivity.class);
+//                                                    intent.putExtra("name_activity", "生产中");
+//                                                    intent.putExtra("state_product", state);
+//                                                    intent.putExtra("process_id", process_id);
+//                                                    intent.putExtra("production_line_id", production_line_id);
+//                                                    Log.e("zws", "production_line_id="+production_line_id);
+//                                                    startActivity(intent);
+                                                    finish();
                                                 }
                                             }).show();
                                 } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1) {

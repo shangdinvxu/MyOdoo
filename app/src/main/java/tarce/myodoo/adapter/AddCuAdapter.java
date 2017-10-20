@@ -27,6 +27,8 @@ public class AddCuAdapter extends BaseQuickAdapter<DiyListBean, BaseViewHolder> 
                 .setText(R.id.need_in, item.getProduct().getArea().getArea_name())
                 .setText(R.id.need_out, item.getTheoretical_qty()+"")
                 .setText(R.id.done, item.getProduct_qty()+"");
+        helper.setText(R.id.weight, item.getProduct().getWeight()+"");
+        helper.getView(R.id.weight).setVisibility(View.VISIBLE);
         helper.getView(R.id.tv_guige).setVisibility(View.GONE);
     }
 }

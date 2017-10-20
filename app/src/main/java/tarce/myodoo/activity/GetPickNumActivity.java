@@ -79,14 +79,15 @@ public class GetPickNumActivity extends BaseActivity {
                 }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!= null) {
                     for (int i = 0; i < response.body().getResult().getRes_data().size(); i++) {
+                        int count = response.body().getResult().getRes_data().get(i).getCount();
                         if (response.body().getResult().getRes_data().get(i).getState().equals("delay")) {
-                            beanList.set(0, new ProcessShowBean("延误", response.body().getResult().getRes_data().get(i).getCount()));
+                            beanList.set(0, new ProcessShowBean("延误", count));
                         } else if (response.body().getResult().getRes_data().get(i).getState().equals("today")) {
-                            beanList.set(1, new ProcessShowBean("今天", response.body().getResult().getRes_data().get(i).getCount()));
+                            beanList.set(1, new ProcessShowBean("今天", count));
                         } else if (response.body().getResult().getRes_data().get(i).getState().equals("tomorrow")) {
-                            beanList.set(2, new ProcessShowBean("明天", response.body().getResult().getRes_data().get(i).getCount()));
+                            beanList.set(2, new ProcessShowBean("明天", count));
                         } else if (response.body().getResult().getRes_data().get(i).getState().equals("after")) {
-                            beanList.set(3, new ProcessShowBean("后天", response.body().getResult().getRes_data().get(i).getCount()));
+                            beanList.set(3, new ProcessShowBean("后天", count));
                         }
                     }
                     detailAdapter.notifyDataSetChanged();
@@ -111,6 +112,7 @@ public class GetPickNumActivity extends BaseActivity {
                 if (beanList.get(position).getProcess_num() == 0)return;
                 Intent intent = new Intent(GetPickNumActivity.this, WaitProdListActivity.class);
                 intent.putExtra("state_delay",beanList.get(position).getProcess_name());
+              //  intent.putExtra("limit", beanList.get(position));
                 startActivity(intent);
             }
         });

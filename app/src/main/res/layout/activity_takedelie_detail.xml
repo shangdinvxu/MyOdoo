@@ -190,6 +190,14 @@
                     android:text="完成" />
 
                 <TextView
+                    android:id="@+id/weight_takedeliver"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:text="总重量" />
+                <TextView
                     android:id="@+id/tv_false_product"
                     android:layout_width="0dp"
                     android:layout_weight="1"

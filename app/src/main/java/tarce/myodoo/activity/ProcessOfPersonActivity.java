@@ -113,7 +113,8 @@ public class ProcessOfPersonActivity extends BaseActivity {
                     if (res_data == null || position>=res_data.size()){
                         return;
                     }
-                    Intent intent = new Intent(ProcessOfPersonActivity.this, ProductLlActivity.class);
+                 //   Intent intent = new Intent(ProcessOfPersonActivity.this, ProductLlActivity.class);
+                    Intent intent = new Intent(ProcessOfPersonActivity.this, LineProductActivity.class);
                     intent.putExtra("name_activity","生产中");
                     intent.putExtra("state_product","progress");
                     intent.putExtra("process_id",res_data.get(position).getProcess_id());
