@@ -308,7 +308,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="重量" />
+                    android:text="重量(g)" />
 
                 <TextView
                     android:id="@+id/tv_weight"

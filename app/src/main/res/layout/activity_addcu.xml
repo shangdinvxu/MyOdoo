@@ -5,19 +5,23 @@
 
     <TextView
         android:id="@+id/scan_tv"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="40dp"
-        android:textColor="@color/white"
-        android:text="扫描二维码"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:text="扫码添加产品"
         android:gravity="center"
-        android:background="@color/color_5693f8"/>
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/back_check_tv"
+        android:layout_marginTop="10dp"/>
     <EditText
         android:id="@+id/edit_write_name"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@drawable/edit_input_bac"
         android:gravity="center"
-        android:hint="请填写盘点单名"/>
+        android:hint="请填写盘点单名"
+        android:layout_marginTop="10dp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -55,14 +59,14 @@
             android:layout_width="0dp"
             android:layout_weight="0.6"
             android:layout_height="match_parent"
-            android:text="重量"
+            android:text="重量(g)"
             android:textColor="@color/white"
             android:gravity="center"/>
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_scan"
         android:layout_width="match_parent"
-        android:layout_height="340dp">
+        android:layout_height="320dp">
     </android.support.v7.widget.RecyclerView>
     <LinearLayout
         android:layout_width="match_parent"

@@ -34,6 +34,8 @@ import tarce.myodoo.activity.GetPickNumActivity;
 import tarce.myodoo.activity.ProcessOfPersonActivity;
 import tarce.myodoo.activity.device.DeviceSelectActivity;
 import tarce.myodoo.activity.engineer.EngineerActivity;
+import tarce.myodoo.activity.product.AgainProductActivity;
+import tarce.myodoo.activity.product.SecondProductActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
@@ -69,9 +71,10 @@ public class ProduceFragment extends Fragment {
         list.add(new MainItemBean(new MenuBean("仓库检验退料", 0)));
         list.add(new MainItemBean(new MenuBean("生产入库", 0)));
         list.add(new MainItemBean(true, ""));
-        list.add(new MainItemBean(new MenuBean("领料", 0)));
+      //  list.add(new MainItemBean(new MenuBean("领料", 0)));
         list.add(new MainItemBean(new MenuBean("等待生产", 0)));
         list.add(new MainItemBean(new MenuBean("生产中", 0)));
+        list.add(new MainItemBean(new MenuBean("二次生产", 0)));
         list.add(new MainItemBean(new MenuBean("清点退料", 0)));
         list.add(new MainItemBean(new MenuBean("等待返工", 0)));
         list.add(new MainItemBean(new MenuBean("返工中", 0)));
@@ -79,6 +82,8 @@ public class ProduceFragment extends Fragment {
         list.add(new MainItemBean(true, ""));
         list.add(new MainItemBean(new MenuBean("工程领料", 0)));
         list.add(new MainItemBean(new MenuBean("设备管理", 0)));
+        list.add(new MainItemBean(true,""));
+        list.add(new MainItemBean(new MenuBean("二次加工", 0)));
         list.add(new MainItemBean(true,""));
         /*list = new ArrayList<>();
         list.add(new MenuBean("领料", 0));
@@ -136,12 +141,12 @@ public class ProduceFragment extends Fragment {
                 try {
                     if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                         res_data = response.body().getResult().getRes_data();
-                        Integer needaction_counter0 = res_data.getLinkloving_mrp_extend_menu_mrp_finish_prepare_material().getNeedaction_counter();
-                        list.get(4).t.setNumber(needaction_counter0);
+//                        Integer needaction_counter0 = res_data.getLinkloving_mrp_extend_menu_mrp_finish_prepare_material().getNeedaction_counter();
+//                        list.get(4).t.setNumber(needaction_counter0);
                         Integer needaction_counter1 = res_data.getLinkloving_mrp_extend_menu_mrp_already_picking().getNeedaction_counter();
-                        list.get(5).t.setNumber(needaction_counter1);
+                        list.get(4).t.setNumber(needaction_counter1);
                         Integer needaction_counter2 = res_data.getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
-                        list.get(6).t.setNumber(needaction_counter2);
+                        list.get(5).t.setNumber(needaction_counter2);
                         Integer needaction_counter3 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
                         list.get(7).t.setNumber(needaction_counter3);
                         Integer needaction_counter4 = res_data.getLinkloving_mrp_extend_mrp_production_qc_inspection_fail().getNeedaction_counter();
@@ -222,9 +227,9 @@ public class ProduceFragment extends Fragment {
                     case "生产入库":
                         IntentFactory.start_WaitRework_Activity(getActivity(),"生产入库", "qc_success");
                         break;
-                    case "领料":
-                        IntentFactory.start_ProducLl_Activity(getActivity(), "领料", "finish_prepare_material");
-                        break;
+//                    case "领料":
+//                        IntentFactory.start_ProducLl_Activity(getActivity(), "领料", "finish_prepare_material");
+//                        break;
                     case "备料":
                         IntentFactory.start_SeProce_Activity(getActivity());
                         break;
@@ -255,6 +260,14 @@ public class ProduceFragment extends Fragment {
                     case "设备管理":
                         Intent intent2 = new Intent(getActivity(), DeviceSelectActivity.class);
                         startActivity(intent2);
+                        break;
+                    case "二次生产":
+                        Intent intent3 = new Intent(getActivity(), AgainProductActivity.class);
+                        startActivity(intent3);
+                        break;
+                    case "二次加工":
+                        Intent intent5 = new Intent(getActivity(), SecondProductActivity.class);
+                        startActivity(intent5);
                         break;
                 }
             }

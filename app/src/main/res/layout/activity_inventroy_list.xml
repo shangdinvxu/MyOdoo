@@ -42,7 +42,7 @@
             android:layout_height="match_parent"
             android:textColor="@color/white"
             android:gravity="center"
-            android:text="重量" />
+            android:text="重量(g)" />
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_change"

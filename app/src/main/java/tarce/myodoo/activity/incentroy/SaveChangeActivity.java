@@ -72,7 +72,7 @@ public class SaveChangeActivity extends AppCompatActivity {
     @InjectView(R.id.area)
     EditText area;
     @InjectView(R.id.lilun_num)
-    EditText lilunNum;
+    TextView lilunNum;
     @InjectView(R.id.actrul_num)
     EditText actrulNum;
     @InjectView(R.id.product_guige)
@@ -116,7 +116,6 @@ public class SaveChangeActivity extends AppCompatActivity {
         area.setSelection(area.getText().length());
         area_id = diyListBean.getProduct().getArea().getArea_id();
         lilunNum.setText(diyListBean.getTheoretical_qty() + "");
-        lilunNum.setSelection(lilunNum.getText().length());
         actrulNum.setText(diyListBean.getProduct_qty() + "");
         actrulNum.setSelection(actrulNum.getText().length());
         productGuige.setText(diyListBean.getProduct().getProduct_spec());
@@ -136,7 +135,7 @@ public class SaveChangeActivity extends AppCompatActivity {
             if (!StringUtils.isNullOrEmpty(selectedImagePath)) {
                 diyListBean.product.image_medium = BitmapUtils.bitmapToBase64(ImageUtil.decodeFile(selectedImagePath));
             }
-            diyListBean.theoretical_qty = Double.valueOf(lilunNum.getText().toString());
+            diyListBean.theoretical_qty = diyListBean.getTheoretical_qty();
             diyListBean.product_qty = Double.valueOf(actrulNum.getText().toString());
             diyListBean.product.weight = productWeight.getText().toString();
             diyListBean.product.area.area_name = area.getText().toString();
@@ -145,10 +144,6 @@ public class SaveChangeActivity extends AppCompatActivity {
             intent.putExtra("position", position);
         } else {
             if (StringUtils.isNullOrEmpty(actrulNum.getText().toString())) {
-                ToastUtils.showCommonToast(SaveChangeActivity.this, "请输入数量");
-                return;
-            }
-            if (StringUtils.isNullOrEmpty(lilunNum.getText().toString())) {
                 ToastUtils.showCommonToast(SaveChangeActivity.this, "请输入数量");
                 return;
             }
@@ -169,7 +164,7 @@ public class SaveChangeActivity extends AppCompatActivity {
             productBean.weight = productWeight.getText().toString();
             bean.product = productBean;
             bean.product_qty = Integer.parseInt(actrulNum.getText().toString());
-            bean.theoretical_qty = Integer.parseInt(lilunNum.getText().toString());
+            bean.theoretical_qty = res_data.getTheoretical_qty();
             intent.putExtra("bean", bean);
         }
         setResult(AddCuActivity.SETRESULT, intent);
@@ -244,7 +239,12 @@ public class SaveChangeActivity extends AppCompatActivity {
         if (StringUtils.isNullOrEmpty(res_data.getProduct().getImage_medium())) {
             tvTakephoto.setVisibility(View.VISIBLE);
         } else {
-            Glide.with(SaveChangeActivity.this).load(res_data.getProduct().getImage_medium()).into(imageInventDetail);
+           // Log.e("zws", "img = "+res_data.getProduct().getImage_medium());
+            Glide.with(SaveChangeActivity.this)
+                    .load(res_data.getProduct().getImage_medium())
+                    .placeholder(R.drawable.person_camera_icon)
+                    .crossFade()
+                    .into(imageInventDetail);
         }
         liaohao.setText(res_data.getProduct().getProduct_name());
         if (res_data.getProduct().getArea().getArea_name() == null) {
@@ -259,11 +259,14 @@ public class SaveChangeActivity extends AppCompatActivity {
             area_id = 0;
         }
         lilunNum.setText(res_data.getTheoretical_qty() + "");
-        lilunNum.setSelection(lilunNum.getText().length());
         actrulNum.setText(res_data.getProduct_qty() + "");
         actrulNum.setSelection(actrulNum.getText().length());
         productGuige.setText(res_data.getProduct().getProduct_spec());
-        productWeight.setText(res_data.getProduct().getWeight() + "");
+        if (res_data.getProduct().getWeight() == 0){
+            productWeight.setText("0");
+        }else {
+            productWeight.setText(res_data.getProduct().getWeight() + "");
+        }
         initEzdit();
     }
 

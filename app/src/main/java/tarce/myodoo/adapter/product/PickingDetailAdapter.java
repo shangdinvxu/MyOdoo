@@ -43,7 +43,7 @@ public class PickingDetailAdapter extends BaseQuickAdapter<PickingDetailBean.Res
         }else {
             helper.setText(R.id.produce_line_name, "产线暂无");
         }
-        if (item.getState().equals("progress")){
+        if (item.getState().equals("progress") && !item.isAgainProduct()){
             helper.getView(R.id.produce_line_name).setVisibility(View.GONE);
         }else {
             helper.getView(R.id.produce_line_name).setVisibility(View.VISIBLE);

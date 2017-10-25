@@ -27,9 +27,8 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="20dp" />
     <TextView
-        android:visibility="gone"
         android:id="@+id/tv_takephoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -79,6 +78,7 @@
             android:background="@null"
             android:imeOptions="actionSearch"
             android:singleLine="true"
+            android:textColor="@color/color_5693f8"
             android:gravity="right|center_vertical"
             android:paddingRight="15dp"/>
     </LinearLayout>
@@ -94,16 +94,16 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="理论数量"
+            android:text="库存"
             android:gravity="left|center_vertical"
             android:paddingLeft="15dp"/>
-        <EditText
+        <TextView
             android:layout_width="0dp"
             android:layout_weight="3"
             android:layout_height="match_parent"
-            android:background="@null"
             android:id="@+id/lilun_num"
             android:gravity="right|center_vertical"
+            android:textColor="@color/color_5693f8"
             android:paddingRight="15dp"/>
     </LinearLayout>
     <View
@@ -128,6 +128,8 @@
             android:background="@null"
             android:id="@+id/actrul_num"
             android:gravity="right|center_vertical"
+            android:singleLine="true"
+            android:textColor="@color/color_5693f8"
             android:paddingRight="15dp"/>
     </LinearLayout>
     <View
@@ -166,7 +168,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="重量"
+            android:text="重量(g)"
             android:gravity="left|center_vertical"
             android:paddingLeft="15dp"/>
         <EditText
@@ -175,7 +177,9 @@
             android:layout_height="match_parent"
             android:background="@null"
             android:id="@+id/product_weight"
+            android:singleLine="true"
             android:gravity="right|center_vertical"
+            android:textColor="@color/color_5693f8"
             android:paddingRight="15dp"/>
     </LinearLayout>
 </LinearLayout>

@@ -54,7 +54,7 @@ public class SalesDetailAdapter extends BaseQuickAdapter<GetSaleResponse.TResult
                     .setTextColor(R.id.line_num, Color.GRAY);
             helper.setTextColor(R.id.done, Color.GRAY)
                     .setTextColor(R.id.baoliu, Color.GRAY);
-        } else if (item.getOrigin_qty() > item.getProduct_qty() || qty_done<(item.getProduct_id().getQty_available() - reserved_qty)) {
+        } else if (item.getOrigin_qty() > item.getProduct_qty()) {
             helper.setTextColor(R.id.product, Color.RED)
                     .setTextColor(R.id.need_in, Color.RED)
                     .setTextColor(R.id.origin_qty, Color.RED)
@@ -72,6 +72,11 @@ public class SalesDetailAdapter extends BaseQuickAdapter<GetSaleResponse.TResult
                     .setTextColor(R.id.line_num, Color.BLACK);
             helper.setTextColor(R.id.done, Color.BLACK)
                     .setTextColor(R.id.baoliu, Color.BLACK);
+            if (qty_done<item.getProduct_qty()){
+                helper.setTextColor(R.id.done, Color.RED);
+            }else {
+                helper.setTextColor(R.id.done, Color.BLACK);
+            }
         }
     }
 }

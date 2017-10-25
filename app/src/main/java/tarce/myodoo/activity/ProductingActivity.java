@@ -600,7 +600,8 @@ public class ProductingActivity extends ToolBarActivity {
     @OnClick(R.id.tv_start_produce)
     void finishProduct(View view) {
         AlertAialogUtils.getCommonDialog(ProductingActivity.this, "")
-                .setMessage("本单共产出" + tvNumProduct.getText().toString() + ",请确认")
+                .setTitle("是否确定生产完成，目前生产结果如下：")
+                .setMessage("本单总需求数量："+tvNeedNum.getText().toString()+"\n本单总生产数量："+tvNumProduct.getText().toString())
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -650,6 +651,7 @@ public class ProductingActivity extends ToolBarActivity {
                                                         intent.putExtra("production_line_id", production_line_id);
                                                     }
                                                     startActivity(intent);
+                                                    finish();
                                                 }
                                             })
                                             .setNegativeButton("取消", new DialogInterface.OnClickListener() {

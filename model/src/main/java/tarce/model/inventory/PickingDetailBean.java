@@ -109,6 +109,14 @@ public class PickingDetailBean {
                 this.production_line_id = production_line_id;
             }
 
+            public boolean isAgainProduct() {
+                return againProduct;
+            }
+
+            public void setAgainProduct(boolean againProduct) {
+                this.againProduct = againProduct;
+            }
+
             /**
              * origin : MO170514126:MO170514126
              * in_charge_name : 陈小娟
@@ -121,6 +129,7 @@ public class PickingDetailBean {
              * product_name : [QJ.0JP217.001] 全检制程品-JP217-木板(松鼠)-2-1+2
              */
 
+            private boolean againProduct = false;
             private ProduceLineBean production_line_id;
             private Object origin;
             private String in_charge_name;

@@ -2,6 +2,7 @@ package tarce.model.greendaoBean;
 
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Index;
 
 /**
@@ -9,11 +10,14 @@ import org.greenrobot.greendao.annotation.Index;
  */
 @Entity
 public class UserLogin {
+    @Id
+    private Long id;
     @Index(unique = true)
     private String userName ;
     private String password ;
-    @Generated(hash = 534347389)
-    public UserLogin(String userName, String password) {
+    @Generated(hash = 675672463)
+    public UserLogin(Long id, String userName, String password) {
+        this.id = id;
         this.userName = userName;
         this.password = password;
     }
@@ -31,5 +35,11 @@ public class UserLogin {
     }
     public void setPassword(String password) {
         this.password = password;
+    }
+    public Long getId() {
+        return this.id;
+    }
+    public void setId(Long id) {
+        this.id = id;
     }
 }

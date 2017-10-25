@@ -36,8 +36,13 @@ public class SectionAdapter extends BaseSectionQuickAdapter<MainItemBean,BaseVie
     protected void convert(BaseViewHolder helper, MainItemBean item) {
         helper.setText(R.id.text,item.t.getName());
         if (item.t.getNumber()>0){
-            helper.setText(R.id.number,item.t.getNumber()+"");
-            helper.setVisible(R.id.number,true);
+            if (item.t.getNumber()>99){
+                helper.setText(R.id.number,"99+");
+                helper.setVisible(R.id.number,true);
+            }else {
+                helper.setText(R.id.number,item.t.getNumber()+"");
+                helper.setVisible(R.id.number,true);
+            }
         }else {
             helper.setVisible(R.id.number,false);
         }

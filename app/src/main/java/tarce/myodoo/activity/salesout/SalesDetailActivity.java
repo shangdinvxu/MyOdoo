@@ -468,6 +468,7 @@ public class SalesDetailActivity extends BaseActivity {
                                             @Override
                                             public void onFailure(Call<GetSaleResponse> call, Throwable t) {
                                                 dismissDefultProgressDialog();
+                                                ToastUtils.showCommonToast(SalesDetailActivity.this, t.toString());
                                                 MyLog.e("", t.toString());
                                             }
                                         });
@@ -692,6 +693,11 @@ public class SalesDetailActivity extends BaseActivity {
             public void onResponse(Call<DoUnreservBean> call, Response<DoUnreservBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
+                if (response.body().getError()!=null){
+                    new TipDialog(SalesDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1) {
                     finish();
                 }

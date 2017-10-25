@@ -1,6 +1,7 @@
 package tarce.myodoo.utils;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -91,6 +92,17 @@ public class StringUtils {
         return new Double(i).intValue();
     }
 
+    /**
+     * 小数点保留两位小数
+     * */
+    public static String twoDouble(double num){
+        String s = "";
+        DecimalFormat df = new DecimalFormat("#.##");
+        if (num != 0) {
+            s =  df.format(num)+"";
+        }
+        return s;
+    }
     /**
      * 半角转全角
      * */

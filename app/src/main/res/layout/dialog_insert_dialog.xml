@@ -26,6 +26,13 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"
         android:inputType="number"/>
+    <TextView
+        android:id="@+id/tv_all_weight"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_marginTop="10dp"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"

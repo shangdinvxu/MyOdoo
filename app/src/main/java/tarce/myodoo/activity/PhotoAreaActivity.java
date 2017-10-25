@@ -282,12 +282,12 @@ public class PhotoAreaActivity extends ToolBarActivity {
                                         return;
                                     }
                                     if (response.body().getResult().getRes_code() == 1) {
-                                        Intent intent = new Intent(PhotoAreaActivity.this, ProductLineListActivity.class);
-                                        intent.putExtra("name_activity", "生产中");
-                                        intent.putExtra("state_product", "progress");
-                                        intent.putExtra("process_id", process_id);
-                                        intent.putExtra("production_line_id", production_line_id);
-                                        startActivity(intent);
+//                                        Intent intent = new Intent(PhotoAreaActivity.this, ProductLineListActivity.class);
+//                                        intent.putExtra("name_activity", "生产中");
+//                                        intent.putExtra("state_product", "progress");
+//                                        intent.putExtra("process_id", process_id);
+//                                        intent.putExtra("production_line_id", production_line_id);
+//                                        startActivity(intent);
                                         finish();
                                     }
                                 }

@@ -215,12 +215,16 @@ public class BuGetLiaoActivity extends BaseActivity {
                             handlerAdapter.notifyDataSetChanged();
                         }
                     });
+                }else if (response.body().getResult().getRes_code() == -1){
+                    new TipDialog(BuGetLiaoActivity.this, R.style.MyDialogStyle, response.body().getResult().getRes_data().getError())
+                            .show();
                 }
             }
 
             @Override
             public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(BuGetLiaoActivity.this, t.toString());
             }
         });
     }
@@ -379,6 +383,7 @@ public class BuGetLiaoActivity extends BaseActivity {
                     }
                 }, data.get(position).getProduct_id())
                         .changeTitle("填写 " + data.get(position).getProduct_id() + "的补领料数量")
+                        .setWeight(data.get(position).getWeight())
                         .dismissTip().show();
             }
         });

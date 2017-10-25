@@ -113,6 +113,7 @@ public class LoginActivity extends Activity {
     private RFCardModule rfCardModule;
     private Dialog alertDialog;
     private Retrofit retrofit;
+    private ArrayAdapter<String> stringArrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,44 +164,53 @@ public class LoginActivity extends Activity {
         email.setThreshold(1);
         userLogins = new UserLoginUtils().searchAll();
         userStrings = new ArrayList<>();
+      //  Log.e("zws", "userLogins 3= "+userLogins+"  userStrings="+userStrings);
         if (userLogins != null && userLogins.size() > 0) {
             for (UserLogin s : userLogins) {
                 userStrings.add(s.getUserName());
             }
-            ArrayAdapter<String> stringArrayAdapter = new ArrayAdapter<>(LoginActivity.this, R.layout.auto_text_listview, userStrings);
+            stringArrayAdapter = new ArrayAdapter<>(LoginActivity.this, R.layout.auto_text_listview, userStrings);
             email.setAdapter(stringArrayAdapter);
         }
     }
 
-//    /**
-//     * 删除账号信息
-//     * */
-//    @OnClick(R.id.delete_email)
-//    void deleteEmail(View view){
-//        if (StringUtils.isNullOrEmpty(email.getText().toString())){
-//            return;
-//        }
-//        AlertAialogUtils.getCommonDialog(LoginActivity.this, "确定删除账号？")
-//                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        userLogins = new UserLoginUtils().searchAll();
-////                        int index = 0;
-////                        if (userLogins != null && userLogins.size() > 0) {
-////                            for (int j = 0; j < userLogins.size(); j++) {
-////                                if (userLogins.get(j).getUserName().equals(email.getText().toString())){
-////                                    index = j;
-////                                    Log.e("zws", "index = "+index);
-////                                    userLogins.remove(j);
-////                                    break;
-////                                }
-////                            }
-////                            email.setText("");
-////                            password.setText("");
-////                        }
-//                    }
-//                }).show();
-//    }
+    /**
+     * 删除账号信息
+     * */
+    @OnClick(R.id.delete_email)
+    void deleteEmail(View view){
+        if (StringUtils.isNullOrEmpty(email.getText().toString())){
+            return;
+        }
+        AlertAialogUtils.getCommonDialog(LoginActivity.this, "确定删除账号？")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                      //  Log.e("zws", "userLogins = "+userLogins);
+                        int index = -1;
+                        if (userLogins != null && userLogins.size() > 0) {
+                            for (int j = 0; j < userLogins.size(); j++) {
+                                if (userLogins.get(j).getUserName().equals(email.getText().toString())){
+                                    index = j;
+                                    break;
+                                }else {
+                                    break;
+                                }
+                            }
+                            if (index==-1)return;
+                            if (userStrings!=null && userStrings.size()>0){
+                                userStrings.remove(userLogins.get(index).getUserName());
+                            }
+                            new UserLoginUtils().deleteOne(userLogins.get(index).getId());
+                            userLogins.remove(index);
+                            stringArrayAdapter.notifyDataSetChanged();
+                           // Log.e("zws", "userLogins 2= "+userLogins);
+                            email.setText("");
+                            password.setText("");
+                        }
+                    }
+                }).show();
+    }
 
     private void initListener() {
         /**
@@ -210,7 +220,10 @@ public class LoginActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String item = (String) adapterView.getAdapter().getItem(i);
+                if (userStrings==null || userStrings.size()==0)return;
                 int index = userStrings.indexOf(item);
+                if (userLogins==null || userLogins.size()==0)return;
+                if (userLogins.get(index).getPassword()==null)return;
                 String password = userLogins.get(index).getPassword();
                 LoginActivity.this.password.setText(password);
             }
@@ -366,7 +379,7 @@ public class LoginActivity extends Activity {
                     SharePreferenceUtils.putInt("partner_id", response.body().getResult().getRes_data().getPartner_id(), LoginActivity.this);
                     SharePreferenceUtils.putString("user_ava", response.body().getResult().getRes_data().getUser_ava(), LoginActivity.this);
                     final String name = response.body().getResult().getRes_data().getName();
-                    new UserLoginUtils().insertUser(new UserLogin(emailString, passwordString));
+                    new UserLoginUtils().insertUser(new UserLogin(null, emailString, passwordString));
                     List<LoginResponse.ResultBean.ResDataBean.GroupsBean> groups = response.body().getResult().getRes_data().getGroups();
                     Observable.from(groups)
                             .subscribe(new Action1<LoginResponse.ResultBean.ResDataBean.GroupsBean>() {

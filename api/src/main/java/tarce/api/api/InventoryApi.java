@@ -75,6 +75,11 @@ import tarce.model.inventory.WorkingWorkerBean;
 
 public interface InventoryApi {
     /**
+     * 二次生产
+     * */
+    @POST("get_secondary_mos")
+    Call<PickingDetailBean> getSecondMos(@Body HashMap hashMap);
+    /**
      * 获取物料关系
      * */
     @POST("get_mrp_rule_detail")

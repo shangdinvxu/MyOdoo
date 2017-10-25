@@ -25,8 +25,8 @@ public class UserLoginUtils {
         return userLogins;
     }
 
-    public void deleteOne(UserLogin someOne){
-        userLoginDao.delete(someOne);
+    public void deleteOne(long id){
+        userLoginDao.deleteByKey(id);
     }
 
 }

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import tarce.model.inventory.OrderDetailBean;
@@ -97,12 +98,16 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                         || result.getRes_data().getState().equals("prepare_material_ing")
                         || result.getRes_data().getState().equals("finish_prepare_material")){
                     beiliaoNum = list.get(position-1).getQuantity_ready()+list.get(position-1).getQuantity_done();
-                    holder.tv_prepare_order.setText("备料:"+beiliaoNum);
                 }else {
                     beiliaoNum = list.get(position-1).getQuantity_done();
-                    holder.tv_prepare_order.setText("备料:"+beiliaoNum);
                 }
-
+                DecimalFormat df = new DecimalFormat("#.##");
+                if (beiliaoNum != 0) {
+                    holder.tv_prepare_order.setText("备料:" + df.format(beiliaoNum));
+                }else {
+                    holder.tv_prepare_order.setText("备料:" + beiliaoNum);
+                }
+                //holder.tv_prepare_order.setText("备料:"+beiliaoNum);
                 if (isGray_bac()){
                     holder.tv_kucun_order.setTextColor(Color.GRAY);
                     holder.tv_prepare_order.setTextColor(Color.GRAY);
@@ -138,7 +143,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                     holder.tv_id_product.setTextColor(Color.BLACK);
                     holder.tv_advice_order.setTextColor(Color.BLACK);
                 }
-                holder.tv_feedback.setText("总重量："+list.get(position-1).getWeight()*beiliaoNum);
+                holder.tv_feedback.setText("总重量(g)："+list.get(position-1).getWeight()*beiliaoNum);
               //  holder.itemView.setTag(list.get(position-1));
                 holder.itemView.setTag(R.id.tag_first,list.get(position-1));
                 holder.itemView.setTag(R.id.tag_second,position-1);

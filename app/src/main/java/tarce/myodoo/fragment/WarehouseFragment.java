@@ -78,6 +78,8 @@ public class WarehouseFragment extends Fragment {
         list.add(new MainItemBean(new MenuBean("零售出货", 0)));
         list.add(new MainItemBean(new MenuBean("零售退货", 0)));
         list.add(new MainItemBean(true, ""));
+        list.add(new MainItemBean(new MenuBean("生产入库", 0)));
+        list.add(new MainItemBean(true, ""));
         list.add(new MainItemBean(new MenuBean("盘点", 0)));
         list.add(new MainItemBean(new MenuBean("物料异常上报", 0)));
         list.add(new MainItemBean(new MenuBean("库存查询", 0)));
@@ -154,7 +156,7 @@ public class WarehouseFragment extends Fragment {
         sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (position==0 || position==4 || position==7 || position==10 || position==14){
+                if (position==0 || position==4 || position==7 || position==10 || position==12){
                     return;
                 }
                 String name = list.get(position).t.getName();
@@ -175,6 +177,9 @@ public class WarehouseFragment extends Fragment {
                         break;
                     case "零售退货":
                         IntentFactory.start_RetailSub_Activity(getActivity());
+                        break;
+                    case "生产入库":
+                        IntentFactory.start_WaitRework_Activity(getActivity(),"生产入库", "qc_success");
                         break;
                     case "盘点":
                         Intent intent2 = new Intent(getActivity(), InventroyActivity.class);

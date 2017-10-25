@@ -28,11 +28,9 @@ import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.InventroyResultBean;
 import tarce.myodoo.R;
-import tarce.myodoo.activity.OrderDetailActivity;
 import tarce.myodoo.adapter.inventroy.InventroyAdapter;
 import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.MyLog;
-import tarce.support.ToastUtils;
 
 /**
  * Created by zouzou on 2017/7/4.
@@ -45,6 +43,8 @@ public class InventroyActivity extends AppCompatActivity {
     SwipeRefreshLayout swipeRefreshMy;
     @InjectView(R.id.image_inven)
     ImageView imageInven;
+    @InjectView(R.id.inventroy_back)
+    ImageView inventroyBack;
     private InventoryApi inventoryApi;
     private InventroyAdapter inventroyAdapter;
     private List<InventroyResultBean.ResultBean.ResDataBean> res_data;
@@ -79,6 +79,11 @@ public class InventroyActivity extends AppCompatActivity {
         });
     }
 
+    @OnClick(R.id.inventroy_back)
+    void setInventroyBack(View view){
+        finish();
+    }
+
     private void initData(final int offset, final int limit) {
         res_data = new ArrayList<>();
         HashMap<Object, Object> hashMap = new HashMap<>();
@@ -90,7 +95,7 @@ public class InventroyActivity extends AppCompatActivity {
             public void onResponse(Call<InventroyResultBean> call, Response<InventroyResultBean> response) {
                 progressDialog.dismiss();
                 if (response.body() == null) return;
-                if (response.body().getError()!=null){
+                if (response.body().getError() != null) {
                     new TipDialog(InventroyActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                             .show();
                     return;
@@ -128,7 +133,7 @@ public class InventroyActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.image_inven)
-    void addkucun(View view){
+    void addkucun(View view) {
         Intent intent = new Intent(InventroyActivity.this, AddCuActivity.class);
         startActivity(intent);
     }

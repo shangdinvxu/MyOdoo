@@ -210,7 +210,10 @@
         <activity android:name=".activity.LineProductActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
         <activity android:name=".activity.ProductLineListActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".activity.product.AgainProductActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.product.SecondProductActivity"/>
     </application>
 
 </manifest>

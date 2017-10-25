@@ -135,7 +135,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:text="重量"
+            android:text="重量(g)"
             android:gravity="left|center_vertical"
             android:paddingLeft="15dp"/>
         <TextView

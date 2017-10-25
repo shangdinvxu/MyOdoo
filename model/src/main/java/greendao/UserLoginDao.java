@@ -15,7 +15,7 @@ import tarce.model.greendaoBean.UserLogin;
 /** 
  * DAO for table "USER_LOGIN".
 */
-public class UserLoginDao extends AbstractDao<UserLogin, Void> {
+public class UserLoginDao extends AbstractDao<UserLogin, Long> {
 
     public static final String TABLENAME = "USER_LOGIN";
 
@@ -24,8 +24,9 @@ public class UserLoginDao extends AbstractDao<UserLogin, Void> {
      * Can be used for QueryBuilder and for referencing column names.
      */
     public static class Properties {
-        public final static Property UserName = new Property(0, String.class, "userName", false, "USER_NAME");
-        public final static Property Password = new Property(1, String.class, "password", false, "PASSWORD");
+        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
+        public final static Property UserName = new Property(1, String.class, "userName", false, "USER_NAME");
+        public final static Property Password = new Property(2, String.class, "password", false, "PASSWORD");
     }
 
 
@@ -41,8 +42,9 @@ public class UserLoginDao extends AbstractDao<UserLogin, Void> {
     public static void createTable(Database db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"USER_LOGIN\" (" + //
-                "\"USER_NAME\" TEXT," + // 0: userName
-                "\"PASSWORD\" TEXT);"); // 1: password
+                "\"_id\" INTEGER PRIMARY KEY ," + // 0: id
+                "\"USER_NAME\" TEXT," + // 1: userName
+                "\"PASSWORD\" TEXT);"); // 2: password
         // Add Indexes
         db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_USER_LOGIN_USER_NAME ON USER_LOGIN" +
                 " (\"USER_NAME\" ASC);");
@@ -58,14 +60,19 @@ public class UserLoginDao extends AbstractDao<UserLogin, Void> {
     protected final void bindValues(DatabaseStatement stmt, UserLogin entity) {
         stmt.clearBindings();
  
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
         String userName = entity.getUserName();
         if (userName != null) {
-            stmt.bindString(1, userName);
+            stmt.bindString(2, userName);
         }
  
         String password = entity.getPassword();
         if (password != null) {
-            stmt.bindString(2, password);
+            stmt.bindString(3, password);
         }
     }
 
@@ -73,52 +80,62 @@ public class UserLoginDao extends AbstractDao<UserLogin, Void> {
     protected final void bindValues(SQLiteStatement stmt, UserLogin entity) {
         stmt.clearBindings();
  
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
         String userName = entity.getUserName();
         if (userName != null) {
-            stmt.bindString(1, userName);
+            stmt.bindString(2, userName);
         }
  
         String password = entity.getPassword();
         if (password != null) {
-            stmt.bindString(2, password);
+            stmt.bindString(3, password);
         }
     }
 
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     @Override
     public UserLogin readEntity(Cursor cursor, int offset) {
         UserLogin entity = new UserLogin( //
-            cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0), // userName
-            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1) // password
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // userName
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2) // password
         );
         return entity;
     }
      
     @Override
     public void readEntity(Cursor cursor, UserLogin entity, int offset) {
-        entity.setUserName(cursor.isNull(offset + 0) ? null : cursor.getString(offset + 0));
-        entity.setPassword(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setUserName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setPassword(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
      }
     
     @Override
-    protected final Void updateKeyAfterInsert(UserLogin entity, long rowId) {
-        // Unsupported or missing PK type
-        return null;
+    protected final Long updateKeyAfterInsert(UserLogin entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
     
     @Override
-    public Void getKey(UserLogin entity) {
-        return null;
+    public Long getKey(UserLogin entity) {
+        if(entity != null) {
+            return entity.getId();
+        } else {
+            return null;
+        }
     }
 
     @Override
     public boolean hasKey(UserLogin entity) {
-        // TODO
-        return false;
+        return entity.getId() != null;
     }
 
     @Override

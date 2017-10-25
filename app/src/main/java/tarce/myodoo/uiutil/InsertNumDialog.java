@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -37,6 +39,8 @@ public class InsertNumDialog extends Dialog {
     TextView trueInsetDialog;
     @InjectView(R.id.tv_tip_dialog)
     TextView tvTipDialog;
+    @InjectView(R.id.tv_all_weight)
+    TextView tvAllWeight;
     private LayoutInflater inflater;
     private Display display;
     private Context context;
@@ -47,6 +51,32 @@ public class InsertNumDialog extends Dialog {
     private int position;
     private double beiNum;
     private double return_qty = 0;
+    private double weightProduct;
+    private TextWatcher watcher = new TextWatcher() {
+        private CharSequence temp;
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            temp = charSequence;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (StringUtils.isNullOrEmpty(temp.toString())){
+                return;
+            }
+            Integer num = Integer.valueOf(temp.toString());
+            if (num>0){
+                tvAllWeight.setText("总重量(g): "+num*weightProduct);
+            }else {
+                tvAllWeight.setVisibility(View.GONE);
+            }
+        }
+    };
 
     public InsertNumDialog(@NonNull Context context) {
         super(context, R.style.MyDialogStyle);
@@ -135,9 +165,9 @@ public class InsertNumDialog extends Dialog {
             double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(position).getProduct_uom_qty();
             eidtOutNum.setText(StringUtils.doubleToString(beiNum-v));
         }*/
-        if (return_qty!=0){
+        if (return_qty != 0) {
             eidtOutNum.setText(StringUtils.doubleToString(return_qty));
-        }else {
+        } else {
             eidtOutNum.setText("0");
         }
         eidtOutNum.setSelection(eidtOutNum.getText().length());
@@ -147,6 +177,13 @@ public class InsertNumDialog extends Dialog {
         void OnSendCommonClick(int num);
     }
 
+    //添加总重量
+    public InsertNumDialog setWeight(double weightProduct){
+        tvAllWeight.setVisibility(View.VISIBLE);
+        this.weightProduct = weightProduct;
+        eidtOutNum.addTextChangedListener(watcher);
+        return this;
+    }
     //改变产品名称
     public InsertNumDialog changeTitle(String title) {
         nameProductDialog.setText(title);
@@ -160,7 +197,7 @@ public class InsertNumDialog extends Dialog {
     }
 
     //改变title
-    public InsertNumDialog changeTip(String tip){
+    public InsertNumDialog changeTip(String tip) {
         tvTipDialog.setText(tip);
         return this;
     }
