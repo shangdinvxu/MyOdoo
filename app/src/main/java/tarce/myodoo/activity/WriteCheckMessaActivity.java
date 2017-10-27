@@ -109,8 +109,10 @@ public class WriteCheckMessaActivity extends BaseActivity {
         inventoryApi = RetrofitClient.getInstance(WriteCheckMessaActivity.this).create(InventoryApi.class);
         if (confirm.equals("confirm")) {
             intArr = intent.getIntegerArrayListExtra("intArr");
-            passTv.setText("同意入库");
-            notPassTv.setText("退回");
+            passTv.setVisibility(View.GONE);
+            notPassTv.setVisibility(View.GONE);
+//            passTv.setText("同意入库");
+//            notPassTv.setText("退回");
             editWritePizhu.setFocusable(false);
             editWritePizhu.setHint("");
             editWritePizhu.setVisibility(View.GONE);

@@ -144,7 +144,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.takedeliver.TakeDeliverDetailActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
         <activity
             android:name=".activity.scancode.ScanCodeActivity"
             android:screenOrientation="portrait" />
@@ -213,7 +214,10 @@
             android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity android:name=".activity.product.AgainProductActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.product.SecondProductActivity"/>
+        <activity android:name=".activity.product.SecondProductActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.product.FenjianListActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
     </application>
 
 </manifest>

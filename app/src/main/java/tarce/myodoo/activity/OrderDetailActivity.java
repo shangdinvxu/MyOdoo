@@ -792,7 +792,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                         }
                     }
                 }
-            }, linesBean);
+            }, linesBean)
+            .setWeight(linesBean.getWeight());
             dialogForOrder.show();
         }
         if (!dialogForOrder.isShowing()) {//为防止扫描多次弹出多个对话框

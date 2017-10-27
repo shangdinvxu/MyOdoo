@@ -32,6 +32,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
@@ -43,8 +44,10 @@ import tarce.myodoo.R;
 import tarce.myodoo.activity.AreaMessageActivity;
 import tarce.myodoo.activity.BaseActivity;
 import tarce.myodoo.activity.WriteCheckMessaActivity;
+import tarce.myodoo.activity.product.FenjianListActivity;
 import tarce.myodoo.adapter.takedeliver.DetailTakedAdapter;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
@@ -227,6 +230,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                     }
                 });
                 break;
+            case "picking":
             case "validate":
                 weightTakedeliver.setVisibility(View.VISIBLE);
                 takedAdapter.setShowNotgood("validate");
@@ -251,6 +255,68 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                         startActivity(intent);
                     }
                 });
+                if (state.equals("picking")) {
+                    buttomButton2.setVisibility(View.VISIBLE);
+                    buttomButton2.setText("分拣完成");
+                    buttomButton2.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "确定分拣完成？")
+                                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            showDefultProgressDialog();
+                                            HashMap<Object, Object> hashMap = new HashMap<>();
+                                            hashMap.put("state", "picking_done");
+                                            hashMap.put("is_all", "part");
+                                            hashMap.put("picking_id", resDataBean.getPicking_id());
+                                            List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> ids = resDataBean.getPack_operation_product_ids();
+                                            List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> sub_ids = new ArrayList<>();
+                                            for (int j = 0; j < ids.size(); j++) {
+                                                if (ids.get(j).getPack_id() == -1) {
+                                                    sub_ids.add(ids.get(j));
+                                                }
+                                            }
+                                            ids.removeAll(sub_ids);
+                                            hashMap.put("pack_operation_product_ids", ids);
+                                            Call<TakeDeAreaBean> takeDeAreaBeanCall = inventoryApi.commitRuku(hashMap);
+                                            takeDeAreaBeanCall.enqueue(new Callback<TakeDeAreaBean>() {
+                                                @Override
+                                                public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
+                                                    dismissDefultProgressDialog();
+                                                    if (response.body() == null)return;
+                                                    if (response.body().getError()!=null){
+                                                        new TipDialog(TakeDeliverDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                                                .show();
+                                                        return;
+                                                    }
+                                                    if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==1){
+                                                        new TipDialog(TakeDeliverDetailActivity.this, R.style.MyDialogStyle, "分拣成功")
+                                                                .setTrue(new View.OnClickListener() {
+                                                                    @Override
+                                                                    public void onClick(View view) {
+                                                                        finish();
+                                                                    }
+                                                                })
+                                                                .show();
+                                                    }else if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==-1){
+                                                        //ToastUtils.showCommonToast(FenjianListActivity.this, response.body().getResult().getRes_data());
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onFailure(Call<TakeDeAreaBean> call, Throwable t) {
+                                                    dismissDefultProgressDialog();
+                                                }
+                                            });
+                                        }
+                                    }).show();
+                        }
+                    });
+                    initRejectAdapter();
+                } else {
+                    return;
+                }
                 break;
             case "waiting_in":
                 weightTakedeliver.setVisibility(View.VISIBLE);

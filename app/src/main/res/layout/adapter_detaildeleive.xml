@@ -45,7 +45,6 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:layout_weight="1"
-            android:textSize="10sp"
             android:textColor="@color/black"
             android:visibility="gone"/>
         <TextView

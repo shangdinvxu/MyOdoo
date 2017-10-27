@@ -231,7 +231,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:id="@+id/buttom_button2"
-            android:background="@color/cc"
+            android:background="@color/height_yellow"
             android:layout_height="match_parent"
             android:visibility="gone"/>
         <Button

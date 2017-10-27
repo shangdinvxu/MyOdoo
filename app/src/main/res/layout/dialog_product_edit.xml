@@ -15,7 +15,7 @@
         android:layout_marginTop="10dp"/>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp">
+        android:layout_height="180dp">
         <LinearLayout
             android:id="@+id/linear_colum"
             android:layout_width="80dp"
@@ -54,6 +54,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="备料数量"
+                android:layout_gravity="right"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="10dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="总重量(g)"
                 android:layout_gravity="right"
                 android:layout_marginRight="15dp"
                 android:layout_marginTop="10dp" />
@@ -103,11 +110,21 @@
             <EditText
                 android:id="@+id/tv_prepare_num"
                 android:layout_width="200dp"
-                android:layout_height="30dp"
+                android:layout_height="25dp"
                 android:inputType="number"
                 android:layout_gravity="left"
                 android:layout_marginLeft="15dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/edit_input_bac"
+                />
+            <EditText
+                android:id="@+id/tv_weight_num"
+                android:layout_width="200dp"
+                android:layout_height="25dp"
+                android:inputType="number"
+                android:layout_gravity="left"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/edit_input_bac"
                 android:layout_marginBottom="10dp"/>
         </LinearLayout>

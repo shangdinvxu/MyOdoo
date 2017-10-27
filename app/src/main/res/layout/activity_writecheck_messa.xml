@@ -170,6 +170,14 @@
         android:orientation="horizontal"
         android:background="@color/cc"
         android:layout_alignParentBottom="true">
+        <!--<TextView-->
+            <!--android:id="@+id/fenjian_tv"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:text="去分拣"-->
+            <!--android:visibility="gone"-->
+            <!--android:gravity="center"/>-->
         <TextView
             android:id="@+id/pass_tv"
             android:layout_width="0dp"

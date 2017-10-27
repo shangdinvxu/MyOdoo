@@ -3,6 +3,8 @@ package tarce.myodoo.uiutil;
 import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -26,6 +28,8 @@ import tarce.myodoo.utils.StringUtils;
  */
 
 public class DialogForOrder extends Dialog {
+    @InjectView(R.id.tv_weight_num)
+    EditText tvWeightNum;
     private OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean;
     @InjectView(R.id.dialog_name_product)
     TextView dialogNameProduct;
@@ -46,6 +50,51 @@ public class DialogForOrder extends Dialog {
     private Context context;
     private View view;
     private OnSendCommonClickListener sendCommonClickListener;
+    private double weightNum;
+    private TextWatcher textWatcher = new TextWatcher() {
+        CharSequence temp;
+
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            temp = charSequence;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            if (StringUtils.isNullOrEmpty(temp.toString())) {
+                tvWeightNum.setText("0");
+                return;
+            }
+            Integer num = Integer.valueOf(temp.toString());
+            tvWeightNum.setText(num*weightNum+"");
+        }
+    };
+    private TextWatcher weiWatcher = new TextWatcher() {
+        CharSequence temp;
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            temp = charSequence;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            Integer weight = Integer.valueOf(temp.toString());
+            if (StringUtils.isNullOrEmpty(temp.toString())){
+
+                return;
+            }
+        }
+    };
 
     public DialogForOrder(@NonNull Context context) {
         super(context, R.style.MyDialogStyle);
@@ -95,29 +144,35 @@ public class DialogForOrder extends Dialog {
         dialogNeedNum.setText(StringUtils.doubleToString(linesBean.getProduct_uom_qty()));
         dialogAdviceNum.setText(StringUtils.doubleToString(linesBean.getSuggest_qty()));
         double v1 = linesBean.getProduct_uom_qty() - linesBean.getQuantity_ready() - linesBean.getQuantity_done();
-        if (v1<0){
+        if (v1 < 0) {
             tvPrepareNum.setText("0");
-        } else if (v1>=linesBean.getQty_available()){
+        } else if (v1 >= linesBean.getQty_available()) {
             tvPrepareNum.setText(StringUtils.doubleToString(linesBean.getQty_available()));
-        }else if (v1<linesBean.getQty_available()){
+        } else if (v1 < linesBean.getQty_available()) {
             tvPrepareNum.setText(StringUtils.doubleToString(v1));
         }
         tvPrepareNum.setSelection(tvPrepareNum.getText().length());
     }
 
-    public interface OnSendCommonClickListener{
+    public interface OnSendCommonClickListener {
         void OnSendCommonClick(int num);
     }
 
-
+    public DialogForOrder setWeight(double weightNum){
+        this.weightNum = weightNum;
+        Integer valueOf = Integer.valueOf(tvPrepareNum.getText().toString());
+        tvWeightNum.setText(weightNum* valueOf+"");
+        tvPrepareNum.addTextChangedListener(textWatcher);
+        return this;
+    }
     @OnClick(R.id.tv_cancel_dialog)
     void cancelAction(View view) {
         dismiss();
     }
 
     @OnClick(R.id.tv_true_dialog)
-    void trueAction(View view){
-        if (StringUtils.isNullOrEmpty(tvPrepareNum.getText().toString())){
+    void trueAction(View view) {
+        if (StringUtils.isNullOrEmpty(tvPrepareNum.getText().toString())) {
             Toast.makeText(context, "请确认数量？", Toast.LENGTH_SHORT).show();
             return;
         }
