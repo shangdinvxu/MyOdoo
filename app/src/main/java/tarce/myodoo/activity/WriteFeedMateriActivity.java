@@ -121,7 +121,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
         }
     };
     private String handlerType;
-    private int handlerNum;
+    private double handlerNum;
     private int handlerPosition;
     private WriteFeedbackNumAdapter handlerAdapter;
 
@@ -168,6 +168,10 @@ public class WriteFeedMateriActivity extends BaseActivity {
      */
     private void initData() {
         if (from.equals("write") || from.equals("check")) {
+            if (resDataBean==null){
+                ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "数据暂时丢失，请返回重试");
+                return;
+            }
             List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> stock_move_lines = resDataBean.getStock_move_lines();
             if (resDataBean.is_secondary_produce()){
                 for (int i = 0; i < stock_move_lines.size(); i++) {
@@ -262,11 +266,13 @@ public class WriteFeedMateriActivity extends BaseActivity {
                     insertNumDialog = new InsertNumDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle,
                             new InsertNumDialog.OnSendCommonClickListener() {
                                 @Override
-                                public void OnSendCommonClick(int num) {
+                                public void OnSendCommonClick(double num) {
                                     data.get(position).setReturn_qty(num);
                                     feeadapter.notifyDataSetChanged();
                                 }
                             }, data.get(position).getProduct_id())
+                            .changeTip("输入退料数量")
+                            .setWeight(data.get(position).getWeight())
                             .changeTitle("输入 " + data.get(position).getProduct_id() + " 的退料数量");
                     insertNumDialog.show();
                     return;
@@ -287,7 +293,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
                             public double beiNum;//备料数量
 
                             @Override
-                            public void OnSendCommonClick(int num) {
+                            public void OnSendCommonClick(double num) {
                                 if (resDataBean.getState().equals("waiting_material")
                                         || resDataBean.getState().equals("prepare_material_ing")
                                         || resDataBean.getState().equals("finish_prepare_material")) {
@@ -305,6 +311,8 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                 }
                             }
                         }, data.get(position).getProduct_id(), (beiNum-v))
+                        .changeTip("输入退料数量")
+                        .setWeight(data.get(position).getWeight())
                         .changeTitle("输入 " + data.get(position).getProduct_id() + " 的退料数量");
                 insertNumDialog.show();
             }
@@ -322,7 +330,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
                 insertNumDialog = new InsertNumDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle,
                         new InsertNumDialog.OnSendCommonClickListener() {
                             @Override
-                            public void OnSendCommonClick(final int num) {
+                            public void OnSendCommonClick(final double num) {
                                 if (num > 0) {
                                     final String product_type = (String) adapter_type.getData().get(position).getProduct_type();
                                     if (product_type.equals("material") || product_type.equals("real_semi_finished")) {
@@ -422,7 +430,8 @@ public class WriteFeedMateriActivity extends BaseActivity {
                             }
                         }, adapter_type.getData().get(position).getProduct_id(), adapter_type.getData().get(position).getReturn_qty())
                         .changeTitle("确认 " + adapter_type.getData().get(position).getProduct_id() + " 的退料数量")
-                .changeTip("输入退料数量");
+                .changeTip("输入退料数量")
+                .setWeight(adapter_type.getData().get(position).getWeight());
                 insertNumDialog.show();
             }
         });
@@ -531,7 +540,7 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                     dismissDefultProgressDialog();
                                     if (response.body() == null)return;
                                     if (response.body().getError() != null) {
-                                        new TipDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
+                                        new TipDialog(WriteFeedMateriActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                                 .show();
                                         return;
                                     }

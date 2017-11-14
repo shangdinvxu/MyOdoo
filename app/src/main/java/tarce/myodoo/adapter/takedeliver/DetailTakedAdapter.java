@@ -61,6 +61,7 @@ public class DetailTakedAdapter extends BaseQuickAdapter<TakeDelListBean.ResultB
                 helper.setText(R.id.weight, item.getProduct_id().getWeight()*item.getQty_done()+"");
                 helper.getView(R.id.weight).setVisibility(View.VISIBLE);
                 helper.setVisible(R.id.nongood, true);
+                helper.setBackgroundColor(R.id.nongood, context.getResources().getColor(R.color.grgray));
                 helper.setText(R.id.nongood, item.getRejects_qty()+"");
                 break;
         }

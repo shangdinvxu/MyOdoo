@@ -56,9 +56,6 @@
             android:name=".activity.salesout.SalesDetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activity.SalesInActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".activity.SelectProcedureActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -76,7 +73,7 @@
             android:name=".activity.MaterialDetailActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
         <activity
             android:name=".activity.PhotoAreaActivity"
             android:screenOrientation="portrait"
@@ -113,9 +110,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.WaitProdListActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.ProcessOfPersonActivity"
             android:screenOrientation="portrait" />
@@ -145,7 +142,7 @@
         <activity
             android:name=".activity.takedeliver.TakeDeliverDetailActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
         <activity
             android:name=".activity.scancode.ScanCodeActivity"
             android:screenOrientation="portrait" />
@@ -168,7 +165,8 @@
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
         <activity
             android:name=".activity.inquiriesstock.StockDetailActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".activity.inquiriesstock.StockMoveListActivity"
             android:screenOrientation="portrait" />
@@ -189,35 +187,54 @@
         <activity
             android:name=".activity.salesout.NewSaleListActivity"
             android:windowSoftInputMode="adjustPan|stateHidden" />
-        <activity android:name=".activity.engineer.ProjectActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.incentroy.AddCuActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.incentroy.SaveChangeActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.engineer.EngineerActivity"
+        <activity
+            android:name=".activity.engineer.ProjectActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.incentroy.AddCuActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.incentroy.SaveChangeActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.engineer.EngineerActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity
+            android:name=".activity.engineer.ProjectDetailActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity android:name=".activity.device.DeviceSelectActivity" />
+        <activity
+            android:name=".activity.device.DeviceStateActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity
+            android:name=".activity.moreproduce.MoreProduceActicity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity
+            android:name=".activity.moreproduce.InquiriessMorePActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity
+            android:name=".activity.moreproduce.MaterialRelationActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity
+            android:name=".activity.LineProductActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity
+            android:name=".activity.ProductLineListActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden" />
+        <activity
+            android:name=".activity.product.AgainProductActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity
+            android:name=".activity.product.SecondProductActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity
+            android:name=".activity.product.FenjianListActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity android:name=".activity.outsourcing.OutSourcingActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.engineer.ProjectDetailActivity"
+        <activity android:name=".activity.outsourcing.OutSourceListActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.device.DeviceSelectActivity"/>
-        <activity android:name=".activity.device.DeviceStateActivity"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.moreproduce.MoreProduceActicity"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.moreproduce.InquiriessMorePActivity"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.moreproduce.MaterialRelationActivity"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.LineProductActivity"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.ProductLineListActivity"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
-        <activity android:name=".activity.product.AgainProductActivity"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.product.SecondProductActivity"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
-        <activity android:name=".activity.product.FenjianListActivity"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.outsourcing.OutSourceDetailActivity"/>
     </application>
 
 </manifest>

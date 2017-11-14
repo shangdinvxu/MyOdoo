@@ -16,6 +16,12 @@
         android:queryHint="根据采购单号搜索"
         android:iconifiedByDefault="false"
         android:layout_height="40dp"/>
+    <SearchView
+        android:id="@+id/edit_search_note"
+        android:layout_width="match_parent"
+        android:queryHint="请输入备注关键词搜索"
+        android:iconifiedByDefault="false"
+        android:layout_height="40dp"/>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_show_supplier"
         android:layout_width="match_parent"

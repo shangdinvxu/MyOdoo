@@ -34,7 +34,6 @@ import tarce.model.inventory.TakeDelListBean;
 import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
-import tarce.myodoo.activity.ProductingActivity;
 import tarce.myodoo.adapter.TakeDelievAdapter;
 import tarce.myodoo.adapter.takedeliver.SupplierAdapter;
 import tarce.myodoo.bean.MenuBean;
@@ -61,6 +60,8 @@ public class TakeDeliverActivity extends BaseActivity {
     SearchView editSearchCustom;
     @InjectView(R.id.edit_search_order)
     SearchView editSearchOrder;
+    @InjectView(R.id.edit_search_note)
+    SearchView editSearchNote;
     private InventoryApi inventoryApi;
     private List<MenuBean> menuBeanList;
     private TakeDelievAdapter adapter;
@@ -89,7 +90,64 @@ public class TakeDeliverActivity extends BaseActivity {
         setRecyclerview(recyclerShowSupplier);
         editCustomListener();
         editOrderListener();
+        editNoteListener();
         initData();
+    }
+
+    /**
+     * 根据备注关键词搜索
+     * */
+    private void editNoteListener() {
+        editSearchNote.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                ViewUtils.collapseSoftInputMethod(TakeDeliverActivity.this, editSearchNote);
+                searchNote(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+    }
+
+    /**根据笔记搜索*/
+    private void searchNote(String query) {
+        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put("remark", query);
+        objectObjectHashMap.put("type", "incoming");
+        Call<TakeDelListBean> objectCall = inventoryApi.seachByNote(objectObjectHashMap);
+        showDefultProgressDialog();
+        objectCall.enqueue(new Callback<TakeDelListBean>() {
+            @Override
+            public void onResponse(Call<TakeDelListBean> call, Response<TakeDelListBean> response) {
+                dismissDefultProgressDialog();
+                if (response.body() == null) return;
+                if (response.body().getError() != null) {
+                    new TipDialog(TakeDeliverActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
+                    List<TakeDelListBean.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
+                    if (res_data != null && res_data.size() > 0) {
+                        Intent intent = new Intent(TakeDeliverActivity.this, TakeDeliveListActivity.class);
+                        intent.putExtra("intent", (Serializable) res_data);
+                        intent.putExtra("from", "no");
+                        intent.putExtra("notneed", "yes");
+                        startActivity(intent);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TakeDelListBean> call, Throwable t) {
+                dismissDefultProgressDialog();
+            }
+        });
+
     }
 
     @Override
@@ -120,7 +178,7 @@ public class TakeDeliverActivity extends BaseActivity {
 
     /**
      * 根据订单号搜索
-     * */
+     */
     private void editOrderListener() {
         editSearchOrder.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -139,7 +197,7 @@ public class TakeDeliverActivity extends BaseActivity {
 
     /**
      * 根据订单号搜索 searchByTakeNumber
-     * */
+     */
     private void searchOrder(String query) {
         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
         objectObjectHashMap.put("order_name", query);
@@ -150,18 +208,18 @@ public class TakeDeliverActivity extends BaseActivity {
             @Override
             public void onResponse(Call<TakeDelListBean> call, Response<TakeDelListBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null)return;
-                if (response.body().getError()!=null){
+                if (response.body() == null) return;
+                if (response.body().getError() != null) {
                     new TipDialog(TakeDeliverActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                             .show();
                     return;
                 }
-                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null){
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     List<TakeDelListBean.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
                     if (res_data != null && res_data.size() > 0) {
                         Intent intent = new Intent(TakeDeliverActivity.this, TakeDeliveListActivity.class);
                         intent.putExtra("intent", (Serializable) res_data);
-                        intent.putExtra("from","no");
+                        intent.putExtra("from", "no");
                         intent.putExtra("notneed", "yes");
                         startActivity(intent);
                     }
@@ -179,7 +237,7 @@ public class TakeDeliverActivity extends BaseActivity {
 
     /**
      * 搜索供应商名的监听
-     * */
+     */
     private void editCustomListener() {
         editSearchCustom.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -251,7 +309,7 @@ public class TakeDeliverActivity extends BaseActivity {
             @Override
             public void onResponse(Call<GetGroupByListresponse> call, Response<GetGroupByListresponse> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult()==null) return;
+                if (response.body() == null || response.body().getResult() == null) return;
                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                     List<GetGroupByListresponse.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
                     states = new ArrayList<>();
@@ -298,10 +356,10 @@ public class TakeDeliverActivity extends BaseActivity {
                     return;
                 }
                 Intent intent = new Intent(TakeDeliverActivity.this, TakeDeliveListActivity.class);
-                if (partnerId == 0){
+                if (partnerId == 0) {
                     intent.putExtra("from", "no");
                     intent.putExtra("partner_id", 0);
-                }else {
+                } else {
                     intent.putExtra("from", "yes");
                     intent.putExtra("partner_id", partnerId);
                     intent.putExtra("picking_type_id", picking_type_id);

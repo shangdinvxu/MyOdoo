@@ -3,6 +3,8 @@ package tarce.model.inventory;
 import java.io.Serializable;
 import java.util.List;
 
+import tarce.model.ErrorBean;
+
 /**
  * Created by zouzou on 2017/7/5.
  */
@@ -17,6 +19,15 @@ public class StockMoveListBean {
     private String jsonrpc;
     private Object id;
     private ResultBean result;
+    private ErrorBean error;
+
+    public ErrorBean getError() {
+        return error;
+    }
+
+    public void setError(ErrorBean error) {
+        this.error = error;
+    }
 
     public String getJsonrpc() {
         return jsonrpc;

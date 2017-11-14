@@ -18,6 +18,7 @@ import com.newland.me.DeviceManager;
 import com.newland.mtype.ConnectionCloseEvent;
 import com.newland.mtype.ModuleType;
 import com.newland.mtype.event.DeviceEventListener;
+import com.newland.mtype.module.common.printer.Printer;
 import com.newland.mtype.module.common.rfcard.RFCardModule;
 import com.newland.mtype.module.common.rfcard.RFResult;
 import com.newland.mtype.util.ISOUtils;
@@ -98,9 +99,10 @@ public class BuGetLiaoActivity extends BaseActivity {
     private String product_type;
     private List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean> handlerBean;
     private int handlerPosition;
-    private int handlerNum;
+    private double handlerNum;
     private int employee_id;
     private BuGetLiaoAdapter handlerAdapter;
+    private Printer printer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,18 +203,28 @@ public class BuGetLiaoActivity extends BaseActivity {
                                     list_two.add(resDataBean.getStock_move_lines().get(i));
                                 }
                             }
+                            OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean stockMoveLinesBean = new OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean();
                             if (product_type.equals("material")){
+                                stockMoveLinesBean = list_one.get(handlerPosition);
                                 handlerBean.get(handlerPosition).setOver_picking_qty(handlerNum);
                                 handlerBean.get(handlerPosition).setQuantity_done(list_one.get(handlerPosition).getQuantity_done());
                                 handlerBean.get(handlerPosition).setQty_available(list_one.get(handlerPosition).getQty_available());
                                 handlerBean.get(handlerPosition).setBlue(true);
                             }else if (product_type.equals("real_semi_finished")){
+                                stockMoveLinesBean = list_two.get(handlerPosition);
                                 handlerBean.get(handlerPosition).setOver_picking_qty(handlerNum);
                                 handlerBean.get(handlerPosition).setQuantity_done(list_two.get(handlerPosition).getQuantity_done());
                                 handlerBean.get(handlerPosition).setQty_available(list_two.get(handlerPosition).getQty_available());
                                 handlerBean.get(handlerPosition).setBlue(true);
                             }
                             handlerAdapter.notifyDataSetChanged();
+                            printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+                            printer.init();
+                            printer.setLineSpace(1);
+                            printer.print("MO单号："+resDataBean.getDisplay_name()+"\n产品名称："+stockMoveLinesBean.getProduct_id()+
+                                    "\n需求数量："+stockMoveLinesBean.getProduct_uom_qty()+"\n补料数量："+handlerNum
+                                    +"\n备料数量："+(stockMoveLinesBean.getQuantity_ready()+stockMoveLinesBean.getQuantity_done()), 30, TimeUnit.SECONDS);
+                            printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
                         }
                     });
                 }else if (response.body().getResult().getRes_code() == -1){
@@ -239,7 +251,7 @@ public class BuGetLiaoActivity extends BaseActivity {
                         (List<OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean>) adapter_type.getData();
                 new InsertNumDialog(BuGetLiaoActivity.this, R.style.MyDialogStyle, new InsertNumDialog.OnSendCommonClickListener() {
                     @Override
-                    public void OnSendCommonClick(final int num) {
+                    public void OnSendCommonClick(final double num) {
 
                         if (num > data.get(position).getQty_available()) {
                             ToastUtils.showCommonToast(BuGetLiaoActivity.this, "库存不足");
@@ -368,6 +380,13 @@ public class BuGetLiaoActivity extends BaseActivity {
                                                     data.get(position).setQty_available(list_three.get(position).getQty_available());
                                                     data.get(position).setBlue(true);
                                                     adapter_type.notifyDataSetChanged();
+                                                    printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+                                                    printer.init();
+                                                    printer.setLineSpace(1);
+                                                    printer.print("MO单号："+resDataBean.getDisplay_name()+"\n产品名称："+list_three.get(position).getProduct_id()+
+                                                            "\n需求数量："+list_three.get(position).getProduct_uom_qty()+"\n补料数量："+num
+                                                            +"\n备料数量："+(list_three.get(position).getQuantity_ready()+list_three.get(position).getQuantity_done()), 30, TimeUnit.SECONDS);
+                                                    printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
                                                 }
                                             });
                                         }
@@ -384,6 +403,7 @@ public class BuGetLiaoActivity extends BaseActivity {
                 }, data.get(position).getProduct_id())
                         .changeTitle("填写 " + data.get(position).getProduct_id() + "的补领料数量")
                         .setWeight(data.get(position).getWeight())
+                      //  .setWeight(2)
                         .dismissTip().show();
             }
         });

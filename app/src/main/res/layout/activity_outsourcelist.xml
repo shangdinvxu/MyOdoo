@@ -1,85 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical">
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/search_stock"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal">
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/search_bar_icon_normal"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="搜索"
-            android:layout_gravity="center_vertical"/>
-    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="@color/cc"
-        android:orientation="horizontal">
-
+        android:orientation="horizontal"
+        android:background="@color/header">
         <TextView
             android:layout_width="0dp"
+            android:layout_weight="1.5"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:text="外协单号"
             android:gravity="center"
-            android:text="内部参考" />
-
+            android:textColor="@color/white"/>
         <TextView
             android:layout_width="0dp"
+            android:layout_weight="1.5"
             android:layout_height="match_parent"
+            android:text="源单据"
+            android:gravity="center"
+            android:textColor="@color/white"/>
+        <TextView
+            android:layout_width="0dp"
             android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="工序"
             android:gravity="center"
-            android:text="内部类别" />
-
+            android:textColor="@color/white"/>
         <TextView
             android:layout_width="0dp"
-            android:layout_height="match_parent"
             android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:text="数量"
             android:gravity="center"
-            android:text="库存" />
-
+            android:textColor="@color/white"/>
         <TextView
             android:layout_width="0dp"
-            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center"
-            android:text="预测数量" />
-
-        <TextView
-            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:text="负责人"
             android:gravity="center"
-            android:text="总重量(g)" />
+            android:textColor="@color/white"/>
     </LinearLayout>
-
     <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
-        android:id="@+id/swipeToLoad"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:id="@+id/swipeToLoad">
         <tarce.myodoo.uiutil.RecyclerHeaderView
             android:id="@+id/swipe_refresh_header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
+            android:layout_height="wrap_content">
+        </tarce.myodoo.uiutil.RecyclerHeaderView>
         <android.support.v7.widget.RecyclerView
             android:id="@+id/swipe_target"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
         <tarce.myodoo.uiutil.RecyclerFooterView
             android:id="@+id/swipe_load_more_footer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content">
+        </tarce.myodoo.uiutil.RecyclerFooterView>
     </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
 </LinearLayout>

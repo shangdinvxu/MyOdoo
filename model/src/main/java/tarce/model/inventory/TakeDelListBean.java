@@ -98,6 +98,17 @@ public class TakeDelListBean {
                 this.weight = weight;
             }
 
+            public Object getRemark() {
+                if (remark instanceof Boolean){
+                    remark = "";
+                }
+                return remark;
+            }
+
+            public void setRemark(Object remark) {
+                this.remark = remark;
+            }
+
             /**
              * origin : PO2017050405266
              * sale_note : false
@@ -117,6 +128,8 @@ public class TakeDelListBean {
              * picking_id : 6140
              */
 
+
+            private Object remark;
             private double weight;
             private String origin;
 

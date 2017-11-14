@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
@@ -78,6 +80,7 @@
             android:background="@null"
             android:imeOptions="actionSearch"
             android:singleLine="true"
+            android:hint="请输入"
             android:textColor="@color/color_5693f8"
             android:gravity="right|center_vertical"
             android:paddingRight="15dp"/>
@@ -103,7 +106,6 @@
             android:layout_height="match_parent"
             android:id="@+id/lilun_num"
             android:gravity="right|center_vertical"
-            android:textColor="@color/color_5693f8"
             android:paddingRight="15dp"/>
     </LinearLayout>
     <View

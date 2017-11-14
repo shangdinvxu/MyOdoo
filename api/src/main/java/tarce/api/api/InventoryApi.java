@@ -29,6 +29,7 @@ import tarce.model.SearchSupplierResponse;
 import tarce.model.inventory.AreaMessageBean;
 import tarce.model.inventory.AutoAddworkBean;
 import tarce.model.inventory.BomFramworkBean;
+import tarce.model.inventory.ChangeWeightBean;
 import tarce.model.inventory.CommonBean;
 import tarce.model.inventory.CustomerSaleBean;
 import tarce.model.inventory.DoUnreservBean;
@@ -50,6 +51,7 @@ import tarce.model.inventory.NewSaleBean;
 import tarce.model.inventory.NewSaleListBean;
 import tarce.model.inventory.NfcOrderBean;
 import tarce.model.inventory.OrderDetailBean;
+import tarce.model.inventory.OutsourceBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.model.inventory.ProcessDeatilBean;
 import tarce.model.inventory.ProductProcessBean;
@@ -74,6 +76,16 @@ import tarce.model.inventory.WorkingWorkerBean;
  */
 
 public interface InventoryApi {
+    /**
+     * 外协改变状态
+     * */
+    @POST("change_outsourcing_order_state")
+    Call<OutsourceBean> changeOutsouceOrder(@Body HashMap hashMap);
+    /**
+     * w外协列表
+     * */
+    @POST("get_outsourcing_order_by_state")
+    Call<OutsourceBean> getOutOrderbyState(@Body HashMap hashMap);
     /**
      * 二次生产
      * */
@@ -160,6 +172,11 @@ public interface InventoryApi {
      * */
     @POST("get_product_list")
     Call<StockListBean> getProductList(@Body HashMap hashMap);
+    /**
+     * 改变某一产品重量
+     * */
+    @POST("change_product_weight")
+    Call<ChangeWeightBean> changeProductWeight(@Body HashMap hashMap);
     /**
      * nfc登录
      * */
@@ -259,6 +276,11 @@ public interface InventoryApi {
     @POST("get_stock_picking_by_origin")
     Call<TakeDelListBean> searchByTakeNumber(@Body HashMap hashMap);
 
+    /**
+     *
+     * */
+    @POST("get_stock_picking_by_remark")
+    Call<TakeDelListBean> seachByNote(@Body HashMap hashMap);
     /**
      * 根据客户全称搜索
      * */

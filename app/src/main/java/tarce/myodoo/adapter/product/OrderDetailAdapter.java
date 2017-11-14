@@ -85,14 +85,14 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
             case body:
                 holder.tv_id_order.setText(position+".");
                 holder.tv_id_product.setText(list.get(position-1).getProduct_id());
-                holder.tv_advice_order.setText("建议:"+list.get(position-1).getSuggest_qty());
+                holder.tv_advice_order.setText("建议:"+StringUtils.twoDouble(list.get(position-1).getSuggest_qty()));
                 if (list.get(position-1).getArea_id() != null){
                     holder.tv_area_order.setText("位置:"+list.get(position-1).getArea_id().getArea_name());
                 }else {
                     holder.tv_area_order.setText("位置:null");
                 }
                 holder.tv_kucun_order.setText("库存:"+StringUtils.changeDouble(list.get(position-1).getQty_available()));
-                holder.tv_need_order.setText("需求:"+list.get(position-1).getProduct_uom_qty());
+                holder.tv_need_order.setText("需求:"+StringUtils.twoDouble(list.get(position-1).getProduct_uom_qty()));
                 double beiliaoNum;
                 if (result.getRes_data().getState().equals("waiting_material")
                         || result.getRes_data().getState().equals("prepare_material_ing")
@@ -143,7 +143,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                     holder.tv_id_product.setTextColor(Color.BLACK);
                     holder.tv_advice_order.setTextColor(Color.BLACK);
                 }
-                holder.tv_feedback.setText("总重量(g)："+list.get(position-1).getWeight()*beiliaoNum);
+                holder.tv_feedback.setText("总重量(g)："+StringUtils.fourDouble(list.get(position-1).getWeight()*beiliaoNum));
               //  holder.itemView.setTag(list.get(position-1));
                 holder.itemView.setTag(R.id.tag_first,list.get(position-1));
                 holder.itemView.setTag(R.id.tag_second,position-1);

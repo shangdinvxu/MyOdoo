@@ -6,12 +6,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +24,7 @@ import butterknife.OnClick;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.utils.StringUtils;
+import tarce.support.ToastUtils;
 
 /**
  * Created by rose.zou on 2017/5/31.
@@ -39,8 +42,12 @@ public class InsertNumDialog extends Dialog {
     TextView trueInsetDialog;
     @InjectView(R.id.tv_tip_dialog)
     TextView tvTipDialog;
-    @InjectView(R.id.tv_all_weight)
-    TextView tvAllWeight;
+    //    @InjectView(R.id.tv_all_weight)
+//    TextView tvAllWeight;
+    @InjectView(R.id.edit_all_weight)
+    EditText editAllWeight;
+    @InjectView(R.id.btn_transterm)
+    Button btnTransterm;
     private LayoutInflater inflater;
     private Display display;
     private Context context;
@@ -54,6 +61,7 @@ public class InsertNumDialog extends Dialog {
     private double weightProduct;
     private TextWatcher watcher = new TextWatcher() {
         private CharSequence temp;
+
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             temp = charSequence;
@@ -66,14 +74,15 @@ public class InsertNumDialog extends Dialog {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            if (StringUtils.isNullOrEmpty(temp.toString())){
+            if (StringUtils.isNullOrEmpty(temp.toString())) {
+                editAllWeight.setText("0.00");
                 return;
             }
-            Integer num = Integer.valueOf(temp.toString());
-            if (num>0){
-                tvAllWeight.setText("总重量(g): "+num*weightProduct);
-            }else {
-                tvAllWeight.setVisibility(View.GONE);
+            double num = Double.valueOf(temp.toString());
+            if (num > 0) {
+                editAllWeight.setText(StringUtils.fourDouble(num * weightProduct));
+            } else {
+                editAllWeight.setText("0.00");
             }
         }
     };
@@ -174,16 +183,17 @@ public class InsertNumDialog extends Dialog {
     }
 
     public interface OnSendCommonClickListener {
-        void OnSendCommonClick(int num);
+        void OnSendCommonClick(double num);
     }
 
     //添加总重量
-    public InsertNumDialog setWeight(double weightProduct){
-        tvAllWeight.setVisibility(View.VISIBLE);
+    public InsertNumDialog setWeight(double weightProduct) {
+        editAllWeight.setText(StringUtils.fourDouble(Double.valueOf(eidtOutNum.getText().toString()) * weightProduct));
         this.weightProduct = weightProduct;
         eidtOutNum.addTextChangedListener(watcher);
         return this;
     }
+
     //改变产品名称
     public InsertNumDialog changeTitle(String title) {
         nameProductDialog.setText(title);
@@ -213,8 +223,25 @@ public class InsertNumDialog extends Dialog {
             Toast.makeText(context, "请确认数量？", Toast.LENGTH_SHORT).show();
             return;
         }
-        sendCommonClickListener.OnSendCommonClick(Integer.parseInt(eidtOutNum.getText().toString()));
+        sendCommonClickListener.OnSendCommonClick(Double.parseDouble(eidtOutNum.getText().toString()));
         eidtOutNum.setText(null);
         dismiss();
+    }
+
+    @OnClick(R.id.btn_transterm)
+    void setBtnTransterm(View view){
+        double weightDouble = Double.parseDouble(editAllWeight.getText().toString());
+        Log.e("zws", "weightDouble = "+weightDouble);
+        if (StringUtils.isNullOrEmpty(editAllWeight.getText().toString())){
+            eidtOutNum.setText("0");
+            ToastUtils.showCommonToast(context, "请输入总重量");
+        }else if (weightDouble == 0){
+            eidtOutNum.setText("0");
+        }else if (weightProduct!=0){
+            double v = (double) weightDouble / weightProduct;
+            Log.e("zws", "v = "+v);
+            eidtOutNum.setText(StringUtils.twoDouble(v));
+            editAllWeight.setText(""+weightDouble);
+        }
     }
 }

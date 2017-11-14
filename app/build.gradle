@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
@@ -10,10 +11,11 @@ android {
         ndk {
             abiFilters "armeabi"
         }
-        versionCode 66
-        versionName "2.1.2"
+        versionCode 71
+        versionName "2.1.7"
         resValue "string", "updatefun_provider_file_authorities", "tarce.myodoo.fileprovider"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     /**
      * 签名设置
@@ -60,6 +62,7 @@ dependencies {
     compile project(':model')
     compile project(':api')
 
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     compile 'com.android.support:appcompat-v7:25.3.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'

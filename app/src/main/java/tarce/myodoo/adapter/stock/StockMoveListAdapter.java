@@ -9,6 +9,7 @@ import tarce.model.inventory.StockMoveListBean;
 import tarce.myodoo.R;
 import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
+import tarce.support.TimeUtils;
 
 /**
  * Created by zouzou on 2017/7/5.
@@ -34,7 +35,7 @@ public class StockMoveListAdapter extends BaseQuickAdapter<StockMoveListBean.Res
     protected void convert(BaseViewHolder helper, StockMoveListBean.ResultBean.ResDataBean item) {
         helper.setText(R.id.position_tv, (helper.getPosition()+1)+".")
         .setText(R.id.tv_type, StringUtils.typeSwitch(item.getMove_order_type()))
-        .setText(R.id.name_and_time, item.getWrite_uid()+" "+ DateTool.getGMTBeijing(item.getWrite_date()))
+        .setText(R.id.name_and_time, item.getWrite_uid()+" "+ TimeUtils.utc2Local(item.getWrite_date()))
         .setText(R.id.state_tv, StringUtils.switchString(item.getState()))
         .setText(R.id.tv_argument, "说明："+item.getProduct_id().getProduct_name())
         .setText(R.id.origin_tv, "源单据: "+item.getName())

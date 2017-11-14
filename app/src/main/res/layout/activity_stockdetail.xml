@@ -136,7 +136,7 @@
                     android:layout_marginLeft="15dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="在手/预测" />
+                    android:text="库存/预测" />
 
                 <TextView
                     android:id="@+id/tv_num"
@@ -309,6 +309,15 @@
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:text="重量(g)" />
+
+                <Button
+                    android:id="@+id/btn_change_weight"
+                    android:layout_width="60dp"
+                    android:layout_height="30dp"
+                    android:text="修改"
+                    android:textColor="@color/white"
+                    android:background="@drawable/nfcbuttonbac"
+                    android:layout_marginLeft="10dp"/>
 
                 <TextView
                     android:id="@+id/tv_weight"

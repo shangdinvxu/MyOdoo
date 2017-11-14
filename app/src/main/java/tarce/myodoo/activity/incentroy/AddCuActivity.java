@@ -147,21 +147,21 @@ public class AddCuActivity extends BaseActivity {
         showDefultProgressDialog();
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("name", editWriteName.getText().toString());
-        for (int i = 0; i < listBeen.size(); i++) {
-            final int finalI = i;
-            Glide.with(AddCuActivity.this)
-                    .load(listBeen.get(i).getProduct().getImage_medium())
-                    .asBitmap()
-                    .into(new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
-                        @Override
-                        public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                            //得到bitmap
-                            String s = BitmapUtils.bitmapToBase64(bitmap);
-                          //  Log.e("zws", "?????"+s);
-                            listBeen.get(finalI).getProduct().setImage_medium(BitmapUtils.bitmapToBase64(bitmap));
-                        }
-                    });
-        }
+//        for (int i = 0; i < listBeen.size(); i++) {
+//            final int finalI = i;
+//            Glide.with(AddCuActivity.this)
+//                    .load(listBeen.get(i).getProduct().getImage_medium())
+//                    .asBitmap()
+//                    .into(new SimpleTarget<Bitmap>(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL) {
+//                        @Override
+//                        public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+//                            //得到bitmap
+//                           // String s = BitmapUtils.bitmapToBase64(bitmap);
+//                          //  Log.e("zws", "?????"+s);
+//                            listBeen.get(finalI).getProduct().setImage_medium(BitmapUtils.bitmapToBase64(bitmap));
+//                        }
+//                    });
+//        }
         hashMap.put("line_ids", listBeen);
         Call<CommonBean> stockInventroy = inventoryApi.createStockInventroy(hashMap);
         stockInventroy.enqueue(new Callback<CommonBean>() {
@@ -185,6 +185,8 @@ public class AddCuActivity extends BaseActivity {
             @Override
             public void onFailure(Call<CommonBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                new TipDialog(AddCuActivity.this, R.style.MyDialogStyle, t.toString())
+                        .show();
             }
         });
     }

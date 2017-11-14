@@ -75,7 +75,7 @@ public class InspectionSubActivity extends BaseActivity {
 
     @Override
     protected void onResume(){
-        if (res_data == null){
+        if (for_transform == null){
             swipeToLoad.setRefreshing(true);
             loadTime = 0;
         }
@@ -83,11 +83,15 @@ public class InspectionSubActivity extends BaseActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        for_transform = null;
+        super.onDestroy();
+    }
+
+    @Override
     protected void onPause() {
+        for_transform = null;
         super.onPause();
-        if (res_data != null){
-            res_data = null;
-        }
     }
 
     private void setRecyc() {

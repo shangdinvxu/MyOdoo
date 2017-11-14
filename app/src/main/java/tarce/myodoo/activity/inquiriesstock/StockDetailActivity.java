@@ -1,28 +1,49 @@
 package tarce.myodoo.activity.inquiriesstock;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.text.InputType;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.newland.mtype.ModuleType;
 import com.newland.mtype.module.common.printer.Printer;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import tarce.api.RetrofitClient;
+import tarce.api.api.InventoryApi;
+import tarce.model.inventory.ChangeWeightBean;
 import tarce.model.inventory.StockListBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
+import tarce.myodoo.activity.outsourcing.OutSourceListActivity;
+import tarce.myodoo.activity.salesout.SalesDetailActivity;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
+import tarce.support.AlertAialogUtils;
+import tarce.support.ToastUtils;
+import tarce.support.ViewUtils;
 
 /**
  * Created by zouzou on 2017/7/5.
@@ -55,8 +76,11 @@ public class StockDetailActivity extends BaseActivity {
     TextView tvPrint;
     @InjectView(R.id.tv_weight)
     TextView tvWeight;
+    @InjectView(R.id.btn_change_weight)
+    Button btnChangeWeight;
     private StockListBean.ResultBean.ResDataBean resDataBean;
     private Printer printer;
+    private InventoryApi inventoryApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +88,7 @@ public class StockDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_stockdetail);
         ButterKnife.inject(this);
 
+        inventoryApi = RetrofitClient.getInstance(StockDetailActivity.this).create(InventoryApi.class);
         Intent intent = getIntent();
         resDataBean = (StockListBean.ResultBean.ResDataBean) intent.getSerializableExtra("bean");
         if (resDataBean != null) {
@@ -95,7 +120,7 @@ public class StockDetailActivity extends BaseActivity {
         tvTypeIn.setText(String.valueOf(resDataBean.getInner_spec()));
         tvGuige.setText(String.valueOf(resDataBean.getProduct_spec()));
         tvInChannel.setText(resDataBean.getCateg_id());
-        tvWeight.setText(resDataBean.getWeight()+"");
+        tvWeight.setText(StringUtils.fourDouble(resDataBean.getWeight()));
     }
 
     @OnClick(R.id.tv_look_move)
@@ -121,5 +146,47 @@ public class StockDetailActivity extends BaseActivity {
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
         printer.print("\n" + "打印时间：" + DateTool.getDateTime(), 30, TimeUnit.SECONDS);
         printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+    }
+
+    @OnClick(R.id.btn_change_weight)
+    void setBtnChangeWeight(View view) {
+        final EditText editText = new EditText(StockDetailActivity.this);
+        editText.setText(resDataBean.getWeight() + "");
+        editText.setSelection(editText.getText().length());
+        AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(StockDetailActivity.this, "输入" + resDataBean.getProduct_name() + "的单位重量");
+        dialog.setView(editText)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        double weight = Double.parseDouble(editText.getText().toString());
+                        tvWeight.setText(StringUtils.fourDouble(weight) + "");
+                        showDefultProgressDialog();
+                        HashMap<Object, Object> hashMap = new HashMap<>();
+                        hashMap.put("product_id", resDataBean.getProduct_id());
+                        hashMap.put("weight", weight);
+                        Call<ChangeWeightBean> objectCall = inventoryApi.changeProductWeight(hashMap);
+                        objectCall.enqueue(new Callback<ChangeWeightBean>() {
+                            @Override
+                            public void onResponse(Call<ChangeWeightBean> call, Response<ChangeWeightBean> response) {
+                                dismissDefultProgressDialog();
+                                if (response.body() == null) return;
+                                if (response.body().getError()!=null){
+                                    new TipDialog(StockDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                            .show();
+                                    return;
+                                }
+                                if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==1){
+                                    new TipDialog(StockDetailActivity.this, R.style.MyDialogStyle, "成功修改重量!")
+                                            .show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<ChangeWeightBean> call, Throwable t) {
+                                dismissDefultProgressDialog();
+                            }
+                        });
+                    }
+                }).show();
     }
 }

@@ -3,6 +3,7 @@ package tarce.myodoo;
 import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.multidex.MultiDex;
 
 import com.facebook.stetho.Stetho;
 import com.tencent.bugly.crashreport.CrashReport;
@@ -68,5 +69,10 @@ public class MyApplication extends Application {
     }
     public SQLiteDatabase getDb() {
         return db;
+    }
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }

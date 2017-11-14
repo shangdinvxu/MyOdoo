@@ -5,12 +5,14 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +22,9 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.LoginActivity;
 import tarce.myodoo.utils.StringUtils;
+import tarce.support.ToastUtils;
 
 /**
  * Created by rose.zou on 2017/5/24.
@@ -30,6 +34,8 @@ import tarce.myodoo.utils.StringUtils;
 public class DialogForOrder extends Dialog {
     @InjectView(R.id.tv_weight_num)
     EditText tvWeightNum;
+    @InjectView(R.id.btn_transterm)
+    Button btnTransterm;
     private OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean linesBean;
     @InjectView(R.id.dialog_name_product)
     TextView dialogNameProduct;
@@ -50,13 +56,14 @@ public class DialogForOrder extends Dialog {
     private Context context;
     private View view;
     private OnSendCommonClickListener sendCommonClickListener;
-    private double weightNum;
+    private double weightNum = 0;
     private TextWatcher textWatcher = new TextWatcher() {
         CharSequence temp;
 
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             temp = charSequence;
+
         }
 
         @Override
@@ -71,28 +78,7 @@ public class DialogForOrder extends Dialog {
                 return;
             }
             Integer num = Integer.valueOf(temp.toString());
-            tvWeightNum.setText(num*weightNum+"");
-        }
-    };
-    private TextWatcher weiWatcher = new TextWatcher() {
-        CharSequence temp;
-        @Override
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            temp = charSequence;
-        }
-
-        @Override
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            Integer weight = Integer.valueOf(temp.toString());
-            if (StringUtils.isNullOrEmpty(temp.toString())){
-
-                return;
-            }
+            tvWeightNum.setText(num * weightNum + "");
         }
     };
 
@@ -158,13 +144,14 @@ public class DialogForOrder extends Dialog {
         void OnSendCommonClick(int num);
     }
 
-    public DialogForOrder setWeight(double weightNum){
+    public DialogForOrder setWeight(double weightNum) {
         this.weightNum = weightNum;
         Integer valueOf = Integer.valueOf(tvPrepareNum.getText().toString());
-        tvWeightNum.setText(weightNum* valueOf+"");
+        tvWeightNum.setText(weightNum * valueOf + "");
         tvPrepareNum.addTextChangedListener(textWatcher);
         return this;
     }
+
     @OnClick(R.id.tv_cancel_dialog)
     void cancelAction(View view) {
         dismiss();
@@ -179,5 +166,22 @@ public class DialogForOrder extends Dialog {
         sendCommonClickListener.OnSendCommonClick(Integer.parseInt(tvPrepareNum.getText().toString()));
         tvPrepareNum.setText(null);
         dismiss();
+    }
+
+    @OnClick(R.id.btn_transterm)
+    void setBtnTransterm(View view){
+        double weightDouble = Double.parseDouble(tvWeightNum.getText().toString());
+        Log.e("zws", "weightDouble = "+weightDouble);
+        if (StringUtils.isNullOrEmpty(tvWeightNum.getText().toString())){
+            tvPrepareNum.setText("0");
+            ToastUtils.showCommonToast(context, "请输入总重量");
+        }else if (weightDouble == 0){
+            tvPrepareNum.setText("0");
+        }else if (weightNum!=0){
+            double v = (double) weightDouble / weightNum;
+            Log.e("zws", "v = "+v);
+            tvPrepareNum.setText(StringUtils.twoDouble(v));
+            tvWeightNum.setText(""+weightDouble);
+        }
     }
 }

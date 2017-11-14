@@ -26,6 +26,7 @@ import tarce.api.api.InventoryApi;
 import tarce.model.inventory.MainMdBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.inspect.InspectionSubActivity;
 import tarce.myodoo.adapter.processproduct.PrepareMdAdapter;
 import tarce.myodoo.adapter.product.PickingDetailAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
@@ -172,6 +173,10 @@ public class WaitProdListActivity extends BaseActivity {
                     seach();
                 } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1) {
 
+                }else if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() == null
+                        && move!=Load_Move){
+                    swipeTarget.setVisibility(View.GONE);
+                    ToastUtils.showCommonToast(WaitProdListActivity.this, "没有更多数据...");
                 }
             }
 

@@ -34,6 +34,7 @@ import tarce.myodoo.activity.GetPickNumActivity;
 import tarce.myodoo.activity.ProcessOfPersonActivity;
 import tarce.myodoo.activity.device.DeviceSelectActivity;
 import tarce.myodoo.activity.engineer.EngineerActivity;
+import tarce.myodoo.activity.outsourcing.OutSourcingActivity;
 import tarce.myodoo.activity.product.AgainProductActivity;
 import tarce.myodoo.activity.product.SecondProductActivity;
 import tarce.myodoo.adapter.SectionAdapter;
@@ -74,6 +75,7 @@ public class ProduceFragment extends Fragment {
       //  list.add(new MainItemBean(new MenuBean("领料", 0)));
         list.add(new MainItemBean(new MenuBean("等待生产", 0)));
         list.add(new MainItemBean(new MenuBean("生产中", 0)));
+        list.add(new MainItemBean(new MenuBean("外协", 0)));
         list.add(new MainItemBean(new MenuBean("二次生产", 0)));
         list.add(new MainItemBean(new MenuBean("清点退料", 0)));
         list.add(new MainItemBean(new MenuBean("等待返工", 0)));
@@ -213,7 +215,7 @@ public class ProduceFragment extends Fragment {
         sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (position == 3 || position == 11 || position == 14){
+                if (position == 3 || position == 12 || position == 15){
                     return;
                 }
                 String name = list.get(position).t.getName();
@@ -268,6 +270,10 @@ public class ProduceFragment extends Fragment {
                     case "二次加工":
                         Intent intent5 = new Intent(getActivity(), SecondProductActivity.class);
                         startActivity(intent5);
+                        break;
+                    case "外协":
+                        Intent intent6 = new Intent(getActivity(), OutSourcingActivity.class);
+                        startActivity(intent6);
                         break;
                 }
             }

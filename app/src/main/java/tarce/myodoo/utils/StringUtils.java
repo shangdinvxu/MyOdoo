@@ -10,42 +10,43 @@ import java.util.regex.Pattern;
  */
 
 public class StringUtils {
-    public static String switchString(String string){
-        String transtring = string ;
-        if (string.equals("assigned")){
+    public static String switchString(String string) {
+        String transtring = string;
+        if (string.equals("assigned")) {
             transtring = "可用";
-        }else  if (string.equals("confirmed")){
+        } else if (string.equals("confirmed")) {
             transtring = "等待可用";
-        }else  if (string.equals("done")){
+        } else if (string.equals("done")) {
             transtring = "完成";
-        }else  if (string.equals("partially_available")){
+        } else if (string.equals("partially_available")) {
             transtring = "部分可用";
-        }else  if (string.equals("delivery_once")){
+        } else if (string.equals("delivery_once")) {
             transtring = "一次性发齐货";
-        }else if (string.equals("create_backorder")){
+        } else if (string.equals("create_backorder")) {
             transtring = "允许分批,并产生欠单";
-        }else if (string.equals("cancel_backorder")){
+        } else if (string.equals("cancel_backorder")) {
             transtring = "允许分批,不产生欠单";
-        }else if (string.equals("waiting_in")){
+        } else if (string.equals("waiting_in")) {
             transtring = "待入库";
-        }else if (string.equals("qc_check")){
+        } else if (string.equals("qc_check")) {
             transtring = "品检";
-        }else if (string.equals("validate")){
+        } else if (string.equals("validate")) {
             transtring = "等待采购检验";
-        }else if (string.equals("waiting")){
+        } else if (string.equals("waiting")) {
             transtring = "等待其他作业";
-        }else if (string.equals("waiting_out")){
+        } else if (string.equals("waiting_out")) {
             transtring = "待出库";
-        }else if (string.equals("cancel")){
+        } else if (string.equals("cancel")) {
             transtring = "已取消";
-        }else if (string.equals("picking")){
+        } else if (string.equals("picking")) {
             transtring = "等待分拣";
         }
         return transtring;
     }
-    public static String typeSwitch(String string){
-        String transtring = string ;
-        switch (string){
+
+    public static String typeSwitch(String string) {
+        String transtring = string;
+        switch (string) {
             case "procurement_warehousing":
                 transtring = "采购入库";
                 break;
@@ -73,57 +74,72 @@ public class StringUtils {
         }
         return transtring;
     }
+
     /**
      * 判断是否为空string
-     * */
+     */
     public static boolean isNullOrEmpty(String str) {
         return str == null || str.trim().length() == 0;
     }
 
     /**
      * 将Double类型数据转换成String,去掉小数点。先转成int
+     *
      * @param i
-     * */
-    public static String doubleToString(double i){
+     */
+    public static String doubleToString(double i) {
         return String.valueOf(new Double(i).intValue());
     }
+
     /**
      * double转int
-     * */
-    public static int doubleToInt(double i){
+     */
+    public static int doubleToInt(double i) {
         return new Double(i).intValue();
     }
 
     /**
      * 小数点保留两位小数
-     * */
-    public static String twoDouble(double num){
+     */
+    public static String twoDouble(double num) {
         String s = "";
         DecimalFormat df = new DecimalFormat("#.##");
         if (num != 0) {
-            s =  df.format(num)+"";
+            s = df.format(num) + "";
         }
         return s;
     }
+
     /**
-     * 半角转全角
-     * */
-    public static String stringFilter(String str) {
-            char[] c = str.toCharArray();
-            for (int i = 0; i < c.length; i++) {
-                if (c[i] == 12288) {
-                    c[i] = (char) 32;
-                    continue;
-                }
-                if (c[i] > 65280 && c[i] < 65375)
-                    c[i] = (char) (c[i] - 65248);
-            }
-            return new String(c);
+     * 小数点保留4位
+     */
+    public static String fourDouble(double num) {
+        String s = "";
+        BigDecimal bd = new BigDecimal(num);
+        bd = bd.setScale(4, BigDecimal.ROUND_HALF_UP);
+        s = bd + "";
+        return s;
     }
 
-    public static double changeDouble(double i){
-        BigDecimal bd=new BigDecimal(i);
-        bd=bd.setScale(4, BigDecimal.ROUND_HALF_UP);
+    /**
+     * 半角转全角
+     */
+    public static String stringFilter(String str) {
+        char[] c = str.toCharArray();
+        for (int i = 0; i < c.length; i++) {
+            if (c[i] == 12288) {
+                c[i] = (char) 32;
+                continue;
+            }
+            if (c[i] > 65280 && c[i] < 65375)
+                c[i] = (char) (c[i] - 65248);
+        }
+        return new String(c);
+    }
+
+    public static double changeDouble(double i) {
+        BigDecimal bd = new BigDecimal(i);
+        bd = bd.setScale(4, BigDecimal.ROUND_HALF_UP);
         return bd.doubleValue();
     }
 

@@ -41,6 +41,8 @@ import tarce.myodoo.activity.takedeliver.TakeDeliverActivity;
 import tarce.myodoo.adapter.SectionAdapter;
 import tarce.myodoo.bean.MainItemBean;
 import tarce.myodoo.bean.MenuBean;
+import tarce.myodoo.uiutil.TipDialog;
+import tarce.myodoo.utils.UserManager;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
 
@@ -182,6 +184,10 @@ public class WarehouseFragment extends Fragment {
                         IntentFactory.start_WaitRework_Activity(getActivity(),"生产入库", "qc_success");
                         break;
                     case "盘点":
+                        if (!UserManager.getSingleton().getGrops().contains("group_stock_control_manager")) {
+                            ToastUtils.showCommonToast(getActivity(), "抱歉，您无此权限查看盘点相关");
+                            return;
+                        }
                         Intent intent2 = new Intent(getActivity(), InventroyActivity.class);
                         startActivity(intent2);
                         break;
@@ -211,11 +217,5 @@ public class WarehouseFragment extends Fragment {
     void setSalesOut(View view) {
         IntentFactory.start_SalesOut_Activity(getActivity());
     }
-
-    @OnClick(R.id.sales_in)
-    void setSaleIn(View view) {
-        IntentFactory.start_SalesIn_Activity(getActivity());
-    }
-
 
 }

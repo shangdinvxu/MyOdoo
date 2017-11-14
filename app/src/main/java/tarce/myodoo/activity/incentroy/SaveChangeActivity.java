@@ -258,6 +258,8 @@ public class SaveChangeActivity extends AppCompatActivity {
         } else {
             area_id = 0;
         }
+        actrulNum.requestFocus();
+        actrulNum.findFocus();
         lilunNum.setText(res_data.getTheoretical_qty() + "");
         actrulNum.setText(res_data.getProduct_qty() + "");
         actrulNum.setSelection(actrulNum.getText().length());

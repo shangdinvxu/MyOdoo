@@ -191,7 +191,7 @@ public class GetSaleResponse implements Serializable{
             private	Object	sale_note;	/*false*/
             private	String	state;	/*done*/
             private	Integer	picking_id;	/*781*/
-            private	String	min_date;	/*2016-12-14 06:59:24*/
+            private	Object	min_date;	/*2016-12-14 06:59:24*/
 
             public Object getDelivery_rule() {
                 if (delivery_rule instanceof String){
@@ -268,11 +268,14 @@ public class GetSaleResponse implements Serializable{
                 return this.picking_id;
             }
 
-            public void setMin_date(String value){
+            public void setMin_date(Object value){
                 this.min_date = value;
             }
-            public String getMin_date(){
-                return this.min_date;
+            public Object getMin_date(){
+                if (min_date instanceof Boolean){
+                    min_date = "";
+                }
+                return min_date;
             }
 
 

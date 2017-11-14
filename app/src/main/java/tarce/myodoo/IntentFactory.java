@@ -5,12 +5,10 @@ import android.content.Intent;
 
 import tarce.myodoo.activity.MainActivity;
 import tarce.myodoo.activity.ProductLlActivity;
-import tarce.myodoo.activity.SalesInActivity;
 import tarce.myodoo.activity.SelectProcedureActivity;
 import tarce.myodoo.activity.inspect.InspectionSubActivity;
 import tarce.myodoo.activity.retail.RetailSubActivity;
 import tarce.myodoo.activity.salesout.NewSaleoutActivity;
-import tarce.myodoo.activity.salesout.SalesOutActivity;
 
 
 /**
@@ -36,14 +34,6 @@ public class IntentFactory {
         context.startActivity(intent);
     }
 
-    /**
-     * 客户退货
-     * @param context
-     */
-    public static void start_SalesIn_Activity(Context context){
-        Intent intent = new Intent(context, SalesInActivity.class);
-        context.startActivity(intent);
-    }
 
     /**
      * 生产备料->选择工序

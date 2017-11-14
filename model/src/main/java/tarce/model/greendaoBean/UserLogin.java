@@ -42,4 +42,9 @@ public class UserLogin {
     public void setId(Long id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "\n 姓名："+userName+"\n密码："+password+"\nid = "+id;
+    }
 }

@@ -24,10 +24,12 @@ import tarce.api.api.InventoryApi;
 import tarce.model.inventory.StockMoveListBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
+import tarce.myodoo.activity.OrderDetailActivity;
 import tarce.myodoo.adapter.stock.StockListAdapter;
 import tarce.myodoo.adapter.stock.StockMoveListAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.ToastUtils;
 
 /**
@@ -112,7 +114,12 @@ public class StockMoveListActivity extends BaseActivity {
             @Override
             public void onResponse(Call<StockMoveListBean> call, Response<StockMoveListBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() ==null)return;
+                if (response.body() == null)return;
+                if (response.body().getError()!=null){
+                    new TipDialog(StockMoveListActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                     res_data = response.body().getResult().getRes_data();
                     if (move == Refresh_Move) {

@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -132,6 +133,11 @@ public class LoginActivity extends Activity {
         initListener();
         httpUrl.setSelection(httpUrl.getText().length());
         initDevice();
+//        PackageManager pm = getPackageManager();
+//        boolean nfc = pm.hasSystemFeature(PackageManager.FEATURE_NFC);
+//        Toast.makeText(LoginActivity.this,
+//                String.format("NFC支持%s", nfc), Toast.LENGTH_SHORT)
+//                .show();
     }
 
     @OnClick(R.id.img_delete)
@@ -164,7 +170,7 @@ public class LoginActivity extends Activity {
         email.setThreshold(1);
         userLogins = new UserLoginUtils().searchAll();
         userStrings = new ArrayList<>();
-      //  Log.e("zws", "userLogins 3= "+userLogins+"  userStrings="+userStrings);
+       // Log.e("zws", "userLogins 3= "+userLogins+"  userStrings="+userStrings);
         if (userLogins != null && userLogins.size() > 0) {
             for (UserLogin s : userLogins) {
                 userStrings.add(s.getUserName());
@@ -193,8 +199,6 @@ public class LoginActivity extends Activity {
                                 if (userLogins.get(j).getUserName().equals(email.getText().toString())){
                                     index = j;
                                     break;
-                                }else {
-                                    break;
                                 }
                             }
                             if (index==-1)return;
@@ -204,7 +208,7 @@ public class LoginActivity extends Activity {
                             new UserLoginUtils().deleteOne(userLogins.get(index).getId());
                             userLogins.remove(index);
                             stringArrayAdapter.notifyDataSetChanged();
-                           // Log.e("zws", "userLogins 2= "+userLogins);
+                        //    Log.e("zws", "userLogins 2= "+userLogins);
                             email.setText("");
                             password.setText("");
                         }
@@ -223,6 +227,7 @@ public class LoginActivity extends Activity {
                 if (userStrings==null || userStrings.size()==0)return;
                 int index = userStrings.indexOf(item);
                 if (userLogins==null || userLogins.size()==0)return;
+                if (index==-1)return;
                 if (userLogins.get(index).getPassword()==null)return;
                 String password = userLogins.get(index).getPassword();
                 LoginActivity.this.password.setText(password);

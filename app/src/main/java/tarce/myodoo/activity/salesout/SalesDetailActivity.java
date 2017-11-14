@@ -15,6 +15,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -158,7 +159,11 @@ public class SalesDetailActivity extends BaseActivity {
 
     private void refreshView(GetSaleResponse.TResult.TRes_data bundle1) {
         partner.setText(bundle1.getParnter_id());
-        time.setText(TimeUtils.utc2Local(bundle1.getMin_date()));
+        if (!StringUtils.isNullOrEmpty(bundle1.getMin_date()+"")){
+            time.setText(TimeUtils.utc2Local(bundle1.getMin_date()+""));
+        }else {
+            time.setText("false");
+        }
         states.setText(StringUtils.switchString(bundle1.getState()));
         originDocuments.setText(bundle1.getOrigin());
         if (bundle1.getDelivery_rule() != null) {
@@ -425,10 +430,10 @@ public class SalesDetailActivity extends BaseActivity {
                                             @Override
                                             public void onResponse(Call<GetSaleResponse> call, final Response<GetSaleResponse> response) {
                                                 dismissDefultProgressDialog();
-                                                if (response.body() == null || response.body().getResult() == null)
+                                                if (response.body() == null)
                                                     return;
                                                 if (response.body().getError() != null) {
-                                                    new TipDialog(SalesDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
+                                                    new TipDialog(SalesDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                                             .show();
                                                     return;
                                                 }

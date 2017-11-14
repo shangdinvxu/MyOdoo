@@ -101,6 +101,15 @@ public class GetReturnMaterBean {
             private double return_qty;
             private boolean isNfc = false;
             private Object product_type;
+            private double weight;
+
+            public double getWeight() {
+                return weight;
+            }
+
+            public void setWeight(double weight) {
+                this.weight = weight;
+            }
 
             public Object getProduct_type() {
                 if (product_type instanceof Boolean){

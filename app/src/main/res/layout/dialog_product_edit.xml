@@ -129,6 +129,14 @@
                 android:layout_marginBottom="10dp"/>
         </LinearLayout>
     </RelativeLayout>
+    <Button
+        android:id="@+id/btn_transterm"
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:background="@drawable/nfcbuttonbac"
+        android:text="点击重量转换数量"
+        android:textColor="@color/white"
+        android:layout_gravity="center_horizontal"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"

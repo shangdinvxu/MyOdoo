@@ -411,7 +411,7 @@ public class ProductingActivity extends ToolBarActivity {
                 insertNumDialog = new InsertNumDialog(ProductingActivity.this, R.style.MyDialogStyle,
                         new InsertNumDialog.OnSendCommonClickListener() {
                             @Override
-                            public void OnSendCommonClick(final int num) {
+                            public void OnSendCommonClick(final double num) {
                                 boolean isCanAdd = false;
                                 if (is_rework || resDataBean.is_secondary_produce()) {
                                     isCanAdd = true;

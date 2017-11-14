@@ -143,7 +143,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         } else {
             salesOut.setText("");
         }
-        remarks.setText(String.valueOf(resDataBean.getSale_note()));
+        remarks.setText(resDataBean.getRemark()+"");
         List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> pack_operation_product_ids = resDataBean.getPack_operation_product_ids();
         takedAdapter = new DetailTakedAdapter(R.layout.adapter_detaildeleive, pack_operation_product_ids, TakeDeliverDetailActivity.this, "notShow");
         recyclerview.setAdapter(takedAdapter);
@@ -406,11 +406,21 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 int anInt = Integer.parseInt(editText.getText().toString());
-                                if (anInt > bean.getQty_done()) {
+                                double sum = bean.getQty_done() + bean.getRejects_qty();
+                                if (state.equals("picking") && anInt > sum){
+                                     Toast.makeText(TakeDeliverDetailActivity.this, "不能超过完成数量", Toast.LENGTH_SHORT).show();
+                                     return;
+                                }
+                                if (anInt > bean.getQty_done() && !state.equals("picking")) {
                                     Toast.makeText(TakeDeliverDetailActivity.this, "不能超过完成数量", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                                 bean.setRejects_qty(anInt);
+                                if (state.equals("picking")){
+                                    bean.setQty_done(sum-anInt);
+                                }else {
+
+                                }
                                 takedAdapter.notifyDataSetChanged();
                             }
                         }).show();

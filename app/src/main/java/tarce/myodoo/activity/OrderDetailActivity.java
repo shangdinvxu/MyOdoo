@@ -163,6 +163,8 @@ public class OrderDetailActivity extends ToolBarActivity {
     TextView tvSecondProduct;
     @InjectView(R.id.tv_product_finish)
     TextView tvProductFinish;
+    @InjectView(R.id.tv_add_product)
+    TextView tvAddProduct;
     /*@InjectView(R.id.tv_print)
     TextView tvPrint;*/
     private int click_check;//用于底部的点击事件  根据状态加载不同的点击事件后续
@@ -280,6 +282,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         recycler3OrderDetail.setNestedScrollingEnabled(false);
         recyclerDone.setNestedScrollingEnabled(false);
         initDevice();
+        showDefultProgressDialog();
         getDetail();
     }
 
@@ -444,6 +447,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 imgUpDown.setImageResource(R.mipmap.up);
                 up_or_down = true;
                 tvStartProduce.setText("开始生产");
+                tvAddProduct.setVisibility(View.VISIBLE);
                 tvAreaLook.setVisibility(View.VISIBLE);
                 tvAreaLook.setText("补拍物料位置信息");
                 showLinThreePro();
@@ -521,7 +525,6 @@ public class OrderDetailActivity extends ToolBarActivity {
      * 订单详情
      */
     private void getDetail() {
-        showDefultProgressDialog();
         inventoryApi = RetrofitClient.getInstance(OrderDetailActivity.this).create(InventoryApi.class);
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("order_id", order_id);
@@ -554,6 +557,18 @@ public class OrderDetailActivity extends ToolBarActivity {
         });
     }
 
+    @OnClick(R.id.tv_add_product)
+    void setTvAddProduct(View view){
+        try {
+            Intent intent = new Intent(OrderDetailActivity.this, BuGetLiaoActivity.class);
+            intent.putExtra("value", resDataBean);
+            intent.putExtra("state", resDataBean.getState());
+            intent.putExtra("order_id", order_id);
+            startActivity(intent);
+        } catch (Exception e) {
+            ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
+        }
+    }
     /**
      * 扫NFC之后刷新试图
      */
@@ -594,22 +609,35 @@ public class OrderDetailActivity extends ToolBarActivity {
                                     list_two.add(resDataBean.getStock_move_lines().get(i));
                                 }
                             }
+                            OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean stockMoveLinesBean = new OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean();
                             switch (handlerType) {
                                 case 1:
-                                    handlerBean.setQuantity_ready(list_one.get(handlerPosition).getQuantity_ready());
-                                    handlerBean.setQuantity_done(list_one.get(handlerPosition).getQuantity_done());
-                                    handlerBean.setQty_available(list_one.get(handlerPosition).getQty_available());
+                                    stockMoveLinesBean = list_one.get(handlerPosition);
+                                    handlerBean.setQuantity_ready(stockMoveLinesBean.getQuantity_ready());
+                                    handlerBean.setQuantity_done(stockMoveLinesBean.getQuantity_done());
+                                    handlerBean.setQty_available(stockMoveLinesBean.getQty_available());
                                     handlerBean.setBlue(true);
                                     adapter.notifyDataSetChanged();
                                     break;
                                 case 2:
-                                    handlerBean.setQuantity_ready(list_two.get(handlerPosition).getQuantity_ready());
-                                    handlerBean.setQuantity_done(list_two.get(handlerPosition).getQuantity_done());
-                                    handlerBean.setQty_available(list_two.get(handlerPosition).getQty_available());
+                                    stockMoveLinesBean = list_two.get(handlerPosition);
+                                    handlerBean.setQuantity_ready(stockMoveLinesBean.getQuantity_ready());
+                                    handlerBean.setQuantity_done(stockMoveLinesBean.getQuantity_done());
+                                    handlerBean.setQty_available(stockMoveLinesBean.getQty_available());
                                     handlerBean.setBlue(true);
                                     adapter_two.notifyDataSetChanged();
                                     break;
                             }
+                            printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+                            printer.init();
+                            printer.setLineSpace(1);
+                            printer.print("MO单号：" + order_name + "\n产品名称：" + stockMoveLinesBean.getProduct_id() + "\n需求数量：" +
+                                    stockMoveLinesBean.getProduct_uom_qty()
+                                    + "\n备料数量：" + (stockMoveLinesBean.getQuantity_ready() + stockMoveLinesBean.getQuantity_done()), 30, TimeUnit.SECONDS);
+                            printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+//                            Message message = new Message();
+//                            message.what = 1;
+//                            mHandler.sendMessage(message);
                         }
                     });
                 } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1) {
@@ -779,6 +807,21 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                 linesBean.setQty_available(list_three.get(position).getQty_available());
                                                 linesBean.setBlue(true);
                                                 adapter_three.notifyDataSetChanged();
+                                                new Thread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        if (deviceManager == null) {
+                                                            initDevice();
+                                                        }
+                                                        printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+                                                        printer.init();
+                                                        printer.setLineSpace(1);
+                                                        printer.print("MO单号：" + order_name + "\n产品名称：" + list_three.get(position).getProduct_id() + "\n需求数量：" +
+                                                                list_three.get(position).getProduct_uom_qty()
+                                                                + "\n备料数量：" + (list_three.get(position).getQuantity_ready() + list_three.get(position).getQuantity_done()), 30, TimeUnit.SECONDS);
+                                                        printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+                                                    }
+                                                }).start();
                                             }
                                         });
                                     }
@@ -793,7 +836,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                     }
                 }
             }, linesBean)
-            .setWeight(linesBean.getWeight());
+                    //.setWeight(2);
+                    .setWeight(linesBean.getWeight());
             dialogForOrder.show();
         }
         if (!dialogForOrder.isShowing()) {//为防止扫描多次弹出多个对话框
@@ -1303,7 +1347,17 @@ public class OrderDetailActivity extends ToolBarActivity {
     }
 
     @Override
+    protected void onResume() {
+        if (resDataBean == null && result == null) {
+            getDetail();
+        }
+        super.onResume();
+    }
+
+    @Override
     protected void onPause() {
+        resDataBean = null;
+        result = null;
         dismissDefultProgressDialog();
         super.onPause();
     }
@@ -1344,6 +1398,7 @@ public class OrderDetailActivity extends ToolBarActivity {
     }
 
     /**
+     * 备料完成
      * 展示dialog  后续改的  用于等待生产
      */
     private void showNext() {
@@ -1496,6 +1551,11 @@ public class OrderDetailActivity extends ToolBarActivity {
                 "负责人: " + tvReworkProduct.getText() + "\n" + "生产数量：" + tvNumProduct.getText() + "\n" + "需求数量：" + tvNeedNum.getText()
                 + "\n" + "规格：" + tvStringGuige.getText() + "\n" + "工序：" + tvGongxuProduct.getText() + "\n" + "类型：" + tvTypeProduct.getText()
                 + "\n" + "MO单备注：" + eidtMoNote.getText() + "\n" + "销售单备注：" + editSaleNote.getText() + "\n", 30, TimeUnit.SECONDS);
+        for (int i = 0; i < resDataBean.getStock_move_lines().size(); i++) {
+            printer.print("\n产品名称：" + resDataBean.getStock_move_lines().get(i).getProduct_id() + "\n需求数量：" +
+                    resDataBean.getStock_move_lines().get(i).getProduct_uom_qty()
+                    + "\n备料数量：" + (resDataBean.getStock_move_lines().get(i).getQuantity_ready() + resDataBean.getStock_move_lines().get(i).getQuantity_done()) + "\n", 30, TimeUnit.SECONDS);
+        }
         Bitmap mBitmap = CodeUtils.createImage(order_name, 150, 150, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
         printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
