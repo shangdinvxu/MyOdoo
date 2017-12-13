@@ -104,6 +104,10 @@ public class PickingDetailAdapter extends BaseQuickAdapter<PickingDetailBean.Res
             case "done":
                 helper.setText(R.id.tv_state, "完成");
                 break;
+            case "force_cancel_waiting_warehouse_inspection":
+            case "force_cancel_waiting_return":
+                helper.setText(R.id.tv_state, "强制退料");
+                break;
         }
     }
 }

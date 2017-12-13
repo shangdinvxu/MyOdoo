@@ -136,7 +136,8 @@ public class ProductLlActivity extends BaseActivity {
         hashMap.put("limit", limit);
         if ("rework_ing".equals(state_activity) || "finish_prepare_material".equals(state_activity) || "already_picking".equals(state_activity)
                 || "progress".equals(state_activity) || "waiting_rework".equals(state_activity) || "rework_ing".equals(state_activity)
-                || "waiting_inventory_material".equals(state_activity)) {
+                || "waiting_inventory_material".equals(state_activity)
+                || "force_cancel_waiting_return".equals(state_activity)) {
             int partner_id = SharePreferenceUtils.getInt("partner_id", 1000, ProductLlActivity.this);
             hashMap.put("partner_id", partner_id);
         }

@@ -39,10 +39,10 @@ public class InspectionSubAdapter extends BaseQuickAdapter<QcFeedbaskBean.Result
             if (StringUtils.doubleToString(item.getQty_produced()).equals("0")){
                 helper.setText(R.id.tv_num_inspection, "多产出");
             }else {
-                helper.setText(R.id.tv_num_inspection, StringUtils.doubleToString(item.getQty_produced()));
+                helper.setText(R.id.tv_num_inspection, item.getQty_produced()+"");
             }
         }else {
-            helper.setText(R.id.tv_num_inspection, StringUtils.doubleToString(item.getQty_produced()));
+            helper.setText(R.id.tv_num_inspection, item.getQty_produced()+"");
         }
         helper.setText(R.id.tv_num, helper.getPosition()+1+".");
         switch (item.getState()){

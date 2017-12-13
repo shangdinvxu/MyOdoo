@@ -126,7 +126,7 @@ public class GetSaleResponse implements Serializable{
                 private	Integer	product_qty;	/*900*/
                 private	TProduct_id	product_id;	/*TProduct_id*/
                 private	Integer	pack_id;	/*2788*/
-                private	Integer	qty_done;/*900*/
+                private	double	qty_done;/*900*/
                 private double reserved_qty;
 
                 public double getReserved_qty() {
@@ -168,10 +168,10 @@ public class GetSaleResponse implements Serializable{
                     return this.pack_id;
                 }
 
-                public void setQty_done(Integer value){
+                public void setQty_done(double value){
                     this.qty_done = value;
                 }
-                public Integer getQty_done(){
+                public double getQty_done(){
                     return this.qty_done;
                 }
 

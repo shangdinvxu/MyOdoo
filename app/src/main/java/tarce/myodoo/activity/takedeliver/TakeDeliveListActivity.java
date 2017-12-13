@@ -13,6 +13,7 @@ import com.aspsine.swipetoloadlayout.OnRefreshListener;
 import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
@@ -31,6 +33,7 @@ import tarce.myodoo.adapter.takedeliver.TakeDelListAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
 import tarce.myodoo.uiutil.TipDialog;
+import tarce.support.MyLog;
 import tarce.support.ToastUtils;
 
 /**
@@ -69,6 +72,7 @@ public class TakeDeliveListActivity extends BaseActivity {
     private int picking_type_id;
     private boolean isNull = true;
     private int picking_type_id_2;
+    private String query;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +82,7 @@ public class TakeDeliveListActivity extends BaseActivity {
 
 
         setRecyclerview(swipeTarget);
+        inventoryApi = RetrofitClient.getInstance(TakeDeliveListActivity.this).create(InventoryApi.class);
         Intent intent = getIntent();
         from = intent.getStringExtra("from");
         partner_id = intent.getLongExtra("partner_id", 0);
@@ -85,11 +90,8 @@ public class TakeDeliveListActivity extends BaseActivity {
         if (from.equals("no")){
             notneed = intent.getStringExtra("notneed");
             if (notneed.equals("yes")){
-                not_need = (List<TakeDelListBean.ResultBean.ResDataBean>) intent.getSerializableExtra("intent");
-                listAdapter = new TakeDelListAdapter(R.layout.adapter_takedel_list, not_need);
-                swipeTarget.setAdapter(listAdapter);
-                isNull = false;//为了区分其他三种情况，这种情况下返回本页面时候不清空list
-                initListener();
+                query = intent.getStringExtra("order_name");
+                searchOrder(query);
             }else {
                 type_code = intent.getStringExtra("type_code");
                 state = intent.getStringExtra("state");
@@ -112,6 +114,10 @@ public class TakeDeliveListActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (!isNull && not_need == null){
+            searchOrder(query);
+            return;
+        }
         if (dataBeanList == null && res_data == null){
             initData(0, 40, Refresh_Move);
         }
@@ -150,7 +156,6 @@ public class TakeDeliveListActivity extends BaseActivity {
 
 
     private void initData(final int offset, final int limit, final int move){
-        inventoryApi = RetrofitClient.getInstance(TakeDeliveListActivity.this).create(InventoryApi.class);
         HashMap<Object, Object> hashMap = new HashMap<>();
         Call<TakeDelListBean> inComingOutgoingList = null;
         hashMap.put("state", state);
@@ -234,9 +239,64 @@ public class TakeDeliveListActivity extends BaseActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if (dataBeanList != null && res_data != null && isNull){
+        if (!isNull){
+            not_need = null;
+            return;
+        }
+        if (dataBeanList != null && res_data != null){
             dataBeanList = null;
             res_data = null;
         }
+    }
+
+    /**
+     * 根据订单号搜索 searchByTakeNumber
+     */
+    private void searchOrder(String query) {
+        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+        objectObjectHashMap.put("order_name", query);
+        objectObjectHashMap.put("type", "incoming");
+        Call<TakeDelListBean> getSaleListByNumberResponseCall = inventoryApi.searchByTakeNumber(objectObjectHashMap);
+        showDefultProgressDialog();
+        getSaleListByNumberResponseCall.enqueue(new Callback<TakeDelListBean>() {
+            @Override
+            public void onResponse(Call<TakeDelListBean> call, Response<TakeDelListBean> response) {
+                dismissDefultProgressDialog();
+                if (response.body() == null) return;
+                if (response.body().getError() != null) {
+                    new TipDialog(TakeDeliveListActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
+                    List<TakeDelListBean.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
+                    if (res_data != null && res_data.size() > 0) {
+                        not_need = res_data;
+                        listAdapter = new TakeDelListAdapter(R.layout.adapter_takedel_list, not_need);
+                        swipeTarget.setAdapter(listAdapter);
+                        isNull = false;//为了区分其他三种情况，这种情况下返回本页面时候不清空list
+                        initListener();
+                    }else {
+                        ToastUtils.showCommonToast(TakeDeliveListActivity.this, "没有相关数据");
+                        finish();
+                    }
+                }else {
+                    ToastUtils.showCommonToast(TakeDeliveListActivity.this, "没有相关数据");
+                    try {
+                        Thread.sleep(1000);
+                        finish();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TakeDelListBean> call, Throwable t) {
+                dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(TakeDeliveListActivity.this, t.toString());
+                MyLog.e("TakeDeliverActivity", t.toString());
+            }
+        });
     }
 }

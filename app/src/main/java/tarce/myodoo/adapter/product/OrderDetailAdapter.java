@@ -107,6 +107,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                 }else {
                     holder.tv_prepare_order.setText("备料:" + beiliaoNum);
                 }
+                holder.tv_feedback_order.setText("\n退料:" + df.format(list.get(position-1).getReturn_qty()));
                 //holder.tv_prepare_order.setText("备料:"+beiliaoNum);
                 if (isGray_bac()){
                     holder.tv_kucun_order.setTextColor(Color.GRAY);
@@ -116,6 +117,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                     holder.tv_id_order.setTextColor(Color.GRAY);
                     holder.tv_id_product.setTextColor(Color.GRAY);
                     holder.tv_advice_order.setTextColor(Color.GRAY);
+                    holder.tv_feedback_order.setTextColor(Color.GRAY);
                 }else {
                     holder.tv_kucun_order.setTextColor(Color.BLACK);
                     holder.tv_prepare_order.setTextColor(Color.BLACK);
@@ -124,6 +126,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                     holder.tv_id_order.setTextColor(Color.BLACK);
                     holder.tv_id_product.setTextColor(Color.BLACK);
                     holder.tv_advice_order.setTextColor(Color.BLACK);
+                    holder.tv_feedback_order.setTextColor(Color.BLACK);
                 }
 
                 if (list.get(position-1).isBlue()){
@@ -134,6 +137,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                     holder.tv_id_order.setTextColor(Color.BLUE);
                     holder.tv_id_product.setTextColor(Color.BLUE);
                     holder.tv_advice_order.setTextColor(Color.BLUE);
+                    holder.tv_feedback_order.setTextColor(Color.BLUE);
                 }else {
                     holder.tv_kucun_order.setTextColor(Color.BLACK);
                     holder.tv_prepare_order.setTextColor(Color.BLACK);
@@ -142,6 +146,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                     holder.tv_id_order.setTextColor(Color.BLACK);
                     holder.tv_id_product.setTextColor(Color.BLACK);
                     holder.tv_advice_order.setTextColor(Color.BLACK);
+                    holder.tv_feedback_order.setTextColor(Color.BLACK);
                 }
                 holder.tv_feedback.setText("总重量(g)："+StringUtils.fourDouble(list.get(position-1).getWeight()*beiliaoNum));
               //  holder.itemView.setTag(list.get(position-1));
@@ -184,6 +189,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
         public TextView tv_advice_order;
         public TextView tv_prepare_order;
         public TextView tv_feedback;
+        public TextView tv_feedback_order;
         public OrderViewhold(View itemView, int type) {
             super(itemView);
             if (type == header){
@@ -198,6 +204,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
                 tv_advice_order = (TextView) itemView.findViewById(R.id.tv_advice_order);
                 tv_prepare_order = (TextView) itemView.findViewById(R.id.tv_prepare_order);
                 tv_feedback = (TextView) itemView.findViewById(R.id.tv_feedback);
+                tv_feedback_order = (TextView) itemView.findViewById(R.id.tv_feedback_order);
             }
         }
     }

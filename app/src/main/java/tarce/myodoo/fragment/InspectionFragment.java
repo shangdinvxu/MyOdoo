@@ -79,7 +79,7 @@ public class InspectionFragment extends Fragment {
     public void onResume() {
         if (res_data == null){
             initRedNum();
-            initDeliever();
+         //   initDeliever();
         }
         super.onResume();
     }
@@ -95,7 +95,7 @@ public class InspectionFragment extends Fragment {
         recyclerview.setAdapter(sectionAdapter);
 
         initRedNum();
-     //   initDeliever();
+        initDeliever();
         setOnClick();
         return view;
     }
@@ -181,7 +181,7 @@ public class InspectionFragment extends Fragment {
                         ToastUtils.showCommonToast(getActivity(), "数据出现错误，请联系开发人员调试");
                     }
                 }catch (Exception e){
-                    ToastUtils.showCommonToast(getActivity(), "maybe have some error,please link manager");
+                  //  ToastUtils.showCommonToast(getActivity(), "maybe have some error,please link manager");
                 }
             }
 

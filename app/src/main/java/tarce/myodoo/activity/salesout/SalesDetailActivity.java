@@ -233,24 +233,30 @@ public class SalesDetailActivity extends BaseActivity {
                 Integer product_qty = obj.getProduct_qty();
                 Integer qty = qty_available >= product_qty ? product_qty : qty_available;
                 editText.setText(qty + "");
-                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                //editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText.setSelection(editText.getText().length());
                 AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(SalesDetailActivity.this, "输入" + obj.getProduct_id().getName() + "完成数量");
                 dialog.setView(editText)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                int keyong;
+                                double keyong;
                                 if (bundle1.getState().equals("done") || bundle1.getState().equals("cancel")) {
-                                    keyong = StringUtils.doubleToInt(obj.getProduct_id().getQty_available())-StringUtils.doubleToInt(obj.getReserved_qty());
+                                   // keyong = StringUtils.doubleToInt(obj.getProduct_id().getQty_available())-StringUtils.doubleToInt(obj.getReserved_qty());
+                                    keyong = obj.getProduct_id().getQty_available();
                                 } else {
-                                    keyong = StringUtils.doubleToInt(obj.getProduct_id().getQty_available())-StringUtils.doubleToInt(obj.getReserved_qty())-obj.getQty_done();
+                                   // keyong = StringUtils.doubleToInt(obj.getProduct_id().getQty_available())-StringUtils.doubleToInt(obj.getReserved_qty())-obj.getQty_done();
+                                    keyong = obj.getProduct_id().getQty_available()-obj.getQty_done();
                                 }
-                                if (Integer.parseInt(editText.getText().toString()) > keyong) {
+                                if (Double.parseDouble(editText.getText().toString()) > keyong)     {
                                     Toast.makeText(SalesDetailActivity.this, "库存不足", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
-                                obj.setQty_done(Integer.parseInt(editText.getText().toString()));
+                                if (Double.parseDouble(editText.getText().toString())>StringUtils.doubleToInt(obj.getOrigin_qty())){
+                                    Toast.makeText(SalesDetailActivity.this, "不能超过初始需求", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                obj.setQty_done(Double.parseDouble(editText.getText().toString()));
                                 salesDetailAdapter.notifyDataSetChanged();
                             }
                         }).show();
@@ -390,7 +396,7 @@ public class SalesDetailActivity extends BaseActivity {
                             }
                         }
                         data.removeAll(subdata);
-                        int sum = 0;
+                        double sum = 0;
                         for (int i = 0; i < data.size(); i++) {
                             sum = sum + data.get(i).getQty_done();
                         }

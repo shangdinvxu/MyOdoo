@@ -428,11 +428,21 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/tv_feed_material"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@color/height_yellow"
+            android:gravity="center"
+            android:text="退料"
+            android:textColor="@color/white" />
+
+        <TextView
             android:id="@+id/tv_start_produce"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="@color/cc"
+            android:background="@color/new_color"
             android:gravity="center"
             android:text="生产完成"
             android:textColor="@color/white"
@@ -446,18 +456,16 @@
             android:background="@color/cc"
             android:gravity="center"
             android:text="补领料"
-            android:textColor="@color/white"
-            android:layout_marginLeft="2dp"/>
+            android:textColor="@color/white" />
         <TextView
             android:id="@+id/tv_product_out"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="@color/cc"
+            android:background="@color/height_yellow"
             android:gravity="center"
             android:text="产出"
-            android:textColor="@color/white"
-            android:layout_marginLeft="2dp"/>
+            android:textColor="@color/white" />
         <TextView
             android:id="@+id/tv_person_manage"
             android:layout_width="0dp"
@@ -466,18 +474,16 @@
             android:background="@color/cc"
             android:gravity="center"
             android:text="人员管理"
-            android:textColor="@color/white"
-            android:layout_marginLeft="2dp"/>
+            android:textColor="@color/white" />
         <TextView
             android:id="@+id/tv_line_stop"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:background="@color/cc"
+            android:background="@color/height_yellow"
             android:gravity="center"
             android:text="产线暂停"
-            android:textColor="@color/white"
-            android:layout_marginLeft="2dp"/>
+            android:textColor="@color/white" />
     </LinearLayout>
 
 </RelativeLayout>

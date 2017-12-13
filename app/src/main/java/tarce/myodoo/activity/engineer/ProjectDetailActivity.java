@@ -125,7 +125,7 @@ public class ProjectDetailActivity extends BaseActivity {
     private String state;
     private Retrofit retrofit;
     private int pos;
-    private int numGet;
+    private double numGet;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -323,7 +323,7 @@ public class ProjectDetailActivity extends BaseActivity {
                 final int keyong1 = StringUtils.doubleToInt(detailAdapter.getData().get(position).getQuantity_available());
                 final int num = keyong1 > qty_available?qty_available:keyong1;//可用数量和需求数量比较   谁小默认显示谁
                 editText.setText(num + "");
-                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+             //   editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText.setSelection(editText.getText().length());
                 AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(ProjectDetailActivity.this, "输入" + detailAdapter.getData().get(position).getName() + "备料数量");
                 pos = position;
@@ -332,11 +332,11 @@ public class ProjectDetailActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                if (Integer.parseInt(editText.getText().toString()) > num) {
+                                if (Double.parseDouble(editText.getText().toString()) > num) {
                                     Toast.makeText(ProjectDetailActivity.this, "可用数量不足或超过需求数量，请查看", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
-                                numGet = Integer.parseInt(editText.getText().toString());
+                                numGet = Double.parseDouble(editText.getText().toString());
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {

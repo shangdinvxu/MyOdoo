@@ -341,11 +341,11 @@ public class TakeDelListBean {
             }
 
             public static class PackOperationProductIdsBean implements Serializable{
-                public int getRejects_qty() {
+                public double getRejects_qty() {
                     return rejects_qty;
                 }
 
-                public void setRejects_qty(int rejects_qty) {
+                public void setRejects_qty(double rejects_qty) {
                     this.rejects_qty = rejects_qty;
                 }
 
@@ -356,7 +356,7 @@ public class TakeDelListBean {
                  * product_qty : 5.0
                  */
 
-                private int rejects_qty;
+                private double rejects_qty;
                 private int pack_id;
                 private double qty_done;
                 private ProductIdBean product_id;

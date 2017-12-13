@@ -26,7 +26,7 @@ public class WriteFeedbackNumAdapter extends BaseQuickAdapter<GetReturnMaterBean
     @Override
     protected void convert(BaseViewHolder helper, GetReturnMaterBean.ResultBean.ResDataBean item) {
         helper.setText(R.id.name_product_feedback, item.getProduct_id());
-        helper.setText(R.id.num_feedback_write, StringUtils.doubleToString(item.getReturn_qty()));
+        helper.setText(R.id.num_feedback_write, item.getReturn_qty()+"");
         if (item.isNfc()){
             helper.setTextColor(R.id.name_product_feedback, Color.BLUE);
             helper.setTextColor(R.id.num_feedback_write, Color.BLUE);

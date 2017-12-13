@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationBuilderWithBuilderAccessor;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -143,6 +144,8 @@ public class OrderDetailActivity extends ToolBarActivity {
     private static final int LOOK_MESSAGE_FEEDBACK = 6;//仓库查看退料信息
     private static final int CHECK_MATERIAL_RETURN = 7;//清点退料
     private static final int FINISH_FEEDBACK = 8;//清点退料
+    private static final int LOOK_FORCE_FEEDBACK = 9;//强制取消mo的查看退料
+    private static final int WRITE_WATERIAL_OUT_FORCE = 10;//强制取消mo的查看退料
     @InjectView(R.id.tv_area_look)
     TextView tvAreaLook;
     @InjectView(R.id.linear_three)
@@ -165,6 +168,8 @@ public class OrderDetailActivity extends ToolBarActivity {
     TextView tvProductFinish;
     @InjectView(R.id.tv_add_product)
     TextView tvAddProduct;
+    @InjectView(R.id.tv_feed_material)
+    TextView tvFeedMaterial;
     /*@InjectView(R.id.tv_print)
     TextView tvPrint;*/
     private int click_check;//用于底部的点击事件  根据状态加载不同的点击事件后续
@@ -233,7 +238,7 @@ public class OrderDetailActivity extends ToolBarActivity {
     private InsertNumDialog insertNumDialog;
     private OrderDetailBean.ResultBean.ResDataBean.StockMoveLinesBean handlerBean;
     private int handlerPosition;
-    private int handlerNum;
+    private double handlerNum;
     private int employee_id;
     private int handlerType;
     private DoneAdapter doneAdapter;
@@ -359,6 +364,10 @@ public class OrderDetailActivity extends ToolBarActivity {
             intent.putExtra("order_id", order_id);
             startActivity(intent);
         } else if (item.getItemId() == R.id.action_download) {
+            if (resDataBean == null){
+                ToastUtils.showCommonToast(OrderDetailActivity.this, "未找到sop文件地址，请返回重试");
+                return true;
+            }
             if (StringUtils.isNullOrEmpty(resDataBean.getSop_file_url())) {
                 ToastUtils.showCommonToast(OrderDetailActivity.this, "本单暂时没有SOP文件");
                 return true;
@@ -372,10 +381,10 @@ public class OrderDetailActivity extends ToolBarActivity {
             file1 = new File(Environment.getExternalStorageDirectory(), resDataBean.getDisplay_name() + ".pdf");
             new Thread() {
                 public void run() {
-                    Log.e("zws", "走了这里下载");
+                //    Log.e("zws", "走了这里下载");
 //              本地没有此文件 则从网上下载打开
                     File downloadfile = FileUtil.downLoad(strname, file1.getAbsolutePath(), mProgressDialog);
-                    Log.e("zws", file1.getAbsolutePath() + "url=" + strname);
+                //    Log.e("zws", file1.getAbsolutePath() + "url=" + strname);
                     Message msg = Message.obtain();
                     if (downloadfile != null) {
                         // 下载成功,安装....
@@ -411,10 +420,10 @@ public class OrderDetailActivity extends ToolBarActivity {
                 tvStartProduce.setText("开始备料");
                 click_check = STATE_WAIT_WATERIAL;
                 tvShowCode.setVisibility(View.GONE);
-                //  showLinThreeCang();
                 showLinThreePro();
                 break;
             case "prepare_material_ing":
+                tvFeedMaterial.setVisibility(View.VISIBLE);
                 tvStateOrder.setText("备料中");
                 tvStartProduce.setText("备料完成");
                 click_check = STATE_START_PRODUCT;
@@ -424,7 +433,6 @@ public class OrderDetailActivity extends ToolBarActivity {
                 up_or_down = false;
                 /*tvAreaLook.setVisibility(View.VISIBLE);
                 tvAreaLook.setText("结束本次备料");*/
-                //  showLinThreeCang();
                 showLinThreePro();
                 break;
             case "finish_prepare_material":
@@ -439,6 +447,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 showLinThreePro();
                 break;
             case "already_picking":
+                tvFeedMaterial.setVisibility(View.VISIBLE);
                 tvStateOrder.setText("已领料");
                 click_check = STATE_ALREADY_PICKING;
                 tvShowCode.setVisibility(View.GONE);
@@ -468,6 +477,13 @@ public class OrderDetailActivity extends ToolBarActivity {
             case "rework_ing":
                 tvStateOrder.setText("返工中");
                 break;
+            case "force_cancel_waiting_return":
+                tvStateOrder.setText("取消MO待清点退料");
+                tvShowCode.setVisibility(View.GONE);
+                tvStartProduce.setText("填写退料");
+                click_check = WRITE_WATERIAL_OUT_FORCE;
+                showLinThreePro();
+                break;
             case "waiting_inventory_material":
                 tvStateOrder.setText("等待清点退料");
                 tvShowCode.setVisibility(View.GONE);
@@ -475,12 +491,18 @@ public class OrderDetailActivity extends ToolBarActivity {
                 click_check = WRITE_WATERIAL_OUT;
                 showLinThreePro();
                 break;
+            case "force_cancel_waiting_warehouse_inspection":
+                tvStateOrder.setText("取消MO待检验退料");
+                tvShowCode.setVisibility(View.GONE);
+                tvStartProduce.setText("查看退料信息");
+                click_check = LOOK_FORCE_FEEDBACK;
+                showLinThreePro();
+                break;
             case "waiting_warehouse_inspection":
                 tvStateOrder.setText("等待检验退料");
                 tvShowCode.setVisibility(View.GONE);
                 tvStartProduce.setText("仓库查看退料信息");
                 click_check = LOOK_MESSAGE_FEEDBACK;
-                //   showLinThreeCang();
                 showLinThreePro();
                 break;
             case "waiting_post_inventory":
@@ -508,18 +530,6 @@ public class OrderDetailActivity extends ToolBarActivity {
         }
     }
 
-    /**
-     * 是否显示底部(仓库)//
-     */
-    public void showLinThreeCang() {
-        try {
-            if (!UserManager.getSingleton().getGrops().contains("group_charge_warehouse")) {
-                linearThree.setVisibility(View.GONE);
-            }
-        } catch (Exception e) {
-            ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
-        }
-    }
 
     /**
      * 订单详情
@@ -557,8 +567,11 @@ public class OrderDetailActivity extends ToolBarActivity {
         });
     }
 
+    /**
+     * 补领料
+     * */
     @OnClick(R.id.tv_add_product)
-    void setTvAddProduct(View view){
+    void setTvAddProduct(View view) {
         try {
             Intent intent = new Intent(OrderDetailActivity.this, BuGetLiaoActivity.class);
             intent.putExtra("value", resDataBean);
@@ -569,6 +582,7 @@ public class OrderDetailActivity extends ToolBarActivity {
             ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
         }
     }
+
     /**
      * 扫NFC之后刷新试图
      */
@@ -669,11 +683,11 @@ public class OrderDetailActivity extends ToolBarActivity {
             isShowDialog = false;
             dialogForOrder = new DialogForOrder(OrderDetailActivity.this, new DialogForOrder.OnSendCommonClickListener() {
                 @Override
-                public void OnSendCommonClick(final int num) {
+                public void OnSendCommonClick(final double num) {
                     if (num == 0) {
                         return;
                     }
-                    final int i = StringUtils.doubleToInt(linesBean.getQty_available());
+                    final double i = linesBean.getQty_available();
                     //   int i1 = StringUtils.doubleToInt(linesBean.getQuantity_ready());
                     if (num > i) {
                         ToastUtils.showCommonToast(OrderDetailActivity.this, "该产品库存不足");
@@ -758,6 +772,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                         Thread.sleep(1000);
                                                         // ToastUtils.showCommonToast(OrderDetailActivity.this, e.getMessage() + "  " + Const.MessageTag.ERROR);
                                                         nfCdialog.dismiss();
+                                                        finish();
                                                     } catch (InterruptedException e1) {
                                                         e1.printStackTrace();
                                                     }
@@ -830,6 +845,8 @@ public class OrderDetailActivity extends ToolBarActivity {
                                 @Override
                                 public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                                     dismissDefultProgressDialog();
+                                    ToastUtils.showCommonToast(OrderDetailActivity.this, "请求出现错误，请重试");
+                                    finish();
                                 }
                             });
                         }
@@ -968,6 +985,39 @@ public class OrderDetailActivity extends ToolBarActivity {
         return list;
     }
 
+    /**
+     * 新增的退料按钮点击时间
+     * */
+    @OnClick(R.id.tv_feed_material)
+    void clickFeedMaterial(View view){
+        switch (click_check){
+            case STATE_START_PRODUCT:
+                try {
+                    Intent intent3 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
+                    intent3.putExtra("recycler_data", resDataBean);
+                    intent3.putExtra("order_id", order_id);
+                    intent3.putExtra("from", "anytime");
+                    startActivity(intent3);
+                } catch (Exception e) {
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
+                }
+                break;
+            case STATE_ALREADY_PICKING:
+                try {
+                    Intent intent3 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
+                    intent3.putExtra("recycler_data", resDataBean);
+                    intent3.putExtra("order_id", order_id);
+                    intent3.putExtra("from", "anytime");
+                    startActivity(intent3);
+                } catch (Exception e) {
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
+                }
+                break;
+        }
+    }
+    /**
+     * 底部按键点击时间
+     * */
     @OnClick(R.id.tv_start_produce)
     void clickBottom(View view) {
         switch (click_check) {
@@ -1009,7 +1059,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                             }
                         }).show();
                 break;
-            case STATE_START_PRODUCT:
+            case STATE_START_PRODUCT://备料完成
                 boolean nextone = false;
                 int indexone = -1;
                 linkOneTwo();
@@ -1144,6 +1194,17 @@ public class OrderDetailActivity extends ToolBarActivity {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
                 }
                 break;
+            case WRITE_WATERIAL_OUT_FORCE:
+                try {
+                    Intent intent1 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
+                    intent1.putExtra("recycler_data", resDataBean);
+                    intent1.putExtra("order_id", order_id);
+                    intent1.putExtra("from", "force_cancel_waiting_return");
+                    startActivity(intent1);
+                } catch (Exception e) {
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
+                }
+                break;
             case WRITE_WATERIAL_OUT://填写退料
                 try {
                     Intent intent1 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
@@ -1161,6 +1222,17 @@ public class OrderDetailActivity extends ToolBarActivity {
                     intent2.putExtra("recycler_data", resDataBean);
                     intent2.putExtra("order_id", order_id);
                     intent2.putExtra("from", "look");
+                    startActivity(intent2);
+                } catch (Exception e) {
+                    ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
+                }
+                break;
+            case LOOK_FORCE_FEEDBACK://强制退料 待检验退料
+                try {
+                    Intent intent2 = new Intent(OrderDetailActivity.this, WriteFeedMateriActivity.class);
+                    intent2.putExtra("recycler_data", resDataBean);
+                    intent2.putExtra("order_id", order_id);
+                    intent2.putExtra("from", "force_cancel_waiting_warehouse_inspection");
                     startActivity(intent2);
                 } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());

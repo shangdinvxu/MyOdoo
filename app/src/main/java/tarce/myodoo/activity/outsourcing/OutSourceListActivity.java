@@ -3,6 +3,7 @@ package tarce.myodoo.activity.outsourcing;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 
@@ -23,12 +24,9 @@ import retrofit2.Response;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.OutsourceBean;
-import tarce.model.inventory.PickingDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
-import tarce.myodoo.activity.ProductLlActivity;
 import tarce.myodoo.adapter.outsource.OutSourceAdapter;
-import tarce.myodoo.adapter.product.PickingDetailAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
 import tarce.myodoo.uiutil.TipDialog;
@@ -158,6 +156,8 @@ public class OutSourceListActivity extends BaseActivity {
             @Override
             public void onFailure(Call<OutsourceBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(OutSourceListActivity.this, t.toString());
+                Log.e("zws", t.toString());
             }
         });
     }

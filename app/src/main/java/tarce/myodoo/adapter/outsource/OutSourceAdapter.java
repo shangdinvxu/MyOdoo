@@ -34,8 +34,9 @@ public class OutSourceAdapter extends BaseQuickAdapter<OutsourceBean.ResultBean.
     protected void convert(BaseViewHolder helper, OutsourceBean.ResultBean.ResDataBean item) {
         helper.setText(R.id.id_product_in, item.getName())
                 .setText(R.id.from_id, item.getProduction_id().get(1)+"")
-        .setText(R.id.gongxu_product, item.getProcess_id().get(1)+"")
-        .setText(R.id.num_outsourcing, item.getQty_produced()+"")
-        .setText(R.id.people_buy, item.getEmployee_id().get(1)+"");
+                .setText(R.id.gongxu_product, item.getProcess_id().get(1)+"")
+                .setText(R.id.num_outsourcing, item.getQty_produced()+"");
+                List employeeList = (List) item.getEmployee_id();
+                helper.setText(R.id.people_buy, employeeList.get(1)+"");
     }
 }

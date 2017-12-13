@@ -46,6 +46,7 @@ import cn.hugeterry.updatefun.UpdateFunGO;
 import cn.hugeterry.updatefun.config.UpdateKey;
 import greendao.DaoSession;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -79,6 +80,8 @@ import tarce.support.MyLog;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ViewUtils;
+
+import static tarce.api.RetrofitClient.Url;
 
 /**
  * Created by Daniel.Xu on 2017/4/20.
@@ -394,6 +397,7 @@ public class LoginActivity extends Activity {
                                             .insertOrReplace(new LoginResponseBean(user_id, name, groupsBean.getName(), groupsBean.getId()));
                                 }
                             });
+                    getBlogList();
                     toMainActivity();
                 } else {
                     if (progressDialog.isShowing()) {
@@ -411,7 +415,43 @@ public class LoginActivity extends Activity {
             }
         });
     }
+    /**
+     * test
+     * */
+    private void getBlogList() {
+        Retrofit retrofit = new Retrofit.Builder()
+                //设置OKHttpClient
+                .client(new OKHttpFactory(LoginActivity.this).getOkHttpClient())
 
+//                .baseUrl("http://192.168.2.111:8069/linkloving_app_api/")
+                .baseUrl(Url + "/linkloving_oa_api/")
+                //gson转化器
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+        InventoryApi inventoryApi = retrofit.create(InventoryApi.class);
+        HashMap<Object, Object> hashMap = new HashMap<>();
+          hashMap.put("type", "search");
+//        hashMap.put("limit", 20);
+//        hashMap.put("offset", 0);
+//        hashMap.put("tag_id", 3);
+//        hashMap.put("is_tag_id", true);
+//        hashMap.put("is_first", true);
+          hashMap.put("search_type", "name");
+          hashMap.put("search_body", "安装");
+        Call<Object> blogList = inventoryApi.getBlogList(hashMap);
+        blogList.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                if (response.body() == null)return;
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+
+            }
+        });
+    }
     private void toMainActivity() {
         if (progressDialog.isShowing()) {
             progressDialog.dismiss();

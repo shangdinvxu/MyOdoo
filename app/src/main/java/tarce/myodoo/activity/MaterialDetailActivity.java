@@ -3,6 +3,7 @@ package tarce.myodoo.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.SearchView;
@@ -15,6 +16,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -89,16 +91,20 @@ public class MaterialDetailActivity extends BaseActivity {
                     ViewUtils.collapseSoftInputMethod(MaterialDetailActivity.this, searchMo);
                     mainMdBeen = mainMdBeenQuery;
                 } else {
-                    List<MainMdBean> filterDateList = new ArrayList<>();
-                    mainMdBeenQuery.remove(0);
-                    filterDateList.add(new MainMdBean(true, ""));
-                    for (MainMdBean bean : mainMdBeenQuery) {
-                        if (bean.t.getDisplay_name().contains(newText)) {
-                            filterDateList.add(bean);
+                    try {
+                        List<MainMdBean> filterDateList = new ArrayList<>();
+                        mainMdBeenQuery.remove(0);
+                        filterDateList.add(new MainMdBean(true, ""));
+                        for (MainMdBean bean : mainMdBeenQuery) {
+                            if (bean.t.getDisplay_name().contains(newText)) {
+                                filterDateList.add(bean);
+                            }
                         }
+                        mainMdBeenQuery.add(0,new MainMdBean(true, ""));
+                        mainMdBeen = filterDateList;
+                    }catch (Exception e){
+                        Log.e("zws", e.toString());
                     }
-                    mainMdBeenQuery.add(0,new MainMdBean(true, ""));
-                    mainMdBeen = filterDateList;
                 }
 //                adapter.setData(mainMdBeen);
 //                adapter.notifyDataSetChanged();

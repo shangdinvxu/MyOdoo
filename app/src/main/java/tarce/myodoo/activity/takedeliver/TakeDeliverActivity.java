@@ -199,40 +199,45 @@ public class TakeDeliverActivity extends BaseActivity {
      * 根据订单号搜索 searchByTakeNumber
      */
     private void searchOrder(String query) {
-        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-        objectObjectHashMap.put("order_name", query);
-        objectObjectHashMap.put("type", "incoming");
-        Call<TakeDelListBean> getSaleListByNumberResponseCall = inventoryApi.searchByTakeNumber(objectObjectHashMap);
-        showDefultProgressDialog();
-        getSaleListByNumberResponseCall.enqueue(new Callback<TakeDelListBean>() {
-            @Override
-            public void onResponse(Call<TakeDelListBean> call, Response<TakeDelListBean> response) {
-                dismissDefultProgressDialog();
-                if (response.body() == null) return;
-                if (response.body().getError() != null) {
-                    new TipDialog(TakeDeliverActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
-                            .show();
-                    return;
-                }
-                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
-                    List<TakeDelListBean.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
-                    if (res_data != null && res_data.size() > 0) {
-                        Intent intent = new Intent(TakeDeliverActivity.this, TakeDeliveListActivity.class);
-                        intent.putExtra("intent", (Serializable) res_data);
-                        intent.putExtra("from", "no");
-                        intent.putExtra("notneed", "yes");
-                        startActivity(intent);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<TakeDelListBean> call, Throwable t) {
-                dismissDefultProgressDialog();
-                ToastUtils.showCommonToast(TakeDeliverActivity.this, t.toString());
-                MyLog.e("TakeDeliverActivity", t.toString());
-            }
-        });
+        Intent intent = new Intent(TakeDeliverActivity.this, TakeDeliveListActivity.class);
+        intent.putExtra("order_name", query);
+        intent.putExtra("from", "no");
+        intent.putExtra("notneed", "yes");
+        startActivity(intent);
+//        HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+//        objectObjectHashMap.put("order_name", query);
+//        objectObjectHashMap.put("type", "incoming");
+//        Call<TakeDelListBean> getSaleListByNumberResponseCall = inventoryApi.searchByTakeNumber(objectObjectHashMap);
+//        showDefultProgressDialog();
+//        getSaleListByNumberResponseCall.enqueue(new Callback<TakeDelListBean>() {
+//            @Override
+//            public void onResponse(Call<TakeDelListBean> call, Response<TakeDelListBean> response) {
+//                dismissDefultProgressDialog();
+//                if (response.body() == null) return;
+//                if (response.body().getError() != null) {
+//                    new TipDialog(TakeDeliverActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+//                            .show();
+//                    return;
+//                }
+//                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
+//                    List<TakeDelListBean.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
+//                    if (res_data != null && res_data.size() > 0) {
+//                        Intent intent = new Intent(TakeDeliverActivity.this, TakeDeliveListActivity.class);
+//                        intent.putExtra("intent", (Serializable) res_data);
+//                        intent.putExtra("from", "no");
+//                        intent.putExtra("notneed", "yes");
+//                        startActivity(intent);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<TakeDelListBean> call, Throwable t) {
+//                dismissDefultProgressDialog();
+//                ToastUtils.showCommonToast(TakeDeliverActivity.this, t.toString());
+//                MyLog.e("TakeDeliverActivity", t.toString());
+//            }
+//        });
     }
 
     /**

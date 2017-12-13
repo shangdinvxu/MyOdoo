@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -93,7 +94,8 @@ public class OutSourceDetailActivity extends BaseActivity {
         originProduct.setText(resDataBean.getProduction_id().get(1) + "");
         nameProductSupplier.setText(resDataBean.getOutsourcing_supplier_id().get(1) + "");
         peopleProductBuy.setText(resDataBean.getPo_user_id()+"");
-        gongxuProduct.setText(resDataBean.getEmployee_id().get(1)+"");
+        List employeeList = (List) resDataBean.getEmployee_id();
+        gongxuProduct.setText(employeeList.get(1)+"");
     }
 
     @OnClick(R.id.tv_state_click)
@@ -109,7 +111,7 @@ public class OutSourceDetailActivity extends BaseActivity {
         } else if (state.equals("out_ing")) {
             final EditText editText = new EditText(OutSourceDetailActivity.this);
             editText.setText(resDataBean.getQty_produced() + "");
-            editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            //editText.setInputType(InputType.TYPE_CLASS_NUMBER);
             editText.setSelection(editText.getText().length());
             AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(OutSourceDetailActivity.this, "请填写完成数量");
             dialog.setView(editText)

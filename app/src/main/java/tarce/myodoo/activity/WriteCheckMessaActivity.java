@@ -158,7 +158,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
             case "confirm":
                 boolean haveReject = false;
                 for (int i = 0; i < resDataBean.getPack_operation_product_ids().size(); i++) {
-                    int rejects_qty = resDataBean.getPack_operation_product_ids().get(i).getRejects_qty();
+                    double rejects_qty = resDataBean.getPack_operation_product_ids().get(i).getRejects_qty();
                     if (rejects_qty>0){
                         haveReject = true;
                         break;
@@ -408,7 +408,7 @@ public class WriteCheckMessaActivity extends BaseActivity {
         for (int i = 0; i < size; i++) {
             Map<Object, Object> map = new HashMap<>();
             map.put("pack_id", ids.get(i).getPack_id());
-            map.put("qty_done", StringUtils.doubleToInt(ids.get(i).getQty_done()));
+            map.put("qty_done", ids.get(i).getQty_done());
             map.put("rejects_qty", ids.get(i).getRejects_qty());
             maps[i] = map;
         }

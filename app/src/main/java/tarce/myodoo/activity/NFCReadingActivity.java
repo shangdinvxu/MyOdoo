@@ -56,6 +56,7 @@ import tarce.myodoo.R;
 import tarce.myodoo.activity.takedeliver.TakeDeliverDetailActivity;
 import tarce.myodoo.adapter.NFCUseradapter;
 import tarce.myodoo.device.Const;
+import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
@@ -104,8 +105,13 @@ public class NFCReadingActivity extends BaseActivity {
         allUser.enqueue(new Callback<NFCUserBean>() {
             @Override
             public void onResponse(Call<NFCUserBean> call, Response<NFCUserBean> response) {
-                if (response.body().getResult()==null || response.body().getResult()==null)return;
-                if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_data()!=null){
+                if (response.body()==null)return;
+                if (response.body().getError()!=null){
+                    new TipDialog(NFCReadingActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
+                if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==1){
                     allList = new ArrayList<>();
                     res_data = response.body().getResult().getRes_data();
                     allList =res_data;
@@ -119,6 +125,7 @@ public class NFCReadingActivity extends BaseActivity {
             @Override
             public void onFailure(Call<NFCUserBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                ToastUtils.showCommonToast(NFCReadingActivity.this, t.toString());
                 MyLog.e(t.toString());
             }
         });

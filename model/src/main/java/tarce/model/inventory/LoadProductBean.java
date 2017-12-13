@@ -82,8 +82,26 @@ public class LoadProductBean {
             private NeedSubBean linkloving_mrp_extend_menu_mrp_waiting_inventory_material;
             @SerializedName("linkloving_mrp_extend.menu_mrp_progress")
             private NeedSubBean linkloving_mrp_extend_menu_mrp_progress;
+            @SerializedName("linkloving_mrp_extend.menu_force_cancel_waiting_return")
+            private NeedSubBean linkloving_mrp_extend_menu_force_cancel_waiting_return;
+            @SerializedName("linkloving_mrp_extend.menu_force_cancel_waiting_warehouse_inspection")
+            private NeedSubBean linkloving_mrp_extend_menu_force_cancel_waiting_warehouse_inspection;
 
+            public NeedSubBean getLinkloving_mrp_extend_menu_force_cancel_waiting_return() {
+                return linkloving_mrp_extend_menu_force_cancel_waiting_return;
+            }
 
+            public void setLinkloving_mrp_extend_menu_force_cancel_waiting_return(NeedSubBean linkloving_mrp_extend_menu_force_cancel_waiting_return) {
+                this.linkloving_mrp_extend_menu_force_cancel_waiting_return = linkloving_mrp_extend_menu_force_cancel_waiting_return;
+            }
+
+            public NeedSubBean getLinkloving_mrp_extend_menu_force_cancel_waiting_warehouse_inspection() {
+                return linkloving_mrp_extend_menu_force_cancel_waiting_warehouse_inspection;
+            }
+
+            public void setLinkloving_mrp_extend_menu_force_cancel_waiting_warehouse_inspection(NeedSubBean linkloving_mrp_extend_menu_force_cancel_waiting_warehouse_inspection) {
+                this.linkloving_mrp_extend_menu_force_cancel_waiting_warehouse_inspection = linkloving_mrp_extend_menu_force_cancel_waiting_warehouse_inspection;
+            }
 
             public NeedSubBean getLinkloving_mrp_extend_menu_mrp_finish_prepare_material() {
                 return linkloving_mrp_extend_menu_mrp_finish_prepare_material;

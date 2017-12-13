@@ -676,6 +676,22 @@ public class OrderDetailBean {
                     this.weight = weight;
                 }
 
+                public boolean isNfc() {
+                    return isNfc;
+                }
+
+                public void setNfc(boolean nfc) {
+                    isNfc = nfc;
+                }
+
+                public double getTrual_return_qty() {
+                    return trual_return_qty;
+                }
+
+                public void setTrual_return_qty(double trual_return_qty) {
+                    this.trual_return_qty = trual_return_qty;
+                }
+
                 /**
                  * quantity_ready : 1200.0
                  * virtual_available : 0.0
@@ -693,6 +709,8 @@ public class OrderDetailBean {
                  * over_picking_qty : 0.0
                  */
 
+                private double trual_return_qty;
+                private boolean isNfc = false;
                 private double weight;
                 private double quantity_ready;
                 private double virtual_available;

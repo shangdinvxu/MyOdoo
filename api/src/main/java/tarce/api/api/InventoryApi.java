@@ -77,6 +77,11 @@ import tarce.model.inventory.WorkingWorkerBean;
 
 public interface InventoryApi {
     /**
+     * test
+     * */
+    @POST("get_blog_list")
+    Call<Object> getBlogList(@Body HashMap hashMap);
+    /**
      * 外协改变状态
      * */
     @POST("change_outsourcing_order_state")
@@ -508,6 +513,11 @@ public interface InventoryApi {
     @POST("produce_done")
     Call<RukuBean> produceDone(@Body HashMap hashMap);
 
+    /**
+     * 随时退料
+     * */
+    @POST("return_material_anytime")
+    Call<OrderDetailBean> returnMaterialAny(@Body HashMap hashMap);
     /**
      * 提交退料数量
      * */

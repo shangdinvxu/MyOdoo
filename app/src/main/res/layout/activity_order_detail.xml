@@ -435,6 +435,17 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/tv_feed_material"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/cc"
+            android:gravity="center"
+            android:text="退料"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+
+        <TextView
             android:id="@+id/tv_start_produce"
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -453,8 +464,7 @@
             android:gravity="center"
             android:text="补领料"
             android:textColor="@color/white"
-            android:visibility="gone"
-            android:layout_marginLeft="2dp"/>
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_area_look"
@@ -465,8 +475,7 @@
             android:gravity="center"
             android:text="查看位置信息"
             android:textColor="@color/white"
-            android:visibility="gone"
-            android:layout_marginLeft="2dp"/>
+            android:visibility="gone" />
     </LinearLayout>
 
 </RelativeLayout>

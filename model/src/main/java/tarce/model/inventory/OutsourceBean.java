@@ -1,6 +1,7 @@
 package tarce.model.inventory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import tarce.model.ErrorBean;
@@ -117,11 +118,17 @@ public class OutsourceBean {
                 this.process_id = process_id;
             }
 
-            public List<Object> getEmployee_id() {
+            public Object getEmployee_id() {
+                if (employee_id instanceof Boolean){
+                    List<String> integerList = new ArrayList<>();
+                    integerList.add("");
+                    integerList.add("");
+                    employee_id = integerList;
+                }
                 return employee_id;
             }
 
-            public void setEmployee_id(List<Object> employee_id) {
+            public void setEmployee_id(Object employee_id) {
                 this.employee_id = employee_id;
             }
 
@@ -142,7 +149,7 @@ public class OutsourceBean {
              */
 
             private List<Object> process_id;
-            private List<Object> employee_id;
+            private Object employee_id;
             private List<Object> outsourcing_supplier_id;
             private Object po_user_id;
             private String create_date;

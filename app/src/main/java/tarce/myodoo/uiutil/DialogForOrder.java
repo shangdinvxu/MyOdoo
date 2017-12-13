@@ -77,7 +77,7 @@ public class DialogForOrder extends Dialog {
                 tvWeightNum.setText("0");
                 return;
             }
-            Integer num = Integer.valueOf(temp.toString());
+            double num = Double.parseDouble(temp.toString());
             tvWeightNum.setText(num * weightNum + "");
         }
     };
@@ -141,12 +141,12 @@ public class DialogForOrder extends Dialog {
     }
 
     public interface OnSendCommonClickListener {
-        void OnSendCommonClick(int num);
+        void OnSendCommonClick(double num);
     }
 
     public DialogForOrder setWeight(double weightNum) {
         this.weightNum = weightNum;
-        Integer valueOf = Integer.valueOf(tvPrepareNum.getText().toString());
+        double valueOf = Double.valueOf(tvPrepareNum.getText().toString());
         tvWeightNum.setText(weightNum * valueOf + "");
         tvPrepareNum.addTextChangedListener(textWatcher);
         return this;
@@ -163,7 +163,7 @@ public class DialogForOrder extends Dialog {
             Toast.makeText(context, "请确认数量？", Toast.LENGTH_SHORT).show();
             return;
         }
-        sendCommonClickListener.OnSendCommonClick(Integer.parseInt(tvPrepareNum.getText().toString()));
+        sendCommonClickListener.OnSendCommonClick(Double.valueOf(tvPrepareNum.getText().toString()));
         tvPrepareNum.setText(null);
         dismiss();
     }

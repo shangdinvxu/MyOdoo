@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -70,6 +71,7 @@ public class ProduceFragment extends Fragment {
         list = new ArrayList<>();
         list.add(new MainItemBean(new MenuBean("生产备料", 0)));
         list.add(new MainItemBean(new MenuBean("仓库检验退料", 0)));
+        list.add(new MainItemBean(new MenuBean("取消MO待检验退料", 0)));
         list.add(new MainItemBean(new MenuBean("生产入库", 0)));
         list.add(new MainItemBean(true, ""));
       //  list.add(new MainItemBean(new MenuBean("领料", 0)));
@@ -78,6 +80,7 @@ public class ProduceFragment extends Fragment {
         list.add(new MainItemBean(new MenuBean("外协", 0)));
         list.add(new MainItemBean(new MenuBean("二次生产", 0)));
         list.add(new MainItemBean(new MenuBean("清点退料", 0)));
+        list.add(new MainItemBean(new MenuBean("取消MO待清点退料", 0)));
         list.add(new MainItemBean(new MenuBean("等待返工", 0)));
         list.add(new MainItemBean(new MenuBean("返工中", 0)));
         list.add(new MainItemBean(new MenuBean("已完成", 0)));
@@ -103,6 +106,8 @@ public class ProduceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_2, null);
         ButterKnife.inject(this, view);
+//        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(),3);
+//        recyclerview.setLayoutManager(layoutManager);
         sectionAdapter = new SectionAdapter(R.layout.mian_list_item, R.layout.adapter_head, list);
         setRecyclerview(recyclerview);
         recyclerview.setAdapter(sectionAdapter);
@@ -130,7 +135,8 @@ public class ProduceFragment extends Fragment {
         String[] menus = {"linkloving_mrp_extend.menu_mrp_finish_prepare_material","linkloving_mrp_extend.menu_mrp_already_picking",
                 "linkloving_mrp_extend.menu_mrp_progress","linkloving_mrp_extend.menu_mrp_waiting_inventory_material",
                 "linkloving_mrp_extend.mrp_production_qc_inspection_fail","linkloving_mrp_extend.menu_mrp_rework_ing"
-                ,"linkloving_mrp_extend.menu_mrp_done"};
+                ,"linkloving_mrp_extend.menu_mrp_done", "linkloving_mrp_extend.menu_force_cancel_waiting_return",
+        "linkloving_mrp_extend.menu_force_cancel_waiting_warehouse_inspection"};
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("xml_names", menus);
         hashMap.put("user_id", MyApplication.userID);
@@ -146,15 +152,19 @@ public class ProduceFragment extends Fragment {
 //                        Integer needaction_counter0 = res_data.getLinkloving_mrp_extend_menu_mrp_finish_prepare_material().getNeedaction_counter();
 //                        list.get(4).t.setNumber(needaction_counter0);
                         Integer needaction_counter1 = res_data.getLinkloving_mrp_extend_menu_mrp_already_picking().getNeedaction_counter();
-                        list.get(4).t.setNumber(needaction_counter1);
+                        list.get(5).t.setNumber(needaction_counter1);
                         Integer needaction_counter2 = res_data.getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
-                        list.get(5).t.setNumber(needaction_counter2);
+                        list.get(6).t.setNumber(needaction_counter2);
                         Integer needaction_counter3 = res_data.getLinkloving_mrp_extend_menu_mrp_waiting_inventory_material().getNeedaction_counter();
-                        list.get(7).t.setNumber(needaction_counter3);
+                        list.get(8).t.setNumber(needaction_counter3);
                         Integer needaction_counter4 = res_data.getLinkloving_mrp_extend_mrp_production_qc_inspection_fail().getNeedaction_counter();
-                        list.get(8).t.setNumber(needaction_counter4);
+                        list.get(9).t.setNumber(needaction_counter4);
                         Integer needaction_counter5 = res_data.getLinkloving_mrp_extend_menu_mrp_rework_ing().getNeedaction_counter();
-                        list.get(9).t.setNumber(needaction_counter5);
+                        list.get(11).t.setNumber(needaction_counter5);
+                        Integer needaction_counter6 = res_data.getLinkloving_mrp_extend_menu_force_cancel_waiting_return().getNeedaction_counter();
+                        list.get(10).t.setNumber(needaction_counter6);
+                        Integer needaction_counter7 = res_data.getLinkloving_mrp_extend_menu_force_cancel_waiting_warehouse_inspection().getNeedaction_counter();
+                        list.get(2).t.setNumber(needaction_counter7);
                         //    Integer needaction_counter6 = response.body().getResult().getRes_data().getLinkloving_mrp_extend_menu_mrp_progress().getNeedaction_counter();
                         //   list.get(6).setNumber(0);
                         sectionAdapter.notifyDataSetChanged();
@@ -192,7 +202,7 @@ public class ProduceFragment extends Fragment {
                         Integer needaction_counter3 = res_dataTwo.getLinkloving_mrp_extend_menu_mrp_waiting_material().getNeedaction_counter();
                         list.get(0).t.setNumber(needaction_counter + needaction_counter3);
                         list.get(1).t.setNumber(needaction_counter1);
-                        list.get(2).t.setNumber(needaction_counter2);
+                        list.get(3).t.setNumber(needaction_counter2);
 //                    //               warehouseFragment.list.get(7).t.setNumber(needaction_counter2);
                         sectionAdapter.notifyDataSetChanged();
                     }
@@ -215,7 +225,7 @@ public class ProduceFragment extends Fragment {
         sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (position == 3 || position == 12 || position == 15){
+                if (position == 4 || position == 14 || position == 17 || position == 19){
                     return;
                 }
                 String name = list.get(position).t.getName();
@@ -274,6 +284,12 @@ public class ProduceFragment extends Fragment {
                     case "外协":
                         Intent intent6 = new Intent(getActivity(), OutSourcingActivity.class);
                         startActivity(intent6);
+                        break;
+                    case "取消MO待检验退料":
+                        IntentFactory.start_ProducLl_Activity(getActivity(), "取消MO待检验退料", "force_cancel_waiting_warehouse_inspection");
+                        break;
+                    case "取消MO待清点退料":
+                        IntentFactory.start_ProducLl_Activity(getActivity(), "取消MO待清点退料", "force_cancel_waiting_return");
                         break;
                 }
             }

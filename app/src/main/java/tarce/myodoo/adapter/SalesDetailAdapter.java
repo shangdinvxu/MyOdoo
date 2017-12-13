@@ -33,11 +33,11 @@ public class SalesDetailAdapter extends BaseQuickAdapter<GetSaleResponse.TResult
 
     @Override
     protected void convert(BaseViewHolder helper, GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids item) {
-        int reserved_qty = StringUtils.doubleToInt(item.getReserved_qty());
-        Integer qty_done = item.getQty_done();
+        double reserved_qty = item.getReserved_qty();
+        double qty_done = item.getQty_done();
         helper.setText(R.id.product, item.getProduct_id().getName())
                 .setText(R.id.need_in, "位置: " + item.getProduct_id().getArea_id().getArea_name())
-                .setText(R.id.origin_qty, "初始需求: " + item.getOrigin_qty() + "");
+                .setText(R.id.origin_qty, "初始需求: " + item.getOrigin_qty());
         helper.setText(R.id.need_out, "待出库: " + item.getProduct_qty())
                 .setText(R.id.done, "完成: " + qty_done)
                 .setText(R.id.line_num, helper.getPosition() + 1 + ".");

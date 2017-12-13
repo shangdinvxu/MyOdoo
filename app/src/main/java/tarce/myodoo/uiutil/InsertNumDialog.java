@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.StyleRes;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
@@ -78,7 +79,10 @@ public class InsertNumDialog extends Dialog {
                 editAllWeight.setText("0.00");
                 return;
             }
-            double num = Double.valueOf(temp.toString());
+            if (temp.toString().equals(".")){
+                return;
+            }
+            double num = Double.parseDouble(temp.toString());
             if (num > 0) {
                 editAllWeight.setText(StringUtils.fourDouble(num * weightProduct));
             } else {
@@ -153,6 +157,7 @@ public class InsertNumDialog extends Dialog {
         setCanceledOnTouchOutside(true);
         setCancelable(true);
 
+        eidtOutNum.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         eidtOutNum.setFocusable(true);
         eidtOutNum.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -174,8 +179,8 @@ public class InsertNumDialog extends Dialog {
             double v = resDataBean.getQty_produced() / resDataBean.getProduct_qty() * resDataBean.getStock_move_lines().get(position).getProduct_uom_qty();
             eidtOutNum.setText(StringUtils.doubleToString(beiNum-v));
         }*/
-        if (return_qty != 0) {
-            eidtOutNum.setText(StringUtils.doubleToString(return_qty));
+        if (return_qty != 0 && return_qty>0) {
+            eidtOutNum.setText(StringUtils.fourDouble(return_qty)+"");
         } else {
             eidtOutNum.setText("0");
         }
@@ -188,7 +193,7 @@ public class InsertNumDialog extends Dialog {
 
     //添加总重量
     public InsertNumDialog setWeight(double weightProduct) {
-        editAllWeight.setText(StringUtils.fourDouble(Double.valueOf(eidtOutNum.getText().toString()) * weightProduct));
+        editAllWeight.setText(StringUtils.fourDouble(Double.parseDouble(eidtOutNum.getText().toString()) * weightProduct));
         this.weightProduct = weightProduct;
         eidtOutNum.addTextChangedListener(watcher);
         return this;
@@ -231,7 +236,6 @@ public class InsertNumDialog extends Dialog {
     @OnClick(R.id.btn_transterm)
     void setBtnTransterm(View view){
         double weightDouble = Double.parseDouble(editAllWeight.getText().toString());
-        Log.e("zws", "weightDouble = "+weightDouble);
         if (StringUtils.isNullOrEmpty(editAllWeight.getText().toString())){
             eidtOutNum.setText("0");
             ToastUtils.showCommonToast(context, "请输入总重量");

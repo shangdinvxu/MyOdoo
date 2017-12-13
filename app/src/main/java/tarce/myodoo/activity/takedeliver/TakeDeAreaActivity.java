@@ -83,7 +83,8 @@ public class TakeDeAreaActivity extends BaseActivity {
     private String imgName;//后缀名
     private List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> data;
     private TakeDelListBean.ResultBean.ResDataBean resDataBean;
-    private ArrayList<Integer> intArr;
+  //  private double[] intArr;
+    private List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> intArr;
     private String type_code;
     private String state;
     private String notneed;
@@ -98,7 +99,7 @@ public class TakeDeAreaActivity extends BaseActivity {
         Intent intent = getIntent();
         type_code = intent.getStringExtra("type_code");
         state = intent.getStringExtra("state");
-        intArr = intent.getIntegerArrayListExtra("intArr");
+        intArr = (List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean>) intent.getSerializableExtra("intArr");
         from = intent.getStringExtra("from");
         notneed = intent.getStringExtra("notneed");
         resDataBean = (TakeDelListBean.ResultBean.ResDataBean) intent.getSerializableExtra("bean");
@@ -150,7 +151,7 @@ public class TakeDeAreaActivity extends BaseActivity {
                         for (int i = 0; i < size; i++) {
                             Map<Object, Object> map = new HashMap<>();
                             map.put("pack_id", ids.get(i).getPack_id());
-                            map.put("qty_done", intArr.get(i));
+                            map.put("qty_done", intArr.get(i).getQty_done());
                             maps[i] = map;
                         }
                         hashMap.put("pack_operation_product_ids", maps);

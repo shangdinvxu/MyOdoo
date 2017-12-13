@@ -13,36 +13,35 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.uuzuche.lib_zxing.activity.CaptureActivity;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.util.HashMap;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 import cn.hugeterry.updatefun.UpdateFunGO;
 import cn.hugeterry.updatefun.config.UpdateKey;
-import greendao.ContactsBeanDao;
-import greendao.DaoSession;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import tarce.api.OKHttpFactory;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.LoadActionBean;
-import tarce.model.SearchSupplierResponse;
-import tarce.model.greendaoBean.ContactsBean;
-import tarce.myodoo.MyApplication;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.scancode.ScanCodeActivity;
 import tarce.myodoo.fragment.InspectionFragment;
 import tarce.myodoo.fragment.MeFragment;
+import tarce.myodoo.fragment.NewProductFragment;
 import tarce.myodoo.fragment.ProduceFragment;
 import tarce.myodoo.fragment.WarehouseFragment;
 import tarce.myodoo.view.NoScrollViewPager;
-import tarce.support.MyLog;
+
+import static tarce.api.RetrofitClient.Url;
 
 public class MainActivity extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getSimpleName();
@@ -73,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
     private InventoryApi inventoryApi;
     private WarehouseFragment warehouseFragment;
     private ProduceFragment produceFragment;
+    private NewProductFragment newProductFragment;
     private InspectionFragment inspectionFragment;
     private MeFragment meFragment;
 
@@ -119,8 +119,6 @@ public class MainActivity extends AppCompatActivity {
     /***点击二维码扫描*/
     @OnClick(R.id.scan_button)
     void clickScanButton(View view) {
-        /*Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
-        startActivityForResult(intent, REQUEST_CODE);*/
         Intent intent = new Intent(MainActivity.this, ScanCodeActivity.class);
         startActivity(intent);
     }
@@ -136,7 +134,6 @@ public class MainActivity extends AppCompatActivity {
     void clickRadio_Button2(View view) {
         mViewPager.setCurrentItem(1, true);
         titleText.setText("生产");
-     //   produceFragment.onResume();
     }
 
     @OnClick(R.id.radio_button3)
@@ -158,6 +155,8 @@ public class MainActivity extends AppCompatActivity {
         myfragment[0] = warehouseFragment;
         produceFragment = new ProduceFragment();
         myfragment[1] = produceFragment;
+//        newProductFragment = new NewProductFragment();
+//        myfragment[1] = newProductFragment;
         inspectionFragment = new InspectionFragment();
         myfragment[2] = inspectionFragment;
         meFragment = new MeFragment();

@@ -116,7 +116,7 @@ public class StringUtils {
     public static String fourDouble(double num) {
         String s = "";
         BigDecimal bd = new BigDecimal(num);
-        bd = bd.setScale(4, BigDecimal.ROUND_HALF_UP);
+        bd = bd.setScale(4, BigDecimal.ROUND_DOWN);
         s = bd + "";
         return s;
     }

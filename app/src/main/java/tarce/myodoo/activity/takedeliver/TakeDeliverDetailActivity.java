@@ -22,6 +22,7 @@ import com.newland.mtype.ModuleType;
 import com.newland.mtype.module.common.printer.Printer;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -166,10 +167,12 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> data = takedAdapter.getData();
-                                        ArrayList<Integer> doneNum = new ArrayList<>();
-                                        for (int i = 0; i < data.size(); i++) {
-                                            doneNum.add(StringUtils.doubleToInt(data.get(i).getQty_done()));
-                                        }
+                                       // ArrayList<Double> doneNum = new ArrayList<>();
+//                                        Double[] doneNum = new Double[data.size()];
+//                                        for (int i = 0; i < data.size(); i++) {
+//                                          //  doneNum.add(data.get(i).getQty_done());
+//                                            doneNum[i] = data.get(i).getQty_done();
+//                                        }
                                         boolean isIntent = false;
                                         for (int i = 0; i < data.size(); i++) {
                                             if (data.get(i).getQty_done() > 0) {
@@ -183,7 +186,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                             printTra();//打印
                                             Intent intent = new Intent(TakeDeliverDetailActivity.this, TakeDeAreaActivity.class);
                                             intent.putExtra("bean", resDataBean);
-                                            intent.putIntegerArrayListExtra("intArr", doneNum);
+                                            intent.putExtra("intArr", (Serializable) data);
                                             intent.putExtra("type_code", type_code);
                                             intent.putExtra("state", state);
                                             intent.putExtra("from", from);
@@ -347,7 +350,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                         for (int i = 0; i < size; i++) {
                                             Map<Object, Object> map = new HashMap<>();
                                             map.put("pack_id", ids.get(i).getPack_id());
-                                            map.put("qty_done", StringUtils.doubleToInt(ids.get(i).getQty_done()));
+                                            map.put("qty_done", ids.get(i).getQty_done());
                                             maps[i] = map;
                                         }
                                         hashMap.put("pack_operation_product_ids", maps);
@@ -356,8 +359,13 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                             @Override
                                             public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                                                 dismissDefultProgressDialog();
-                                                if (response.body() == null || response.body().getResult() == null)
+                                                if (response.body() == null)
                                                     return;
+                                                if (response.body().getError()!=null){
+                                                    new TipDialog(TakeDeliverDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                                            .show();
+                                                    return;
+                                                }
                                                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                                                     ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "入库完成");
                                                     finish();
@@ -395,17 +403,17 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 }
                 final EditText editText = new EditText(TakeDeliverDetailActivity.this);
                 // final int qty_available = StringUtils.doubleToInt(bean.getProduct_id().getQty_available());
-                final int product_qty = StringUtils.doubleToInt(bean.getProduct_qty());
+              //  final int product_qty = StringUtils.doubleToInt(bean.getProduct_qty());
                 //final int qty = qty_available >= product_qty ? qty_available:product_qty;
                 editText.setText(bean.getRejects_qty() + "");
-                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+              //  editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText.setSelection(editText.getText().length());
                 AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "请输入 " + bean.getProduct_id().getName() + " 不良品数量");
                 dialog.setView(editText)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                int anInt = Integer.parseInt(editText.getText().toString());
+                                double anInt = Double.parseDouble(editText.getText().toString());
                                 double sum = bean.getQty_done() + bean.getRejects_qty();
                                 if (state.equals("picking") && anInt > sum){
                                      Toast.makeText(TakeDeliverDetailActivity.this, "不能超过完成数量", Toast.LENGTH_SHORT).show();
@@ -439,17 +447,17 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 }
                 final EditText editText = new EditText(TakeDeliverDetailActivity.this);
                 // final int qty_available = StringUtils.doubleToInt(bean.getProduct_id().getQty_available());
-                final int product_qty = StringUtils.doubleToInt(bean.getProduct_qty());
+                final double product_qty = bean.getProduct_qty();
                 //final int qty = qty_available >= product_qty ? qty_available:product_qty;
                 editText.setText(product_qty + "");
-                editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+               // editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText.setSelection(editText.getText().length());
                 AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "请输入 " + bean.getProduct_id().getName() + " 完成数量");
                 dialog.setView(editText)
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                int anInt = Integer.parseInt(editText.getText().toString());
+                                double anInt = Double.parseDouble(editText.getText().toString());
                                 if (anInt > product_qty) {
                                     Toast.makeText(TakeDeliverDetailActivity.this, "库存不足", Toast.LENGTH_SHORT).show();
                                     return;

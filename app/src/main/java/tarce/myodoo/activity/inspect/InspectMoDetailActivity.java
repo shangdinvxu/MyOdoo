@@ -680,12 +680,12 @@ public class InspectMoDetailActivity extends BaseActivity {
         if (StringUtils.isNullOrEmpty(numRejectsInspecdetail.getText().toString())) {
             resultMap.put("qc_fail_qty", 0);
         } else {
-            resultMap.put("qc_fail_qty", Integer.parseInt(numRejectsInspecdetail.getText().toString()));
+            resultMap.put("qc_fail_qty", Double.parseDouble(numRejectsInspecdetail.getText().toString()));
         }
         if (StringUtils.isNullOrEmpty(numSampleInspecdetail.getText().toString())) {
             resultMap.put("qc_test_qty", 0);
         } else {
-            resultMap.put("qc_test_qty", Integer.parseInt(numSampleInspecdetail.getText().toString()));
+            resultMap.put("qc_test_qty", Double.parseDouble(numSampleInspecdetail.getText().toString()));
         }
         resultMap.put("qc_note", commentsOfInspecdetail.getText().toString());
         if (StringUtils.isNullOrEmpty(selectedImagePath)) {

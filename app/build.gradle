@@ -11,8 +11,8 @@ android {
         ndk {
             abiFilters "armeabi"
         }
-        versionCode 71
-        versionName "2.1.7"
+        versionCode 80
+        versionName "2.2.6"
         resValue "string", "updatefun_provider_file_authorities", "tarce.myodoo.fileprovider"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
