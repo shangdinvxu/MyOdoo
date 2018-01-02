@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <SearchView
+        android:layout_marginTop="15dp"
+        android:id="@+id/search_newdate"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:focusable="false"
+        android:iconifiedByDefault="false"
+        android:queryHint="请输入源单据号搜索"
+        android:background="@drawable/edit_input_bac"/>
+
+    <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipeToLoad">
+        <tarce.myodoo.uiutil.RecyclerHeaderView
+            android:id="@+id/swipe_refresh_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </tarce.myodoo.uiutil.RecyclerHeaderView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/swipe_target"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
+        <tarce.myodoo.uiutil.RecyclerFooterView
+            android:id="@+id/swipe_load_more_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </tarce.myodoo.uiutil.RecyclerFooterView>
+    </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
+</LinearLayout>

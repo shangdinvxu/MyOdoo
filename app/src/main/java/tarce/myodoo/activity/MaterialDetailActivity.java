@@ -27,6 +27,7 @@ import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.MainMdBean;
 import tarce.model.inventory.MaterialDetailBean;
+import tarce.model.inventory.PickingDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.salesout.NewSaleoutActivity;
 import tarce.myodoo.adapter.processproduct.PrepareMdAdapter;
@@ -60,8 +61,8 @@ public class MaterialDetailActivity extends BaseActivity {
     private int process_id;
     private int limit;
     private PrepareMdAdapter adapter;
-    private List<MaterialDetailBean.ResultBean.ResDataBean> dataBeanList;
-    private List<MaterialDetailBean.ResultBean.ResDataBean> allListLike;
+    private List<PickingDetailBean.ResultBean.ResDataBean> dataBeanList;
+    private List<PickingDetailBean.ResultBean.ResDataBean> allListLike;
     private List<MainMdBean> mainMdBeen;
     private List<MainMdBean> mainMdBeenQuery = new ArrayList<>();
 
@@ -181,10 +182,10 @@ public class MaterialDetailActivity extends BaseActivity {
         dataBeanList = new ArrayList<>();
         mainMdBeen = new ArrayList<>();
         inventoryApi = RetrofitClient.getInstance(MaterialDetailActivity.this).create(InventoryApi.class);
-        final Call<MaterialDetailBean> recentOr = inventoryApi.getRecentOr(hashMap);
-        recentOr.enqueue(new MyCallback<MaterialDetailBean>() {
+        final Call<PickingDetailBean> recentOr = inventoryApi.getRecentOr(hashMap);
+        recentOr.enqueue(new MyCallback<PickingDetailBean>() {
             @Override
-            public void onResponse(Call<MaterialDetailBean> call, Response<MaterialDetailBean> response) {
+            public void onResponse(Call<PickingDetailBean> call, Response<PickingDetailBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getError() != null) {
@@ -212,7 +213,7 @@ public class MaterialDetailActivity extends BaseActivity {
             }
 
             @Override
-            public void onFailure(Call<MaterialDetailBean> call, Throwable t) {
+            public void onFailure(Call<PickingDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
                 // ToastUtils.showCommonToast(MaterialDetailActivity.this, t.toString());
             }

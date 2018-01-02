@@ -195,9 +195,9 @@ public class InspectionSubActivity extends BaseActivity {
 //                    intent.putExtra("data", resDataBean);
 //                    startActivity(intent);
 //                }else {
-                    Intent intent = new Intent(InspectionSubActivity.this, InspectMoDetailActivity.class);
-                    intent.putExtra("data", resDataBean);
-                    startActivity(intent);
+                Intent intent = new Intent(InspectionSubActivity.this, InspectMoDetailActivity.class);
+                intent.putExtra("data", resDataBean);
+                startActivity(intent);
 //                }
             }
         });

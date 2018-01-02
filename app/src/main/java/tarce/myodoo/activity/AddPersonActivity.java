@@ -55,6 +55,7 @@ import tarce.model.inventory.FreeWorkBean;
 import tarce.model.inventory.StartProductBean;
 import tarce.model.inventory.WorkingWorkerBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.newproduct.NewProductDateActivity;
 import tarce.myodoo.adapter.product.WorkPersonAdapter;
 import tarce.myodoo.adapter.product.WorkingPersonAdapter;
 import tarce.myodoo.bean.WorkingStateBean;
@@ -471,8 +472,8 @@ public class AddPersonActivity extends BaseActivity {
                                     return;
                                 }
                                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
-                                    Intent intent = new Intent(AddPersonActivity.this, WaitProdListActivity.class);
-                                    intent.putExtra("state_delay", name_activity);
+                                    Intent intent = new Intent(AddPersonActivity.this, NewProductDateActivity.class);
+                                   // intent.putExtra("state_delay", name_activity);
                                     startActivity(intent);
                                     finish();
                                 } else {

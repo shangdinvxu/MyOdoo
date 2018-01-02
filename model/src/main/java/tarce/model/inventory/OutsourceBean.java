@@ -160,7 +160,7 @@ public class OutsourceBean {
             private String display_name;
             private int id;
             private String name;
-            private List<Object> create_uid;
+            private Object create_uid;
             private List<Object> company_id;
             private List<Object> write_uid;
             private List<Object> product_id;
@@ -230,11 +230,11 @@ public class OutsourceBean {
                 this.name = name;
             }
 
-            public List<Object> getCreate_uid() {
+            public Object getCreate_uid() {
                 return create_uid;
             }
 
-            public void setCreate_uid(List<Object> create_uid) {
+            public void setCreate_uid(Object create_uid) {
                 this.create_uid = create_uid;
             }
 

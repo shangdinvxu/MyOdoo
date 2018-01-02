@@ -48,7 +48,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="left|center_vertical"
-            android:text="可用"
             android:textSize="13sp"
             android:id="@+id/inventory"
             android:textColor="@color/black"
@@ -83,7 +82,6 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="left|center_vertical"
-            android:text="保留"
             android:textSize="13sp"
             android:layout_weight="1"/>
         <TextView

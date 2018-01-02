@@ -126,6 +126,9 @@ public class WriteFeedMateriActivity extends BaseActivity {
     private int handlerPosition;
     private WriteFeedbackNumAdapter handlerAdapter;
     private WriteFeedAdapter handlerAnyadapter;
+    private int process_id;
+    private int production_line_id;
+    private int origin_sale_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +140,9 @@ public class WriteFeedMateriActivity extends BaseActivity {
         resDataBean = (OrderDetailBean.ResultBean.ResDataBean) intent.getSerializableExtra("recycler_data");
         order_id = intent.getIntExtra("order_id", 1);
         from = intent.getStringExtra("from");
+        process_id = intent.getIntExtra("process_id", -1000);
+        production_line_id = intent.getIntExtra("line_id", -1000);
+        origin_sale_id = intent.getIntExtra("origin_sale_id", 0);
         if (from.equals("look")) {
             tvCommitFeednum.setText("确认退料数量");
         }
@@ -699,6 +705,9 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                         ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "提交退料成功");
                                         Intent intent = new Intent(WriteFeedMateriActivity.this, ProductLlActivity.class);
                                         intent.putExtra("name_activity", "生产退料");
+                                        intent.putExtra("process_id", process_id);
+                                        intent.putExtra("line_id", production_line_id);
+                                        intent.putExtra("origin_sale_id", origin_sale_id);
                                         if (from.equals("check")) {
                                             intent.putExtra("state_product", "done");
                                         } else if (from.equals("write")) {
@@ -774,6 +783,9 @@ public class WriteFeedMateriActivity extends BaseActivity {
                                         ToastUtils.showCommonToast(WriteFeedMateriActivity.this, "退料完成");
                                         intent.putExtra("name_activity", "生产退料");
                                         intent.putExtra("state_product", "waiting_warehouse_inspection");
+                                        intent.putExtra("process_id", process_id);
+                                        intent.putExtra("line_id", production_line_id);
+                                        intent.putExtra("origin_sale_id", origin_sale_id);
                                         startActivity(intent);
                                         finish();
                                     } else {

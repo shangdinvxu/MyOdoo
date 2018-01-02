@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
@@ -230,8 +232,8 @@ public class SalesOutActivity extends BaseActivity {
             @Override
             public void onFailure(Call<SalesOutListResponse> call, Throwable t) {
                 dismissDefultProgressDialog();
-                ToastUtils.showCommonToast(SalesOutActivity.this, t.toString());
-                MyLog.e(TAG, t.toString());
+                Toast.makeText(SalesOutActivity.this, t.toString(), Toast.LENGTH_LONG).show();
+                Log.e("zws", t.toString());
             }
         });
     }

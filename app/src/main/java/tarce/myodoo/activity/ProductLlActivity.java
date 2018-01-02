@@ -3,6 +3,7 @@ package tarce.myodoo.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.SearchView;
@@ -58,7 +59,9 @@ public class ProductLlActivity extends BaseActivity {
     private int loadTime = 0;
     private String state_activity;//生产状态
     private String name_activity;
-    private int process_id = -1000;
+    private int process_id;
+    private int production_line_id;
+    private int origin_sale_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +75,9 @@ public class ProductLlActivity extends BaseActivity {
         name_activity = intent.getStringExtra("name_activity");
         setTitle(name_activity);
         state_activity = intent.getStringExtra("state_product");
-        if ("生产中".equals(name_activity)) {
-            process_id = intent.getIntExtra("process_id", 1000);
-        }
+        process_id = intent.getIntExtra("process_id", -1000);
+        production_line_id = intent.getIntExtra("line_id", -1000);
+        origin_sale_id = intent.getIntExtra("origin_sale_id", 0);
 
         initView();
         getPicking(0, 20, Refresh_Move);
@@ -135,7 +138,7 @@ public class ProductLlActivity extends BaseActivity {
         hashMap.put("offset", offset);
         hashMap.put("limit", limit);
         if ("rework_ing".equals(state_activity) || "finish_prepare_material".equals(state_activity) || "already_picking".equals(state_activity)
-                || "progress".equals(state_activity) || "waiting_rework".equals(state_activity) || "rework_ing".equals(state_activity)
+                || "progress".equals(state_activity) || "waiting_rework".equals(state_activity)
                 || "waiting_inventory_material".equals(state_activity)
                 || "force_cancel_waiting_return".equals(state_activity)) {
             int partner_id = SharePreferenceUtils.getInt("partner_id", 1000, ProductLlActivity.this);
@@ -143,12 +146,25 @@ public class ProductLlActivity extends BaseActivity {
         }
         if (process_id != -1000) {
             hashMap.put("process_id", process_id);
+        }else {
+
         }
+        if (production_line_id != -1000){
+            hashMap.put("production_line_id", production_line_id);
+        }else {
+            hashMap.put("production_line_id", false);
+        }
+        if (origin_sale_id!=0){
+            hashMap.put("origin_sale_id", origin_sale_id);
+        }else {
+            hashMap.put("origin_sale_id", false);
+        }
+        hashMap.put("date", "all");
         Call<PickingDetailBean> stringCall;
         if ("rework_ing".equals(state_activity)) {
-            stringCall = loginApi.reworkIng(hashMap);
+            stringCall = loginApi.newReworkIng(hashMap);
         } else {
-            stringCall = loginApi.getPicking(hashMap);
+            stringCall = loginApi.getNewRecentOr(hashMap);
         }
 
         stringCall.enqueue(new MyCallback<PickingDetailBean>() {
@@ -177,9 +193,6 @@ public class ProductLlActivity extends BaseActivity {
                         adapter.setData(dataBeanList);
                     }
                     clickAdapterItem();
-//                    if ("生产中".equals(name_activity)) {
-//                        searchMoProduct.setVisibility(View.VISIBLE);
-//                    }
                 } else if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() == null
                         && move != Load_Move) {
                     swipeTarget.setVisibility(View.GONE);
@@ -217,7 +230,9 @@ public class ProductLlActivity extends BaseActivity {
                     intent.putExtra("order_id", order_id);
                     intent.putExtra("state", dataBeanList.get(position).getState());
                     intent.putExtra("name_activity", name_activity);
-                    intent.putExtra("state_activity", state_activity);
+                    intent.putExtra("process_id", process_id);
+                    intent.putExtra("line_id", production_line_id);
+                    intent.putExtra("origin_sale_id", origin_sale_id);
                     startActivity(intent);
                 }
             }

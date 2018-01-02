@@ -106,6 +106,8 @@ public class StringUtils {
         DecimalFormat df = new DecimalFormat("#.##");
         if (num != 0) {
             s = df.format(num) + "";
+        }else {
+            s = "0.0";
         }
         return s;
     }

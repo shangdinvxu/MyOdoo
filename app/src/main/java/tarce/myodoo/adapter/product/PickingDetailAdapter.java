@@ -38,16 +38,6 @@ public class PickingDetailAdapter extends BaseQuickAdapter<PickingDetailBean.Res
 
     @Override
     protected void convert(BaseViewHolder helper, PickingDetailBean.ResultBean.ResDataBean item) {
-        if (item.getProduction_line_id()!=null){
-            helper.setText(R.id.produce_line_name, "产线："+item.getProduction_line_id().getName());
-        }else {
-            helper.setText(R.id.produce_line_name, "产线暂无");
-        }
-        if (item.getState().equals("progress") && !item.isAgainProduct()){
-            helper.getView(R.id.produce_line_name).setVisibility(View.GONE);
-        }else {
-            helper.getView(R.id.produce_line_name).setVisibility(View.VISIBLE);
-        }
         helper.setText(R.id.id_colum, helper.getPosition()+1+".");
         helper.setText(R.id.tv_display_name, item.getDisplay_name());
         if (item.getProduct_name().equals("false")){

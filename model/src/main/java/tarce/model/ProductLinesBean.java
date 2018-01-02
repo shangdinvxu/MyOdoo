@@ -87,10 +87,20 @@ public class ProductLinesBean {
         }
 
         public static class ResDataBean {
+            public int getPosition() {
+                return position;
+            }
+
+            public void setPosition(int position) {
+                this.position = position;
+            }
+
             /**
              * production_line_id : [11,"全检-1号"]
              * production_line_id_count : 1
              */
+
+            private int position = -1;
 
             private int production_line_id_count;
             private Object production_line_id;

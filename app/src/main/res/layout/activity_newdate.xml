@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <SearchView
+        android:layout_marginTop="5dp"
+        android:id="@+id/search_newdate"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:focusable="false"
+        android:iconifiedByDefault="false"
+        android:queryHint="请输入MO单据号搜索"
+        android:background="@drawable/edit_input_bac"/>
+    <RadioGroup
+        android:id="@+id/parent_radio_dan"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:layout_marginTop="5dp">
+        <RadioButton
+            android:id="@+id/delay_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent"
+            android:text="延误"
+            android:gravity="center" />
+        <RadioButton
+            android:id="@+id/today_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent"
+            android:text="今天"
+            android:gravity="center"
+            android:checked="true" />
+        <RadioButton
+            android:id="@+id/tomorrow_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent"
+            android:text="明天"
+            android:gravity="center" />
+        <RadioButton
+            android:id="@+id/after_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent"
+            android:text="后天"
+            android:gravity="center" />
+        <RadioButton
+            android:id="@+id/all_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent"
+            android:text="所有"
+            android:gravity="center" />
+    </RadioGroup>
+    <RadioGroup
+        android:id="@+id/parent_radio"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/one_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent"
+            android:background="@drawable/blue_white"
+            android:gravity="center" />
+        <RadioButton
+            android:id="@+id/two_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent"
+            android:background="@drawable/blue_white"
+            android:gravity="center"
+            android:checked="true" />
+        <RadioButton
+            android:id="@+id/three_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:background="@drawable/blue_white"
+            android:layout_height="match_parent"
+            android:gravity="center" />
+        <RadioButton
+            android:id="@+id/four_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:background="@drawable/blue_white"
+            android:layout_height="match_parent"
+            android:gravity="center" />
+        <RadioButton
+            android:id="@+id/five_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:background="@drawable/blue_white"
+            android:layout_height="match_parent"
+            android:gravity="center" />
+    </RadioGroup>
+    <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipeToLoad">
+        <tarce.myodoo.uiutil.RecyclerHeaderView
+            android:id="@+id/swipe_refresh_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </tarce.myodoo.uiutil.RecyclerHeaderView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/swipe_target"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
+        <tarce.myodoo.uiutil.RecyclerFooterView
+            android:id="@+id/swipe_load_more_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </tarce.myodoo.uiutil.RecyclerFooterView>
+    </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
+</LinearLayout>

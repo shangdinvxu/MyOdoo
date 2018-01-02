@@ -214,8 +214,8 @@ public class SalesDetailActivity extends BaseActivity {
         for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
             GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids productIds = bundle1.getPack_operation_product_ids().get(i);
             if (productIds.getPack_id() != -1) {
-                Integer qty = productIds.getProduct_id().getQty_available() >= productIds.getProduct_qty() ? productIds.getProduct_qty() : StringUtils.doubleToInt(productIds.getProduct_id().getQty_available());
-                productIds.setQty_done(qty );
+                double qty = productIds.getProduct_id().getQty_available() >= productIds.getProduct_qty() ? productIds.getProduct_qty() : productIds.getProduct_id().getQty_available();
+                productIds.setQty_done(qty);
                 salesDetailAdapter.notifyDataSetChanged();
             }
         }
@@ -229,9 +229,10 @@ public class SalesDetailActivity extends BaseActivity {
                         (GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids) adapter.getData().get(position);
                 if (obj.getPack_id() == -1) return;
                 final EditText editText = new EditText(SalesDetailActivity.this);
-                final Integer qty_available = StringUtils.doubleToInt(obj.getProduct_id().getQty_available());
-                Integer product_qty = obj.getProduct_qty();
-                Integer qty = qty_available >= product_qty ? product_qty : qty_available;
+//                final Integer qty_available = StringUtils.doubleToInt(obj.getProduct_id().getQty_available());
+//                Integer product_qty = obj.getProduct_qty();
+//                Integer qty = qty_available >= product_qty ? product_qty : qty_available;
+                final double qty = obj.getProduct_id().getQty_available();
                 editText.setText(qty + "");
                 //editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText.setSelection(editText.getText().length());
@@ -241,19 +242,17 @@ public class SalesDetailActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 double keyong;
-                                if (bundle1.getState().equals("done") || bundle1.getState().equals("cancel")) {
-                                   // keyong = StringUtils.doubleToInt(obj.getProduct_id().getQty_available())-StringUtils.doubleToInt(obj.getReserved_qty());
-                                    keyong = obj.getProduct_id().getQty_available();
-                                } else {
-                                   // keyong = StringUtils.doubleToInt(obj.getProduct_id().getQty_available())-StringUtils.doubleToInt(obj.getReserved_qty())-obj.getQty_done();
-                                    keyong = obj.getProduct_id().getQty_available()-obj.getQty_done();
-                                }
-                                if (Double.parseDouble(editText.getText().toString()) > keyong)     {
+//                                if (bundle1.getState().equals("done") || bundle1.getState().equals("cancel")) {
+//                                    keyong = obj.getProduct_id().getQty_available();
+//                                } else {
+//                                    keyong = obj.getProduct_id().getQty_available()-obj.getQty_done();
+//                                }
+//                                if (Double.parseDouble(editText.getText().toString()) > keyong)     {
+//                                    Toast.makeText(SalesDetailActivity.this, "库存不足", Toast.LENGTH_SHORT).show();
+//                                    return;
+//                                }
+                                if (Double.parseDouble(editText.getText().toString())>qty)     {
                                     Toast.makeText(SalesDetailActivity.this, "库存不足", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                                if (Double.parseDouble(editText.getText().toString())>StringUtils.doubleToInt(obj.getOrigin_qty())){
-                                    Toast.makeText(SalesDetailActivity.this, "不能超过初始需求", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                                 obj.setQty_done(Double.parseDouble(editText.getText().toString()));
@@ -314,7 +313,7 @@ public class SalesDetailActivity extends BaseActivity {
         for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
             GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids productIds = bundle1.getPack_operation_product_ids().get(i);
             if (productIds.getPack_id() != -1) {
-                Integer qty = productIds.getProduct_id().getQty_available() >= productIds.getProduct_qty() ? productIds.getProduct_qty() : StringUtils.doubleToInt(productIds.getProduct_id().getQty_available());
+                double qty = productIds.getProduct_id().getQty_available() >= productIds.getProduct_qty() ? productIds.getProduct_qty() : productIds.getProduct_id().getQty_available();
                 String name = productIds.getProduct_id().getName();
                 if (name.length() > 17) {
                     printer.print(name.substring(0, 15) + "       " +
@@ -581,115 +580,115 @@ public class SalesDetailActivity extends BaseActivity {
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // TODO Auto-generated method stub
-        if (item.getItemId() == android.R.id.home) {
-            boolean isSave = false;
-            for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
-                if (bundle1.getPack_operation_product_ids().get(i).getQty_done() > 0) {
-                    isSave = true;
-                    break;
-                } else {
-                    isSave = false;
-                }
-            }
-            /**
-             * 情况一：点进来是开始备货状态，什么都没操作，点击返回按钮默认取消保留
-             * 情况二：点击了开始备货，什么也没操作，全是0，点击返回默认取消保留
-             * 情况三：点击了开始备货，并且至少备了一个，则进行选择是否保留
-             * 情况一和二合并
-             * */
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // TODO Auto-generated method stub
+//        if (item.getItemId() == android.R.id.home) {
+//            boolean isSave = false;
+//            for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
+//                if (bundle1.getPack_operation_product_ids().get(i).getQty_done() > 0) {
+//                    isSave = true;
+//                    break;
+//                } else {
+//                    isSave = false;
+//                }
+//            }
+//            /**
+//             * 情况一：点进来是开始备货状态，什么都没操作，点击返回按钮默认取消保留
+//             * 情况二：点击了开始备货，什么也没操作，全是0，点击返回默认取消保留
+//             * 情况三：点击了开始备货，并且至少备了一个，则进行选择是否保留
+//             * 情况一和二合并
+//             * */
+//
+//            if ("change".equals(model_state) && isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
+//                new DialogIsSave(SalesDetailActivity.this)
+//                        .setSave(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                saveState();
+//                            }
+//                        }).setNotSave(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        cacelReserver();
+//                    }
+//                }).setCancel().show();
+//            } else if (isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
+//                new DialogIsSave(SalesDetailActivity.this)
+//                        .setSave(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                saveState();
+//                            }
+//                        }).setNotSave(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        cacelReserver();
+//                    }
+//                }).setCancel().show();
+//            } else {
+//                cacelReserver();
+//            }
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
-            if ("change".equals(model_state) && isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
-                new DialogIsSave(SalesDetailActivity.this)
-                        .setSave(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                saveState();
-                            }
-                        }).setNotSave(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        cacelReserver();
-                    }
-                }).setCancel().show();
-            } else if (isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
-                new DialogIsSave(SalesDetailActivity.this)
-                        .setSave(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                saveState();
-                            }
-                        }).setNotSave(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        cacelReserver();
-                    }
-                }).setCancel().show();
-            } else {
-                cacelReserver();
-            }
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * 返回按钮
-     */
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) { //监控/拦截/屏蔽返回键
-            boolean isSave = false;
-            for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
-                if (bundle1.getPack_operation_product_ids().get(i).getQty_done() > 0) {
-                    isSave = true;
-                    break;
-                } else {
-                    isSave = false;
-                }
-            }
-            /**
-             * 情况一：点进来是开始备货状态，什么都没操作，点击返回按钮默认取消保留
-             * 情况二：点击了开始备货，什么也没操作，全是0，点击返回默认取消保留
-             * 情况三：点击了开始备货，并且至少备了一个，则进行选择是否保留
-             * 情况一和二合并
-             * */
-
-            if ("change".equals(model_state) && isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
-                new DialogIsSave(SalesDetailActivity.this)
-                        .setSave(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                saveState();
-                            }
-                        }).setNotSave(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        cacelReserver();
-                    }
-                }).setCancel().show();
-            } else if (isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
-                new DialogIsSave(SalesDetailActivity.this)
-                        .setSave(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                saveState();
-                            }
-                        }).setNotSave(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        cacelReserver();
-                    }
-                }).setCancel().show();
-            } else {
-                cacelReserver();
-            }
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
+//    /**
+//     * 返回按钮
+//     */
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode == KeyEvent.KEYCODE_BACK) { //监控/拦截/屏蔽返回键
+//            boolean isSave = false;
+//            for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
+//                if (bundle1.getPack_operation_product_ids().get(i).getQty_done() > 0) {
+//                    isSave = true;
+//                    break;
+//                } else {
+//                    isSave = false;
+//                }
+//            }
+//            /**
+//             * 情况一：点进来是开始备货状态，什么都没操作，点击返回按钮默认取消保留
+//             * 情况二：点击了开始备货，什么也没操作，全是0，点击返回默认取消保留
+//             * 情况三：点击了开始备货，并且至少备了一个，则进行选择是否保留
+//             * 情况一和二合并
+//             * */
+//
+//            if ("change".equals(model_state) && isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
+//                new DialogIsSave(SalesDetailActivity.this)
+//                        .setSave(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                saveState();
+//                            }
+//                        }).setNotSave(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        cacelReserver();
+//                    }
+//                }).setCancel().show();
+//            } else if (isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
+//                new DialogIsSave(SalesDetailActivity.this)
+//                        .setSave(new View.OnClickListener() {
+//                            @Override
+//                            public void onClick(View v) {
+//                                saveState();
+//                            }
+//                        }).setNotSave(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        cacelReserver();
+//                    }
+//                }).setCancel().show();
+//            } else {
+//                cacelReserver();
+//            }
+//            return true;
+//        }
+//        return super.onKeyDown(keyCode, event);
+//    }
 
     /**
      * 点击返回按钮时  取消保留
@@ -847,8 +846,8 @@ public class SalesDetailActivity extends BaseActivity {
                                 final GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids obj = data.get(index);
                                 final EditText editText = new EditText(SalesDetailActivity.this);
                                 final Integer qty_available = StringUtils.doubleToInt(obj.getProduct_id().getQty_available());
-                                Integer product_qty = obj.getProduct_qty();
-                                Integer qty = qty_available >= product_qty ? product_qty : qty_available;
+                                double product_qty = obj.getProduct_qty();
+                                double qty = qty_available >= product_qty ? product_qty : qty_available;
                                 editText.setText(qty + "");
                                 editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                                 AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(SalesDetailActivity.this, "输入" + obj.getProduct_id().getName() + "完成数量");

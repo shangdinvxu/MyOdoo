@@ -18,6 +18,7 @@ import tarce.model.FindProductByConditionResponse;
 import tarce.model.GetGroupByListresponse;
 import tarce.model.GetProcessBean;
 import tarce.model.GetSaleResponse;
+import tarce.model.LineBean;
 import tarce.model.LoadActionBean;
 import tarce.model.MaterialRelationBean;
 import tarce.model.OutgoingStockpickingBean;
@@ -25,7 +26,11 @@ import tarce.model.ProductLinesBean;
 import tarce.model.ProjectBean;
 import tarce.model.ProjectDetailBean;
 import tarce.model.RequestBindUserBean;
+import tarce.model.ScanBean;
 import tarce.model.SearchSupplierResponse;
+import tarce.model.SoOriginBean;
+import tarce.model.SoQcBean;
+import tarce.model.StateCountBean;
 import tarce.model.inventory.AreaMessageBean;
 import tarce.model.inventory.AutoAddworkBean;
 import tarce.model.inventory.BomFramworkBean;
@@ -77,6 +82,37 @@ import tarce.model.inventory.WorkingWorkerBean;
 
 public interface InventoryApi {
     /**
+     * 扫描二维码入库
+     * */
+    @POST("action_transfer_from_sub")
+    Call<ScanBean> actionTransfer(@Body HashMap hashMap);
+    /**
+     * 扫描二维码之后
+     * */
+    @POST("view_feedback_detail")
+    Call<ScanBean> viewFeedbackDetail(@Body HashMap hashMap);
+    /**
+     * 获取生产状态的树木
+     * */
+    @POST("get_count_mrp_production")
+    Call<StateCountBean> getCountMrpPro(@Body HashMap hashMap);
+
+    /**
+     * 获取品检单数量
+     * */
+    @POST("get_count_qc_feedback")
+    Call<StateCountBean> getCountQc(@Body HashMap hashMap);
+    /**
+     * get_so_mrp_production
+     * 得到mo源
+     * */
+    @POST("get_so_mrp_production")
+    Call<SoOriginBean> getSoMrp(@Body HashMap hashMap);
+    /**
+     * get_mrp_production_new
+     * 获取生产单列表new
+     * */
+    /**
      * test
      * */
     @POST("get_blog_list")
@@ -96,6 +132,11 @@ public interface InventoryApi {
      * */
     @POST("get_secondary_mos")
     Call<PickingDetailBean> getSecondMos(@Body HashMap hashMap);
+    /**
+     * 新的二次生产
+     * */
+    @POST("get_new_secondary_mos")
+    Call<PickingDetailBean> getNewSecondMos(@Body HashMap hashMap);
     /**
      * 获取物料关系
      * */
@@ -357,6 +398,11 @@ public interface InventoryApi {
     Call<PickingDetailBean> getPicking(@Body HashMap hashMap);
 
     /**
+     * 获取产线
+     * */
+    @POST("get_new_production_lines")
+    Call<LineBean> getNewProductLines(@Body HashMap hashMap);
+    /**
      * 产线分类
      * */
     @POST("get_production_lines")
@@ -377,7 +423,13 @@ public interface InventoryApi {
      * 生产备料-》延误-》详情
      * */
     @POST("get_recent_production_order")
-    Call<MaterialDetailBean> getRecentOr(@Body HashMap hashMap);
+    Call<PickingDetailBean> getRecentOr(@Body HashMap hashMap);
+
+    /**
+     * 新的生产顺序排序
+     * */
+    @POST("get_new_mrp_production")
+    Call<PickingDetailBean> getNewRecentOr(@Body HashMap hashMap);
 
     /**
      * 点击开始备料-》
@@ -493,6 +545,11 @@ public interface InventoryApi {
     @POST("get_qc_feedback")
     Call<QcFeedbaskBean> getQcfb(@Body HashMap hashMap);
 
+//    @POST("get_new_qc_feedback")
+//    Call<QcFeedbaskBean> getNewQcfb(@Body HashMap hashMap);
+
+    @POST("get_new_qc_feedback")
+    Call<SoQcBean> getNewQcfb(@Body HashMap hashMap);
     /**
      * 开始品检
      * */
@@ -548,6 +605,11 @@ public interface InventoryApi {
     Call<PickingDetailBean> reworkIng(@Body HashMap hashMap);
 
     /**
+     * 返工中新接口
+     * */
+    @POST("get_new_reworking_production")
+    Call<PickingDetailBean> newReworkIng(@Body HashMap hashMap);
+    /**
      * bom结构
      * */
     @POST("get_bom_detail")
@@ -568,8 +630,6 @@ public interface InventoryApi {
     @POST("get_progress_mo_group_by_process")
     Call<ProductProcessBean> processGroup(@Body HashMap hashMap);
 
-    @POST("get_mrp_production")
-    Call<Object> mrpProduction(@Body HashMap hashMap);
 
     /**
      * 出库信息查询

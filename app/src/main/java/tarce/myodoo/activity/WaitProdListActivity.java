@@ -146,7 +146,7 @@ public class WaitProdListActivity extends BaseActivity {
             @Override
             public void onResponse(Call<PickingDetailBean> call, Response<PickingDetailBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body() == null) return;
                 if (response.body().getError() != null) {
                     new TipDialog(WaitProdListActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
                             .show();

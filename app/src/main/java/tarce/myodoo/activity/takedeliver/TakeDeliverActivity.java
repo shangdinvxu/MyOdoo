@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -135,8 +136,7 @@ public class TakeDeliverActivity extends BaseActivity {
                     if (res_data != null && res_data.size() > 0) {
                         Intent intent = new Intent(TakeDeliverActivity.this, TakeDeliveListActivity.class);
                         intent.putExtra("intent", (Serializable) res_data);
-                        intent.putExtra("from", "no");
-                        intent.putExtra("notneed", "yes");
+                        intent.putExtra("note", true);
                         startActivity(intent);
                     }
                 }
@@ -144,6 +144,7 @@ public class TakeDeliverActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<TakeDelListBean> call, Throwable t) {
+                Log.e("zws", t.toString());
                 dismissDefultProgressDialog();
             }
         });
@@ -430,6 +431,7 @@ public class TakeDeliverActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<SearchSupplierResponse> call, Throwable t) {
+                Log.e("zws", t.toString());
                 ToastUtils.showCommonToast(TakeDeliverActivity.this, t.toString());
             }
         });

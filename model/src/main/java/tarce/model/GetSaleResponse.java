@@ -123,7 +123,7 @@ public class GetSaleResponse implements Serializable{
                     }
 
                 }
-                private	Integer	product_qty;	/*900*/
+                private	double	product_qty;	/*900*/
                 private	TProduct_id	product_id;	/*TProduct_id*/
                 private	Integer	pack_id;	/*2788*/
                 private	double	qty_done;/*900*/
@@ -147,10 +147,10 @@ public class GetSaleResponse implements Serializable{
 
                 private int origin_qty;
 
-                public void setProduct_qty(Integer value){
+                public void setProduct_qty(double value){
                     this.product_qty = value;
                 }
-                public Integer getProduct_qty(){
+                public double getProduct_qty(){
                     return this.product_qty;
                 }
 

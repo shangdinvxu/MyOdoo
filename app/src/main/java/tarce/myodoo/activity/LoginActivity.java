@@ -344,7 +344,7 @@ public class LoginActivity extends Activity {
 
     @OnClick(R.id.to_login)
     void toLogin(View view) {
-        String chooseDB = database.getText().toString();
+        final String chooseDB = database.getText().toString();
         if (chooseDB.equals("选择数据库")) {
             ToastUtils.showCommonToast(LoginActivity.this, "请选择数据库");
             return;
@@ -380,6 +380,7 @@ public class LoginActivity extends Activity {
                     UserManager.getSingleton().setUserInfoBean(response.body());//单例存储
                     final int user_id = response.body().getResult().getRes_data().getUser_id();
                     MyApplication.userID = user_id;
+                    SharePreferenceUtils.putString("db", chooseDB, LoginActivity.this);
                     SharePreferenceUtils.putInt("user_id", user_id, LoginActivity.this);
                     SharePreferenceUtils.putString("email", emailString, LoginActivity.this);
                     SharePreferenceUtils.putString("url", url, LoginActivity.this);

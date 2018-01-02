@@ -7,12 +7,12 @@ import com.chad.library.adapter.base.entity.SectionEntity;
  * 为了显示头部
  */
 
-public class MainMdBean extends SectionEntity<MaterialDetailBean.ResultBean.ResDataBean> {
+public class MainMdBean extends SectionEntity<PickingDetailBean.ResultBean.ResDataBean> {
     public MainMdBean(boolean isHeader, String header) {
         super(isHeader, header);
     }
 
-    public MainMdBean(MaterialDetailBean.ResultBean.ResDataBean resDataBean) {
+    public MainMdBean(PickingDetailBean.ResultBean.ResDataBean resDataBean) {
         super(resDataBean);
     }
 }

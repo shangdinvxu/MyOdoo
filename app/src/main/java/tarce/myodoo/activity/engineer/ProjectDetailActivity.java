@@ -75,6 +75,7 @@ import tarce.support.TimeUtils;
 import tarce.support.ToastUtils;
 
 import static tarce.api.RetrofitClient.Url;
+import static tarce.myodoo.R.string.num;
 
 /**
  * Created by zouwansheng on 2017/9/6.
@@ -193,7 +194,6 @@ public class ProjectDetailActivity extends BaseActivity {
                             .show();
                     return;
                 }
-                if (response.body().getResult().getRes_data() == null) return;
                 if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                     res_data = response.body().getResult().getRes_data();
                     refreshView();
@@ -293,6 +293,11 @@ public class ProjectDetailActivity extends BaseActivity {
                                             public void onResponse(Call<ChangeProjectBean> call, Response<ChangeProjectBean> response) {
                                                 dismissDefultProgressDialog();
                                                 if (response.body() == null)return;
+                                                if (response.body().getError()!=null){
+                                                    new TipDialog(ProjectDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                                            .show();
+                                                    return;
+                                                }
                                                 if (response.body().getResult()!=null && response.body().getResult().getRes_code() == 1){
                                                     ToastUtils.showCommonToast(ProjectDetailActivity.this, "上传成功");
                                                     printTra();
@@ -320,9 +325,11 @@ public class ProjectDetailActivity extends BaseActivity {
                 if (position > adapter.getData().size() - 1) return;
                 final EditText editText = new EditText(ProjectDetailActivity.this);
                 final Integer qty_available = StringUtils.doubleToInt(detailAdapter.getData().get(position).getProduct_qty());
-                final int keyong1 = StringUtils.doubleToInt(detailAdapter.getData().get(position).getQuantity_available());
-                final int num = keyong1 > qty_available?qty_available:keyong1;//可用数量和需求数量比较   谁小默认显示谁
-                editText.setText(num + "");
+//                final int keyong1 = StringUtils.doubleToInt(detailAdapter.getData().get(position).getQuantity_available());
+//                final int num = keyong1 > qty_available?qty_available:keyong1;//可用数量和需求数量比较   谁小默认显示谁
+                // TODO: 2017/12/25 改为小于库存数量
+                final double qty_product = detailAdapter.getData().get(position).getQty_product();
+                editText.setText(qty_available + "");
              //   editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText.setSelection(editText.getText().length());
                 AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(ProjectDetailActivity.this, "输入" + detailAdapter.getData().get(position).getName() + "备料数量");
@@ -332,8 +339,8 @@ public class ProjectDetailActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                if (Double.parseDouble(editText.getText().toString()) > num) {
-                                    Toast.makeText(ProjectDetailActivity.this, "可用数量不足或超过需求数量，请查看", Toast.LENGTH_SHORT).show();
+                                if (Double.parseDouble(editText.getText().toString()) > qty_product) {
+                                    Toast.makeText(ProjectDetailActivity.this, "超过了库存数量，请查看", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                                 numGet = Double.parseDouble(editText.getText().toString());

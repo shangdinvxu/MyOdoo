@@ -21,8 +21,18 @@
             android:textColor="@color/white"
             android:textSize="13sp" />
         <TextView
+            android:id="@+id/tv_print"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bac_tv_order"
+            android:text="打印"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="15dp"
+            android:gravity="center"
+            android:textColor="@color/black"/>
+        <TextView
             android:id="@+id/tv_look_bom"
-            android:layout_width="200dp"
+            android:layout_width="100dp"
             android:layout_height="match_parent"
             android:background="@color/height_yellow"
             android:text="查看BOM结构"

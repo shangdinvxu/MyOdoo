@@ -57,6 +57,7 @@ import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
+import tarce.support.SharePreferenceUtils;
 import tarce.support.TimeUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
@@ -157,6 +158,7 @@ public class ProductingActivity extends ToolBarActivity {
     private int production_line_id;
     private LoginResponse userInfoBean;
     private int allow_produced_qty_rate;
+    private int origin_sale_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -174,6 +176,7 @@ public class ProductingActivity extends ToolBarActivity {
         process_id = intent.getIntExtra("process_id", 1);
         name_activity = intent.getStringExtra("name_activity");
         state_activity = intent.getStringExtra("state_activity");
+        origin_sale_id = intent.getIntExtra("origin_sale_id", 0);
         if (state.equals("progress")) {
             production_line_id = intent.getIntExtra("production_line_id", 100);
         }
@@ -505,6 +508,7 @@ public class ProductingActivity extends ToolBarActivity {
             intent3.putExtra("recycler_data", resDataBean);
             intent3.putExtra("order_id", order_id);
             intent3.putExtra("from", "anytimeProduct");
+            intent3.putExtra("origin_sale_id", origin_sale_id);
             startActivity(intent3);
         } catch (Exception e) {
             ToastUtils.showCommonToast(ProductingActivity.this, e.toString());
@@ -670,9 +674,10 @@ public class ProductingActivity extends ToolBarActivity {
                                                     Intent intent = new Intent(ProductingActivity.this, PhotoAreaActivity.class);
                                                     intent.putExtra("type", state);
                                                     intent.putExtra("order_id", order_id);
-                                                    intent.putExtra("delay_state", delay_state);
-                                                    intent.putExtra("limit", limit);
+//                                                    intent.putExtra("delay_state", delay_state);
+//                                                    intent.putExtra("limit", limit);
                                                     intent.putExtra("process_id", process_id);
+                                                    intent.putExtra("origin_sale_id", origin_sale_id);
                                                     intent.putExtra("change", true);
                                                     intent.putExtra("bean", response.body().getResult().getRes_data());
                                                     if (state.equals("progress")) {

@@ -84,7 +84,12 @@ public class GetProcessBean {
 
 
         public static class ListSubBean{
-           public int getProcess_id() {
+            public ListSubBean(int process_id, String name) {
+                this.process_id = process_id;
+                this.name = name;
+            }
+
+            public int getProcess_id() {
                return process_id;
            }
 

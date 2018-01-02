@@ -153,10 +153,10 @@ public class MainActivity extends AppCompatActivity {
         myfragment = new Fragment[4];
         warehouseFragment = new WarehouseFragment();
         myfragment[0] = warehouseFragment;
-        produceFragment = new ProduceFragment();
-        myfragment[1] = produceFragment;
-//        newProductFragment = new NewProductFragment();
-//        myfragment[1] = newProductFragment;
+//        produceFragment = new ProduceFragment();
+//        myfragment[1] = produceFragment;
+        newProductFragment = new NewProductFragment();
+        myfragment[1] = newProductFragment;
         inspectionFragment = new InspectionFragment();
         myfragment[2] = inspectionFragment;
         meFragment = new MeFragment();

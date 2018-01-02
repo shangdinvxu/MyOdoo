@@ -96,7 +96,6 @@ public class ProjectDetailBean {
              * picking_cause : asdfas
              * delivery_date : 2017-09-27
              */
-
             private String create_uid;
             private Object remark;
             private String create_date;
@@ -173,6 +172,15 @@ public class ProjectDetailBean {
                 private double quantity_done;
                 private int id;
                 private double reserve;
+                private double qty_product;
+
+                public double getQty_product() {
+                    return qty_product;
+                }
+
+                public void setQty_product(double qty_product) {
+                    this.qty_product = qty_product;
+                }
 
                 public String getName() {
                     return name;

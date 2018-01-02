@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.uuzuche.lib_zxing.activity.CaptureActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import tarce.myodoo.activity.ConfirmPurchaseActivity;
 import tarce.myodoo.activity.MainActivity;
 import tarce.myodoo.activity.engineer.EngineerActivity;
 import tarce.myodoo.activity.engineer.ProjectActivity;
+import tarce.myodoo.activity.inbuy.ScancodeBuyActivity;
 import tarce.myodoo.activity.incentroy.InventroyActivity;
 import tarce.myodoo.activity.inquiriesstock.StockListActivity;
 import tarce.myodoo.activity.inquiriesstock.StockMoveListActivity;
@@ -72,6 +74,7 @@ public class WarehouseFragment extends Fragment {
         list.add(new MainItemBean(true, ""));
         list.add(new MainItemBean(new MenuBean("收货", 0)));
         list.add(new MainItemBean(new MenuBean("采购确认", 0)));
+        list.add(new MainItemBean(new MenuBean("内部采购入库", 0)));
         list.add(new MainItemBean(new MenuBean("采购退货", 0)));
         list.add(new MainItemBean(true, ""));
         list.add(new MainItemBean(new MenuBean("销售出货", 0)));
@@ -119,7 +122,7 @@ public class WarehouseFragment extends Fragment {
         sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (position==0 || position==4 || position==7 || position==10 || position==12){
+                if (position==0 || position==5 || position==8 || position==11 || position==13){
                     return;
                 }
                 String name = list.get(position).t.getName();
@@ -155,6 +158,10 @@ public class WarehouseFragment extends Fragment {
                     case "库存查询":
                         Intent intent3 = new Intent(getActivity(), StockListActivity.class);
                         startActivity(intent3);
+                        break;
+                    case "内部采购入库":
+                        Intent intent4 = new Intent(getActivity(), ScancodeBuyActivity.class);
+                        startActivity(intent4);
                         break;
                 }
             }

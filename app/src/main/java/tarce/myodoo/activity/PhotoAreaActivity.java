@@ -61,6 +61,7 @@ import tarce.model.inventory.FinishPrepareMaBean;
 import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.UpdateMessageBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.newproduct.NewDateActivity;
 import tarce.myodoo.adapter.processproduct.AreaMessageAdapter;
 import tarce.myodoo.uiutil.ImageUtil;
 import tarce.myodoo.uiutil.TipDialog;
@@ -106,8 +107,8 @@ public class PhotoAreaActivity extends ToolBarActivity {
     private String imgName;//后缀名
     private String type;
     private int order_id;
-    private int limit;
-    private String delay_state;
+  //  private int limit;
+ //   private String delay_state;
     private int process_id;
     private boolean change;
     private OrderDetailBean.ResultBean.ResDataBean resDataBean;
@@ -138,6 +139,9 @@ public class PhotoAreaActivity extends ToolBarActivity {
         }
     };
     private int production_line_id;
+    private int line_id;
+    private String state;
+    private int origin_sale_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,10 +152,13 @@ public class PhotoAreaActivity extends ToolBarActivity {
         Intent intent = getIntent();
         type = intent.getStringExtra("type");
         order_id = intent.getIntExtra("order_id", 1);
-        limit = intent.getIntExtra("limit", 1);
-        delay_state = intent.getStringExtra("delay_state");
+        line_id = intent.getIntExtra("line_id", -1000);
+        state = intent.getStringExtra("state");
+        //   limit = intent.getIntExtra("limit", 1);
+     //   delay_state = intent.getStringExtra("delay_state");
         process_id = intent.getIntExtra("process_id", 1);
         change = intent.getBooleanExtra("change", true);
+        origin_sale_id = intent.getIntExtra("origin_sale_id", 0);
         resDataBean = (OrderDetailBean.ResultBean.ResDataBean) intent.getSerializableExtra("bean");
         if (change) {
             tvFinishOrder.setText("提交产品位置信息");
@@ -409,10 +416,13 @@ public class PhotoAreaActivity extends ToolBarActivity {
                                     message.what = 1;
                                     handler.sendMessage(message);
 
-                                    Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
-                                    intent.putExtra("limit", limit);
+                                    Intent intent = new Intent(PhotoAreaActivity.this, NewDateActivity.class);
+                                 //   Intent intent = new Intent(PhotoAreaActivity.this, MaterialDetailActivity.class);
+                            //        intent.putExtra("limit", limit);
                                     intent.putExtra("process_id", process_id);
-                                    intent.putExtra("state", delay_state);
+                                    intent.putExtra("state", state);
+                                    intent.putExtra("line_id", line_id);
+                                    intent.putExtra("origin_sale_id", origin_sale_id);
                                     startActivity(intent);
                                     finish();
                                 }

@@ -55,6 +55,7 @@ import tarce.myodoo.uiutil.NFCdialog;
 import tarce.myodoo.uiutil.TipDialog;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
+import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
 
 import static tarce.api.RetrofitClient.Url;
@@ -168,6 +169,7 @@ public class BuGetLiaoActivity extends BaseActivity {
      * 在打卡成功之后改变试图
      * */
     private void changeShowAfterNfc(){
+        SharePreferenceUtils.putInt("httpKey", 1024, BuGetLiaoActivity.this);
         showDefultProgressDialog();
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("order_id", order_id);
@@ -181,6 +183,7 @@ public class BuGetLiaoActivity extends BaseActivity {
         objectCall.enqueue(new Callback<OrderDetailBean>() {
             @Override
             public void onResponse(Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
+                SharePreferenceUtils.putInt("httpKey", 1000, BuGetLiaoActivity.this);
                 dismissDefultProgressDialog();
                 if (response.body() == null)
                     return;
@@ -228,6 +231,7 @@ public class BuGetLiaoActivity extends BaseActivity {
                         }
                     });
                 }else if (response.body().getResult().getRes_code() == -1){
+                    SharePreferenceUtils.putInt("httpKey", 1000, BuGetLiaoActivity.this);
                     new TipDialog(BuGetLiaoActivity.this, R.style.MyDialogStyle, response.body().getResult().getRes_data().getError())
                             .show();
                 }
@@ -236,7 +240,8 @@ public class BuGetLiaoActivity extends BaseActivity {
             @Override
             public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
-                ToastUtils.showCommonToast(BuGetLiaoActivity.this, t.toString());
+                new TipDialog(BuGetLiaoActivity.this, R.style.MyDialogStyle, t.toString()+"\n返回重试")
+                        .show();
             }
         });
     }

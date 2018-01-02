@@ -27,6 +27,7 @@ import tarce.myodoo.activity.salesout.SalesDetailActivity;
 import tarce.myodoo.adapter.product.PickingDetailAdapter;
 import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
+import tarce.support.SharePreferenceUtils;
 
 /**
  * Created by zouwansheng on 2017/10/20.
@@ -38,6 +39,10 @@ public class AgainProductActivity extends BaseActivity {
     private InventoryApi inventoryApi;
     private PickingDetailAdapter pickAdapter;
     private List<PickingDetailBean.ResultBean.ResDataBean> res_data;
+    private int production_line_id;
+    private String state;
+    private int process_id;
+    private int origin_sale_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +51,11 @@ public class AgainProductActivity extends BaseActivity {
         ButterKnife.inject(this);
 
         inventoryApi = RetrofitClient.getInstance(AgainProductActivity.this).create(InventoryApi.class);
+        Intent intent = getIntent();
+        production_line_id = intent.getIntExtra("production_line_id", -1000);
+        state = intent.getStringExtra("state");
+        process_id = intent.getIntExtra("process_id", 1000);
+        origin_sale_id = intent.getIntExtra("origin_sale_id", 0);
         setRecyclerview(recyclerLine);
         showDefultProgressDialog();
         initData();
@@ -71,7 +81,24 @@ public class AgainProductActivity extends BaseActivity {
     }
 
     private void initData() {
-        Call<PickingDetailBean> secondMos = inventoryApi.getSecondMos(new HashMap());
+        HashMap<Object, Object> hashMap = new HashMap<>();
+        hashMap.put("state", state);
+        int partner_id = SharePreferenceUtils.getInt("partner_id", 1000, AgainProductActivity.this);
+        hashMap.put("partner_id", partner_id);
+        if (process_id != -1000) {
+            hashMap.put("process_id", process_id);
+        }
+        if (production_line_id == -1000){
+            hashMap.put("production_line_id", false);
+        }else {
+            hashMap.put("production_line_id", production_line_id);
+        }
+        if (origin_sale_id!=0){
+            hashMap.put("origin_sale_id", origin_sale_id);
+        }else {
+            hashMap.put("origin_sale_id", false);
+        }
+        Call<PickingDetailBean> secondMos = inventoryApi.getNewSecondMos(hashMap);
         secondMos.enqueue(new Callback<PickingDetailBean>() {
             @Override
             public void onResponse(Call<PickingDetailBean> call, Response<PickingDetailBean> response) {
@@ -84,9 +111,6 @@ public class AgainProductActivity extends BaseActivity {
                 }
                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==1){
                     res_data = response.body().getResult().getRes_data();
-                    for (int i = 0; i < res_data.size(); i++) {
-                        res_data.get(i).setAgainProduct(true);
-                    }
                     pickAdapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, res_data);
                     recyclerLine.setAdapter(pickAdapter);
                     clickAdapterItem();
@@ -114,14 +138,17 @@ public class AgainProductActivity extends BaseActivity {
                     intent.putExtra("name_activity", "生产中");
                     intent.putExtra("state_activity", res_data.get(position).getState());
                     intent.putExtra("production_line_id", -1000);
+                    intent.putExtra("process_id", process_id);
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(AgainProductActivity.this, OrderDetailActivity.class);
                     intent.putExtra("order_name", res_data.get(position).getDisplay_name());
                     intent.putExtra("order_id", order_id);
                     intent.putExtra("state", res_data.get(position).getState());
-                    // intent.putExtra("name_activity", name_activity);
+                    //intent.putExtra("name_activity", name_activity);
                     intent.putExtra("state_activity", res_data.get(position).getState());
+                    intent.putExtra("production_line_id", -1000);
+                    intent.putExtra("process_id", process_id);
                     startActivity(intent);
                 }
             }

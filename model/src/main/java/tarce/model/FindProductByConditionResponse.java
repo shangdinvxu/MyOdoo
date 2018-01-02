@@ -105,7 +105,7 @@ public class FindProductByConditionResponse {
 
             private String error ;
             private ProductBean product;
-            private int theoretical_qty;
+            private double theoretical_qty;
             private int product_qty;
 
             public ProductBean getProduct() {
@@ -116,11 +116,11 @@ public class FindProductByConditionResponse {
                 this.product = product;
             }
 
-            public int getTheoretical_qty() {
+            public double getTheoretical_qty() {
                 return theoretical_qty;
             }
 
-            public void setTheoretical_qty(int theoretical_qty) {
+            public void setTheoretical_qty(double theoretical_qty) {
                 this.theoretical_qty = theoretical_qty;
             }
 

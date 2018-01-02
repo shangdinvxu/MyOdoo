@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
 import com.aspsine.swipetoloadlayout.OnRefreshListener;
@@ -29,6 +30,7 @@ import tarce.api.api.InventoryApi;
 import tarce.model.inventory.TakeDelListBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
+import tarce.myodoo.activity.salesout.SalesOutActivity;
 import tarce.myodoo.adapter.takedeliver.TakeDelListAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
@@ -73,6 +75,7 @@ public class TakeDeliveListActivity extends BaseActivity {
     private boolean isNull = true;
     private int picking_type_id_2;
     private String query;
+    private boolean note;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +89,14 @@ public class TakeDeliveListActivity extends BaseActivity {
         Intent intent = getIntent();
         from = intent.getStringExtra("from");
         partner_id = intent.getLongExtra("partner_id", 0);
-
+        note = intent.getBooleanExtra("note", false);
+        if (note){
+            List<TakeDelListBean.ResultBean.ResDataBean> intentSerializableExtra = (List<TakeDelListBean.ResultBean.ResDataBean>) intent.getSerializableExtra("intent");
+            listAdapter = new TakeDelListAdapter(R.layout.adapter_takedel_list, intentSerializableExtra);
+            swipeTarget.setAdapter(listAdapter);
+            initListener();
+            return;
+        }
         if (from.equals("no")){
             notneed = intent.getStringExtra("notneed");
             if (notneed.equals("yes")){
@@ -102,7 +112,6 @@ public class TakeDeliveListActivity extends BaseActivity {
         }else {
             picking_type_id = intent.getIntExtra("picking_type_id", 1);
             picking_type_id_2 = intent.getIntExtra("picking_type_id_2", 10000);
-            Log.e("zws", "picking_type_id = "+picking_type_id);
             type_code = intent.getStringExtra("type_code");
             state = intent.getStringExtra("state");
             showDefultProgressDialog();
@@ -213,7 +222,8 @@ public class TakeDeliveListActivity extends BaseActivity {
             @Override
             public void onFailure(Call<TakeDelListBean> call, Throwable t) {
                 dismissDefultProgressDialog();
-                ToastUtils.showCommonToast(TakeDeliveListActivity.this, t.toString());
+                Log.e("zws", "TakeDeliveListActivity"+t.toString());
+                Toast.makeText(TakeDeliveListActivity.this, t.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -232,6 +242,9 @@ public class TakeDeliveListActivity extends BaseActivity {
                 intent.putExtra("from", from);
                 intent.putExtra("notneed", notneed);
                 startActivity(intent);
+                if (note){
+                    finish();
+                }
             }
         });
     }
@@ -268,6 +281,11 @@ public class TakeDeliveListActivity extends BaseActivity {
                             .show();
                     return;
                 }
+                if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==-1){
+                    new TipDialog(TakeDeliveListActivity.this, R.style.MyDialogStyle, "请输入单名")
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     List<TakeDelListBean.ResultBean.ResDataBean> res_data = response.body().getResult().getRes_data();
                     if (res_data != null && res_data.size() > 0) {
@@ -294,8 +312,8 @@ public class TakeDeliveListActivity extends BaseActivity {
             @Override
             public void onFailure(Call<TakeDelListBean> call, Throwable t) {
                 dismissDefultProgressDialog();
-                ToastUtils.showCommonToast(TakeDeliveListActivity.this, t.toString());
-                MyLog.e("TakeDeliverActivity", t.toString());
+                Toast.makeText(TakeDeliveListActivity.this, t.toString(), Toast.LENGTH_LONG).show();
+                Log.e("zws", "TakeDeliveListActivity"+t.toString());
             }
         });
     }

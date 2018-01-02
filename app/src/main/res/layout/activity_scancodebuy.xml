@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/relative_one"
+        android:layout_below="@+id/id_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:background="@color/result_view"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_state_scan"
+            android:layout_width="80dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/bac_tv_order"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="12sp" />
+    </RelativeLayout>
+        <RelativeLayout
+            android:layout_below="@+id/rela_one"
+            android:layout_above="@+id/tv_ruku"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="15dp">
+            <LinearLayout
+                android:id="@+id/lin_name_pro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:text="产品名称:" />
+
+                <TextView
+                    android:id="@+id/name_product_inspecdetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/lin_location"
+                android:layout_below="@+id/lin_name_pro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:text="        位置:" />
+
+                <TextView
+                    android:id="@+id/location_product_inspecdetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_below="@+id/lin_location"
+                android:id="@+id/lin_one"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:text="生产数量:" />
+
+                <TextView
+                    android:id="@+id/num_product_inspecdetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/line_two"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/lin_one"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:text="抽样数量:" />
+
+                <TextView
+                    android:id="@+id/num_sample_inspecdetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linea_three"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/line_two"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="55dp"
+                    android:text="品检率:" />
+
+                <TextView
+                    android:id="@+id/tv_rate_inspecdetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linea_foure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linea_three"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="40dp"
+                    android:text="不良品数量:" />
+
+                <TextView
+                    android:id="@+id/num_rejects_inspecdetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linea_five"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linea_foure"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:text="不良品率:" />
+
+                <TextView
+                    android:id="@+id/num_rate_rejects"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linea_six"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/linea_five"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:text="品检批注:" />
+
+                <EditText
+                    android:id="@+id/comments_of_inspecdetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:background="@drawable/bac_inspect_edit"
+                    android:gravity="top"
+                    android:hint="点击输入品检批注"
+                    android:padding="5dp"
+                    android:focusable="false"/>
+            </LinearLayout>
+        </RelativeLayout>
+    <TextView
+        android:id="@+id/tv_ruku"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/height_yellow"
+        android:text="入库"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textStyle="bold"/>
+</RelativeLayout>

@@ -3,6 +3,7 @@ package tarce.myodoo.activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -68,6 +69,7 @@ import tarce.model.inventory.OrderDetailBean;
 import tarce.model.inventory.UpdateMessageBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.moreproduce.MaterialRelationActivity;
+import tarce.myodoo.activity.newproduct.NewDateActivity;
 import tarce.myodoo.adapter.DoneAdapter;
 import tarce.myodoo.adapter.product.OrderDetailAdapter;
 import tarce.myodoo.device.Const;
@@ -82,6 +84,7 @@ import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
+import tarce.support.SharePreferenceUtils;
 import tarce.support.TimeUtils;
 import tarce.support.ToastUtils;
 import tarce.support.ToolBarActivity;
@@ -193,7 +196,7 @@ public class OrderDetailActivity extends ToolBarActivity {
     private OrderDetailBean.ResultBean.ResDataBean.PrepareMaterialAreaIdBean prepare_material_area_id;
     private String prepare_material_img;
     private String name_activity;
-    private String state_activity;
+  //  private String state_activity;
     private OrderDetailBean.ResultBean result;
     private boolean isShowDialog = true;//用于判断是否已经显示了dialog，为了防止扫描时候的连续弹出
     private CaptureFragment captureFragment;
@@ -242,13 +245,14 @@ public class OrderDetailActivity extends ToolBarActivity {
     private int employee_id;
     private int handlerType;
     private DoneAdapter doneAdapter;
+    private int line_id;
+    private int origin_sale_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_detail);
         ButterKnife.inject(this);
-
         retrofit = new Retrofit.Builder()
                 //设置OKHttpClient
                 .client(new OKHttpFactory(OrderDetailActivity.this).getOkHttpClient())
@@ -263,11 +267,10 @@ public class OrderDetailActivity extends ToolBarActivity {
         order_name = intent.getStringExtra("order_name");
         setTitle(order_name);
         state = intent.getStringExtra("state");
-        limit = intent.getIntExtra("limit", 1);
-        delay_state = intent.getStringExtra("delay_state");
+        line_id = intent.getIntExtra("line_id", -1000);
         process_id = intent.getIntExtra("process_id", 1);
         name_activity = intent.getStringExtra("name_activity");
-        state_activity = intent.getStringExtra("state_activity");
+        origin_sale_id = intent.getIntExtra("origin_sale_id", 0);
         // initFragment();
         stateView(state);
         recyclerOrderDetail.setLayoutManager(new FullyLinearLayoutManager(OrderDetailActivity.this));
@@ -289,6 +292,18 @@ public class OrderDetailActivity extends ToolBarActivity {
         initDevice();
         showDefultProgressDialog();
         getDetail();
+        // TODO: 2017/12/18 判断是否上次请求网络异常
+        int httpKey = SharePreferenceUtils.getInt("httpKey", 1000, OrderDetailActivity.this);
+        if (httpKey == 1024){
+            new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, "在本pos机的上次网络请求操作出现异常或者正在队列中，\n请核实备料数量或等待请求结束")
+                    .setTrue(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            SharePreferenceUtils.putInt("httpKey", 1000, OrderDetailActivity.this);
+                        }
+                    })
+                    .show();
+        }
     }
 
     @Override
@@ -587,6 +602,7 @@ public class OrderDetailActivity extends ToolBarActivity {
      * 扫NFC之后刷新试图
      */
     private void changeShowAfterNfc() {
+        SharePreferenceUtils.putInt("httpKey", 1024, OrderDetailActivity.this);
         showDefultProgressDialog();
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("order_id", order_id);
@@ -600,7 +616,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         objectCall.enqueue(new Callback<OrderDetailBean>() {
             @Override
             public void onResponse(final Call<OrderDetailBean> call, final Response<OrderDetailBean> response) {
-                //threadDismiss(nfCdialog);
+                SharePreferenceUtils.putInt("httpKey", 1000, OrderDetailActivity.this);
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getError() != null) {
@@ -655,13 +671,23 @@ public class OrderDetailActivity extends ToolBarActivity {
                         }
                     });
                 } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1) {
-                    ToastUtils.showCommonToast(OrderDetailActivity.this, response.body().getResult().getRes_data().getError());
+                    SharePreferenceUtils.putInt("httpKey", 1000, OrderDetailActivity.this);
+                    new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, response.body().getResult().getRes_data().getError())
+                            .show();
                 }
             }
 
             @Override
             public void onFailure(Call<OrderDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+                new TipDialog(OrderDetailActivity.this, R.style.MyDialogStyle, t.toString()+"\n返回重试")
+                        .setTrue(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                finish();
+                            }
+                        })
+                        .show();
                 //threadDismiss(nfCdialog);
             }
         });
@@ -997,6 +1023,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                     intent3.putExtra("recycler_data", resDataBean);
                     intent3.putExtra("order_id", order_id);
                     intent3.putExtra("from", "anytime");
+                    intent3.putExtra("process_id", process_id);
+                    intent3.putExtra("line_id", line_id);
+                    intent3.putExtra("origin_sale_id", origin_sale_id);
                     startActivity(intent3);
                 } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
@@ -1008,6 +1037,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                     intent3.putExtra("recycler_data", resDataBean);
                     intent3.putExtra("order_id", order_id);
                     intent3.putExtra("from", "anytime");
+                    intent3.putExtra("process_id", process_id);
+                    intent3.putExtra("line_id", line_id);
+                    intent3.putExtra("origin_sale_id", origin_sale_id);
                     startActivity(intent3);
                 } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
@@ -1155,7 +1187,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                                                             public void onClick(DialogInterface dialog, int which) {
                                                                 Intent intent = new Intent(OrderDetailActivity.this, ProductLlActivity.class);
                                                                 intent.putExtra("name_activity", name_activity);
-                                                                intent.putExtra("state_activity", state_activity);
+                                                                intent.putExtra("state_activity", state);
+                                                                intent.putExtra("process_id", process_id);
+                                                                intent.putExtra("line_id", line_id);
                                                                 startActivity(intent);
                                                                 dialog.dismiss();
                                                             }
@@ -1185,7 +1219,7 @@ public class OrderDetailActivity extends ToolBarActivity {
                 try {
                     Intent intent = new Intent(OrderDetailActivity.this, AddPersonActivity.class);
                     intent.putExtra("order_id", order_id);
-                    intent.putExtra("state_activity", state_activity);
+                    intent.putExtra("state_activity", state);
                     intent.putExtra("name_activity", name_activity);
                     intent.putExtra("close", false);
                     startActivity(intent);
@@ -1200,6 +1234,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                     intent1.putExtra("recycler_data", resDataBean);
                     intent1.putExtra("order_id", order_id);
                     intent1.putExtra("from", "force_cancel_waiting_return");
+                    intent1.putExtra("process_id", process_id);
+                    intent1.putExtra("line_id", line_id);
+                    intent1.putExtra("origin_sale_id", origin_sale_id);
                     startActivity(intent1);
                 } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
@@ -1211,6 +1248,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                     intent1.putExtra("recycler_data", resDataBean);
                     intent1.putExtra("order_id", order_id);
                     intent1.putExtra("from", "write");
+                    intent1.putExtra("process_id", process_id);
+                    intent1.putExtra("line_id", line_id);
+                    intent1.putExtra("origin_sale_id", origin_sale_id);
                     startActivity(intent1);
                 } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
@@ -1222,6 +1262,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                     intent2.putExtra("recycler_data", resDataBean);
                     intent2.putExtra("order_id", order_id);
                     intent2.putExtra("from", "look");
+                    intent2.putExtra("process_id", process_id);
+                    intent2.putExtra("line_id", line_id);
+                    intent2.putExtra("origin_sale_id", origin_sale_id);
                     startActivity(intent2);
                 } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
@@ -1233,6 +1276,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                     intent2.putExtra("recycler_data", resDataBean);
                     intent2.putExtra("order_id", order_id);
                     intent2.putExtra("from", "force_cancel_waiting_warehouse_inspection");
+                    intent2.putExtra("process_id", process_id);
+                    intent2.putExtra("line_id", line_id);
+                    intent2.putExtra("origin_sale_id", origin_sale_id);
                     startActivity(intent2);
                 } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
@@ -1244,6 +1290,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                     intent3.putExtra("recycler_data", resDataBean);
                     intent3.putExtra("order_id", order_id);
                     intent3.putExtra("from", "check");
+                    intent3.putExtra("process_id", process_id);
+                    intent3.putExtra("line_id", line_id);
+                    intent3.putExtra("origin_sale_id", origin_sale_id);
                     startActivity(intent3);
                 } catch (Exception e) {
                     ToastUtils.showCommonToast(OrderDetailActivity.this, e.toString());
@@ -1375,10 +1424,13 @@ public class OrderDetailActivity extends ToolBarActivity {
                                             dismissDefultProgressDialog();
                                             if (response.body() == null) return;
                                             if (response.body().getResult().getRes_code() == 1) {
-                                                Intent intent = new Intent(OrderDetailActivity.this, MaterialDetailActivity.class);
-                                                intent.putExtra("limit", limit);
+                                                Intent intent = new Intent(OrderDetailActivity.this, NewDateActivity.class);
+                                              //  Intent intent = new Intent(OrderDetailActivity.this, MaterialDetailActivity.class);
+                                            //    intent.putExtra("limit", limit);
                                                 intent.putExtra("process_id", process_id);
-                                                intent.putExtra("state", delay_state);
+                                                intent.putExtra("state", state);
+                                                intent.putExtra("line_id", line_id);
+                                                intent.putExtra("origin_sale_id", origin_sale_id);
                                                 startActivity(intent);
                                                 finish();
                                             }
@@ -1399,11 +1451,13 @@ public class OrderDetailActivity extends ToolBarActivity {
             Intent intent = new Intent(OrderDetailActivity.this, PhotoAreaActivity.class);
             intent.putExtra("type", state);
             intent.putExtra("order_id", order_id);
-            intent.putExtra("delay_state", delay_state);
-            intent.putExtra("limit", limit);
+       //     intent.putExtra("delay_state", delay_state);
+        //    intent.putExtra("limit", limit);
             intent.putExtra("process_id", process_id);
             intent.putExtra("change", false);
+            intent.putExtra("state", state);
             intent.putExtra("bean", resDataBean);
+            intent.putExtra("line_id", line_id);
             startActivity(intent);
         }
     }
@@ -1497,10 +1551,13 @@ public class OrderDetailActivity extends ToolBarActivity {
                                     message.what = 1;
                                     mHandler.sendMessage(message);
 
-                                    Intent intent = new Intent(OrderDetailActivity.this, MaterialDetailActivity.class);
-                                    intent.putExtra("limit", limit);
+                                    Intent intent = new Intent(OrderDetailActivity.this, NewDateActivity.class);
+                                   // Intent intent = new Intent(OrderDetailActivity.this, MaterialDetailActivity.class);
+                                 //   intent.putExtra("limit", limit);
                                     intent.putExtra("process_id", process_id);
-                                    intent.putExtra("state", delay_state);
+                                    intent.putExtra("state", state);
+                                    intent.putExtra("line_id", line_id);
+                                    intent.putExtra("origin_sale_id", origin_sale_id);
                                     startActivity(intent);
                                     finish();
                                 }

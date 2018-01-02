@@ -1,9 +1,9 @@
 package tarce.myodoo.activity.inspect;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,16 +23,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-
-import com.newland.me.ConnUtils;
-import com.newland.me.DeviceManager;
-import com.newland.mtype.ConnectionCloseEvent;
 import com.newland.mtype.ModuleType;
-import com.newland.mtype.event.DeviceEventListener;
-import com.newland.mtype.module.common.rfcard.RFCardModule;
+import com.newland.mtype.module.common.printer.Printer;
 import com.newland.mtype.module.common.rfcard.RFResult;
 import com.newland.mtype.util.ISOUtils;
-import com.newland.mtypex.nseries.NSConnV100ConnParams;
+import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -63,21 +58,17 @@ import tarce.model.inventory.StartReworkBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
 import tarce.myodoo.activity.BomFramworkActivity;
-import tarce.myodoo.activity.WriteFeedMateriActivity;
-import tarce.myodoo.activity.moreproduce.InquiriessMorePActivity;
 import tarce.myodoo.adapter.product.ImgRecycAdapter;
 import tarce.myodoo.device.Const;
 import tarce.myodoo.uiutil.FullyGridLayoutManager;
 import tarce.myodoo.uiutil.ImageUtil;
-import tarce.myodoo.uiutil.NFCdialog;
 import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
 import tarce.support.AlertAialogUtils;
 import tarce.support.BitmapUtils;
-import tarce.support.MyLog;
+import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
-import tarce.support.ToolBarActivity;
 import tarce.support.ViewUtils;
 
 import static tarce.api.RetrofitClient.Url;
@@ -117,6 +108,8 @@ public class InspectMoDetailActivity extends BaseActivity {
     RelativeLayout relativeImgTake;*/
     @InjectView(R.id.img_grid_recycler)
     RecyclerView imgGridRecycler;
+    @InjectView(R.id.tv_print)
+    TextView tvPrint;
     private QcFeedbaskBean.ResultBean.ResDataBean dataBean;
     private InventoryApi inventoryApi;
     private Retrofit retrofit;
@@ -146,13 +139,13 @@ public class InspectMoDetailActivity extends BaseActivity {
 //                    float num = (float) (input / dataBean.getLine_ids().get(positionMore).getQty_produced() * 100);
 //                    tvRateInspecdetail.setText(num + "%");
 //                }else {
-                    if (input>dataBean.getQty_produced()){
-                        ToastUtils.showCommonToast(InspectMoDetailActivity.this, "品检数量不可大于生产数量");
-                        numSampleInspecdetail.setText("0");
-                        return;
-                    }
-                    float num = (float) (input / dataBean.getQty_produced() * 100);
-                    tvRateInspecdetail.setText(num + "%");
+                if (input > dataBean.getQty_produced()) {
+                    ToastUtils.showCommonToast(InspectMoDetailActivity.this, "品检数量不可大于生产数量");
+                    numSampleInspecdetail.setText("0");
+                    return;
+                }
+                float num = (float) (input / dataBean.getQty_produced() * 100);
+                tvRateInspecdetail.setText(num + "%");
 //                }
             }
         }
@@ -177,7 +170,7 @@ public class InspectMoDetailActivity extends BaseActivity {
                 float input = Float.parseFloat(temp.toString());
                 //     long input = Integer.parseInt(temp.toString());
                 float chouyang_num = Float.parseFloat(numSampleInspecdetail.getText().toString());
-                if (input>chouyang_num){
+                if (input > chouyang_num) {
                     ToastUtils.showCommonToast(InspectMoDetailActivity.this, "不良品数量不可大于抽样数量");
                     numRejectsInspecdetail.setText("0");
                     return;
@@ -194,6 +187,9 @@ public class InspectMoDetailActivity extends BaseActivity {
     private ImgRecycAdapter imgRecycAdapter;
     private InventoryApi inventory;
     private int positionMore;
+    private int process_id;
+    private int production_line_id;
+    private Printer printer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,13 +201,15 @@ public class InspectMoDetailActivity extends BaseActivity {
         retrofit = new Retrofit.Builder()
                 //设置OKHttpClient
                 .client(new OKHttpFactory(InspectMoDetailActivity.this).getOkHttpClient())
-                .baseUrl(Url+"/linkloving_user_auth/")
+                .baseUrl(Url + "/linkloving_user_auth/")
                 //gson转化器
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
         Url = RetrofitClient.Url;
         Intent intent = getIntent();
+        process_id = intent.getIntExtra("process_id", -1000);
+        production_line_id = intent.getIntExtra("line_id", -1000);
         dataBean = (QcFeedbaskBean.ResultBean.ResDataBean) intent.getSerializableExtra("data");
 //        if (dataBean.is_random_output() || dataBean.is_multi_output()){
 //            positionMore = intent.getIntExtra("position", -1);
@@ -263,15 +261,15 @@ public class InspectMoDetailActivity extends BaseActivity {
 //                    }
 //                    showLinThreePin();
 //                }else {
-                    stateInspectDetail.setText("品检中");
-                    tvPassOr.setVisibility(View.VISIBLE);
-                    tvClickFinish.setText("品检通过");
-                    numRateRejects.setText("");
-                    tvRateInspecdetail.setText("");
-                    imgTakePhoto.setVisibility(View.VISIBLE);
-                    imgRecycAdapter = new ImgRecycAdapter(InspectMoDetailActivity.this, R.layout.adapter_img_recyc, imgList);
-                    imgGridRecycler.setAdapter(imgRecycAdapter);
-                    showLinThreePin();
+                stateInspectDetail.setText("品检中");
+                tvPassOr.setVisibility(View.VISIBLE);
+                tvClickFinish.setText("品检通过");
+                numRateRejects.setText("");
+                tvRateInspecdetail.setText("");
+                imgTakePhoto.setVisibility(View.VISIBLE);
+                imgRecycAdapter = new ImgRecycAdapter(InspectMoDetailActivity.this, R.layout.adapter_img_recyc, imgList);
+                imgGridRecycler.setAdapter(imgRecycAdapter);
+                showLinThreePin();
 //                }
                 break;
             case "qc_success":
@@ -287,7 +285,7 @@ public class InspectMoDetailActivity extends BaseActivity {
                 imgRecycAdapter = new ImgRecycAdapter(InspectMoDetailActivity.this, R.layout.adapter_img_recyc, (List<String>) dataBean.getQc_img());
                 imgGridRecycler.setAdapter(imgRecycAdapter);
                 tvClickFinish.setText("入库");
-             //   showLinThreeCang();
+                //   showLinThreeCang();
                 showLinThreePro();
                 break;
             case "qc_fail":
@@ -324,7 +322,7 @@ public class InspectMoDetailActivity extends BaseActivity {
 //            if (positionMore!=-1)
 //            numProductInspecdetail.setText(dataBean.getLine_ids().get(positionMore).getQty_produced()+"");
 //        }else {
-            numProductInspecdetail.setText(dataBean.getQty_produced()+"");
+        numProductInspecdetail.setText(dataBean.getQty_produced() + "");
 //        }
         numSampleInspecdetail.addTextChangedListener(mEditnumSample);
         numRejectsInspecdetail.addTextChangedListener(mEditnumRejects);
@@ -357,6 +355,10 @@ public class InspectMoDetailActivity extends BaseActivity {
         }
     }
 
+    @OnClick(R.id.tv_print)
+    void setPrinter(View view){
+        printProduct();
+    }
     /**
      * 点击事件
      */
@@ -374,12 +376,12 @@ public class InspectMoDetailActivity extends BaseActivity {
                     public void onResponse(Call<StartInspectBean> call, Response<StartInspectBean> response) {
                         dismissDefultProgressDialog();
                         if (response.body() == null) return;
-                        if (response.body().getError()!=null){
+                        if (response.body().getError() != null) {
                             new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                     .show();
                             return;
                         }
-                        if (response.body().getResult().getRes_data() !=null && response.body().getResult().getRes_code() == 1) {
+                        if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                             AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "")
                                     .setMessage("该单据状态变为品检中")
                                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -391,8 +393,8 @@ public class InspectMoDetailActivity extends BaseActivity {
                                             finish();
                                         }
                                     }).show();
-                        }else {
-                            ToastUtils.showCommonToast(InspectMoDetailActivity.this,  "出现错误，请联系开发人员调试");
+                        } else {
+                            ToastUtils.showCommonToast(InspectMoDetailActivity.this, "出现错误，请联系开发人员调试");
                         }
                     }
 
@@ -422,7 +424,7 @@ public class InspectMoDetailActivity extends BaseActivity {
                         }).show();
                 break;
             case "入库":
-                if (nfCdialog!=null && nfCdialog.isShowing()){
+                if (nfCdialog != null && nfCdialog.isShowing()) {
                     tvClickFinish.setClickable(false);
                     return;
                 }
@@ -442,9 +444,9 @@ public class InspectMoDetailActivity extends BaseActivity {
                                         tvClickFinish.setClickable(true);
                                     } else {
                                         String NFC_Number = ISOUtils.hexString(qPResult.getCardSerialNo());
-                                        if (Url!=null){
+                                        if (Url != null) {
                                             inventory = retrofit.create(InventoryApi.class);
-                                        }else {
+                                        } else {
                                             Url = RetrofitClient.Url;
                                             inventory = retrofit.create(InventoryApi.class);
                                         }
@@ -483,14 +485,14 @@ public class InspectMoDetailActivity extends BaseActivity {
                                                     showDefultProgressDialog();
                                                     HashMap<Object, Object> doneHashmap = new HashMap<>();
                                                     doneHashmap.put("feedback_id", dataBean.getFeedback_id());
-                                                    doneHashmap.put("employee_id",res_dataNfc.getEmployee_id());
+                                                    doneHashmap.put("employee_id", res_dataNfc.getEmployee_id());
                                                     Call<RukuBean> objectCall1 = inventoryApi.produceDone(doneHashmap);
                                                     objectCall1.enqueue(new MyCallback<RukuBean>() {
                                                         @Override
                                                         public void onResponse(Call<RukuBean> call, Response<RukuBean> response) {
                                                             dismissDefultProgressDialog();
                                                             if (response.body() == null) return;
-                                                            if (response.body().getError()!=null){
+                                                            if (response.body().getError() != null) {
                                                                 new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                                                         .show();
                                                                 return;
@@ -500,13 +502,16 @@ public class InspectMoDetailActivity extends BaseActivity {
                                                                         .setTrue(new View.OnClickListener() {
                                                                             @Override
                                                                             public void onClick(View v) {
-                                                                                Intent intent = new Intent(InspectMoDetailActivity.this, InspectionSubActivity.class);
-                                                                                intent.putExtra("state", "qc_success");
-                                                                                startActivity(intent);
+                                                                                Intent intent = new Intent();
+//                                                                                intent.putExtra("state", "qc_success");
+//                                                                                intent.putExtra("process_id", process_id);
+//                                                                                intent.putExtra("line_id", production_line_id);
+                                                                                intent.putExtra("feed_back", dataBean.getFeedback_id());
+                                                                                InspectMoDetailActivity.this.setResult(NewSpectListActivity.Refresh, intent);
                                                                                 finish();
                                                                             }
                                                                         }).show();
-                                                            }else if (response.body().getResult().getRes_code() == -1 && response.body().getResult().getRes_data() != null){
+                                                            } else if (response.body().getResult().getRes_code() == -1 && response.body().getResult().getRes_data() != null) {
                                                                 new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, response.body().getResult().getRes_data().getError())
                                                                         .show();
                                                             }
@@ -517,14 +522,15 @@ public class InspectMoDetailActivity extends BaseActivity {
                                                             dismissDefultProgressDialog();
                                                             new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, t.toString())
                                                                     .show();
-                                                          //  Log.e("zws", t.toString());
+                                                            //  Log.e("zws", t.toString());
                                                         }
                                                     });
                                                 }
                                             }
+
                                             @Override
                                             public void onFailure(Call<NfcOrderBean> call, Throwable t) {
-                                               // dismissDefultProgressDialog();
+                                                // dismissDefultProgressDialog();
                                                 new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, t.toString())
                                                         .show();
                                                 Log.e("zws", t.toString());
@@ -581,23 +587,28 @@ public class InspectMoDetailActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<StartReworkBean> call, Response<StartReworkBean> response) {
                         if (response.body() == null) return;
-                        if (response.body().getError()!=null){
+                        if (response.body().getError() != null) {
                             new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                     .show();
                             return;
                         }
-                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
+                        if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                             AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "该单据开始返工")
                                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            Intent intent = new Intent(InspectMoDetailActivity.this, InspectionSubActivity.class);
-                                            intent.putExtra("state", "qc_fail");
-                                            startActivity(intent);
+//                                            Intent intent = new Intent(InspectMoDetailActivity.this, NewSpectListActivity.class);
+//                                            intent.putExtra("state", "qc_fail");
+//                                            intent.putExtra("process_id", process_id);
+//                                            intent.putExtra("line_id", production_line_id);
+//                                            startActivity(intent);
+                                            Intent intent = new Intent();
+                                            intent.putExtra("feed_back", dataBean.getFeedback_id());
+                                            InspectMoDetailActivity.this.setResult(NewSpectListActivity.Refresh, intent);
                                             finish();
                                         }
                                     }).show();
-                        } else if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == -1) {
+                        } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1) {
                             ToastUtils.showCommonToast(InspectMoDetailActivity.this, response.body().getResult().getRes_data().getError());
                         }
                     }
@@ -626,13 +637,14 @@ public class InspectMoDetailActivity extends BaseActivity {
 //                break;
         }
     }
+
     /**
      * 查看bom结构
      */
     @OnClick(R.id.tv_look_bom)
     void lookBom(View view) {
         Intent intent = new Intent(InspectMoDetailActivity.this, BomFramworkActivity.class);
-        intent.putExtra("order_id", (int)dataBean.getProduction_id().getOrder_id());
+        intent.putExtra("order_id", (int) dataBean.getProduction_id().getOrder_id());
         startActivity(intent);
     }
 
@@ -696,7 +708,7 @@ public class InspectMoDetailActivity extends BaseActivity {
             for (int i = 0; i < imgList.size(); i++) {
                 img_str[i] = BitmapUtils.bitmapToBase64(ImageUtil.decodeFile(imgList.get(i)));
             }
-               //     String[] img_str = {BitmapUtils.bitmapToBase64(decodeFile(selectedImagePath))};
+            //     String[] img_str = {BitmapUtils.bitmapToBase64(decodeFile(selectedImagePath))};
             resultMap.put("qc_img", img_str);
         }
         Call<RejectResultBean> objectCall1 = inventoryApi.resultInspecFirst(resultMap);
@@ -705,17 +717,32 @@ public class InspectMoDetailActivity extends BaseActivity {
             public void onResponse(Call<RejectResultBean> call, Response<RejectResultBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getError()!=null){
+                if (response.body().getError() != null) {
                     new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                             .show();
                     return;
                 }
-                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data()!=null) {
+                if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     if (result == 1) {
                         AlertAialogUtils.getCommonDialog(InspectMoDetailActivity.this, "品检成功，等待入库")
                                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        ProgressDialog progressDialog = new ProgressDialog(InspectMoDetailActivity.this);
+                                                        progressDialog.setMessage("正在打印...");
+                                                        progressDialog.show();
+                                                        printProduct();
+                                                        progressDialog.dismiss();
+                                                    }
+                                                });
+                                            }
+                                        }).start();
                                         Intent intent = new Intent(InspectMoDetailActivity.this, InspectionSubActivity.class);
                                         intent.putExtra("state", "qc_ing");
                                         startActivity(intent);
@@ -811,4 +838,19 @@ public class InspectMoDetailActivity extends BaseActivity {
             return null;
     }
 
+    private void printProduct() {
+        initDevice();
+        printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
+        printer.init();
+        printer.setLineSpace(1);
+        printer.print(dataBean.getName() + "\n" + "生产数量：" + dataBean.getQty_produced()
+                +"\n"+"产品名称: " + dataBean.getProduction_id().getProduct_id().getProduct_name()+"\n"
+                +"生产MO：" + dataBean.getProduction_id().getDisplay_name()+"\n"
+                + "\n", 30, TimeUnit.SECONDS);
+        String db = SharePreferenceUtils.getString("db", "", InspectMoDetailActivity.this);
+        String url = SharePreferenceUtils.getString("url", "", InspectMoDetailActivity.this);
+        Bitmap mBitmap = CodeUtils.createImage(url + ";" + db + ";" + dataBean.getFeedback_id(), 200, 200, null);
+        printer.print(0, mBitmap, 30, TimeUnit.SECONDS);
+        printer.print("\n\n\n\n\n\n\n", 30, TimeUnit.SECONDS);
+    }
 }

@@ -220,6 +220,7 @@
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
         <activity
             android:name=".activity.ProductLineListActivity"
+            android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".activity.product.AgainProductActivity"
@@ -235,6 +236,21 @@
         <activity android:name=".activity.outsourcing.OutSourceListActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
         <activity android:name=".activity.outsourcing.OutSourceDetailActivity"/>
+        <activity android:name=".activity.newproduct.LineAndStateActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.newproduct.NewDateActivity"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.inbuy.ScancodeBuyActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.newproduct.NewProductDateActivity"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.newproduct.SoOriginActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+        <activity android:name=".activity.newproduct.ForInspecSoActivity"
+            />
+        <activity android:name=".activity.inspect.NewSpectListActivity"/>
     </application>
 
 </manifest>

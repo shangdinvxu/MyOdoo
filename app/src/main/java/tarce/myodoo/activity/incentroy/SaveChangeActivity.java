@@ -191,7 +191,6 @@ public class SaveChangeActivity extends AppCompatActivity {
                     }
                     if (bundle.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
                         String string = bundle.getString(CodeUtils.RESULT_STRING);
-                        Log.e("zws", "string = " + string);
                         dialog.show();
                         HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
                         objectObjectHashMap.put("default_code", string);
@@ -239,7 +238,6 @@ public class SaveChangeActivity extends AppCompatActivity {
         if (StringUtils.isNullOrEmpty(res_data.getProduct().getImage_medium())) {
             tvTakephoto.setVisibility(View.VISIBLE);
         } else {
-           // Log.e("zws", "img = "+res_data.getProduct().getImage_medium());
             Glide.with(SaveChangeActivity.this)
                     .load(res_data.getProduct().getImage_medium())
                     .placeholder(R.drawable.person_camera_icon)

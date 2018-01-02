@@ -61,6 +61,7 @@ public class ProductLineListActivity extends BaseActivity {
     private List<PickingDetailBean.ResultBean.ResDataBean> allList = new ArrayList<>();
     private PickingDetailAdapter adapter;
     private int loadTime = 0;
+    private int origin_sale_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +78,10 @@ public class ProductLineListActivity extends BaseActivity {
 
     private void initView() {
         Intent intent = getIntent();
-        production_line_id = intent.getIntExtra("production_line_id", 1000);
+        production_line_id = intent.getIntExtra("production_line_id", -1000);
         state_activity = intent.getStringExtra("state_activity");
         process_id = intent.getIntExtra("process_id", 1000);
+        origin_sale_id = intent.getIntExtra("origin_sale_id", 0);
 
         swipeRefreshHeader.setGravity(Gravity.CENTER);
         swipeLoadMoreFooter.setGravity(Gravity.CENTER);
@@ -136,8 +138,13 @@ public class ProductLineListActivity extends BaseActivity {
         }else {
             hashMap.put("production_line_id", production_line_id);
         }
-       // hashMap.put("production_line_id", production_line_id);
-        Call<PickingDetailBean> picking = loginApi.getPicking(hashMap);
+        if (origin_sale_id!=0){
+            hashMap.put("origin_sale_id", origin_sale_id);
+        }else {
+            hashMap.put("origin_sale_id", false);
+        }
+        hashMap.put("date", "all");
+        Call<PickingDetailBean> picking = loginApi.getNewRecentOr(hashMap);
         picking.enqueue(new MyCallback<PickingDetailBean>() {
             @Override
             public void onResponse(Call<PickingDetailBean> call, Response<PickingDetailBean> response) {
@@ -221,6 +228,7 @@ public class ProductLineListActivity extends BaseActivity {
                     intent.putExtra("name_activity", "生产中");
                     intent.putExtra("state_activity", state_activity);
                     intent.putExtra("production_line_id",production_line_id);
+                    intent.putExtra("origin_sale_id", origin_sale_id);
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(ProductLineListActivity.this, OrderDetailActivity.class);

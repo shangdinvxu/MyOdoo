@@ -6,6 +6,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import java.util.List;
 
 import tarce.model.inventory.MainMdBean;
+import tarce.model.inventory.PickingDetailBean;
 import tarce.myodoo.R;
 import tarce.myodoo.utils.StringUtils;
 
@@ -16,6 +17,16 @@ import tarce.myodoo.utils.StringUtils;
 
 public class PrepareMdAdapter extends BaseSectionQuickAdapter<MainMdBean, BaseViewHolder>{
     private int itemType;
+    private List<MainMdBean> data;
+
+    @Override
+    public List<MainMdBean> getData() {
+        return data;
+    }
+
+    public void setData(List<MainMdBean> data) {
+        this.data = data;
+    }
 
     /**
      * Same as QuickAdapter#QuickAdapter(Context,int) but with
@@ -27,15 +38,11 @@ public class PrepareMdAdapter extends BaseSectionQuickAdapter<MainMdBean, BaseVi
      */
     public PrepareMdAdapter(int layoutResId, int sectionHeadResId, List<MainMdBean> data) {
         super(layoutResId, sectionHeadResId, data);
+        this.data = data;
     }
 
     @Override
     protected void convert(BaseViewHolder helper, MainMdBean item) {
-        if (item.t.getProduction_line_id()!=null){
-            helper.setText(R.id.produce_line_name, "产线："+item.t.getProduction_line_id().getName());
-        }else {
-            helper.setText(R.id.produce_line_name, "产线暂无");
-        }
         helper.setText(R.id.tv_name_dan, item.t.getDisplay_name());
         helper.setText(R.id.tv_name_prod, item.t.getProduct_name());
         helper.setText(R.id.tv_num_state, item.t.getProduct_qty()+"");
