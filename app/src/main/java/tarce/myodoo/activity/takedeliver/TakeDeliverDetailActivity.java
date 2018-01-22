@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,10 +44,10 @@ import tarce.myodoo.R;
 import tarce.myodoo.activity.AreaMessageActivity;
 import tarce.myodoo.activity.BaseActivity;
 import tarce.myodoo.activity.WriteCheckMessaActivity;
-import tarce.myodoo.activity.product.FenjianListActivity;
 import tarce.myodoo.adapter.takedeliver.DetailTakedAdapter;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.TipDialog;
+import tarce.myodoo.uiutil.WorkTimeDialog;
 import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
@@ -98,6 +97,14 @@ public class TakeDeliverDetailActivity extends BaseActivity {
     TextView tvFalseProduct;
     @InjectView(R.id.weight_takedeliver)
     TextView weightTakedeliver;
+//    @InjectView(R.id.tv_fen_name)
+//    TextView tvFenName;
+//    @InjectView(R.id.tv_control_name)
+//    TextView tvControlName;
+//    @InjectView(R.id.work_channel)
+//    TextView workChannel;
+//    @InjectView(R.id.work_time)
+//    TextView workTime;
     private TakeDelListBean.ResultBean.ResDataBean resDataBean;
     private InventoryApi inventoryApi;
     private DetailTakedAdapter takedAdapter;
@@ -144,7 +151,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
         } else {
             salesOut.setText("");
         }
-        remarks.setText(resDataBean.getRemark()+"");
+        remarks.setText(resDataBean.getRemark() + "");
         List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> pack_operation_product_ids = resDataBean.getPack_operation_product_ids();
         takedAdapter = new DetailTakedAdapter(R.layout.adapter_detaildeleive, pack_operation_product_ids, TakeDeliverDetailActivity.this, "notShow");
         recyclerview.setAdapter(takedAdapter);
@@ -167,7 +174,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         List<TakeDelListBean.ResultBean.ResDataBean.PackOperationProductIdsBean> data = takedAdapter.getData();
-                                       // ArrayList<Double> doneNum = new ArrayList<>();
+                                        // ArrayList<Double> doneNum = new ArrayList<>();
 //                                        Double[] doneNum = new Double[data.size()];
 //                                        for (int i = 0; i < data.size(); i++) {
 //                                          //  doneNum.add(data.get(i).getQty_done());
@@ -258,12 +265,21 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                         startActivity(intent);
                     }
                 });
+                // TODO: 2018/1/11 二次生产
                 if (state.equals("picking")) {
                     buttomButton2.setVisibility(View.VISIBLE);
                     buttomButton2.setText("分拣完成");
                     buttomButton2.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
+//                            WorkTimeDialog timeDialog = new WorkTimeDialog(TakeDeliverDetailActivity.this, R.style.MyDialogStyle,
+//                                    new WorkTimeDialog.OnSendCommonClickListener() {
+//                                        @Override
+//                                        public void OnSendCommonClick(double num, String gongzhong) {
+//                                            ToastUtils.showCommonToast(TakeDeliverDetailActivity.this, "num="+num+"gongzhong="+gongzhong);
+//                                        }
+//                                    });
+//                            timeDialog.show();
                             AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "确定分拣完成？")
                                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                         @Override
@@ -287,13 +303,13 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                                 @Override
                                                 public void onResponse(Call<TakeDeAreaBean> call, Response<TakeDeAreaBean> response) {
                                                     dismissDefultProgressDialog();
-                                                    if (response.body() == null)return;
-                                                    if (response.body().getError()!=null){
+                                                    if (response.body() == null) return;
+                                                    if (response.body().getError() != null) {
                                                         new TipDialog(TakeDeliverDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                                                 .show();
                                                         return;
                                                     }
-                                                    if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==1){
+                                                    if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                                                         new TipDialog(TakeDeliverDetailActivity.this, R.style.MyDialogStyle, "分拣成功")
                                                                 .setTrue(new View.OnClickListener() {
                                                                     @Override
@@ -302,7 +318,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                                                     }
                                                                 })
                                                                 .show();
-                                                    }else if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==-1){
+                                                    } else if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == -1) {
                                                         //ToastUtils.showCommonToast(FenjianListActivity.this, response.body().getResult().getRes_data());
                                                     }
                                                 }
@@ -361,7 +377,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                                                 dismissDefultProgressDialog();
                                                 if (response.body() == null)
                                                     return;
-                                                if (response.body().getError()!=null){
+                                                if (response.body().getError() != null) {
                                                     new TipDialog(TakeDeliverDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                                             .show();
                                                     return;
@@ -403,10 +419,10 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 }
                 final EditText editText = new EditText(TakeDeliverDetailActivity.this);
                 // final int qty_available = StringUtils.doubleToInt(bean.getProduct_id().getQty_available());
-              //  final int product_qty = StringUtils.doubleToInt(bean.getProduct_qty());
+                //  final int product_qty = StringUtils.doubleToInt(bean.getProduct_qty());
                 //final int qty = qty_available >= product_qty ? qty_available:product_qty;
                 editText.setText(bean.getRejects_qty() + "");
-              //  editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                //  editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText.setSelection(editText.getText().length());
                 AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "请输入 " + bean.getProduct_id().getName() + " 不良品数量");
                 dialog.setView(editText)
@@ -415,18 +431,18 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 double anInt = Double.parseDouble(editText.getText().toString());
                                 double sum = bean.getQty_done() + bean.getRejects_qty();
-                                if (state.equals("picking") && anInt > sum){
-                                     Toast.makeText(TakeDeliverDetailActivity.this, "不能超过完成数量", Toast.LENGTH_SHORT).show();
-                                     return;
+                                if (state.equals("picking") && anInt > sum) {
+                                    Toast.makeText(TakeDeliverDetailActivity.this, "不能超过完成数量", Toast.LENGTH_SHORT).show();
+                                    return;
                                 }
                                 if (anInt > bean.getQty_done() && !state.equals("picking")) {
                                     Toast.makeText(TakeDeliverDetailActivity.this, "不能超过完成数量", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                                 bean.setRejects_qty(anInt);
-                                if (state.equals("picking")){
-                                    bean.setQty_done(sum-anInt);
-                                }else {
+                                if (state.equals("picking")) {
+                                    bean.setQty_done(sum - anInt);
+                                } else {
 
                                 }
                                 takedAdapter.notifyDataSetChanged();
@@ -450,7 +466,7 @@ public class TakeDeliverDetailActivity extends BaseActivity {
                 final double product_qty = bean.getProduct_qty();
                 //final int qty = qty_available >= product_qty ? qty_available:product_qty;
                 editText.setText(product_qty + "");
-               // editText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                // editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText.setSelection(editText.getText().length());
                 AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(TakeDeliverDetailActivity.this, "请输入 " + bean.getProduct_id().getName() + " 完成数量");
                 dialog.setView(editText)

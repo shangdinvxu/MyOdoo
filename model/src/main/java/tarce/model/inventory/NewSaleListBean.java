@@ -2,6 +2,7 @@ package tarce.model.inventory;
 
 import java.util.List;
 
+import retrofit2.Call;
 import tarce.model.ErrorBean;
 
 /**
@@ -115,6 +116,22 @@ public class NewSaleListBean {
             }
 
             public static class AbleToDataBean {
+                public boolean isSecondary_operation() {
+                    return secondary_operation;
+                }
+
+                public void setSecondary_operation(boolean secondary_operation) {
+                    this.secondary_operation = secondary_operation;
+                }
+
+                public List<TimeSheetBean> getTimesheet_order_ids() {
+                    return timesheet_order_ids;
+                }
+
+                public void setTimesheet_order_ids(List<TimeSheetBean> timesheet_order_ids) {
+                    this.timesheet_order_ids = timesheet_order_ids;
+                }
+
                 /**
                  * origin : SO1706092974
                  * sale_note : 亚风已付
@@ -150,6 +167,8 @@ public class NewSaleListBean {
                  * picking_id : 7848
                  */
 
+                private List<TimeSheetBean> timesheet_order_ids;
+                private boolean secondary_operation;
                 private String origin;
                 private boolean sale_note;
                 private String carrier_tracking_ref;
@@ -653,6 +672,66 @@ public class NewSaleListBean {
                                 }
                                 return this.area_name;
                             }
+                        }
+                    }
+                }
+
+                public static class TimeSheetBean {
+                    private IdName from_partner;
+                    private IdName to_partner;
+                    private IdName work_type_id;
+                    private double hour_spent;
+
+                    public IdName getFrom_partner() {
+                        return from_partner;
+                    }
+
+                    public void setFrom_partner(IdName from_partner) {
+                        this.from_partner = from_partner;
+                    }
+
+                    public IdName getTo_partner() {
+                        return to_partner;
+                    }
+
+                    public void setTo_partner(IdName to_partner) {
+                        this.to_partner = to_partner;
+                    }
+
+                    public IdName getWork_type_id() {
+                        return work_type_id;
+                    }
+
+                    public void setWork_type_id(IdName work_type_id) {
+                        this.work_type_id = work_type_id;
+                    }
+
+                    public double getHour_spent() {
+                        return hour_spent;
+                    }
+
+                    public void setHour_spent(double hour_spent) {
+                        this.hour_spent = hour_spent;
+                    }
+
+                    private static class IdName{
+                        private int id;
+                        private String name;
+
+                        public int getId() {
+                            return id;
+                        }
+
+                        public void setId(int id) {
+                            this.id = id;
+                        }
+
+                        public String getName() {
+                            return name;
+                        }
+
+                        public void setName(String name) {
+                            this.name = name;
                         }
                     }
                 }

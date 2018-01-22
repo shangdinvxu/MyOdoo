@@ -62,6 +62,7 @@ public class ProductLineListActivity extends BaseActivity {
     private PickingDetailAdapter adapter;
     private int loadTime = 0;
     private int origin_sale_id;
+    private boolean isChange = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,13 +118,16 @@ public class ProductLineListActivity extends BaseActivity {
 
     @Override
     protected void onResume() {
-        if (dataBeanList == null) {
+        if (isChange) {
             swipeToLoad.setRefreshing(true);
             loadTime = 0;
         }
         super.onResume();
     }
     private void getPicking(final int offset, final int limit, final int move) {
+        if (beanList != null) {
+            beanList.clear();
+        }
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("state", state_activity);
         hashMap.put("offset", offset);
@@ -244,7 +248,7 @@ public class ProductLineListActivity extends BaseActivity {
     }
     @Override
     protected void onPause() {
-        dataBeanList = null;
+        isChange = true;
         super.onPause();
     }
 

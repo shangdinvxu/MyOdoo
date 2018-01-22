@@ -4,20 +4,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:fitsSystemWindows="true"
     tools:context="tarce.myodoo.activity.NFCReadingActivity">
 
     <SearchView
         android:id="@+id/search_name"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:focusable="false"
         android:iconifiedByDefault="false"
-        android:queryHint="输入用户名搜索"></SearchView>
+        android:queryHint="输入用户名搜索"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="50dp"></android.support.v7.widget.RecyclerView>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="10dp"/>
+    <Button
+        android:id="@+id/btn_true"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="确定"
+        android:textColor="@color/white"
+        android:background="@color/color_5693f8"/>
 </LinearLayout>

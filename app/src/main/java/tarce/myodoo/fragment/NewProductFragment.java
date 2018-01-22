@@ -95,6 +95,17 @@ public class NewProductFragment extends Fragment {
                             .show();
                     return;
                 }
+                if (response.body().getResult().getRes_data()==null &&response.body().getResult().getRes_code() == 1){
+                    list = new ArrayList<>();
+                    list.add(new MainProcessBean(new ProcessBean("工程领料", 1000, 0)));
+                    list.add(new MainProcessBean(new ProcessBean("设备管理", 1000, 0)));
+                    list.add(new MainProcessBean(new ProcessBean("二次加工", 1000, 0)));
+                    list.add(new MainProcessBean(new ProcessBean("外协", 1000, 0)));
+                    sectionAdapter = new NewSectionAdapter(R.layout.mian_list_item, R.layout.adapter_head, list);
+                    recyclerview.setAdapter(sectionAdapter);
+                    initListener();
+                    return;
+                }
                 if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code() == 1){
                     listSubBeen = response.body().getResult().getRes_data();
                     list = new ArrayList<>();
@@ -125,7 +136,7 @@ public class NewProductFragment extends Fragment {
         sectionAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (position == listSubBeen.size()){
+                if (listSubBeen!=null && position==listSubBeen.size()){
                     return;
                 }
                 if (sectionAdapter==null)return;

@@ -9,6 +9,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import rx.Observable;
 import tarce.model.AddworkBean;
+import tarce.model.AllEmployeeBean;
 import tarce.model.BuLlBean;
 import tarce.model.ChangeProjectBean;
 import tarce.model.ChangeStateBean;
@@ -31,6 +32,8 @@ import tarce.model.SearchSupplierResponse;
 import tarce.model.SoOriginBean;
 import tarce.model.SoQcBean;
 import tarce.model.StateCountBean;
+import tarce.model.TimeSheetBean;
+import tarce.model.WorkTypeBean;
 import tarce.model.inventory.AreaMessageBean;
 import tarce.model.inventory.AutoAddworkBean;
 import tarce.model.inventory.BomFramworkBean;
@@ -81,6 +84,26 @@ import tarce.model.inventory.WorkingWorkerBean;
  */
 
 public interface InventoryApi {
+    /**
+     * 提交工时工种
+     * */
+    @POST("action_assign_hour_spent")
+    Call<TimeSheetBean>  actionAssinHour(@Body HashMap hashMap);
+    /**
+     * 获取工种
+     * */
+    @POST("get_work_type")
+    Call<WorkTypeBean> getWorkType(@Body HashMap hashMap);
+    /**
+     * 分配二次加工负责人
+     * */
+    @POST("action_assign_secondary_operation_partner")
+    Call<TimeSheetBean> action_partner(@Body HashMap hashMap);
+    /**
+     * 获取所有的员工
+     * */
+    @POST("get_all_employees")
+    Call<AllEmployeeBean> getAllEmployees(@Body HashMap hashMap);
     /**
      * 扫描二维码入库
      * */

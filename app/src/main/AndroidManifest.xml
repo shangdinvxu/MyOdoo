@@ -251,6 +251,7 @@
         <activity android:name=".activity.newproduct.ForInspecSoActivity"
             />
         <activity android:name=".activity.inspect.NewSpectListActivity"/>
+        <activity android:name=".activity.product.AllEmployeesActivity"/>
     </application>
 
 </manifest>

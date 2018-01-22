@@ -177,6 +177,7 @@ public class BuGetLiaoActivity extends BaseActivity {
         Map<Object, Object> mapSmall = new HashMap<>();
         mapSmall.put("stock_move_lines_id", handlerBean.get(handlerPosition).getId());
         mapSmall.put("quantity_ready", handlerNum);
+        mapSmall.put("quantity_available", handlerBean.get(handlerPosition).getQty_available());
         mapSmall.put("order_id", handlerBean.get(handlerPosition).getOrder_id());
         hashMap.put("stock_move", mapSmall);
         Call<OrderDetailBean> objectCall = inventoryApi.newPrepareMater(hashMap);

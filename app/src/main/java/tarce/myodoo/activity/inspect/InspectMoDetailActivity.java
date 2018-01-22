@@ -277,9 +277,9 @@ public class InspectMoDetailActivity extends BaseActivity {
                 numRateRejects.setText(Math.rint(dataBean.getQc_fail_rate()) + "%");
                 tvRateInspecdetail.setText(Math.rint(dataBean.getQc_rate()) + "%");
                 numRejectsInspecdetail.setFocusable(false);
-                numRejectsInspecdetail.setText(StringUtils.doubleToString(dataBean.getQc_fail_qty()));
+                numRejectsInspecdetail.setText(dataBean.getQc_fail_qty()+"");
                 numSampleInspecdetail.setFocusable(false);
-                numSampleInspecdetail.setText(StringUtils.doubleToString(dataBean.getQc_test_qty()));
+                numSampleInspecdetail.setText(dataBean.getQc_test_qty()+"");
                 commentsOfInspecdetail.setFocusable(false);
                 commentsOfInspecdetail.setText(dataBean.getQc_note());
                 imgRecycAdapter = new ImgRecycAdapter(InspectMoDetailActivity.this, R.layout.adapter_img_recyc, (List<String>) dataBean.getQc_img());
@@ -484,6 +484,7 @@ public class InspectMoDetailActivity extends BaseActivity {
                                                     }, 1000);
                                                     showDefultProgressDialog();
                                                     HashMap<Object, Object> doneHashmap = new HashMap<>();
+//                                                    doneHashmap.put("qty_produced", dataBean.getQty_produced());
                                                     doneHashmap.put("feedback_id", dataBean.getFeedback_id());
                                                     doneHashmap.put("employee_id", res_dataNfc.getEmployee_id());
                                                     Call<RukuBean> objectCall1 = inventoryApi.produceDone(doneHashmap);

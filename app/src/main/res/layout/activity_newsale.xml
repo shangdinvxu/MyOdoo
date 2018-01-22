@@ -9,8 +9,9 @@
         android:background="@color/color_5693f8">
         <ImageView
             android:id="@+id/back_no_left"
-            android:layout_width="80dp"
-            android:layout_height="25dp"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:padding="10dp"
             android:src="@drawable/back_no_left"
             android:layout_centerVertical="true" />
         <TextView
@@ -18,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="搜索的客户"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:layout_centerInParent="true"/>
         <TextView
@@ -29,7 +30,7 @@
             android:layout_centerVertical="true"
             android:text="手动刷新"
             android:textSize="12sp"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:gravity="center"/>
        <!--<ImageView
             android:id="@+id/right_detail"
@@ -39,6 +40,58 @@
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"/>-->
     </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:background="@color/color_5693f8">
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginLeft="60dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="待处理"
+                android:textSize="16sp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/white"/>
+            <TextView
+                android:id="@+id/wait_num"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginLeft="30dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="可处理"
+                android:textSize="16sp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:textColor="@color/white"/>
+            <TextView
+                android:id="@+id/can_num"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+    </LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="0.5dp"

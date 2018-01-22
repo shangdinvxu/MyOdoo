@@ -25,7 +25,9 @@ public class InventroyAdapter extends BaseQuickAdapter<InventroyResultBean.Resul
                     .setText(R.id.tv_time_inv, TimeUtils.utc2Local(item.getDate()));
             if (item.getState().equals("done")){
                helper.setText(R.id.tv_already_check, "已验证");
-            }else {
+            }else if (item.getState().equals("confirm")){
+                helper.setText(R.id.tv_already_check, "进行中");
+            } else {
                 helper.setText(R.id.tv_already_check, "");
             }
     }

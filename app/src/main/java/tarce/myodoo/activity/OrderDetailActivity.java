@@ -300,9 +300,9 @@ public class OrderDetailActivity extends ToolBarActivity {
                         @Override
                         public void onClick(View view) {
                             SharePreferenceUtils.putInt("httpKey", 1000, OrderDetailActivity.this);
+                            finish();
                         }
-                    })
-                    .show();
+                    }).show();
         }
     }
 
@@ -611,6 +611,7 @@ public class OrderDetailActivity extends ToolBarActivity {
         mapSmall.put("stock_move_lines_id", handlerBean.getId());
         mapSmall.put("quantity_ready", handlerNum);
         mapSmall.put("order_id", handlerBean.getOrder_id());
+        mapSmall.put("quantity_available", handlerBean.getQty_available());
         hashMap.put("stock_move", mapSmall);
         Call<OrderDetailBean> objectCall = inventoryApi.newPrepareMater(hashMap);
         objectCall.enqueue(new Callback<OrderDetailBean>() {

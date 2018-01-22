@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
@@ -14,6 +12,7 @@ import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
 import com.aspsine.swipetoloadlayout.OnRefreshListener;
@@ -128,7 +127,12 @@ public class NewSaleListActivity extends BaseActivity {
             @Override
             public void onResponse(Call<NewSaleListBean> call, Response<NewSaleListBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body() == null) return;
+                if (response.body().getError() != null) {
+                    new TipDialog(NewSaleListActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1) {
                     resDataBean = response.body().getResult().getRes_data();
                     if (resDataBean.getWaiting_data().size() == 0 && resDataBean.getAble_to_data().size() == 0) {
@@ -203,7 +207,7 @@ public class NewSaleListActivity extends BaseActivity {
                     @Override
                     public void run() {
                         loadTime++;
-                        getDone(LOAD_NUM, LOAD_NUM*loadTime, Load_Move);
+                        getDone(LOAD_NUM, LOAD_NUM * loadTime, Load_Move);
                         swipeToLoad.setLoadingMore(false);
                     }
                 }, 500);
@@ -242,22 +246,27 @@ public class NewSaleListActivity extends BaseActivity {
             @Override
             public void onResponse(Call<GetDonePickBean> call, Response<GetDonePickBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null) return;
+                if (response.body() == null) return;
+                if (response.body().getError() != null) {
+                    new TipDialog(NewSaleListActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
                 if (response.body().getResult().getRes_code() == 1) {
                     res_data = response.body().getResult().getRes_data();
-                    if (move == Refresh_Move){
-                    allList = res_data;
-                    listAdapte = new NewSaleListAdapte(R.layout.item_newsalelist, res_data);
-                    swipeTarget.setAdapter(listAdapte);
-                }else {
-                    if (res_data == null){
-                        ToastUtils.showCommonToast(NewSaleListActivity.this, "没有更多数据...");
-                        return;
+                    if (move == Refresh_Move) {
+                        allList = res_data;
+                        listAdapte = new NewSaleListAdapte(R.layout.item_newsalelist, res_data);
+                        swipeTarget.setAdapter(listAdapte);
+                    } else {
+                        if (res_data == null) {
+                            ToastUtils.showCommonToast(NewSaleListActivity.this, "没有更多数据...");
+                            return;
+                        }
+                        allList = listAdapte.getData();
+                        allList.addAll(res_data);
+                        listAdapte.setDataAll(allList);
                     }
-                    allList = listAdapte.getData();
-                    allList.addAll(res_data);
-                    listAdapte.setDataAll(allList);
-                }
                     initListner();
                     searchListener();
                     initRadio();
@@ -282,8 +291,13 @@ public class NewSaleListActivity extends BaseActivity {
             @Override
             public void onResponse(Call<NewSaleListBean> call, Response<NewSaleListBean> response) {
                 dismissDefultProgressDialog();
-                if (response.body() == null || response.body().getResult() == null) return;
-                if (response.body().getResult().getRes_code() == 1) {
+                if (response.body() == null) return;
+                if (response.body().getError() != null) {
+                    new TipDialog(NewSaleListActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                            .show();
+                    return;
+                }
+                if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                     resDataBean = response.body().getResult().getRes_data();
                     res_data = resDataBean.getWaiting_data();
                     allList = res_data;
@@ -348,7 +362,7 @@ public class NewSaleListActivity extends BaseActivity {
                     public void onResponse(Call<GetSaleResponse> call, Response<GetSaleResponse> response) {
                         dismissDefultProgressDialog();
                         if (response.body() == null) return;
-                        if (response.body().getError()!=null){
+                        if (response.body().getError() != null) {
                             new TipDialog(NewSaleListActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                     .show();
                             return;

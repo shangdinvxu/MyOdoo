@@ -7,6 +7,8 @@ package tarce.model;
 import java.io.Serializable;
 import java.util.List;
 
+import tarce.model.inventory.NewSaleListBean;
+
 
 /***
  *
@@ -137,15 +139,15 @@ public class GetSaleResponse implements Serializable{
                     this.reserved_qty = reserved_qty;
                 }
 
-                public int getOrigin_qty() {
+                public double getOrigin_qty() {
                     return origin_qty;
                 }
 
-                public void setOrigin_qty(int origin_qty) {
+                public void setOrigin_qty(double origin_qty) {
                     this.origin_qty = origin_qty;
                 }
 
-                private int origin_qty;
+                private double origin_qty;
 
                 public void setProduct_qty(double value){
                     this.product_qty = value;
@@ -194,7 +196,7 @@ public class GetSaleResponse implements Serializable{
             private	Object	min_date;	/*2016-12-14 06:59:24*/
 
             public Object getDelivery_rule() {
-                if (delivery_rule instanceof String){
+                if (delivery_rule instanceof Boolean){
                     delivery_rule = String.valueOf(delivery_rule);
                 }
                 return delivery_rule;
@@ -211,7 +213,93 @@ public class GetSaleResponse implements Serializable{
             public void setPhone(String phone) {
                 this.phone = phone;
             }
+            public static class TimeSheetBean implements Serializable{
+                private IdName from_partner;
+                private IdName to_partner;
+                private IdName work_type_id;
+                private double hour_spent;
+                private int id;
 
+                public int getId() {
+                    return id;
+                }
+
+                public void setId(int id) {
+                    this.id = id;
+                }
+
+                public IdName getFrom_partner() {
+                    return from_partner;
+                }
+
+                public void setFrom_partner(IdName from_partner) {
+                    this.from_partner = from_partner;
+                }
+
+                public IdName getTo_partner() {
+                    return to_partner;
+                }
+
+                public void setTo_partner(IdName to_partner) {
+                    this.to_partner = to_partner;
+                }
+
+                public IdName getWork_type_id() {
+                    return work_type_id;
+                }
+
+                public void setWork_type_id(IdName work_type_id) {
+                    this.work_type_id = work_type_id;
+                }
+
+                public double getHour_spent() {
+                    return hour_spent;
+                }
+
+                public void setHour_spent(double hour_spent) {
+                    this.hour_spent = hour_spent;
+                }
+
+                public static class IdName implements Serializable{
+                    private int id;
+                    private String name;
+
+                    public int getId() {
+                        return id;
+                    }
+
+                    public void setId(int id) {
+                        this.id = id;
+                    }
+
+                    public String getName() {
+                        return name;
+                    }
+
+                    public void setName(String name) {
+                        this.name = name;
+                    }
+                }
+            }
+
+            public List<TimeSheetBean> getTimesheet_order_id() {
+                return timesheet_order_id;
+            }
+
+            public void setTimesheet_order_id(List<TimeSheetBean> timesheet_order_id) {
+                this.timesheet_order_id = timesheet_order_id;
+            }
+
+            public boolean isSecondary_operation() {
+                return secondary_operation;
+            }
+
+            public void setSecondary_operation(boolean secondary_operation) {
+                this.secondary_operation = secondary_operation;
+            }
+
+            private List<TimeSheetBean> timesheet_order_id;
+            private boolean secondary_operation;
             private String phone;
             private	Object	delivery_rule;	/*Object*/
             private	String	name;	/*WHIN2016121500693*/

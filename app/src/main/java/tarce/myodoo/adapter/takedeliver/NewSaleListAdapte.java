@@ -67,7 +67,7 @@ public class NewSaleListAdapte extends BaseQuickAdapter<NewSaleListBean.ResultBe
             }
         }
         if (!StringUtils.isNullOrEmpty(item.getState())){
-            if (!"done".equals(item.getState()) && !"assigned".equals(item.getState())
+            if (!"secondary_operation_done".equals(item.getState()) && !"done".equals(item.getState()) && !"assigned".equals(item.getState())
                     && !"partially_available".equals(item.getState()) && StringUtils.isNullOrEmpty(item.getBack_order_id())){
                 helper.getView(R.id.quanxin).setVisibility(View.VISIBLE);
             }else {

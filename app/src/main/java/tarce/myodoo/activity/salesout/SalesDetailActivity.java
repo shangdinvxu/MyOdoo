@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -15,9 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,21 +25,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.newland.me.ConnUtils;
-import com.newland.me.DeviceManager;
-import com.newland.mtype.ConnectionCloseEvent;
 import com.newland.mtype.ModuleType;
-import com.newland.mtype.event.DeviceEventListener;
 import com.newland.mtype.module.common.printer.Printer;
-import com.newland.mtypex.nseries.NSConnV100ConnParams;
 import com.uuzuche.lib_zxing.activity.CaptureFragment;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
@@ -51,20 +45,27 @@ import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 import tarce.api.MyCallback;
+import tarce.api.OKHttpFactory;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.FindProductByConditionResponse;
 import tarce.model.GetSaleResponse;
+import tarce.model.TimeSheetBean;
+import tarce.model.WorkTypeBean;
+import tarce.model.inventory.CommonBean;
 import tarce.model.inventory.DoUnreservBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
-import tarce.myodoo.activity.LoginActivity;
+import tarce.myodoo.activity.product.AllEmployeesActivity;
 import tarce.myodoo.adapter.SalesDetailAdapter;
-import tarce.myodoo.uiutil.DialogIsSave;
 import tarce.myodoo.uiutil.FullyLinearLayoutManager;
 import tarce.myodoo.uiutil.ImageUtil;
 import tarce.myodoo.uiutil.TipDialog;
+import tarce.myodoo.uiutil.WorkTimeDialog;
 import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.myodoo.utils.UserManager;
@@ -82,6 +83,7 @@ import tarce.support.ViewUtils;
 
 public class SalesDetailActivity extends BaseActivity {
     private static String TAG = SalesDetailActivity.class.getSimpleName();
+    private static final int SECOND_OPERATION=0x10;
     @InjectView(R.id.partner)
     TextView partner;
     @InjectView(R.id.time)
@@ -118,6 +120,20 @@ public class SalesDetailActivity extends BaseActivity {
     TextView tvPrint;
     @InjectView(R.id.tv_auto_num)
     TextView tvAutoNum;
+    @InjectView(R.id.is_secondary)
+    TextView isSecondary;
+    @InjectView(R.id.is_secondary_message)
+    TextView isSecondaryMessage;
+    @InjectView(R.id.tv_fen_name)
+    TextView tvFenName;
+    @InjectView(R.id.tv_control_name)
+    TextView tvControlName;
+    @InjectView(R.id.work_channel)
+    TextView workChannel;
+    @InjectView(R.id.work_time)
+    TextView workTime;
+    @InjectView(R.id.secondary_linear)
+    LinearLayout secondaryLinear;
     private SalesDetailAdapter salesDetailAdapter;
     private boolean isShowCamera = true;
     private InventoryApi inventoryApi;
@@ -132,6 +148,9 @@ public class SalesDetailActivity extends BaseActivity {
     private String saleName;
     private String model_state = "";
     private Printer printer;
+    private Retrofit retrofit;
+    private TimeSheetBean.ResultBean.ResDataBean dataBean;
+    private int sheet_id = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,10 +177,32 @@ public class SalesDetailActivity extends BaseActivity {
     }
 
     private void refreshView(GetSaleResponse.TResult.TRes_data bundle1) {
-        partner.setText(bundle1.getParnter_id());
-        if (!StringUtils.isNullOrEmpty(bundle1.getMin_date()+"")){
-            time.setText(TimeUtils.utc2Local(bundle1.getMin_date()+""));
+        if (bundle1.isSecondary_operation()){//二次生产显示的信息
+            isSecondary.setText("是");
+            isSecondaryMessage.setVisibility(View.VISIBLE);
+            secondaryLinear.setVisibility(View.VISIBLE);
+            if (bundle1.getTimesheet_order_id().size()>0){
+                tvControlName.setText(bundle1.getTimesheet_order_id().get(0).getTo_partner().getName());
+                tvFenName.setText(bundle1.getTimesheet_order_id().get(0).getFrom_partner().getName());
+                workChannel.setText(bundle1.getTimesheet_order_id().get(0).getWork_type_id().getName());
+                workTime.setText(bundle1.getTimesheet_order_id().get(0).getHour_spent()+"");
+            }else {
+                tvControlName.setText("暂无");
+                tvFenName.setText("暂无");
+                workChannel.setText("暂无");
+                workTime.setText("暂无");
+            }
+
         }else {
+            isSecondary.setText("否");
+            isSecondaryMessage.setVisibility(View.GONE);
+            secondaryLinear.setVisibility(View.GONE);
+        }
+
+        partner.setText(bundle1.getParnter_id());
+        if (!StringUtils.isNullOrEmpty(bundle1.getMin_date() + "")) {
+            time.setText(TimeUtils.utc2Local(bundle1.getMin_date() + ""));
+        } else {
             time.setText("false");
         }
         states.setText(StringUtils.switchString(bundle1.getState()));
@@ -208,18 +249,23 @@ public class SalesDetailActivity extends BaseActivity {
 
     /**
      * 批量自动填写
-     * */
+     */
     @OnClick(R.id.tv_auto_num)
-    void autoWrite(View view){
+    void autoWrite(View view) {
         for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
             GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids productIds = bundle1.getPack_operation_product_ids().get(i);
             if (productIds.getPack_id() != -1) {
-                double qty = productIds.getProduct_id().getQty_available() >= productIds.getProduct_qty() ? productIds.getProduct_qty() : productIds.getProduct_id().getQty_available();
-                productIds.setQty_done(qty);
+                double qty = productIds.getProduct_id().getQty_available() >= productIds.getOrigin_qty() ? productIds.getOrigin_qty() : productIds.getProduct_id().getQty_available();
+                if (qty<0){
+                    productIds.setQty_done(0);
+                }else {
+                    productIds.setQty_done(qty);
+                }
                 salesDetailAdapter.notifyDataSetChanged();
             }
         }
     }
+
     private void initListener() {
         salesDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
@@ -229,10 +275,9 @@ public class SalesDetailActivity extends BaseActivity {
                         (GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids) adapter.getData().get(position);
                 if (obj.getPack_id() == -1) return;
                 final EditText editText = new EditText(SalesDetailActivity.this);
-//                final Integer qty_available = StringUtils.doubleToInt(obj.getProduct_id().getQty_available());
-//                Integer product_qty = obj.getProduct_qty();
-//                Integer qty = qty_available >= product_qty ? product_qty : qty_available;
-                final double qty = obj.getProduct_id().getQty_available();
+                final double qty_available = obj.getProduct_id().getQty_available();
+                double product_qty = obj.getOrigin_qty();
+                final double qty = qty_available >= product_qty ? product_qty : qty_available;
                 editText.setText(qty + "");
                 //editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText.setSelection(editText.getText().length());
@@ -251,8 +296,8 @@ public class SalesDetailActivity extends BaseActivity {
 //                                    Toast.makeText(SalesDetailActivity.this, "库存不足", Toast.LENGTH_SHORT).show();
 //                                    return;
 //                                }
-                                if (Double.parseDouble(editText.getText().toString())>qty)     {
-                                    Toast.makeText(SalesDetailActivity.this, "库存不足", Toast.LENGTH_SHORT).show();
+                                if (Double.parseDouble(editText.getText().toString()) > qty) {
+                                    Toast.makeText(SalesDetailActivity.this, "库存不足或超过初始需求", Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                                 obj.setQty_done(Double.parseDouble(editText.getText().toString()));
@@ -281,9 +326,9 @@ public class SalesDetailActivity extends BaseActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if (bundle1.getState().equals("done")){
+                        if (bundle1.getState().equals("done")) {
                             printTra("留底单");
-                        }else {
+                        } else {
                             printDefaultNum();
                         }
                     }
@@ -305,7 +350,7 @@ public class SalesDetailActivity extends BaseActivity {
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
         printer.setLineSpace(1);
-        printer.print("              留底\n      --------------------\n"+"销售订单备注: " + bundle1.getSale_note() + "\n\n\n" + "出货单号：" + bundle1.getName() + "\n" + "源单据: " + bundle1.getOrigin() + "\n" + "合作伙伴： " +
+        printer.print("              留底\n      --------------------\n" + "销售订单备注: " + bundle1.getSale_note() + "\n\n\n" + "出货单号：" + bundle1.getName() + "\n" + "源单据: " + bundle1.getOrigin() + "\n" + "合作伙伴： " +
                 bundle1.getParnter_id() + "\n" +
                 "收货人联系电话: " + bundle1.getPhone() + "\n--------------------------\n", 30, TimeUnit.SECONDS);
         printer.print("产品名称       完成数量", 30, TimeUnit.SECONDS);
@@ -326,7 +371,7 @@ public class SalesDetailActivity extends BaseActivity {
                 }
             }
         }
-        printer.print("打印时间：" + DateTool.getDateTime()+"\n\n\n\n\n", 30, TimeUnit.SECONDS);
+        printer.print("打印时间：" + DateTool.getDateTime() + "\n\n\n\n\n", 30, TimeUnit.SECONDS);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -351,9 +396,14 @@ public class SalesDetailActivity extends BaseActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         //开始备货
-                                        refreshButtom("备货完成");
-                                        model_state = "change";
-                                        initListener();
+                                        if (bundle1.isSecondary_operation()){
+                                            refreshButtom("分配二次加工负责人");
+                                            initListener();
+                                        }else {
+                                            refreshButtom("备货完成");
+                                            model_state = "change";
+                                            initListener();
+                                        }
                                     }
                                 }).show();
                     }
@@ -379,10 +429,12 @@ public class SalesDetailActivity extends BaseActivity {
                     }
                 });
                 break;
+            case "secondary_operation_done":
             case "备货完成":
+                initListener();
                 tvAutoNum.setVisibility(View.VISIBLE);
                 buttomButton1.setVisibility(View.VISIBLE);
-                buttomButton1.setText(s);
+                buttomButton1.setText("备货完成");
                 buttomButton1.setBackgroundResource(R.color.color_5693f8);
                 buttomButton1.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -418,16 +470,42 @@ public class SalesDetailActivity extends BaseActivity {
                                                 break;
                                             }
                                         }
+                                        // TODO: 2018/1/17 需要把完成数量是0的都删除掉不传给后台
+                                        List<GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids> subTwodata = new ArrayList<>();
+                                        for (int i = 0; i < data.size(); i++) {
+                                            if (data.get(i).getQty_done()>0){
+                                                subTwodata.add(data.get(i));
+                                            }
+                                        }
+//                                        data.removeAll(subTwodata);
                                         if (threeOrFive) {
                                             objectObjectHashMap.put("state", "process");
                                             objectObjectHashMap.put("picking_id", bundle1.getPicking_id());
-                                            objectObjectHashMap.put("pack_operation_product_ids", data);
+                                            objectObjectHashMap.put("pack_operation_product_ids", subTwodata);
                                         } else {
                                             objectObjectHashMap.put("state", "process");
                                             objectObjectHashMap.put("picking_id", bundle1.getPicking_id());
-                                            objectObjectHashMap.put("pack_operation_product_ids", data);
+                                            objectObjectHashMap.put("pack_operation_product_ids", subTwodata);
                                             objectObjectHashMap.put("qc_img", bundle1.getQc_img());
-                                            objectObjectHashMap.put("qc_note", "yes");
+                                            // TODO: 2018/1/17 一次性出货规则的订单 需要看完成数量是否都等于了初始需求
+                                            if (String.valueOf(bundle1.getDelivery_rule()).equals("delivery_once")){
+                                                boolean isYes = false;
+                                                for (int i = 0; i < data.size(); i++) {
+                                                    if (data.get(i).getQty_done()>=data.get(i).getOrigin_qty()){
+                                                        isYes = true;
+                                                    }else {
+                                                        isYes = false;
+                                                        break;
+                                                    }
+                                                }
+                                                if (isYes){
+                                                    objectObjectHashMap.put("qc_note", "yes");
+                                                }else {
+                                                    objectObjectHashMap.put("qc_note", "no");
+                                                }
+                                            }else {
+                                                objectObjectHashMap.put("qc_note", "yes");
+                                            }
                                         }
                                         Call<GetSaleResponse> getSaleResponseCall = inventoryApi.changeStockPicking(objectObjectHashMap);
                                         showDefultProgressDialog();
@@ -461,9 +539,9 @@ public class SalesDetailActivity extends BaseActivity {
                                                         public void onClick(DialogInterface dialog, int which) {
                                                             Toast.makeText(SalesDetailActivity.this, "将自动打印此单据，请等待", Toast.LENGTH_LONG).show();
                                                             for (int i = 0; i < 2; i++) {
-                                                                if (i == 0){
+                                                                if (i == 0) {
                                                                     printTra("客户联");
-                                                                }else if (i == 1){
+                                                                } else if (i == 1) {
                                                                     printTra("物流联");
                                                                 }
                                                             }
@@ -511,6 +589,109 @@ public class SalesDetailActivity extends BaseActivity {
             case "cancel":
                 buttomButton1.setText("已取消");
                 break;
+            case "分配二次加工负责人":
+                buttomButton1.setText("分配二次加工负责人");
+                buttomButton1.setVisibility(View.VISIBLE);
+                buttomButton1.setBackgroundResource(R.color.color_5693f8);
+                buttomButton1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(SalesDetailActivity.this, AllEmployeesActivity.class);
+                        intent.putExtra("picking_id", bundle1.getPicking_id());
+                        startActivityForResult(intent, SECOND_OPERATION);
+                    }
+                });
+                break;
+            case "secondary_operation":
+            case "加工完成":
+                buttomButton1.setText("加工完成");
+                buttomButton1.setVisibility(View.VISIBLE);
+                buttomButton1.setBackgroundResource(R.color.color_5693f8);
+                buttomButton1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        retrofit = new Retrofit.Builder()
+                                .client(new OKHttpFactory(SalesDetailActivity.this).getOkHttpClient())
+                                .baseUrl(RetrofitClient.Url + "/linkloving_timesheets/")
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                                .build();
+                       InventoryApi  inventoryApi1 = retrofit.create(InventoryApi.class);
+                        showDefultProgressDialog();
+                        Call<WorkTypeBean> workType = inventoryApi1.getWorkType(new HashMap());
+                        workType.enqueue(new Callback<WorkTypeBean>() {
+                            @Override
+                            public void onResponse(Call<WorkTypeBean> call, Response<WorkTypeBean> response) {
+                                dismissDefultProgressDialog();
+                                if (response.body()==null)return;
+                                if (response.body().getError()!=null){
+                                    new TipDialog(SalesDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                            .show();
+                                    return;
+                                }
+                                if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==1){
+                                    WorkTimeDialog timeDialog = new WorkTimeDialog(SalesDetailActivity.this, R.style.MyDialogStyle,
+                                            new WorkTimeDialog.OnSendCommonClickListener() {
+                                                @Override
+                                                public void OnSendCommonClick(double num, int type_id) {
+                                                    //ToastUtils.showCommonToast(SalesDetailActivity.this, "num="+num+"gongzhong="+type_id);
+                                                    retrofit = new Retrofit.Builder()
+                                                            .client(new OKHttpFactory(SalesDetailActivity.this).getOkHttpClient())
+                                                            .baseUrl(RetrofitClient.Url + "/linkloving_timesheets/")
+                                                            .addConverterFactory(GsonConverterFactory.create())
+                                                            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                                                            .build();
+                                                    InventoryApi inventoryApi2 = retrofit.create(InventoryApi.class);
+                                                    showDefultProgressDialog();
+                                                    HashMap<Object, Object> hashMap = new HashMap<Object, Object>();
+                                                    hashMap.put("picking_id", bundle1.getPicking_id());
+                                                    if (bundle1.getTimesheet_order_id().size()>0){
+                                                        hashMap.put("sheet_id", bundle1.getTimesheet_order_id().get(0).getId());
+                                                    }else {
+                                                        hashMap.put("sheet_id", sheet_id);
+                                                    }
+                                                    hashMap.put("work_type_id", type_id);
+                                                    hashMap.put("hour_spent", num);
+                                                    Call<TimeSheetBean> commonBeanCall = inventoryApi2.actionAssinHour(hashMap);
+                                                    commonBeanCall.enqueue(new Callback<TimeSheetBean>() {
+                                                        @Override
+                                                        public void onResponse(Call<TimeSheetBean> call, Response<TimeSheetBean> response) {
+                                                            dismissDefultProgressDialog();
+                                                            if (response.body() == null)return;
+                                                            if (response.body().getError()!=null){
+                                                                new TipDialog(SalesDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+                                                                        .show();
+                                                                return;
+                                                            }
+                                                            if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==1){
+                                                                TimeSheetBean.ResultBean.ResDataBean res_data = response.body().getResult().getRes_data().get(0);
+                                                                tvControlName.setText(res_data.getTo_partner().getName());
+                                                                tvFenName.setText(res_data.getFrom_partner().getName());
+                                                                workChannel.setText(res_data.getWork_type_id().getName());
+                                                                workTime.setText(res_data.getHour_spent()+"");
+                                                                refreshButtom("备货完成");
+                                                                initListener();
+                                                            }
+                                                        }
+                                                        @Override
+                                                        public void onFailure(Call<TimeSheetBean> call, Throwable t) {
+                                                            dismissDefultProgressDialog();
+                                                        }
+                                                    });
+                                                }
+                                            }, response.body().getResult().getRes_data(), tvFenName.getText().toString(),tvControlName.getText().toString());
+                                    timeDialog.show();
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<WorkTypeBean> call, Throwable t) {
+                                dismissDefultProgressDialog();
+                            }
+                        });
+                    }
+                });
+                break;
         }
     }
 
@@ -529,8 +710,8 @@ public class SalesDetailActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != Activity.RESULT_CANCELED){
-            if (requestCode == REQUEST_CODE_IMAGE_CAPTURE){
+        if (resultCode != Activity.RESULT_CANCELED) {
+            if (requestCode == REQUEST_CODE_IMAGE_CAPTURE) {
                 selectedImagePath = getImagePath();
                 if (!StringUtils.isNullOrEmpty(selectedImagePath)) {
                     showDefultProgressDialog();
@@ -555,7 +736,7 @@ public class SalesDetailActivity extends BaseActivity {
                             dismissDefultProgressDialog();
                             if (response.body() == null)
                                 return;
-                            if (response.body().getError()!=null){
+                            if (response.body().getError() != null) {
                                 new TipDialog(SalesDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                         .show();
                                 return;
@@ -573,6 +754,20 @@ public class SalesDetailActivity extends BaseActivity {
                             dismissDefultProgressDialog();
                         }
                     });
+                }
+            }else if (requestCode==SECOND_OPERATION){
+                if (resultCode==1){
+                    if (data!=null){
+                        dataBean = (TimeSheetBean.ResultBean.ResDataBean) data.getSerializableExtra("data");
+//                        TimeSheetBean.ResultBean.ResDataBean.ToPartnerBean to_partner = (TimeSheetBean.ResultBean.ResDataBean.ToPartnerBean) data.getSerializableExtra("to_partner");
+//                        TimeSheetBean.ResultBean.ResDataBean.FromPartnerBean fromPartnerBean = (TimeSheetBean.ResultBean.ResDataBean.FromPartnerBean) data.getSerializableExtra("from_partner");
+                        if (dataBean!=null){
+                            sheet_id = dataBean.getId();
+                            tvFenName.setText(dataBean.getFrom_partner().getName());
+                            tvControlName.setText(dataBean.getTo_partner().getName());
+                        }
+                        refreshButtom("加工完成");
+                    }
                 }
             } else {
                 super.onActivityResult(requestCode, resultCode, data);
@@ -634,57 +829,58 @@ public class SalesDetailActivity extends BaseActivity {
 //        return super.onOptionsItemSelected(item);
 //    }
 
-//    /**
-//     * 返回按钮
-//     */
+    /**
+     * 返回按钮
+     */
 //    @Override
 //    public boolean onKeyDown(int keyCode, KeyEvent event) {
 //        if (keyCode == KeyEvent.KEYCODE_BACK) { //监控/拦截/屏蔽返回键
-//            boolean isSave = false;
-//            for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
-//                if (bundle1.getPack_operation_product_ids().get(i).getQty_done() > 0) {
-//                    isSave = true;
-//                    break;
-//                } else {
-//                    isSave = false;
-//                }
-//            }
-//            /**
-//             * 情况一：点进来是开始备货状态，什么都没操作，点击返回按钮默认取消保留
-//             * 情况二：点击了开始备货，什么也没操作，全是0，点击返回默认取消保留
-//             * 情况三：点击了开始备货，并且至少备了一个，则进行选择是否保留
-//             * 情况一和二合并
-//             * */
-//
-//            if ("change".equals(model_state) && isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
-//                new DialogIsSave(SalesDetailActivity.this)
-//                        .setSave(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                saveState();
-//                            }
-//                        }).setNotSave(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        cacelReserver();
-//                    }
-//                }).setCancel().show();
-//            } else if (isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
-//                new DialogIsSave(SalesDetailActivity.this)
-//                        .setSave(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                saveState();
-//                            }
-//                        }).setNotSave(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        cacelReserver();
-//                    }
-//                }).setCancel().show();
-//            } else {
-//                cacelReserver();
-//            }
+////            cacelReserver();
+////            boolean isSave = false;
+////            for (int i = 0; i < bundle1.getPack_operation_product_ids().size(); i++) {
+////                if (bundle1.getPack_operation_product_ids().get(i).getQty_done() > 0) {
+////                    isSave = true;
+////                    break;
+////                } else {
+////                    isSave = false;
+////                }
+////            }
+////            /**
+////             * 情况一：点进来是开始备货状态，什么都没操作，点击返回按钮默认取消保留
+////             * 情况二：点击了开始备货，什么也没操作，全是0，点击返回默认取消保留
+////             * 情况三：点击了开始备货，并且至少备了一个，则进行选择是否保留
+////             * 情况一和二合并
+////             * */
+////
+////            if ("change".equals(model_state) && isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
+////                new DialogIsSave(SalesDetailActivity.this)
+////                        .setSave(new View.OnClickListener() {
+////                            @Override
+////                            public void onClick(View v) {
+////                                saveState();
+////                            }
+////                        }).setNotSave(new View.OnClickListener() {
+////                    @Override
+////                    public void onClick(View v) {
+////                        cacelReserver();
+////                    }
+////                }).setCancel().show();
+////            } else if (isSave && (bundle1.getState().equals("assigned") || bundle1.getState().equals("partially_available"))) {
+////                new DialogIsSave(SalesDetailActivity.this)
+////                        .setSave(new View.OnClickListener() {
+////                            @Override
+////                            public void onClick(View v) {
+////                                saveState();
+////                            }
+////                        }).setNotSave(new View.OnClickListener() {
+////                    @Override
+////                    public void onClick(View v) {
+////                        cacelReserver();
+////                    }
+////                }).setCancel().show();
+////            } else {
+////                cacelReserver();
+////            }
 //            return true;
 //        }
 //        return super.onKeyDown(keyCode, event);
@@ -703,7 +899,7 @@ public class SalesDetailActivity extends BaseActivity {
             public void onResponse(Call<DoUnreservBean> call, Response<DoUnreservBean> response) {
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
-                if (response.body().getError()!=null){
+                if (response.body().getError() != null) {
                     new TipDialog(SalesDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
                             .show();
                     return;
@@ -776,7 +972,7 @@ public class SalesDetailActivity extends BaseActivity {
         printer = (Printer) deviceManager.getDevice().getStandardModule(ModuleType.COMMON_PRINTER);
         printer.init();
         printer.setLineSpace(1);
-        printer.print("              "+type+"\n      ----------------\n"+"销售订单备注: " + bundle1.getSale_note() + "\n\n" + "出货单号：" + bundle1.getName() + "\n" + "源单据: " + bundle1.getOrigin() + "\n" + "合作伙伴： " +
+        printer.print("              " + type + "\n      ----------------\n" + "销售订单备注: " + bundle1.getSale_note() + "\n\n" + "出货单号：" + bundle1.getName() + "\n" + "源单据: " + bundle1.getOrigin() + "\n" + "合作伙伴： " +
                 bundle1.getParnter_id() + "\n" +
                 "收货人联系电话: " + bundle1.getPhone() + "\n--------------------------\n", 30, TimeUnit.SECONDS);
         printer.print("产品名称         完成数量", 30, TimeUnit.SECONDS);
@@ -795,7 +991,7 @@ public class SalesDetailActivity extends BaseActivity {
                 }
             }
         }
-       // printer.print("\n", 30, TimeUnit.SECONDS);
+        // printer.print("\n", 30, TimeUnit.SECONDS);
         // Bitmap mBitmap = CodeUtils.createImage(bundle1.getName()+"&stock.picking&"+bundle1.getPicking_id(), 300, 300, null);
         Bitmap mBitmap = CodeUtils.createImage(bundle1.getName(), 180, 180, null);
         printer.print(0, mBitmap, 30, TimeUnit.SECONDS);

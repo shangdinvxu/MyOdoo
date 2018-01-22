@@ -31,7 +31,6 @@ import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.inventory.CustomerSaleBean;
 import tarce.myodoo.R;
-import tarce.myodoo.activity.engineer.ProjectActivity;
 import tarce.myodoo.adapter.NewSaleCustomAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
@@ -67,6 +66,10 @@ public class NewSaleActivity extends Activity {
     SwipeToLoadLayout swipeToLoad;
     @InjectView(R.id.tv_diy_update)
     TextView tvDiyUpdate;
+    @InjectView(R.id.wait_num)
+    TextView waitNum;
+    @InjectView(R.id.can_num)
+    TextView canNum;
     private int team_id;
     private InventoryApi inventoryApi;
     private ProgressDialog progressDialog;
@@ -136,13 +139,14 @@ public class NewSaleActivity extends Activity {
     }
 
     @OnClick(R.id.tv_diy_update)
-    void updateData(View view){
-        if ("firstPage".equals(from)){
+    void updateData(View view) {
+        if ("firstPage".equals(from)) {
             serchData(name);
-        }else {
+        } else {
             getData(LOAD_NUM, 0, Refresh_Move);
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -161,7 +165,7 @@ public class NewSaleActivity extends Activity {
             public void onResponse(Call<CustomerSaleBean> call, Response<CustomerSaleBean> response) {
                 progressDialog.dismiss();
                 if (response.body() == null) return;
-                if (response.body().getError()!=null){
+                if (response.body().getError() != null) {
                     new TipDialog(NewSaleActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                             .show();
                     return;
@@ -182,6 +186,16 @@ public class NewSaleActivity extends Activity {
                     newSaleCustomAdapter.setData(allList);
                 }*/
                     allList = res_data;
+                    int sum_wait = 0;
+                    int sum_can = 0;
+                    if (res_data!=null){
+                        for (int i = 0; i < res_data.size(); i++) {
+                            sum_wait = sum_wait + res_data.get(i).getWaiting_data();
+                            sum_can = sum_can + res_data.get(i).getAble_to_data();
+                        }
+                    }
+                    waitNum.setText(""+sum_wait);
+                    canNum.setText(""+sum_can);
                     newSaleCustomAdapter = new NewSaleCustomAdapter(R.layout.item_customsale, res_data);
                     swipeTarget.setAdapter(newSaleCustomAdapter);
                     initListner();
@@ -231,7 +245,7 @@ public class NewSaleActivity extends Activity {
             public void onResponse(Call<CustomerSaleBean> call, Response<CustomerSaleBean> response) {
                 progressDialog.dismiss();
                 if (response.body() == null) return;
-                if (response.body().getError()!=null){
+                if (response.body().getError() != null) {
                     new TipDialog(NewSaleActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                             .show();
                     return;

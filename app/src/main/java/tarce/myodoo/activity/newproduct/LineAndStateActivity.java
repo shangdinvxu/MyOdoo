@@ -280,6 +280,7 @@ public class LineAndStateActivity extends BaseActivity {
      * 获取生产状态的数量
      * */
     private void initCount() {
+        showDefultProgressDialog();
         HashMap<Object, Object> hashMap = new HashMap<>();
 
         if (process_id != -1000) {
@@ -301,6 +302,7 @@ public class LineAndStateActivity extends BaseActivity {
         countMrpPro.enqueue(new Callback<StateCountBean>() {
             @Override
             public void onResponse(Call<StateCountBean> call, Response<StateCountBean> response) {
+                dismissDefultProgressDialog();
                 if (response.body() == null)return;
                 if (response.body().getError()!=null){
                     new TipDialog(LineAndStateActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
@@ -355,6 +357,7 @@ public class LineAndStateActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call<StateCountBean> call, Throwable t) {
+                dismissDefultProgressDialog();
                 Log.e("zws", t.toString());
             }
         });

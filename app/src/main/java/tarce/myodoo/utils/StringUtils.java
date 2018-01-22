@@ -40,6 +40,10 @@ public class StringUtils {
             transtring = "已取消";
         } else if (string.equals("picking")) {
             transtring = "等待分拣";
+        }else if (string.equals("secondary_operation")){
+            transtring = "二次加工中";
+        }else if (string.equals("secondary_operation_done")){
+            transtring = "二次加工完成";
         }
         return transtring;
     }
