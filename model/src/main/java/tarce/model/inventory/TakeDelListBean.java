@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import tarce.model.ErrorBean;
+import tarce.model.ImageBean;
+
 
 /**
  * Created by zouzou on 2017/6/23.
@@ -411,6 +413,8 @@ public class TakeDelListBean {
                         this.weight = weight;
                     }
 
+
+
                     /**
                      * default_code : 98.DG104A.100
                      * qty_available : 0.0
@@ -419,6 +423,16 @@ public class TakeDelListBean {
                      * name : [98.DG104A.100] DG104A-组装好成品(凯西花房)-RT
                      */
 
+
+                    public List<ImageBean> getImage_ids() {
+                        return image_ids;
+                    }
+
+                    public void setImage_ids(List<ImageBean> image_ids) {
+                        this.image_ids = image_ids;
+                    }
+
+                    private List<ImageBean> image_ids;
                     private double weight;
                     private String product_specs;
                     private String default_code;

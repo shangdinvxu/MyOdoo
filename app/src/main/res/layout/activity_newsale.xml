@@ -11,14 +11,16 @@
             android:id="@+id/back_no_left"
             android:layout_width="100dp"
             android:layout_height="match_parent"
-            android:padding="10dp"
+            android:paddingRight="35dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
             android:src="@drawable/back_no_left"
-            android:layout_centerVertical="true" />
+            />
         <TextView
             android:id="@+id/sale_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="搜索的客户"
+            android:text="搜索的客户/SO单号"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:layout_centerInParent="true"/>
@@ -92,21 +94,28 @@
                 android:textColor="@color/white"/>
         </LinearLayout>
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/result_minor_text"/>
-    <SearchView
-        android:layout_marginTop="15dp"
-        android:id="@+id/search_newsale"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:focusable="false"
-        android:iconifiedByDefault="false"
-        android:queryHint="请输入客户简称用于搜索"
-        android:background="@drawable/edit_input_bac"/>
+        <AutoCompleteTextView
+            android:layout_marginTop="15dp"
+            android:id="@+id/search_newsale"
+            android:background="@drawable/logineditbac"
+            android:layout_width="match_parent"
+            android:textSize="12sp"
+            android:hint="请输入客户简称/SO单号搜索"
+            android:layout_height="35dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:paddingLeft="5dp" />
+    <!--<SearchView-->
+        <!--android:layout_marginTop="15dp"-->
+        <!--android:id="@+id/search_newsale"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="35dp"-->
+        <!--android:layout_marginLeft="15dp"-->
+        <!--android:layout_marginRight="15dp"-->
+        <!--android:focusable="true"-->
+        <!--android:iconifiedByDefault="false"-->
+        <!--android:queryHint="请输入客户简称/SO单号搜索"-->
+        <!--android:background="@drawable/edit_input_bac"/>-->
     <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
         android:layout_marginTop="15dp"
         android:layout_width="match_parent"

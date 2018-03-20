@@ -1,20 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
-    <SearchView
-        android:layout_marginTop="15dp"
-        android:id="@+id/search_newdate"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:focusable="false"
-        android:iconifiedByDefault="false"
-        android:queryHint="请输入源单据号搜索"
-        android:background="@drawable/edit_input_bac"/>
-
+        android:layout_height="50dp"
+        android:background="@color/color_5693f8">
+        <SearchView
+            android:id="@+id/search_newdate"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_gravity="center_vertical"
+            android:focusable="false"
+            android:iconifiedByDefault="false"
+            android:queryHint="搜源单据号/产品名称/MO号"
+            android:background="@drawable/edit_input_bac"/>
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/linear_tip"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/color_f0f2f5">
+        <TextView
+            android:id="@+id/tv_tip_show"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_8a9399"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:text="已自动隐藏有产出的mo"/>
+        <Button
+            android:id="@+id/btn_show_cancel"
+            android:layout_width="110dp"
+            android:layout_height="40dp"
+            android:text="取消隐藏"
+            android:background="@drawable/product_button_have"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:textColor="@color/color_666666"/>
+    </RelativeLayout>
     <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,6 +57,7 @@
             android:layout_height="wrap_content">
         </tarce.myodoo.uiutil.RecyclerHeaderView>
         <android.support.v7.widget.RecyclerView
+            android:background="@color/white"
             android:id="@+id/swipe_target"
             android:layout_width="match_parent"
             android:layout_height="match_parent">

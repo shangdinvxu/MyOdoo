@@ -54,6 +54,7 @@ import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
 import tarce.model.FindProductByConditionResponse;
 import tarce.model.GetSaleResponse;
+import tarce.model.LoginResponse;
 import tarce.model.TimeSheetBean;
 import tarce.model.WorkTypeBean;
 import tarce.model.inventory.CommonBean;
@@ -77,7 +78,7 @@ import tarce.support.ToastUtils;
 import tarce.support.ViewUtils;
 
 /**
- * Created by Daniel.Xu on 2017/4/21.
+ * Created by zws on 2017/4/21.
  * 销售出货详情页
  */
 
@@ -151,6 +152,8 @@ public class SalesDetailActivity extends BaseActivity {
     private Retrofit retrofit;
     private TimeSheetBean.ResultBean.ResDataBean dataBean;
     private int sheet_id = 0;
+    private LoginResponse userInfoBean;
+    private boolean company_main;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -275,10 +278,18 @@ public class SalesDetailActivity extends BaseActivity {
                         (GetSaleResponse.TResult.TRes_data.TPack_operation_product_ids) adapter.getData().get(position);
                 if (obj.getPack_id() == -1) return;
                 final EditText editText = new EditText(SalesDetailActivity.this);
+                // TODO: 2018/3/16 根据主公司子公司
+                userInfoBean = UserManager.getSingleton().getUserInfoBean();
+                if (userInfoBean != null) {
+                    company_main = userInfoBean.getResult().getRes_data().is_company_main();
+                }
                 final double qty_available = obj.getProduct_id().getQty_available();
                 double product_qty = obj.getOrigin_qty();
                 final double qty = qty_available >= product_qty ? product_qty : qty_available;
                 editText.setText(qty + "");
+                if (qty<0){
+                    editText.setText("0");
+                }
                 //editText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 editText.setSelection(editText.getText().length());
                 AlertDialog.Builder dialog = AlertAialogUtils.getCommonDialog(SalesDetailActivity.this, "输入" + obj.getProduct_id().getName() + "完成数量");
@@ -296,9 +307,18 @@ public class SalesDetailActivity extends BaseActivity {
 //                                    Toast.makeText(SalesDetailActivity.this, "库存不足", Toast.LENGTH_SHORT).show();
 //                                    return;
 //                                }
-                                if (Double.parseDouble(editText.getText().toString()) > qty) {
-                                    Toast.makeText(SalesDetailActivity.this, "库存不足或超过初始需求", Toast.LENGTH_SHORT).show();
-                                    return;
+                                if (company_main){//主公司
+                                    if (Double.parseDouble(editText.getText().toString()) > qty) {
+                                        Toast.makeText(SalesDetailActivity.this, "库存不足或超过初始需求", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                }
+                                if (!company_main){//子公司
+                                    // TODO: 2018/3/14 小于库存就好了
+                                    if      (Double.parseDouble(editText.getText().toString()) > qty_available) {
+                                        Toast.makeText(SalesDetailActivity.this, "库存不足", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
                                 }
                                 obj.setQty_done(Double.parseDouble(editText.getText().toString()));
                                 salesDetailAdapter.notifyDataSetChanged();

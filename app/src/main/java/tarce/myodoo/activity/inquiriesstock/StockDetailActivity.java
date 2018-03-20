@@ -1,27 +1,26 @@
 package tarce.myodoo.activity.inquiriesstock;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.text.InputType;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.newland.mtype.ModuleType;
 import com.newland.mtype.module.common.printer.Printer;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.ButterKnife;
@@ -32,18 +31,17 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
+import tarce.model.ImageBean;
 import tarce.model.inventory.ChangeWeightBean;
 import tarce.model.inventory.StockListBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
-import tarce.myodoo.activity.outsourcing.OutSourceListActivity;
-import tarce.myodoo.activity.salesout.SalesDetailActivity;
+import tarce.myodoo.activity.ImageActivity;
+import tarce.myodoo.activity.inspect.InspectMoDetailActivity;
 import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.DateTool;
 import tarce.myodoo.utils.StringUtils;
 import tarce.support.AlertAialogUtils;
-import tarce.support.ToastUtils;
-import tarce.support.ViewUtils;
 
 /**
  * Created by zouzou on 2017/7/5.
@@ -78,6 +76,8 @@ public class StockDetailActivity extends BaseActivity {
     TextView tvWeight;
     @InjectView(R.id.btn_change_weight)
     Button btnChangeWeight;
+    @InjectView(R.id.tv_image_list)
+    TextView tvImageList;
     private StockListBean.ResultBean.ResDataBean resDataBean;
     private Printer printer;
     private InventoryApi inventoryApi;
@@ -96,17 +96,37 @@ public class StockDetailActivity extends BaseActivity {
         }
     }
 
+    @OnClick(R.id.image_stockdetail)
+    void clickImage(View view){
+        if (!StringUtils.isNullOrEmpty(resDataBean.getImage_medium())) {
+            List<ImageBean> list = new ArrayList<>();
+            ImageBean bean = new ImageBean(resDataBean.getImage_medium());
+            list.add(bean);
+            Intent intent = new Intent(StockDetailActivity.this, ImageActivity.class);
+            intent.putExtra("imageList", (Serializable) list);
+            startActivity(intent);
+        }
+    }
     //初始化试图
     private void initView() {
         if (!StringUtils.isNullOrEmpty(resDataBean.getImage_medium())) {
             Glide.with(StockDetailActivity.this).load(resDataBean.getImage_medium()).into(imageStockdetail);
         }
+
+        tvImageList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(StockDetailActivity.this, ImageActivity.class);
+                intent.putExtra("imageList", (Serializable) resDataBean.getImage_ids());
+                startActivity(intent);
+            }
+        });
         switch (resDataBean.getType()) {
             case "product":
                 tvProductType.setText("可库存产品");
                 break;
             case "consu":
-                tvProductType.setText("可消耗");
+                tvProductType.setText("可消 耗");
                 break;
             case "service":
                 tvProductType.setText("服务");
@@ -170,12 +190,12 @@ public class StockDetailActivity extends BaseActivity {
                             public void onResponse(Call<ChangeWeightBean> call, Response<ChangeWeightBean> response) {
                                 dismissDefultProgressDialog();
                                 if (response.body() == null) return;
-                                if (response.body().getError()!=null){
+                                if (response.body().getError() != null) {
                                     new TipDialog(StockDetailActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                                             .show();
                                     return;
                                 }
-                                if (response.body().getResult().getRes_data()!=null && response.body().getResult().getRes_code()==1){
+                                if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
                                     new TipDialog(StockDetailActivity.this, R.style.MyDialogStyle, "成功修改重量!")
                                             .show();
                                 }

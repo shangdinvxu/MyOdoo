@@ -117,6 +117,14 @@ public class LoginResponse {
                 this.allow_produced_qty_rate = allow_produced_qty_rate;
             }
 
+            public boolean is_company_main() {
+                return is_company_main;
+            }
+
+            public void setIs_company_main(boolean is_company_main) {
+                this.is_company_main = is_company_main;
+            }
+
             /**
              * lang : zh-Hans
              * user_ava : http://192.168.2.36:8069/linkloving_app_api/get_worker_image?worker_id=1&model=res.users&field=image_medium&time=1493832026.0
@@ -127,6 +135,7 @@ public class LoginResponse {
              * partner_id : 3
              */
 
+            private boolean is_company_main;
             private int allow_produced_qty_rate;
             private String company;
             private String error;

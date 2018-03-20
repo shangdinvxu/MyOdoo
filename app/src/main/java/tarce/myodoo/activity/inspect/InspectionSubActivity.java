@@ -69,6 +69,17 @@ public class InspectionSubActivity extends BaseActivity {
 
         Intent intent = getIntent();
         state = intent.getStringExtra("state");
+                switch (state){
+            case "draft":
+                setTitle("等待生产品检");
+                break;
+            case "qc_ing":
+                setTitle("品检中");
+                break;
+            case "qc_success":
+                setTitle("等待入库");
+                break;
+        }
         getFeedback(0,20, Refresh_Move);
         setRecyc();
     }
@@ -189,16 +200,9 @@ public class InspectionSubActivity extends BaseActivity {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 QcFeedbaskBean.ResultBean.ResDataBean resDataBean = subAdapter.getData().get(position);
-//                if (resDataBean.is_random_output() ||
-//                        resDataBean.is_multi_output()){
-//                    Intent intent = new Intent(InspectionSubActivity.this, InquiriessMorePActivity.class);
-//                    intent.putExtra("data", resDataBean);
-//                    startActivity(intent);
-//                }else {
                 Intent intent = new Intent(InspectionSubActivity.this, InspectMoDetailActivity.class);
                 intent.putExtra("data", resDataBean);
                 startActivity(intent);
-//                }
             }
         });
     }

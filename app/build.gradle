@@ -2,6 +2,9 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 android {
+    dataBinding{
+        enabled = true
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
@@ -11,8 +14,8 @@ android {
         ndk {
             abiFilters "armeabi"
         }
-        versionCode 96
-        versionName "2.4.1"
+        versionCode 102
+        versionName "2.4.8"
         resValue "string", "updatefun_provider_file_authorities", "tarce.myodoo.fileprovider"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -66,6 +69,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+
+    compile 'cn.bingoogolapple:bga-banner:2.2.4@aar'
 }
 repositories {
     mavenCentral()

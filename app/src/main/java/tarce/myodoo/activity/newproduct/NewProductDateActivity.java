@@ -100,6 +100,7 @@ public class NewProductDateActivity extends BaseActivity {
     private int process_id;
     private int origin_sale_id;
     private boolean isChange = false;//是否跳转
+    private boolean search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,10 +114,24 @@ public class NewProductDateActivity extends BaseActivity {
         process_id = intent.getIntExtra("process_id", -1000);
         origin_sale_id = intent.getIntExtra("origin_sale_id", 0);
         setRecyclerview(swipeTarget);
-        todayRadio.setTextColor(Color.BLUE);
-        initRefresh();
-        getData(40, 0, Refresh_Move, DateTool.getDate());
-        thisData = DateTool.getDate();
+        search = intent.getBooleanExtra("search", false);
+        if (search){
+            fiveRadio.setChecked(true);
+            allRadio.setTextColor(Color.BLUE);
+            delayRadio.setTextColor(Color.BLACK);
+            tomorrowRadio.setTextColor(Color.BLACK);
+            todayRadio.setTextColor(Color.BLACK);
+            afterRadio.setTextColor(Color.BLACK);
+            dataBeanList = (List<PickingDetailBean.ResultBean.ResDataBean>) intent.getSerializableExtra("data");
+            adapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, dataBeanList);
+            swipeTarget.setAdapter(adapter);
+            clickAdapterItem();
+        }else {
+            todayRadio.setTextColor(Color.BLUE);
+            initRefresh();
+            getData(40, 0, Refresh_Move, DateTool.getDate());
+            thisData = DateTool.getDate();
+        }
     }
 
     @Override

@@ -30,6 +30,7 @@ import com.newland.mtype.util.ISOUtils;
 import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -58,6 +59,7 @@ import tarce.model.inventory.StartReworkBean;
 import tarce.myodoo.R;
 import tarce.myodoo.activity.BaseActivity;
 import tarce.myodoo.activity.BomFramworkActivity;
+import tarce.myodoo.activity.ImageActivity;
 import tarce.myodoo.adapter.product.ImgRecycAdapter;
 import tarce.myodoo.device.Const;
 import tarce.myodoo.uiutil.FullyGridLayoutManager;
@@ -110,6 +112,14 @@ public class InspectMoDetailActivity extends BaseActivity {
     RecyclerView imgGridRecycler;
     @InjectView(R.id.tv_print)
     TextView tvPrint;
+    @InjectView(R.id.tv_guige)
+    TextView tvGuige;
+    @InjectView(R.id.tv_image_list)
+    TextView tvImageList;
+    @InjectView(R.id.reference_standard)
+    LinearLayout referenceStandard;
+    @InjectView(R.id.product_name_code)
+    TextView productNameCode;
     private QcFeedbaskBean.ResultBean.ResDataBean dataBean;
     private InventoryApi inventoryApi;
     private Retrofit retrofit;
@@ -227,6 +237,20 @@ public class InspectMoDetailActivity extends BaseActivity {
     }
 
     private void initView() {
+        tvGuige.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new TipDialog(InspectMoDetailActivity.this, R.style.MyDialogStyle, dataBean.getProduction_id().getProduct_id().getProduct_specs()).show();
+            }
+        });
+        tvImageList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(InspectMoDetailActivity.this, ImageActivity.class);
+                intent.putExtra("imageList", (Serializable) dataBean.getProduction_id().getProduct_id().getImage_ids());
+                startActivity(intent);
+            }
+        });
         setTitle(String.valueOf(dataBean.getProduction_id().getDisplay_name()));
         switch (dataBean.getState()) {
             case "draft":
@@ -277,9 +301,9 @@ public class InspectMoDetailActivity extends BaseActivity {
                 numRateRejects.setText(Math.rint(dataBean.getQc_fail_rate()) + "%");
                 tvRateInspecdetail.setText(Math.rint(dataBean.getQc_rate()) + "%");
                 numRejectsInspecdetail.setFocusable(false);
-                numRejectsInspecdetail.setText(dataBean.getQc_fail_qty()+"");
+                numRejectsInspecdetail.setText(dataBean.getQc_fail_qty() + "");
                 numSampleInspecdetail.setFocusable(false);
-                numSampleInspecdetail.setText(dataBean.getQc_test_qty()+"");
+                numSampleInspecdetail.setText(dataBean.getQc_test_qty() + "");
                 commentsOfInspecdetail.setFocusable(false);
                 commentsOfInspecdetail.setText(dataBean.getQc_note());
                 imgRecycAdapter = new ImgRecycAdapter(InspectMoDetailActivity.this, R.layout.adapter_img_recyc, (List<String>) dataBean.getQc_img());
@@ -326,6 +350,8 @@ public class InspectMoDetailActivity extends BaseActivity {
 //        }
         numSampleInspecdetail.addTextChangedListener(mEditnumSample);
         numRejectsInspecdetail.addTextChangedListener(mEditnumRejects);
+        productNameCode.setText("["+dataBean.getProduction_id().getProduct_id().getProduct_default_code()+"]"+
+        dataBean.getProduction_id().getProduct_id().getProduct_name());
     }
 
     /**
@@ -356,9 +382,10 @@ public class InspectMoDetailActivity extends BaseActivity {
     }
 
     @OnClick(R.id.tv_print)
-    void setPrinter(View view){
+    void setPrinter(View view) {
         printProduct();
     }
+
     /**
      * 点击事件
      */
@@ -845,8 +872,8 @@ public class InspectMoDetailActivity extends BaseActivity {
         printer.init();
         printer.setLineSpace(1);
         printer.print(dataBean.getName() + "\n" + "生产数量：" + dataBean.getQty_produced()
-                +"\n"+"产品名称: " + dataBean.getProduction_id().getProduct_id().getProduct_name()+"\n"
-                +"生产MO：" + dataBean.getProduction_id().getDisplay_name()+"\n"
+                + "\n" + "产品名称: " + dataBean.getProduction_id().getProduct_id().getProduct_name() + "\n"
+                + "生产MO：" + dataBean.getProduction_id().getDisplay_name() + "\n"
                 + "\n", 30, TimeUnit.SECONDS);
         String db = SharePreferenceUtils.getString("db", "", InspectMoDetailActivity.this);
         String url = SharePreferenceUtils.getString("url", "", InspectMoDetailActivity.this);

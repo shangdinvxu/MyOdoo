@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import tarce.model.ErrorBean;
+import tarce.model.ImageBean;
 
 /**
  * Created by rose.zou on 2017/6/2.
@@ -385,6 +386,26 @@ public class QcFeedbaskBean {
                 }
 
                 public static class ProductIdBean implements Serializable{
+                    private String product_specs;
+
+                    public String getProduct_specs() {
+                        return product_specs;
+                    }
+
+                    public void setProduct_specs(String product_specs) {
+                        this.product_specs = product_specs;
+                    }
+
+                    public List<ImageBean> getImage_ids() {
+                        return image_ids;
+                    }
+
+                    public void setImage_ids(List<ImageBean> image_ids) {
+                        this.image_ids = image_ids;
+                    }
+
+                    private List<ImageBean> image_ids;
+
                     public Object getProduct_id() {
                         if (product_id instanceof Boolean){
                             product_id = 0;
@@ -414,6 +435,15 @@ public class QcFeedbaskBean {
 
                     private Object product_id;
                     private Object product_name;
+                    private String product_default_code;
+
+                    public String getProduct_default_code() {
+                        return product_default_code;
+                    }
+
+                    public void setProduct_default_code(String product_default_code) {
+                        this.product_default_code = product_default_code;
+                    }
                 }
             }
         }

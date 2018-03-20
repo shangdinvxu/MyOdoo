@@ -1,6 +1,7 @@
 package tarce.myodoo.adapter.takedeliver;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
@@ -8,12 +9,15 @@ import android.view.View;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
+import java.io.Serializable;
 import java.util.List;
 
 import tarce.model.inventory.TakeDelListBean;
 import tarce.myodoo.R;
+import tarce.myodoo.activity.ImageActivity;
 import tarce.myodoo.uiutil.TipDialog;
 import tarce.myodoo.utils.StringUtils;
+import tarce.support.ToastUtils;
 
 /**
  * Created by zouzou on 2017/6/23.
@@ -94,6 +98,15 @@ public class DetailTakedAdapter extends BaseQuickAdapter<TakeDelListBean.ResultB
             @Override
             public void onClick(View v) {
                 new TipDialog(context, R.style.MyDialogStyle, item.getProduct_id().getProduct_specs()).show();
+            }
+        });
+        helper.addOnClickListener(R.id.tv_image_list);
+        helper.getView(R.id.tv_image_list).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ImageActivity.class);
+                intent.putExtra("imageList", (Serializable) item.getProduct_id().getImage_ids());
+                context.startActivity(intent);
             }
         });
     }

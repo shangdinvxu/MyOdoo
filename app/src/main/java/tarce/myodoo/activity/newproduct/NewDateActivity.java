@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.RadioButton;
@@ -91,7 +92,7 @@ public class NewDateActivity extends BaseActivity {
     private InventoryApi inventoryApi;
     private String state;
     private List<PickingDetailBean.ResultBean.ResDataBean> dataBeanList = new ArrayList<>();
-    private List<PickingDetailBean.ResultBean.ResDataBean> beanList = new ArrayList<>();
+    private List<PickingDetailBean.ResultBean.ResDataBean> beanList;
     private List<MainMdBean> allList = new ArrayList<>();
     private List<MainMdBean> mainMdBeen = new ArrayList<>();
     private List<MainMdBean> mainMdBeanList = new ArrayList<>();
@@ -99,6 +100,7 @@ public class NewDateActivity extends BaseActivity {
     private String thisData;
     private int origin_sale_id;
     private int loadTime = 0;
+    private boolean search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,10 +117,35 @@ public class NewDateActivity extends BaseActivity {
         process_id = intent.getIntExtra("process_id", -1112);
         state = intent.getStringExtra("state");
         origin_sale_id = intent.getIntExtra("origin_sale_id", 0);
-        initRefresh();
-        showDefultProgressDialog();
-        initData(40, 0, Refresh_Move, DateTool.getDate());
-        thisData = DateTool.getDate();
+        search = intent.getBooleanExtra("search", false);
+        if (search){
+            beanList = (List<PickingDetailBean.ResultBean.ResDataBean>) intent.getSerializableExtra("data");
+            fiveRadio.setChecked(true);
+            allRadio.setTextColor(Color.BLUE);
+            delayRadio.setTextColor(Color.BLACK);
+            tomorrowRadio.setTextColor(Color.BLACK);
+            todayRadio.setTextColor(Color.BLACK);
+            afterRadio.setTextColor(Color.BLACK);
+            if (beanList!=null){
+                for (int i = 0; i < beanList.size(); i++) {
+                    mainMdBeen.add(new MainMdBean(beanList.get(i)));
+                }
+            }
+            prepareMdAdapter = new PrepareMdAdapter(R.layout.adapter_mater_detail, R.layout.adapter_head_md, mainMdBeen);
+            swipeTarget.setAdapter(prepareMdAdapter);
+            initListener();
+        }else {
+            initRefresh();
+            showDefultProgressDialog();
+            initData(40, 0, Refresh_Move, DateTool.getDate());
+            thisData = DateTool.getDate();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.e("NewDateActivity", "NewDateActivity = onNewIntent");
     }
 
     @Override

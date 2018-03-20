@@ -1,6 +1,7 @@
 package tarce.myodoo.activity.product;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -43,6 +44,7 @@ public class AgainProductActivity extends BaseActivity {
     private String state;
     private int process_id;
     private int origin_sale_id;
+    private boolean search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +59,16 @@ public class AgainProductActivity extends BaseActivity {
         process_id = intent.getIntExtra("process_id", 1000);
         origin_sale_id = intent.getIntExtra("origin_sale_id", 0);
         setRecyclerview(recyclerLine);
-        showDefultProgressDialog();
-        initData();
+        search = intent.getBooleanExtra("search", false);
+        if (search){
+            res_data = (List<PickingDetailBean.ResultBean.ResDataBean>) intent.getSerializableExtra("data");
+            pickAdapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, res_data);
+            recyclerLine.setAdapter(pickAdapter);
+            clickAdapterItem();
+        }else {
+            showDefultProgressDialog();
+            initData();
+        }
     }
 
     @Override

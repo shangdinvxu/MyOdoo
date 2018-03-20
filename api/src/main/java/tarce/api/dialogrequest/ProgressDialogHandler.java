@@ -29,7 +29,7 @@ public class ProgressDialogHandler extends Handler {
     }
 
     private void initProgressDialog(){
-        if (pd == null) {
+        if (pd == null){
             pd = new ProgressDialog(context);
 
             pd.setCancelable(cancelable);

@@ -2,13 +2,17 @@ package tarce.myodoo.activity.salesout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.ListPopupWindow;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,6 +23,7 @@ import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
+import tarce.model.SoOriginBean;
 import tarce.model.inventory.CustomerSaleBean;
 import tarce.model.inventory.NewSaleBean;
 import tarce.myodoo.MyApplication;
@@ -105,7 +110,7 @@ public class NewSaleoutActivity extends BaseActivity {
         Call<NewSaleBean> saleTeam = inventoryApi.getSaleTeam(new HashMap());
         saleTeam.enqueue(new MyCallback<NewSaleBean>() {
             @Override
-            public void onResponse (Call < NewSaleBean > call, Response< NewSaleBean > response){
+            public void onResponse(Call < NewSaleBean > call, Response< NewSaleBean > response){
                 dismissDefultProgressDialog();
                 if (response.body() == null) return;
                 if (response.body().getError()!=null){

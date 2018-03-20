@@ -95,6 +95,15 @@ public class SoOriginBean {
             private String origin_name;
             private int origin_count;
             private int origin_id;
+            private boolean have;
+
+            public boolean isHave() {
+                return have;
+            }
+
+            public void setHave(boolean have) {
+                this.have = have;
+            }
 
             public String getOrigin_name() {
                 if (origin_name.equals("")){

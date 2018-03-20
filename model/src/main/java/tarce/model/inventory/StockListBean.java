@@ -3,6 +3,8 @@ package tarce.model.inventory;
 import java.io.Serializable;
 import java.util.List;
 
+import tarce.model.ImageBean;
+
 /**
  * Created by zouzou on 2017/7/5.
  */
@@ -102,6 +104,15 @@ public class StockListBean {
              * product_name :   HS310-成品(星夜·追梦人){RT-CN}
              */
 
+            public List<ImageBean> getImage_ids() {
+                return image_ids;
+            }
+
+            public void setImage_ids(List<ImageBean> image_ids) {
+                this.image_ids = image_ids;
+            }
+
+            private List<ImageBean> image_ids;
             private double weight;
             private AreaIdBean area_id;
             private Object product_spec;

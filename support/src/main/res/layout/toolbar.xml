@@ -7,6 +7,6 @@
         android:layout_height="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:id="@+id/id_tool_bar"
-        android:background="@color/cc"
+        android:background="@color/color_5693f8"
         app:navigationIcon="?attr/homeAsUpIndicator"/>
 </FrameLayout>

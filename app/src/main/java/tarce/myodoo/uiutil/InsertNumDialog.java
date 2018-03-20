@@ -229,17 +229,19 @@ public class InsertNumDialog extends Dialog {
             return;
         }
         sendCommonClickListener.OnSendCommonClick(Double.parseDouble(eidtOutNum.getText().toString()));
-        eidtOutNum.setText(null);
+        eidtOutNum.setText("");
         dismiss();
     }
 
     @OnClick(R.id.btn_transterm)
     void setBtnTransterm(View view){
-        double weightDouble = Double.parseDouble(editAllWeight.getText().toString());
         if (StringUtils.isNullOrEmpty(editAllWeight.getText().toString())){
             eidtOutNum.setText("0");
             ToastUtils.showCommonToast(context, "请输入总重量");
-        }else if (weightDouble == 0){
+            return;
+        }
+        double weightDouble = Double.parseDouble(editAllWeight.getText().toString());//产品的总重量
+       if (weightDouble == 0){
             eidtOutNum.setText("0");
         }else if (weightProduct!=0){
             double v = (double) weightDouble / weightProduct;

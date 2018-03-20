@@ -35,6 +35,7 @@ import tarce.myodoo.adapter.takedeliver.TakeDelListAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
 import tarce.myodoo.uiutil.TipDialog;
+import tarce.myodoo.utils.StringUtils;
 import tarce.support.MyLog;
 import tarce.support.ToastUtils;
 
@@ -63,7 +64,7 @@ public class TakeDeliveListActivity extends BaseActivity {
     private int loadTime = 0;
     private InventoryApi inventoryApi;
     private String type_code;
-    private String state;
+    private String state = "";
     private TakeDelListAdapter listAdapter;
     private List<TakeDelListBean.ResultBean.ResDataBean> res_data = new ArrayList<>();
     private List<TakeDelListBean.ResultBean.ResDataBean> not_need = new ArrayList<>();
@@ -118,6 +119,7 @@ public class TakeDeliveListActivity extends BaseActivity {
             initData(0,40, Refresh_Move);
             initRecycler();
         }
+        setTitle(StringUtils.switchString(state));
     }
 
     @Override

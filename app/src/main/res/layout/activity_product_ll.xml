@@ -2,13 +2,70 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <SearchView
-        android:id="@+id/search_mo_product"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/color_5693f8">
+        <SearchView
+            android:id="@+id/search_mo_product"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_gravity="center_vertical"
+            android:queryHint="搜MO单号"
+            android:iconifiedByDefault="false"
+            android:background="@drawable/edit_input_bac"/>
+    </LinearLayout>
+    <RadioGroup
+        android:id="@+id/parent_radio_dan"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:queryHint="请输入MO单号搜索"
-        android:iconifiedByDefault="false">
-    </SearchView>
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:layout_marginTop="5dp">
+        <RadioButton
+            android:id="@+id/no_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent"
+            android:text="无产出"
+            android:gravity="center"
+            android:checked="true"/>
+        <RadioButton
+            android:id="@+id/have_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent"
+            android:text="有产出"
+            android:gravity="center"
+            />
+    </RadioGroup>
+    <RadioGroup
+        android:id="@+id/parent_radio"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/one_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent"
+            android:background="@drawable/blue_white"
+            android:gravity="center"
+            android:checked="true"/>
+        <RadioButton
+            android:id="@+id/two_radio"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:button="@null"
+            android:layout_height="match_parent"
+            android:background="@drawable/blue_white"
+            android:gravity="center" />
+    </RadioGroup>
     <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
         android:orientation="vertical"
         android:layout_width="match_parent"

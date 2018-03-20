@@ -5,6 +5,8 @@
     <color name="colorAccent">#FF4081</color>
     <color name="login">#efeff4</color>
     <color name="white">#ffffff</color>
+    <color name="color_8a9399">#8a9399</color>
+    <color name="color_666666">#666666</color>
     <color name="color_5693f8">#5693f8</color>
     <color name="color_409eff">#409eff</color>
     <color name="result_text">#ffffffff</color>
@@ -30,4 +32,5 @@
     <color name="color_70a8ea">#70a8ea</color>
     <color name="red">#ff0000</color>
     <color name="bbutton_info">#ff5bc0de</color>
+    <color name="color_f0f2f5">#f0f2f5</color>
 </resources>

@@ -247,11 +247,13 @@
             android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
         <activity android:name=".activity.newproduct.SoOriginActivity"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"/>
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
+            android:launchMode="singleTask"/>
         <activity android:name=".activity.newproduct.ForInspecSoActivity"
             />
         <activity android:name=".activity.inspect.NewSpectListActivity"/>
         <activity android:name=".activity.product.AllEmployeesActivity"/>
+        <activity android:name=".activity.ImageActivity"/>
     </application>
 
 </manifest>

@@ -1,5 +1,8 @@
 package tarce.myodoo.adapter;
 
+import android.opengl.Visibility;
+import android.view.View;
+
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 
@@ -22,5 +25,10 @@ public class SoOriginAdapter extends BaseQuickAdapter<SoOriginBean.ResultBean.Re
     protected void convert(BaseViewHolder helper, SoOriginBean.ResultBean.ResDataBean item) {
         helper.setText(R.id.tv_so_origin, item.getOrigin_name());
         helper.setText(R.id.tv_so_count, item.getOrigin_count()+"");
+        if (item.isHave()){
+            helper.setVisible(R.id.view_have, false);
+        }else {
+            helper.setVisible(R.id.view_have, true);
+        }
     }
 }

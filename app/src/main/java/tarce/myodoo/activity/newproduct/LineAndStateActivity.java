@@ -163,7 +163,7 @@ public class LineAndStateActivity extends BaseActivity {
                         break;
                     case "二次生产":
                         Intent intent4 = new Intent(LineAndStateActivity.this, SoOriginActivity.class);
-                        intent4.putExtra   ("line_id", line_id);
+                        intent4.putExtra("line_id", line_id);
                         intent4.putExtra("process_id", process_id);
                         intent4.putExtra("state", "is_secondary_produce");
                         intent4.putExtra("name_activity","二次生产");

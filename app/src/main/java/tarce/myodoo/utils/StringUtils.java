@@ -29,7 +29,7 @@ public class StringUtils {
         } else if (string.equals("waiting_in")) {
             transtring = "待入库";
         } else if (string.equals("qc_check")) {
-            transtring = "品检";
+            transtring = "入库品检";
         } else if (string.equals("validate")) {
             transtring = "等待采购检验";
         } else if (string.equals("waiting")) {

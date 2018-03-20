@@ -1,10 +1,14 @@
 package tarce.myodoo.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SearchView;
 
 import com.aspsine.swipetoloadlayout.OnLoadMoreListener;
@@ -52,17 +56,32 @@ public class ProductLineListActivity extends BaseActivity {
     RecyclerFooterView swipeLoadMoreFooter;
     @InjectView(R.id.swipeToLoad)
     SwipeToLoadLayout swipeToLoad;
+    @InjectView(R.id.no_radio)
+    RadioButton noRadio;
+    @InjectView(R.id.have_radio)
+    RadioButton haveRadio;
+    @InjectView(R.id.parent_radio_dan)
+    RadioGroup parentRadioDan;
+    @InjectView(R.id.one_radio)
+    RadioButton oneRadio;
+    @InjectView(R.id.two_radio)
+    RadioButton twoRadio;
+    @InjectView(R.id.parent_radio)
+    RadioGroup parentRadio;
     private int production_line_id;
     private String state_activity;
     private int process_id;
     private InventoryApi loginApi;
     private List<PickingDetailBean.ResultBean.ResDataBean> beanList = new ArrayList<>();
     private List<PickingDetailBean.ResultBean.ResDataBean> dataBeanList = new ArrayList<>();
+    private List<PickingDetailBean.ResultBean.ResDataBean> haveList = new ArrayList<>();
     private List<PickingDetailBean.ResultBean.ResDataBean> allList = new ArrayList<>();
-    private PickingDetailAdapter adapter;
+    private List<PickingDetailBean.ResultBean.ResDataBean> searchList = new ArrayList<>();
+    private PickingDetailAdapter pickingDetailAdapter;
     private int loadTime = 0;
     private int origin_sale_id;
     private boolean isChange = false;
+    private boolean search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,18 +91,35 @@ public class ProductLineListActivity extends BaseActivity {
 
         loginApi = RetrofitClient.getInstance(ProductLineListActivity.this).create(InventoryApi.class);
         setRecyclerview(swipeTarget);
-        initView();
-        showDefultProgressDialog();
-        getPicking(0, 40, Refresh_Move);
-    }
-
-    private void initView() {
         Intent intent = getIntent();
         production_line_id = intent.getIntExtra("production_line_id", -1000);
         state_activity = intent.getStringExtra("state_activity");
         process_id = intent.getIntExtra("process_id", 1000);
         origin_sale_id = intent.getIntExtra("origin_sale_id", 0);
+        search = intent.getBooleanExtra("search", false);
+        if (search) {
+            searchList = (List<PickingDetailBean.ResultBean.ResDataBean>) intent.getSerializableExtra("data");
+            for (int i = 0; i < searchList.size(); i++) {
+                if (searchList.get(i).isHas_produced_product()){
+                    dataBeanList.add(searchList.get(i));
+                }else {
+                    haveList.add(searchList.get(i));
+                }
+            }
+            pickingDetailAdapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, haveList);
+            swipeTarget.setAdapter(pickingDetailAdapter);
+            allList = haveList;
+            clickAdapterItem();
+            initRadio();
+        } else {
+            initView();
+            showDefultProgressDialog();
+//             getPicking(0, 40, Refresh_Move);
+            getPicking();
+        }
+    }
 
+    private void initView() {
         swipeRefreshHeader.setGravity(Gravity.CENTER);
         swipeLoadMoreFooter.setGravity(Gravity.CENTER);
         swipeToLoad.setRefreshHeaderView(swipeRefreshHeader);
@@ -93,9 +129,10 @@ public class ProductLineListActivity extends BaseActivity {
             @Override
             public void onRefresh() {
                 showDefultProgressDialog();
-                getPicking(0, 40, Refresh_Move);
-                if (adapter != null) {
-                    adapter.notifyDataSetChanged();
+                getPicking();
+//                getPicking(0, 40, Refresh_Move);
+                if (pickingDetailAdapter != null) {
+                    pickingDetailAdapter.notifyDataSetChanged();
                 }
                 swipeToLoad.setRefreshing(false);
             }
@@ -106,9 +143,10 @@ public class ProductLineListActivity extends BaseActivity {
                 swipeToLoad.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        loadTime++;
-                        getPicking(40 * loadTime, 40, Load_Move);
-                        adapter.notifyDataSetChanged();
+//                        loadTime++;
+                        getPicking();
+//                        getPicking(40 * loadTime, 40, Load_Move);
+                        pickingDetailAdapter.notifyDataSetChanged();
                         swipeToLoad.setLoadingMore(false);
                     }
                 }, 1000);
@@ -119,32 +157,37 @@ public class ProductLineListActivity extends BaseActivity {
     @Override
     protected void onResume() {
         if (isChange) {
+            noRadio.setChecked(true);
+            oneRadio.setChecked(true);
             swipeToLoad.setRefreshing(true);
-            loadTime = 0;
+//            loadTime = 0;
         }
         super.onResume();
     }
-    private void getPicking(final int offset, final int limit, final int move) {
-        if (beanList != null) {
-            beanList.clear();
+
+//    private void getPicking(final int offset, final int limit, final int move) {
+    private void getPicking() {
+        if (haveList!=null){
+            haveList.clear();
+        }
+        if (dataBeanList!=null){
+            dataBeanList.clear();
         }
         HashMap<Object, Object> hashMap = new HashMap<>();
         hashMap.put("state", state_activity);
-        hashMap.put("offset", offset);
-        hashMap.put("limit", limit);
         int partner_id = SharePreferenceUtils.getInt("partner_id", 1000, ProductLineListActivity.this);
         hashMap.put("partner_id", partner_id);
         if (process_id != -1000) {
             hashMap.put("process_id", process_id);
         }
-        if (production_line_id == -1000){
+        if (production_line_id == -1000) {
             hashMap.put("production_line_id", false);
-        }else {
+        } else {
             hashMap.put("production_line_id", production_line_id);
         }
-        if (origin_sale_id!=0){
+        if (origin_sale_id != 0) {
             hashMap.put("origin_sale_id", origin_sale_id);
-        }else {
+        } else {
             hashMap.put("origin_sale_id", false);
         }
         hashMap.put("date", "all");
@@ -161,21 +204,32 @@ public class ProductLineListActivity extends BaseActivity {
                 }
                 if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() != null) {
                     beanList = response.body().getResult().getRes_data();
-                    if (move == Refresh_Move) {
-                        dataBeanList = beanList;
-                        adapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, beanList);
-                        swipeTarget.setAdapter(adapter);
-                    } else {
-                        if (beanList == null) {
-                            ToastUtils.showCommonToast(ProductLineListActivity.this, "没有更多数据...");
-                            return;
+//                    if (move == Refresh_Move) {
+//                        dataBeanList = beanList;
+//                        pickingDetailAdapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, beanList);
+//                        swipeTarget.setAdapter(pickingDetailAdapter);
+//                    } else {
+//                        if (beanList == null) {
+//                            ToastUtils.showCommonToast(ProductLineListActivity.this, "没有更多数据...");
+//                            return;
+//                        }
+//                        dataBeanList = pickingDetailAdapter.getData();
+//                        dataBeanList.addAll(beanList);
+//                        pickingDetailAdapter.setData(dataBeanList);
+//                    }
+//                    dataBeanList = beanList;
+                    for (int i = 0; i < beanList.size(); i++) {
+                        if (beanList.get(i).isHas_produced_product()){
+                            dataBeanList.add(beanList.get(i));
+                        }else {
+                            haveList.add(beanList.get(i));
                         }
-                        dataBeanList = adapter.getData();
-                        dataBeanList.addAll(beanList);
-                        adapter.setData(dataBeanList);
                     }
-                    allList = dataBeanList;
+                    pickingDetailAdapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, haveList);
+                    swipeTarget.setAdapter(pickingDetailAdapter);
+                    allList = haveList;
                     clickAdapterItem();
+                    initRadio();
                     seach();
                 } else if (response.body().getResult().getRes_code() == 1 && response.body().getResult().getRes_data() == null) {
                     ToastUtils.showCommonToast(ProductLineListActivity.this, "没有更多数据...");
@@ -185,6 +239,32 @@ public class ProductLineListActivity extends BaseActivity {
             @Override
             public void onFailure(Call<PickingDetailBean> call, Throwable t) {
                 dismissDefultProgressDialog();
+            }
+        });
+    }
+
+    /**
+     * 点击切换未产出
+     * */
+    private void initRadio() {
+        parentRadioDan.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+                if (i == R.id.no_radio){
+                    oneRadio.setChecked(true);
+                    noRadio.setTextColor(Color.BLUE);
+                    haveRadio.setTextColor(Color.BLACK);
+                    pickingDetailAdapter.setNewData(haveList);
+                    pickingDetailAdapter.notifyDataSetChanged();
+                    allList = haveList;
+                }else if (i == R.id.have_radio){
+                    twoRadio.setChecked(true);
+                    noRadio.setTextColor(Color.BLACK);
+                    haveRadio.setTextColor(Color.BLUE);
+                    pickingDetailAdapter.setNewData(dataBeanList);
+                    pickingDetailAdapter.notifyDataSetChanged();
+                    allList = dataBeanList;
+                }
             }
         });
     }
@@ -201,7 +281,7 @@ public class ProductLineListActivity extends BaseActivity {
             public boolean onQueryTextChange(String newText) {
                 if (StringUtils.isNullOrEmpty(newText)) {
                     ViewUtils.collapseSoftInputMethod(ProductLineListActivity.this, searchMoProduct);
-                    dataBeanList = allList;
+                    beanList = allList;
                 } else {
                     List<PickingDetailBean.ResultBean.ResDataBean> filterDateList = new ArrayList<>();
                     for (PickingDetailBean.ResultBean.ResDataBean bean : allList) {
@@ -209,43 +289,44 @@ public class ProductLineListActivity extends BaseActivity {
                             filterDateList.add(bean);
                         }
                     }
-                    dataBeanList = filterDateList;
+                    beanList = filterDateList;
                 }
-                adapter.setNewData(dataBeanList);
-                adapter.notifyDataSetChanged();
+                pickingDetailAdapter.setNewData(beanList);
+                pickingDetailAdapter.notifyDataSetChanged();
                 return false;
             }
         });
     }
 
     private void clickAdapterItem() {
-        adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+        pickingDetailAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                if (dataBeanList == null) return;
-                int order_id = dataBeanList.get(position).getOrder_id();
-                if (dataBeanList.get(position).getState().equals("progress")) {
+//                List<PickingDetailBean.ResultBean.ResDataBean> data = pickingDetailAdapter.getData();
+                int order_id = allList.get(position).getOrder_id();
+                if (allList.get(position).getState().equals("progress")) {
                     Intent intent = new Intent(ProductLineListActivity.this, ProductingActivity.class);
-                    intent.putExtra("order_name", dataBeanList.get(position).getDisplay_name());
+                    intent.putExtra("order_name", allList.get(position).getDisplay_name());
                     intent.putExtra("order_id", order_id);
                     intent.putExtra("state", "progress");
                     intent.putExtra("name_activity", "生产中");
                     intent.putExtra("state_activity", state_activity);
-                    intent.putExtra("production_line_id",production_line_id);
+                    intent.putExtra("production_line_id", production_line_id);
                     intent.putExtra("origin_sale_id", origin_sale_id);
                     startActivity(intent);
                 } else {
                     Intent intent = new Intent(ProductLineListActivity.this, OrderDetailActivity.class);
-                    intent.putExtra("order_name", dataBeanList.get(position).getDisplay_name());
+                    intent.putExtra("order_name", allList.get(position).getDisplay_name());
                     intent.putExtra("order_id", order_id);
-                    intent.putExtra("state", dataBeanList.get(position).getState());
-                   // intent.putExtra("name_activity", name_activity);
+                    intent.putExtra("state", allList.get(position).getState());
+                    // intent.putExtra("name_activity", name_activity);
                     intent.putExtra("state_activity", state_activity);
                     startActivity(intent);
                 }
             }
         });
     }
+
     @Override
     protected void onPause() {
         isChange = true;
@@ -254,7 +335,6 @@ public class ProductLineListActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        dataBeanList = null;
         super.onDestroy();
     }
 }

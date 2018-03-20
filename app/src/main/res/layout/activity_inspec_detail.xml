@@ -50,10 +50,64 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <LinearLayout
-                android:id="@+id/lin_one"
+                android:id="@+id/lin_product"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="50dp"
+                    android:text="产品:" />
+
+                <TextView
+                    android:id="@+id/product_name_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_below="@+id/lin_product"
+                android:id="@+id/reference_standard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="参考标准"
+                    android:layout_marginLeft="50dp"/>
+                <TextView
+                    android:id="@+id/tv_guige"
+                    android:layout_width="70dp"
+                    android:layout_height="35dp"
+                    android:text="物料规格"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:background="@drawable/nfcbuttonbac"
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="30dp"/>
+                <TextView
+                    android:id="@+id/tv_image_list"
+                    android:layout_width="70dp"
+                    android:layout_height="match_parent"
+                    android:text="产品图片"
+                    android:textSize="12sp"
+                    android:gravity="center"
+                    android:background="@drawable/bac_tv_order"
+                    android:textColor="@color/white"
+                    android:layout_marginLeft="30dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_below="@+id/reference_standard"
+                android:id="@+id/lin_one"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
                 android:orientation="horizontal">
 
                 <TextView

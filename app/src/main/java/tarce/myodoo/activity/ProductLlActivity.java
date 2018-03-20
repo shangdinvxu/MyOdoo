@@ -1,6 +1,7 @@
 package tarce.myodoo.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -24,8 +25,10 @@ import retrofit2.Response;
 import tarce.api.MyCallback;
 import tarce.api.RetrofitClient;
 import tarce.api.api.InventoryApi;
+import tarce.model.inventory.MainMdBean;
 import tarce.model.inventory.PickingDetailBean;
 import tarce.myodoo.R;
+import tarce.myodoo.adapter.processproduct.PrepareMdAdapter;
 import tarce.myodoo.adapter.product.PickingDetailAdapter;
 import tarce.myodoo.uiutil.RecyclerFooterView;
 import tarce.myodoo.uiutil.RecyclerHeaderView;
@@ -62,6 +65,7 @@ public class ProductLlActivity extends BaseActivity {
     private int process_id;
     private int production_line_id;
     private int origin_sale_id;
+    private boolean search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +83,16 @@ public class ProductLlActivity extends BaseActivity {
         production_line_id = intent.getIntExtra("line_id", -1000);
         origin_sale_id = intent.getIntExtra("origin_sale_id", 0);
 
-        initView();
-        getPicking(0, 20, Refresh_Move);
+        search = intent.getBooleanExtra("search", false);
+        if (search){
+            dataBeanList = (List<PickingDetailBean.ResultBean.ResDataBean>) intent.getSerializableExtra("data");
+            adapter = new PickingDetailAdapter(R.layout.adapter_picking_activity, dataBeanList);
+            swipeTarget.setAdapter(adapter);
+            clickAdapterItem();
+        }else {
+            initView();
+            getPicking(0, 20, Refresh_Move);
+        }
     }
 
     @Override

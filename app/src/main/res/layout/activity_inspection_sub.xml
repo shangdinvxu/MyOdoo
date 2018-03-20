@@ -16,7 +16,7 @@
             android:gravity="center"/>
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
             android:layout_height="match_parent"
             android:text="产品名"
             android:gravity="center"/>
@@ -26,12 +26,12 @@
             android:layout_height="match_parent"
             android:text="品检数量"
             android:gravity="center"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:text="状态"
-            android:gravity="center"/>
+        <!--<TextView-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:text="状态"-->
+            <!--android:gravity="center"/>-->
     </LinearLayout>
     <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
         android:layout_width="match_parent"

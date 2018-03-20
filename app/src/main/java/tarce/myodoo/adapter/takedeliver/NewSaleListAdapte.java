@@ -44,16 +44,16 @@ public class NewSaleListAdapte extends BaseQuickAdapter<NewSaleListBean.ResultBe
         }else {
             helper.setText(R.id.name_origin_note, "");
         }
-        if (!StringUtils.isNullOrEmpty(item.getState())){
-            if ("assigned".equals(item.getState())
-                    || "partially_available".equals(item.getState())){
-                helper.getView(R.id.baoliu).setVisibility(View.VISIBLE);
-            }else {
-                helper.getView(R.id.baoliu).setVisibility(View.GONE);
-            }
-        }else {
-            helper.getView(R.id.baoliu).setVisibility(View.GONE);
-        }
+//        if (!StringUtils.isNullOrEmpty(item.getState())){
+//            if ("assigned".equals(item.getState())
+//                    || "partially_available".equals(item.getState())){
+//                helper.getView(R.id.baoliu).setVisibility(View.VISIBLE);
+//            }else {
+//                helper.getView(R.id.baoliu).setVisibility(View.GONE);
+//            }
+//        } else {
+//            helper.getView(R.id.baoliu).setVisibility(View.GONE);
+//        }
         if (!StringUtils.isNullOrEmpty(item.getBack_order_id())){
             helper.getView(R.id.qiandan).setVisibility(View.VISIBLE);
         }else {
@@ -67,11 +67,19 @@ public class NewSaleListAdapte extends BaseQuickAdapter<NewSaleListBean.ResultBe
             }
         }
         if (!StringUtils.isNullOrEmpty(item.getState())){
-            if (!"secondary_operation_done".equals(item.getState()) && !"done".equals(item.getState()) && !"assigned".equals(item.getState())
-                    && !"partially_available".equals(item.getState()) && StringUtils.isNullOrEmpty(item.getBack_order_id())){
+            if (!"secondary_operation_done".equals(item.getState()) && !"done".equals(item.getState())
+                    && StringUtils.isNullOrEmpty(item.getBack_order_id())
+                    && !"cancel".equals(item.getState())){
                 helper.getView(R.id.quanxin).setVisibility(View.VISIBLE);
             }else {
                 helper.getView(R.id.quanxin).setVisibility(View.GONE);
+            }
+        }
+        if (!StringUtils.isNullOrEmpty(item.getState())){
+            if ("cancel".equals(item.getState())){
+                helper.getView(R.id.cancel).setVisibility(View.VISIBLE);
+            }else {
+                helper.getView(R.id.cancel).setVisibility(View.GONE);
             }
         }
     }

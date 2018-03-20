@@ -85,6 +85,11 @@ import tarce.model.inventory.WorkingWorkerBean;
 
 public interface InventoryApi {
     /**
+     * 根据产品名称搜索
+     * */
+    @POST("get_search_mrp_production")
+    Call<PickingDetailBean> getSearchMrpPro(@Body HashMap hashMap);
+    /**
      * 提交工时工种
      * */
     @POST("action_assign_hour_spent")

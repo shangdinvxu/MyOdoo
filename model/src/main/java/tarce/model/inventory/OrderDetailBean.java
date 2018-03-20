@@ -869,7 +869,7 @@ public class OrderDetailBean {
 
         private String message;
         private int code;
-        private PickingDetailBean.ErrorBean.DataBean data;
+        private ErrorBean.DataBean data;
 
         public String getMessage() {
             return message;
@@ -887,11 +887,11 @@ public class OrderDetailBean {
             this.code = code;
         }
 
-        public PickingDetailBean.ErrorBean.DataBean getData() {
+        public ErrorBean.DataBean getData() {
             return data;
         }
 
-        public void setData(PickingDetailBean.ErrorBean.DataBean data) {
+        public void setData(ErrorBean.DataBean data) {
             this.data = data;
         }
 
