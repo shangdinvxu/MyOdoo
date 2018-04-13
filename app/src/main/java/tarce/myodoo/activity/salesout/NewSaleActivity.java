@@ -236,33 +236,7 @@ public class NewSaleActivity extends Activity {
             }
         }
     }
-    //设置listpopwindow
-//    private void initListPop() {
-//        searchList.add("搜索：按客户简称");
-//        searchList.add("搜索：按SO源单据");
-//        mListPop = new ListPopupWindow(this);
-//        mListPop.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, searchList));
-//        mListPop.setWidth(RecyclerView.LayoutParams.WRAP_CONTENT);
-//        mListPop.setHeight(RecyclerView.LayoutParams.WRAP_CONTENT);
-//        mListPop.setAnchorView(searchNewsale);//设置ListPopupWindow的锚点，即关联PopupWindow的显示位置和这个锚点
-//        mListPop.setModal(true);//设置是否是模式
-////        mListPop.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
-//        mListPop.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view,
-//                                    int position, long id) {
-//                if (position == 0) {
-//                    serchData(searchNewsale.getQuery().toString());
-//                } else if (position == 1) {
-//                    Intent intent = new Intent(NewSaleActivity.this, NewSaleListActivity.class);
-//                    intent.putExtra("from", "fistPage");
-//                    intent.putExtra("danhao", searchNewsale.getQuery().toString());
-//                    startActivity(intent);
-//                }
-//                mListPop.dismiss();
-//            }
-//        });
-//    }
+
 
     @OnClick(R.id.tv_diy_update)
     void updateData(View view) {

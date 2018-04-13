@@ -353,40 +353,43 @@ public class NewSaleListActivity extends BaseActivity {
         listAdapte.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                showDefultProgressDialog();
-                HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-                objectObjectHashMap.put("picking_id", listAdapte.getData().get(position).getPicking_id());
-                Call<GetSaleResponse> stringCall = inventoryApi.checkIsCanUse(objectObjectHashMap);
-                stringCall.enqueue(new MyCallback<GetSaleResponse>() {
-                    @Override
-                    public void onResponse(Call<GetSaleResponse> call, Response<GetSaleResponse> response) {
-                        dismissDefultProgressDialog();
-                        if (response.body() == null) return;
-                        if (response.body().getError() != null) {
-                            new TipDialog(NewSaleListActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
-                                    .show();
-                            return;
-                        }
-                        if (response.body().getResult().getRes_data() == null) return;
-                        if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
-                            GetSaleResponse.TResult result = response.body().getResult();
-                            Intent intent = new Intent(NewSaleListActivity.this, SalesDetailActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("bundle", result.getRes_data());
-                            intent.putExtra("intent", bundle);
-                            startActivity(intent);
-                        } else {
-                            ToastUtils.showCommonToast(NewSaleListActivity.this, "加载失败，请稍后重试");
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<GetSaleResponse> call, Throwable t) {
-                        dismissDefultProgressDialog();
-                        ToastUtils.showCommonToast(NewSaleListActivity.this, t.toString());
-                        Log.e("zws", t.toString());
-                    }
-                });
+                Intent intent = new Intent(NewSaleListActivity.this, SalesDetailActivity.class);
+                intent.putExtra("picking_id", listAdapte.getData().get(position).getPicking_id());
+                startActivity(intent);
+//                showDefultProgressDialog();
+//                HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+//                objectObjectHashMap.put("picking_id", listAdapte.getData().get(position).getPicking_id());
+//                Call<GetSaleResponse> stringCall = inventoryApi.checkIsCanUse(objectObjectHashMap);
+//                stringCall.enqueue(new MyCallback<GetSaleResponse>() {
+//                    @Override
+//                    public void onResponse(Call<GetSaleResponse> call, Response<GetSaleResponse> response) {
+//                        dismissDefultProgressDialog();
+//                        if (response.body() == null) return;
+//                        if (response.body().getError() != null) {
+//                            new TipDialog(NewSaleListActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
+//                                    .show();
+//                            return;
+//                        }
+//                        if (response.body().getResult().getRes_data() == null) return;
+//                        if (response.body().getResult().getRes_data() != null && response.body().getResult().getRes_code() == 1) {
+//                            GetSaleResponse.TResult result = response.body().getResult();
+//                            Intent intent = new Intent(NewSaleListActivity.this, SalesDetailActivity.class);
+//                            Bundle bundle = new Bundle();
+//                            bundle.putSerializable("bundle", result.getRes_data());
+//                            intent.putExtra("intent", bundle);
+//                            startActivity(intent);
+//                        } else {
+//                            ToastUtils.showCommonToast(NewSaleListActivity.this, "加载失败，请稍后重试");
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<GetSaleResponse> call, Throwable t) {
+//                        dismissDefultProgressDialog();
+//                        ToastUtils.showCommonToast(NewSaleListActivity.this, t.toString());
+//                        Log.e("zws", t.toString());
+//                    }
+//                });
             }
         });
     }

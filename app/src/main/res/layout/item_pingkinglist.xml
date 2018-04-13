@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/tv_partner_name"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:paddingLeft="15dp"/>
+    <TextView
+        android:id="@+id/tv_origin"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:paddingLeft="15dp"/>
+    <TextView
+        android:id="@+id/tv_qty_done"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:textColor="@color/red"
+        android:paddingLeft="15dp"/>
+</LinearLayout>

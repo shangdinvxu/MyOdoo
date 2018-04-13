@@ -90,5 +90,6 @@ dependencies {
     compile 'com.github.barteksc:android-pdf-viewer:2.6.1'
     //ui
     //compile 'com.qmuiteam:qmui:1.0.0'
+    compile 'com.android.support:multidex:1.0.1'
 }
 

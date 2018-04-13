@@ -78,6 +78,7 @@ import tarce.support.AlertAialogUtils;
 import tarce.support.MyLog;
 import tarce.support.SharePreferenceUtils;
 import tarce.support.ToastUtils;
+import tarce.support.Toolkits;
 import tarce.support.ViewUtils;
 
 import static tarce.api.RetrofitClient.Url;
@@ -364,14 +365,16 @@ public class LoginActivity extends Activity {
             return;
         }
         progressDialog.show();
-        Call<LoginResponse> stringCall = loginApi.toLogin(new LoginBean(emailString, passwordString, chooseDB));
+        String versionName = Toolkits.getVersionName(LoginActivity.this);
+        Call<LoginResponse> stringCall = loginApi.toLogin(new LoginBean(emailString, passwordString, chooseDB, versionName));
         stringCall.enqueue(new MyCallback<LoginResponse>() {
             @Override
             public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-                if (response.body() == null || response.body().getResult() == null)
+                progressDialog.dismiss();
+                if (response.body() == null)
                     return;
                 if (response.body().getError() != null) {
-                    new TipDialog(LoginActivity.this, R.style.MyDialogStyle, response.body().getError().getMessage())
+                    new TipDialog(LoginActivity.this, R.style.MyDialogStyle, response.body().getError().getData().getMessage())
                             .show();
                     return;
                 }
@@ -410,8 +413,9 @@ public class LoginActivity extends Activity {
             @Override
             public void onFailure(Call<LoginResponse> call, Throwable t) {
                 super.onFailure(call, t);
+                progressDialog.dismiss();
                 Log.e("zws", t.toString());
-                Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, t.toString(), Toast.LENGTH_SHORT).show();
             }
         });
     }

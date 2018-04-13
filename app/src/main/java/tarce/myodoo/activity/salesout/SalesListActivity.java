@@ -168,31 +168,34 @@ public class SalesListActivity extends BaseActivity {
         salesListAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
-                showDefultProgressDialog();
-                HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
-                objectObjectHashMap.put("picking_id", salesListAdapter.getData().get(position).getPicking_id());
-                Call<GetSaleResponse> stringCall = inventoryApi.checkIsCanUse(objectObjectHashMap);
-                stringCall.enqueue(new MyCallback<GetSaleResponse>() {
-                    @Override
-                    public void onResponse(Call<GetSaleResponse> call, Response<GetSaleResponse> response) {
-                        dismissDefultProgressDialog();
-                        if (response.body() == null)return;
-                        if (response.body().getResult().getRes_code()==1 && response.body().getResult().getRes_data()!=null){
-                            GetSaleResponse.TResult result = response.body().getResult();
-                            Intent intent = new Intent(SalesListActivity.this, SalesDetailActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("bundle", result.getRes_data());
-                            intent.putExtra("intent", bundle);
+                Intent intent = new Intent(SalesListActivity.this, SalesDetailActivity.class);
+                            intent.putExtra("picking_id", salesListAdapter.getData().get(position).getPicking_id());
                             startActivity(intent);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<GetSaleResponse> call, Throwable t) {
-                        dismissDefultProgressDialog();
-                        ToastUtils.showCommonToast(SalesListActivity.this, t.toString());
-                    }
-                });
+//                showDefultProgressDialog();
+//                HashMap<Object, Object> objectObjectHashMap = new HashMap<>();
+//                objectObjectHashMap.put("picking_id", salesListAdapter.getData().get(position).getPicking_id());
+//                Call<GetSaleResponse> stringCall = inventoryApi.checkIsCanUse(objectObjectHashMap);
+//                stringCall.enqueue(new MyCallback<GetSaleResponse>() {
+//                    @Override
+//                    public void onResponse(Call<GetSaleResponse> call, Response<GetSaleResponse> response) {
+//                        dismissDefultProgressDialog();
+//                        if (response.body() == null)return;
+//                        if (response.body().getResult().getRes_code()==1 && response.body().getResult().getRes_data()!=null){
+//                            GetSaleResponse.TResult result = response.body().getResult();
+//                            Intent intent = new Intent(SalesListActivity.this, SalesDetailActivity.class);
+//                            Bundle bundle = new Bundle();
+//                            bundle.putSerializable("bundle", result.getRes_data());
+//                            intent.putExtra("intent", bundle);
+//                            startActivity(intent);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onFailure(Call<GetSaleResponse> call, Throwable t) {
+//                        dismissDefultProgressDialog();
+//                        ToastUtils.showCommonToast(SalesListActivity.this, t.toString());
+//                    }
+//                });
             }
         });
     }

@@ -85,6 +85,12 @@ import tarce.model.inventory.WorkingWorkerBean;
 
 public interface InventoryApi {
     /**
+     *
+     * 获取相关的保留单
+     * */
+    @POST("reassign_pack_done_qty")
+    Call<CommonBean> getReassignPackDone(@Body HashMap hashMap);
+    /**
      * 根据产品名称搜索
      * */
     @POST("get_search_mrp_production")

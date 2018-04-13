@@ -125,6 +125,81 @@ public class GetSaleResponse implements Serializable{
                     }
 
                 }
+                public static class ReservedPingking implements Serializable{
+                    private int id;
+                    private String origin;
+                    private String partner_name;
+                    private String pick_name;
+                    private String product_name;
+                    private double product_qty;
+                    private double qty_done;
+
+                    public int getId() {
+                        return id;
+                    }
+
+                    public void setId(int id) {
+                        this.id = id;
+                    }
+
+                    public String getOrigin() {
+                        return origin;
+                    }
+
+                    public void setOrigin(String origin) {
+                        this.origin = origin;
+                    }
+
+                    public String getPartner_name() {
+                        return partner_name;
+                    }
+
+                    public void setPartner_name(String partner_name) {
+                        this.partner_name = partner_name;
+                    }
+
+                    public String getPick_name() {
+                        return pick_name;
+                    }
+
+                    public void setPick_name(String pick_name) {
+                        this.pick_name = pick_name;
+                    }
+
+                    public String getProduct_name() {
+                        return product_name;
+                    }
+
+                    public void setProduct_name(String product_name) {
+                        this.product_name = product_name;
+                    }
+
+                    public double getProduct_qty() {
+                        return product_qty;
+                    }
+
+                    public void setProduct_qty(double product_qty) {
+                        this.product_qty = product_qty;
+                    }
+
+                    public double getQty_done() {
+                        return qty_done;
+                    }
+
+                    public void setQty_done(double qty_done) {
+                        this.qty_done = qty_done;
+                    }
+                }
+
+                public List<ReservedPingking> getReserved_picking_ids() {
+                    return reserved_picking_ids;
+                }
+
+                public void setReserved_picking_ids(List<ReservedPingking> reserved_picking_ids) {
+                    this.reserved_picking_ids = reserved_picking_ids;
+                }
+
+                private List<ReservedPingking>  reserved_picking_ids;
                 private	double	product_qty;	/*900*/
                 private	TProduct_id	product_id;	/*TProduct_id*/
                 private	Integer	pack_id;	/*2788*/
